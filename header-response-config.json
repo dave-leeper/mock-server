@@ -1,0 +1,8 @@
+[
+  {
+    "path": "/test",
+    "headers": [
+      {"header": "MY_HEADER", "value": "MY_HEADER_VALUE"}
+    ]
+  }
+]
