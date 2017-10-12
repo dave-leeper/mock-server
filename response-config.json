@@ -1,0 +1,10 @@
+[
+  {
+    "path": "/test",
+    "responseFile": "../response-config.json",
+    "fileType": "JSON",
+    "headers": [
+      {"header": "MY_HEADER", "value": "MY_HEADER_VALUE"}
+    ]
+  }
+]
