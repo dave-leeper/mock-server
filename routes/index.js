@@ -1,37 +1,35 @@
 var express = require('express');
 var router = express.Router();
-var jsonResponseConfig = require('../json-response-config.json');
-var headerResponseConfig = require('../header-response-config.json');
+var responseConfig = require('../response-config.json');
 
-/* GET home page. */
 router.get('*', function(req, res, next) {
-    console.log("headerResponseConfig: " + JSON.stringify(headerResponseConfig));
     addHeaders(req.path, res);
-    if (getResponseFile(req.path)) {
-        var responseFileContents = require(getResponseFile(req.path));
-        res.send(JSON.stringify(responseFileContents));
+
+    var responseFileInfo = getResponseFileInfo(req.path);
+    if (!responseFileInfo) {
+        defaultResponse(res);
+        return;
     }
-    else {
-        res.render('index', {title: 'Express'});
+
+    var jsonResponseFileContents = require(responseFileInfo.responseFile);
+    if ("JSON" === responseFileInfo.fileType.toString().toUpperCase()) {
+        res.send(JSON.stringify(jsonResponseFileContents));
+    } else {
+        res.send(jsonResponseFileContents);
     }
 });
 
-function getResponseFile(path) {
-    for (var loop = 0; loop < jsonResponseConfig.length; loop++) {
-        var responseRecord = jsonResponseConfig[loop];
-        console.log("JSON.stringify(responseRecord): " + JSON.stringify(responseRecord));
-        if (responseRecord.path == path) {
-            return responseRecord.responseFile;
-        }
-    }
-    return null;
+function defaultResponse (res) {
+    res.render('index', {title: 'Express'});
 }
 
 function addHeaders(path, res) {
-    for (var loop = 0; loop < headerResponseConfig.length; loop++) {
-        var responseHeaders = headerResponseConfig[loop];
-        console.log("JSON.stringify(responseHeaders): " + JSON.stringify(responseHeaders));
-        if (responseHeaders.path != path) {
+    for (var loop = 0; loop < responseConfig.length; loop++) {
+        var responseHeaders = responseConfig[loop];
+
+        if ((responseHeaders.path != path)
+        || (typeof responseHeaders.headers === 'undefined')
+        || (!responseHeaders.headers.length)){
             continue;
         }
         for (var loop2 = 0; loop2 < responseHeaders.headers.length; loop2++) {
@@ -40,4 +38,16 @@ function addHeaders(path, res) {
         }
     }
 }
+
+function getResponseFileInfo(path) {
+    for (var loop = 0; loop < responseConfig.length; loop++) {
+        var responseRecord = responseConfig[loop];
+        if ((responseRecord.path == path)
+        && (responseRecord.responseFile)) {
+            return responseRecord;
+        }
+    }
+    return null;
+}
+
 module.exports = router;
