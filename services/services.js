@@ -10,17 +10,17 @@ function ServicesService ( )
 /**
  * @param req {Object} - The request object.
  * @param res {Object} - The response object.
- * @param serverInfo - Server config info.
+ * @param router - The router.
  * @param serviceInfo - Service config info.
  */
-ServicesService.prototype.respond = function ( req, res, serverInfo, serviceInfo )
+ServicesService.prototype.do = function ( req, res, router, serviceInfo )
 {
     return new Promise (( inResolve ) => {
-        if ((serverInfo) && (serverInfo.services) && (serverInfo.services.length)) {
+        if ((router) && (router.serverConfig) && (router.serverConfig.services) && (router.serverConfig.services.length)) {
             var result = [];
 
-            for (var loop = 0; loop < serverInfo.services.length; loop++) {
-                var service = serverInfo.services[loop];
+            for (var loop = 0; loop < router.serverConfig.services.length; loop++) {
+                var service = router.serverConfig.services[loop];
 
                 result.push({
                     "path": service.path,
