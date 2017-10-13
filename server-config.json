@@ -2,7 +2,7 @@
   "mocks": [
     {
       "path": "/json",
-      "responseFile": "../server-config.json",
+      "responseFile": "./server-config.json",
       "fileType": "JSON",
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     },
