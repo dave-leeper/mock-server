@@ -1,7 +1,5 @@
 'use strict'
 
-var express = require('express');
-var router = express.Router();
 var util = require ( '../util/utilities.js' );
 var log = require ( '../util/logger-utilities.js' );
 
@@ -11,7 +9,7 @@ Router.startTime = null;
 
 Router.serverConfig = null;
 
-Router.init = function ( ) {
+Router.init = function ( router ) {
     router.get('*', function(req, res) {
         if ( log.will( log.ALL )) log.all( "Router.init: Rounting " + req.path );
         var mockResponseInfo = Router.getMockResponseInfo(req.path);
@@ -39,6 +37,7 @@ Router.init = function ( ) {
             var serviceClass = require(servicePath);
             var service = new serviceClass();
 
+            Router.addHeaders(servicesInfo, res);
             service.do(req, res, Router, servicesInfo);
             return;
         }
