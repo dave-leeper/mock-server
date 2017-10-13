@@ -1,39 +1,45 @@
 {
-  "mock":
-  [
+  "mocks": [
     {
-      "path": "/mock",
+      "path": "/json",
       "responseFile": "../server-config.json",
       "fileType": "JSON",
-      "headers": [
-        {
-          "header": "MY_HEADER",
-          "value": "MY_HEADER_VALUE"
-        }
-      ]
+      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     },
     {
       "path": "/hbs",
       "responseFile": "index.hbs",
       "fileType": "HBS",
       "hbsData": {"title": "Index"},
-      "headers": [
-        {
-          "header": "MY_HEADER",
-          "value": "MY_HEADER_VALUE"
-        }
-      ]
+      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     },
     {
       "path": "/text",
       "responseFile": "./views/index.hbs",
       "fileType": "TEXT",
-      "headers": [
-        {
-          "header": "MY_HEADER",
-          "value": "MY_HEADER_VALUE"
-        }
-      ]
+      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    }
+  ],
+  "services": [
+    {
+      "path": "/ping",
+      "name": "Ping",
+      "description": "A basic ping service.",
+      "serviceFile": "ping.js",
+      "serviceData": { "name": "My Server", "version": "1.0" },
+      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
+      "path": "/services",
+      "name": "Services List",
+      "description": "Provides a list of services registered with this server.",
+      "serviceFile": "services.js"
+    },
+    {
+      "path": "/mocks",
+      "name": "Mock Services List",
+      "description": "Provides a list of mock services registered with this server.",
+      "serviceFile": "mocks.js"
     }
   ]
 }
