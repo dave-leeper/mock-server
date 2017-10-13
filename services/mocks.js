@@ -10,17 +10,18 @@ function MocksService ( )
 /**
  * @param req {Object} - The request object.
  * @param res {Object} - The response object.
- * @param serverInfo - Server config info.
+ * @param router - The router.
  * @param serviceInfo - Service config info.
  */
-MocksService.prototype.respond = function ( req, res, serverInfo, serviceInfo )
+MocksService.prototype.do = function ( req, res, router, serviceInfo )
 {
+    console.log(JSON.stringify(router));
     return new Promise (( inResolve ) => {
-        if ((serverInfo) && (serverInfo.mocks) && (serverInfo.mocks.length)) {
+        if ((router) && (router.serverConfig) && (router.serverConfig.mocks) && (router.serverConfig.mocks.length)) {
             var result = [];
 
-            for (var loop = 0; loop < serverInfo.mocks.length; loop++) {
-                var mock = serverInfo.mocks[loop];
+            for (var loop = 0; loop < router.serverConfig.mocks.length; loop++) {
+                var mock = router.serverConfig.mocks[loop];
 
                 result.push({
                     "path": mock.path,
