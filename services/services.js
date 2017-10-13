@@ -1,13 +1,5 @@
 'use strict'
 
-var log = require ( '../util/logger-utilities.js' );
-
-const   strModuleName = "ServicesService",
-    strModuleEnter = ">" + strModuleName,
-    strModuleExit = "<" + strModuleName,
-    strModuleEnterRespond = strModuleEnter + ".respond",
-    strModuleExitRespond = strModuleExit + ".respond";
-
 /**
  * @constructor
  */
@@ -24,7 +16,6 @@ function ServicesService ( )
 ServicesService.prototype.respond = function ( req, res, serverInfo, serviceInfo )
 {
     return new Promise (( inResolve ) => {
-        if ( log.will( log.ALL )) log.all( strModuleEnterRespond );
         if ((serverInfo) && (serverInfo.services) && (serverInfo.services.length)) {
             var result = [];
 
@@ -42,7 +33,6 @@ ServicesService.prototype.respond = function ( req, res, serverInfo, serviceInfo
             res.send(JSON.stringify({"response": "No registered services"}));
         }
         inResolve && inResolve ( null, this );
-        if ( log.will( log.ALL )) log.all( strModuleExitRespond );
     });
 };
 
