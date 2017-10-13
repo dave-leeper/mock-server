@@ -1,7 +1,6 @@
 'use strict';
 
 var fs = require("fs");
-var process = require('process');
 
 class Utilities {
     /**
@@ -17,13 +16,6 @@ class Utilities {
             inEncoding = 'utf8';
         }
         return fs.readFileSync(inFilepath, inEncoding);
-    }
-
-    /**
-     * @returns {String} Returns the current working directory.
-     */
-    static cwd() {
-        return process.cwd();
     }
 
 }
