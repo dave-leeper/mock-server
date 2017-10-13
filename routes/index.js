@@ -1,55 +1,61 @@
+'use strict'
+
 var express = require('express');
 var router = express.Router();
 var serverConfig = require('../server-config.json');
+var util = require('../util/utilities.js');
 
 router.get('*', function(req, res, next) {
-    addHeaders(req.path, res);
+    var mockResponseInfo = getMockResponseInfo(req.path);
 
-    var responseFileInfo = getResponseFileInfo(req.path);
-    if (!responseFileInfo) {
-        defaultResponse(res);
+    if (mockResponseInfo) {
+        addHeaders(mockResponseInfo, res);
+        if ("JSON" == mockResponseInfo.fileType.toString().toUpperCase()) {
+            var jsonResponseFileContents = require(mockResponseInfo.responseFile);
+
+            res.send(JSON.stringify(jsonResponseFileContents));
+        } else if ("HBS" == mockResponseInfo.fileType.toString().toUpperCase()) {
+            res.render(mockResponseInfo.responseFile, mockResponseInfo.hbsData);
+        } else {
+            var textResponseFileContents = util.readFileSync(mockResponseInfo.responseFile, mockResponseInfo.encoding);
+
+            res.send(textResponseFileContents);
+        }
         return;
     }
 
-    console.log("responseFileInfo.fileType.toString().toUpperCase(): " + responseFileInfo.fileType.toString().toUpperCase());
-    if ("JSON" == responseFileInfo.fileType.toString().toUpperCase()) {
-        var jsonResponseFileContents = require(responseFileInfo.responseFile);
+    var servicesInfo = getServiceInfo(req.path);
 
-        res.send(JSON.stringify(jsonResponseFileContents));
-    } else if ("HBS" == responseFileInfo.fileType.toString().toUpperCase()) {
-        console.log("responseFileInfo.responseFile: " + responseFileInfo.responseFile);
-        console.log("responseFileInfo.hbsData: " + JSON.stringify(responseFileInfo.hbsData));
-        res.render(responseFileInfo.responseFile, responseFileInfo.hbsData);
-    } else {
-        var textResponseFileContents = readFileSync(responseFileInfo.responseFile, responseFileInfo.encoding);
+    if (servicesInfo) {
+        var servicePath = "../services/" + servicesInfo.serviceFile;
+        var serviceClass = require(servicePath);
+        var service = new serviceClass();
 
-        res.send(textResponseFileContents);
+        service.respond(req, res, serverConfig, servicesInfo);
+        return;
     }
+
+    defaultResponse(res);
 });
 
 function defaultResponse (res) {
     res.render('not-found', {title: 'File Not Found'});
 }
 
-function addHeaders(path, res) {
-    for (var loop = 0; loop < serverConfig.mock.length; loop++) {
-        var responseRecord = serverConfig.mock[loop];
-
-        if ((responseRecord.path != path)
-        || (typeof responseRecord.headers === 'undefined')
-        || (!responseRecord.headers.length)){
-            continue;
-        }
-        for (var loop2 = 0; loop2 < responseRecord.headers.length; loop2++) {
-            var header = responseRecord.headers[loop2];
-            res.header(header.header, header.value);
-        }
+function addHeaders(responseRecord, res) {
+    if ((typeof responseRecord.headers === 'undefined')
+    || (!responseRecord.headers.length)){
+        return;
+    }
+    for (var loop = 0; loop < responseRecord.headers.length; loop++) {
+        var header = responseRecord.headers[loop];
+        res.header(header.header, header.value);
     }
 }
 
-function getResponseFileInfo(path) {
-    for (var loop = 0; loop < serverConfig.mock.length; loop++) {
-        var responseRecord = serverConfig.mock[loop];
+function getMockResponseInfo(path) {
+    for (var loop = 0; loop < serverConfig.mocks.length; loop++) {
+        var responseRecord = serverConfig.mocks[loop];
 
         if ((responseRecord.path == path)
         && (responseRecord.responseFile)) {
@@ -59,13 +65,17 @@ function getResponseFileInfo(path) {
     return null;
 }
 
-function readFileSync(filepath, encoding){
-    var fs = require("fs");
+function getServiceInfo(path) {
+    console.log("getServiceInfo");
+    for (var loop = 0; loop < serverConfig.services.length; loop++) {
+        var responseRecord = serverConfig.services[loop];
 
-    if (typeof (encoding) == 'undefined'){
-        encoding = 'utf8';
+        if ((responseRecord.path == path)
+        && (responseRecord.serviceFile)) {
+            return responseRecord;
+        }
     }
-    return fs.readFileSync(filepath, encoding);
+    return null;
 }
 
 module.exports = router;
