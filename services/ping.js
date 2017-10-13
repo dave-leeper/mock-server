@@ -1,13 +1,5 @@
 'use strict'
 
-var log = require ( '../util/logger-utilities.js' );
-
-const   strModuleName = "PingService",
-    strModuleEnter = ">" + strModuleName,
-    strModuleExit = "<" + strModuleName,
-    strModuleEnterRespond = strModuleEnter + ".respond",
-    strModuleExitRespond = strModuleExit + ".respond";
-
 /**
  * @constructor
  */
@@ -24,14 +16,12 @@ function PingService ( )
 PingService.prototype.respond = function ( req, res, serverInfo, serviceInfo )
 {
     return new Promise (( inResolve ) => {
-        if ( log.will( log.ALL )) log.all( strModuleEnterRespond );
         if ((serviceInfo) && (serviceInfo.serviceData)) {
             res.send(JSON.stringify(serviceInfo.serviceData));
         } else {
             res.send(JSON.stringify({"response": "success"}));
         }
         inResolve && inResolve ( null, this );
-        if ( log.will( log.ALL )) log.all( strModuleExitRespond );
     });
 };
 
