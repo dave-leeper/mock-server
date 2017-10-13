@@ -66,7 +66,6 @@ function getMockResponseInfo(path) {
 }
 
 function getServiceInfo(path) {
-    console.log("getServiceInfo");
     for (var loop = 0; loop < serverConfig.services.length; loop++) {
         var responseRecord = serverConfig.services[loop];
 
