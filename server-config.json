@@ -41,5 +41,16 @@
       "description": "Provides a list of mock services registered with this server.",
       "serviceFile": "mocks.js"
     }
+  ],
+  "databaseConnections" : [
+    {
+      "name": "elasticsearch",
+      "description": "Elasticsearch service.",
+      "databaseConnector": "elasticsearch.js",
+      "config": {
+        "host": "localhost:9200",
+        "log": "trace"
+      }
+    }
   ]
 }
