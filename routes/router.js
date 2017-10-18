@@ -91,7 +91,7 @@ Router.route = function ( req, res ) {
     var servicesInfo = Router.getServiceInfo(req.path);
 
     if (servicesInfo) {
-        var servicePath = "../services/" + servicesInfo.serviceFile;
+        var servicePath = "../microservices/" + servicesInfo.serviceFile;
         var serviceClass = require(servicePath);
         var service = new serviceClass();
 
