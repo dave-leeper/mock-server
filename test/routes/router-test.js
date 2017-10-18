@@ -52,21 +52,21 @@ var config = {
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
         {
-            "path": "/services",
+            "path": "/microservices",
             "name": "Services List",
-            "description": "Provides a list of services registered with this server.",
+            "description": "Provides a list of microservices registered with this server.",
             "serviceFile": "services.js"
         },
         {
             "path": "/mocks",
             "name": "Mock Services List",
-            "description": "Provides a list of mock services registered with this server.",
+            "description": "Provides a list of mock microservices registered with this server.",
             "serviceFile": "mocks.js"
         }
     ]
 };
 
-describe( 'As a developer, I need a router that handles all GET paths, understands the server config file, and invokes mocks and services.', function()
+describe( 'As a developer, I need a router that handles all GET paths, understands the server config file, and invokes mocks and microservices.', function()
 {
     it ( 'should handle a GET requests using the provided function and return the router parameter', ( ) => {
         let r = new mockExpressRouter();
@@ -125,7 +125,7 @@ describe( 'As a developer, I need a router that handles all GET paths, understan
         expect(serviceResponseRecord).to.be.null;
     });
 
-    it ( 'should add headers to mock services', ( ) => {
+    it ( 'should add headers to mock microservices', ( ) => {
         Router.serverConfig = config;
         let resp = new mockResponse();
         var mockResponseRecord = Router.getMockResponseInfo('/json');
@@ -137,7 +137,7 @@ describe( 'As a developer, I need a router that handles all GET paths, understan
         Router.serverConfig = null;
     });
 
-    it ( 'should add headers to services', ( ) => {
+    it ( 'should add headers to microservices', ( ) => {
         Router.serverConfig = config;
         let resp = new mockResponse();
         var serviceInfo = Router.getServiceInfo('/ping');
