@@ -7,7 +7,7 @@ function ElasticSearchDatabaseConnector ( ) {
     this.config = null;
 }
 
-ElasticSearchDatabaseConnector.prototype.init = function ( config ) {
+ElasticSearchDatabaseConnector.prototype.connect = function (config ) {
     this.client = new elasticsearch.Client(config.config);
     this.config = config;
     return this.client;
