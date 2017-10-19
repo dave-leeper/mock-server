@@ -5,7 +5,7 @@ function DatabaseConnectorManager ( ) {
     this.databaseConnectors = [];
 }
 
-DatabaseConnectorManager.prototype.init = function ( config ) {
+DatabaseConnectorManager.prototype.connect = function (config ) {
     this.config = config;
 
     if ((!config) || (!config.databaseConnections)) {
@@ -17,7 +17,7 @@ DatabaseConnectorManager.prototype.init = function ( config ) {
         let databaseConnectorClass = require ( './' + databaseConnectorInfo.databaseConnector );
         let databaseConnector = new databaseConnectorClass();
 
-        databaseConnector.init(databaseConnectorInfo);
+        databaseConnector.connect(databaseConnectorInfo);
         this.databaseConnectors.push({name: databaseConnectorInfo.name, connector: databaseConnector});
     }
 };
