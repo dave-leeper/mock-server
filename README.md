@@ -1,10 +1,10 @@
-=== To Run
+# To Run 
 npm start
 
-=== To Test
+# To Test 
 mocha "test/**/*.js"
 
-=== To Start In-Memory Server
+# To Start In-Memory Server 
 var Server = require('./server.js');
 var port = MY_PORT_NUMBER
 var serverConfig = require('./MY_SERVER_CONFIG.json');
