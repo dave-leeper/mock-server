@@ -7,6 +7,7 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const Router = require('./routes/router');
+const DatabaseConnectorManager = require('./database-connectors/database-connector-manager.js');
 
 /**
  * @constructor
@@ -15,6 +16,7 @@ function Server ( ) {
     this.express = null;
     this.server = null;
     this.serverConfig = null;
+    this.databaseConnectorManager = null;
 }
 
 /**
@@ -60,6 +62,10 @@ Server.prototype.init = function ( port, config )
         res.status(err.status || 500);
         res.render('error');
     });
+
+    // Set up database connections
+    this.databaseConnectorManager = new DatabaseConnectorManager();
+    this.databaseConnectorManager.connect(config);
 
     /**
      * Get port from environment and store in Express.
