@@ -10,7 +10,7 @@ Router.startTime = null;
 
 Router.serverConfig = null;
 
-Router.init = function ( router ) {
+Router.connect = function (router ) {
     router.get('*', Router.route);
     return router;
 };
