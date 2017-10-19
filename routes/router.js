@@ -7,8 +7,7 @@ var fs = require("fs");
 function Router ( ) { }
 
 Router.startTime = null;
-
-Router.serverConfig = null;
+Router.server = null;
 
 Router.connect = function (router ) {
     router.get('*', Router.route);
@@ -31,11 +30,11 @@ Router.addHeaders = function ( responseRecord, res ) {
 };
 
 Router.getMockResponseInfo = function ( path ) {
-    if (!Router.serverConfig) {
+    if ((!Router.server) || (!Router.server.serverConfig)) {
         return null;
     }
-    for (var loop = 0; loop < Router.serverConfig.mocks.length; loop++) {
-        var responseRecord = Router.serverConfig.mocks[loop];
+    for (var loop = 0; loop < Router.server.serverConfig.mocks.length; loop++) {
+        var responseRecord = Router.server.serverConfig.mocks[loop];
 
         if ((responseRecord.path == path)
         && (responseRecord.responseFile)) {
@@ -46,11 +45,11 @@ Router.getMockResponseInfo = function ( path ) {
 };
 
 Router.getServiceInfo = function ( path ) {
-    if (!Router.serverConfig) {
+    if ((!Router.server) || (!Router.server.serverConfig)) {
         return null;
     }
-    for (var loop = 0; loop < Router.serverConfig.services.length; loop++) {
-        var responseRecord = Router.serverConfig.services[loop];
+    for (var loop = 0; loop < Router.server.serverConfig.services.length; loop++) {
+        var responseRecord = Router.server.serverConfig.services[loop];
 
         if ((responseRecord.path == path)
             && (responseRecord.serviceFile)) {
