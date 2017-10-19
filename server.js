@@ -32,8 +32,7 @@ Server.prototype.init = function ( port, config )
     this.express.set('views', path.join(__dirname, 'views'));
     this.express.set('view engine', 'hbs');
 
-    // uncomment after placing your favicon in /public
-    //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+    this.express.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
     this.express.use(logger('dev'));
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
