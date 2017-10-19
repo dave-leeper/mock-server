@@ -111,7 +111,7 @@ describe( 'As a developer, I need a router that handles all GET paths, understan
     it ( 'should retreive the config record for a service response', ( ) => {
         Router.server = {};
         Router.server.serverConfig = config;
-        var serviceResponseRecord = Router.getServiceInfo('/ping');
+        var serviceResponseRecord = Router.getMicroserviceInfo('/ping');
         expect(serviceResponseRecord).to.be.equal(config.services[0]);
         Router.server = null;
     });
@@ -119,7 +119,7 @@ describe( 'As a developer, I need a router that handles all GET paths, understan
     it ( 'should return null for invalid service paths', ( ) => {
         Router.server = {};
         Router.server.serverConfig = config;
-        var serviceResponseRecord = Router.getServiceInfo('/JUNK');
+        var serviceResponseRecord = Router.getMicroserviceInfo('/JUNK');
         expect(serviceResponseRecord).to.be.null;
         Router.server = null;
     });
@@ -127,7 +127,7 @@ describe( 'As a developer, I need a router that handles all GET paths, understan
     it ( 'should return null for the service when no config is set', ( ) => {
         Router.server = {};
         Router.server.serverConfig = null;
-        var serviceResponseRecord = Router.getServiceInfo('/ping');
+        var serviceResponseRecord = Router.getMicroserviceInfo('/ping');
         expect(serviceResponseRecord).to.be.null;
     });
 
@@ -148,7 +148,7 @@ describe( 'As a developer, I need a router that handles all GET paths, understan
         Router.server = {};
         Router.server.serverConfig = config;
         let resp = new mockResponse();
-        var serviceInfo = Router.getServiceInfo('/ping');
+        var serviceInfo = Router.getMicroserviceInfo('/ping');
         Router.addHeaders(serviceInfo, resp);
         expect(resp.headers).to.not.be.null;
         expect(resp.headers.length).to.equal(1);
