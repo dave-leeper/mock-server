@@ -86,47 +86,54 @@ describe( 'As a developer, I need a router that handles all GET paths, understan
     });
 
     it ( 'should retreive the config record for a mock response', ( ) => {
-        Router.serverConfig = config;
+        Router.server = {};
+        Router.server.serverConfig = config;
         var mockResponseRecord = Router.getMockResponseInfo('/json');
         expect(mockResponseRecord).to.be.equal(config.mocks[0]);
-        Router.serverConfig = null;
+        Router.server = null;
     });
 
     it ( 'should return null for invalid mock paths', ( ) => {
-        Router.serverConfig = config;
+        Router.server = {};
+        Router.server.serverConfig = config;
         var mockResponseRecord = Router.getMockResponseInfo('/JUNK');
         expect(mockResponseRecord).to.be.null;
-        Router.serverConfig = null;
+        Router.server = null;
     });
 
     it ( 'should return null for the mock service when no config is set', ( ) => {
-        Router.serverConfig = null;
+        Router.server = {};
+        Router.server.serverConfig = null;
         var mockResponseRecord = Router.getMockResponseInfo('/json');
         expect(mockResponseRecord).to.be.null;
     });
 
     it ( 'should retreive the config record for a service response', ( ) => {
-        Router.serverConfig = config;
+        Router.server = {};
+        Router.server.serverConfig = config;
         var serviceResponseRecord = Router.getServiceInfo('/ping');
         expect(serviceResponseRecord).to.be.equal(config.services[0]);
-        Router.serverConfig = null;
+        Router.server = null;
     });
 
     it ( 'should return null for invalid service paths', ( ) => {
-        Router.serverConfig = config;
+        Router.server = {};
+        Router.server.serverConfig = config;
         var serviceResponseRecord = Router.getServiceInfo('/JUNK');
         expect(serviceResponseRecord).to.be.null;
-        Router.serverConfig = null;
+        Router.server = null;
     });
 
     it ( 'should return null for the service when no config is set', ( ) => {
-        Router.serverConfig = null;
+        Router.server = {};
+        Router.server.serverConfig = null;
         var serviceResponseRecord = Router.getServiceInfo('/ping');
         expect(serviceResponseRecord).to.be.null;
     });
 
     it ( 'should add headers to mock microservices', ( ) => {
-        Router.serverConfig = config;
+        Router.server = {};
+        Router.server.serverConfig = config;
         let resp = new mockResponse();
         var mockResponseRecord = Router.getMockResponseInfo('/json');
         Router.addHeaders(mockResponseRecord, resp);
@@ -134,11 +141,12 @@ describe( 'As a developer, I need a router that handles all GET paths, understan
         expect(resp.headers.length).to.equal(1);
         expect(resp.headers[0].name).to.equal("MY_HEADER");
         expect(resp.headers[0].value).to.equal("MY_HEADER_VALUE");
-        Router.serverConfig = null;
+        Router.server = null;
     });
 
     it ( 'should add headers to microservices', ( ) => {
-        Router.serverConfig = config;
+        Router.server = {};
+        Router.server.serverConfig = config;
         let resp = new mockResponse();
         var serviceInfo = Router.getServiceInfo('/ping');
         Router.addHeaders(serviceInfo, resp);
@@ -146,51 +154,55 @@ describe( 'As a developer, I need a router that handles all GET paths, understan
         expect(resp.headers.length).to.equal(1);
         expect(resp.headers[0].name).to.equal("MY_HEADER");
         expect(resp.headers[0].value).to.equal("MY_HEADER_VALUE");
-        Router.serverConfig = null;
+        Router.server = null;
     });
 
     it ( 'should write json files as a mock service', ( ) => {
-        Router.serverConfig = config;
+        Router.server = {};
+        Router.server.serverConfig = config;
         let req = new mockRequest('/json');
         let resp = new mockResponse();
         let data = utils.readFileSync("./server-config.json");
         Router.route(req, resp);
         expect(resp.sendString).to.not.be.null;
         expect(resp.sendString).to.equal(data);
-        Router.serverConfig = null;
+        Router.server = null;
     });
 
     it ( 'should return not found if the json file for a mock service does not exist', ( ) => {
-        Router.serverConfig = config;
+        Router.server = {};
+        Router.server.serverConfig = config;
         let req = new mockRequest('/json-junk');
         let resp = new mockResponse();
         Router.route(req, resp);
         expect(resp.sendString).to.be.null;
         expect(resp.renderString).to.not.be.null;
         expect(resp.renderString).to.equal("not-found");
-        Router.serverConfig = null;
+        Router.server = null;
     });
 
     it ( 'should write text files as a mock service', ( ) => {
-        Router.serverConfig = config;
+        Router.server = {};
+        Router.server.serverConfig = config;
         let req = new mockRequest('/text');
         let resp = new mockResponse();
         let data = utils.readFileSync("./views/index.hbs");
         Router.route(req, resp);
         expect(resp.sendString).to.not.be.null;
         expect(resp.sendString).to.equal(data);
-        Router.serverConfig = null;
+        Router.server = null;
     });
 
     it ( 'should return not found if the text file for a mock service does not exist', ( ) => {
-        Router.serverConfig = config;
+        Router.server = {};
+        Router.server.serverConfig = config;
         let req = new mockRequest('/text-junk');
         let resp = new mockResponse();
         Router.route(req, resp);
         expect(resp.sendString).to.be.null;
         expect(resp.renderString).to.not.be.null;
         expect(resp.renderString).to.equal("not-found");
-        Router.serverConfig = null;
+        Router.server = null;
     });
 });
 
