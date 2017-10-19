@@ -70,7 +70,7 @@ describe( 'As a developer, I need a router that handles all GET paths, understan
 {
     it ( 'should handle a GET requests using the provided function and return the router parameter', ( ) => {
         let r = new mockExpressRouter();
-        let returnValue = Router.init(r);
+        let returnValue = Router.connect(r);
         expect(returnValue).to.be.equal(r);
         expect(r.path).to.be.equal("*");
         expect(typeof r.handler).to.be.equal("function");
