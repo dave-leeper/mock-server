@@ -25,7 +25,7 @@ describe( 'As a developer, I need to manage database connections.', function()
         let dcm = new DatabaseConnectorManager();
 
         expect(dcm).to.not.be.null;
-        dcm.init(config);
+        dcm.connect(config);
         expect(dcm.config).to.be.equal(config);
         expect(dcm.databaseConnectors.length).to.be.equal(1);
 
