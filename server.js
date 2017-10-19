@@ -23,8 +23,9 @@ function Server ( ) {
  * Initialize the server.
  * @param port {Integer} The server port.
  * @param config {Object} The server config.
+ * @param callback {Function} The function called once the server has started.
  */
-Server.prototype.init = function ( port, config )
+Server.prototype.init = function ( port, config, callback )
 {
     this.express = express();
 
@@ -73,7 +74,7 @@ Server.prototype.init = function ( port, config )
     this.express.set('port', normalizedPort);
 
     this.server = http.createServer(this.express);
-    this.server.listen(normalizedPort);
+    this.server.listen(normalizedPort, callback);
     this.server.on('error', this.onError);
     this.serverConfig = config;
 
@@ -81,6 +82,9 @@ Server.prototype.init = function ( port, config )
     return this;
 };
 
+Server.prototype.stop = function (callback) {
+    this.server.close(callback);
+}
 
 /**
  * Normalize a port into a number, string, or false.
