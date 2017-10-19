@@ -1,8 +1,8 @@
 'use strict'
 
-var util = require ( '../util/utilities.js' );
-var log = require ( '../util/logger-utilities.js' );
-var fs = require("fs");
+let util = require ( '../util/utilities.js' );
+let log = require ( '../util/logger-utilities.js' );
+let fs = require("fs");
 
 function Router ( ) { }
 
@@ -23,8 +23,8 @@ Router.addHeaders = function ( responseRecord, res ) {
     || (!responseRecord.headers.length)){
         return;
     }
-    for (var loop = 0; loop < responseRecord.headers.length; loop++) {
-        var header = responseRecord.headers[loop];
+    for (let loop = 0; loop < responseRecord.headers.length; loop++) {
+        let header = responseRecord.headers[loop];
         res.header(header.header, header.value);
     }
 };
@@ -33,8 +33,8 @@ Router.getMockResponseInfo = function ( path ) {
     if ((!Router.server) || (!Router.server.serverConfig)) {
         return null;
     }
-    for (var loop = 0; loop < Router.server.serverConfig.mocks.length; loop++) {
-        var responseRecord = Router.server.serverConfig.mocks[loop];
+    for (let loop = 0; loop < Router.server.serverConfig.mocks.length; loop++) {
+        let responseRecord = Router.server.serverConfig.mocks[loop];
 
         if ((responseRecord.path == path)
         && (responseRecord.responseFile)) {
@@ -44,12 +44,12 @@ Router.getMockResponseInfo = function ( path ) {
     return null;
 };
 
-Router.getServiceInfo = function ( path ) {
+Router.getMicroserviceInfo = function (path ) {
     if ((!Router.server) || (!Router.server.serverConfig)) {
         return null;
     }
-    for (var loop = 0; loop < Router.server.serverConfig.services.length; loop++) {
-        var responseRecord = Router.server.serverConfig.services[loop];
+    for (let loop = 0; loop < Router.server.serverConfig.services.length; loop++) {
+        let responseRecord = Router.server.serverConfig.services[loop];
 
         if ((responseRecord.path == path)
             && (responseRecord.serviceFile)) {
@@ -61,7 +61,7 @@ Router.getServiceInfo = function ( path ) {
 
 Router.route = function ( req, res ) {
     if ( log.will( log.ALL )) log.all( "Router.router: Rounting " + req.path );
-    var mockResponseInfo = Router.getMockResponseInfo(req.path);
+    let mockResponseInfo = Router.getMockResponseInfo(req.path);
 
     if (mockResponseInfo) {
         Router.addHeaders(mockResponseInfo, res);
@@ -70,7 +70,7 @@ Router.route = function ( req, res ) {
                 res.render("not-found", null);
                 return;
             };
-            var jsonResponseFileContents = util.readFileSync(mockResponseInfo.responseFile);
+            let jsonResponseFileContents = util.readFileSync(mockResponseInfo.responseFile);
 
             res.send(jsonResponseFileContents);
         } else if ("HBS" == mockResponseInfo.fileType.toString().toUpperCase()) {
@@ -80,22 +80,22 @@ Router.route = function ( req, res ) {
                 res.render("not-found", null);
                 return;
             };
-            var textResponseFileContents = util.readFileSync(mockResponseInfo.responseFile, mockResponseInfo.encoding);
+            let textResponseFileContents = util.readFileSync(mockResponseInfo.responseFile, mockResponseInfo.encoding);
 
             res.send(textResponseFileContents);
         }
         return;
     }
 
-    var servicesInfo = Router.getServiceInfo(req.path);
+    let microserviceInfo = Router.getMicroserviceInfo(req.path);
 
-    if (servicesInfo) {
-        var servicePath = "../microservices/" + servicesInfo.serviceFile;
-        var serviceClass = require(servicePath);
-        var service = new serviceClass();
+    if (microserviceInfo) {
+        let microservicePath = "../microservices/" + microserviceInfo.serviceFile;
+        let microserviceClass = require(microservicePath);
+        let microservice = new microserviceClass();
 
-        Router.addHeaders(servicesInfo, res);
-        service.do(req, res, Router, servicesInfo);
+        Router.addHeaders(microserviceInfo, res);
+        microservice.do(req, res, Router, microserviceInfo);
         return;
     }
 
