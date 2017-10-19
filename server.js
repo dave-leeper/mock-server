@@ -14,6 +14,7 @@ const Router = require('./routes/router');
 function Server ( ) {
     this.express = null;
     this.server = null;
+    this.serverConfig = null;
 }
 
 /**
@@ -39,7 +40,7 @@ Server.prototype.init = function ( port, config )
 
     // app.use('/', index);
     Router.startTime = new Date();
-    Router.serverConfig = config;
+    Router.server = this;
     this.express.use('/', Router.connect(router));
 
     // catch 404 and forward to error handler
@@ -63,13 +64,13 @@ Server.prototype.init = function ( port, config )
     /**
      * Get port from environment and store in Express.
      */
-
     const normalizedPort = this.normalizePort(port);
     this.express.set('port', normalizedPort);
 
     this.server = http.createServer(this.express);
     this.server.listen(normalizedPort);
     this.server.on('error', this.onError);
+    this.serverConfig = config;
 
     console.log('Listening on port ' + normalizedPort);
     return this;
