@@ -85,7 +85,8 @@ describe( 'As a developer, I need need to obtain a list of mock services that ar
         let mockServiceInfo = {};
         let expectedResponse = '[{"path":"/json","responseFile":"./server-config.json","fileType":"JSON"},{"path":"/hbs","responseFile":"index.hbs","fileType":"HBS"},{"path":"/text","responseFile":"./views/index.hbs","fileType":"TEXT"},{"path":"/json-junk","responseFile":"./JUNK.json","fileType":"JSON"},{"path":"/text-junk","responseFile":"./JUNK.tex","fileType":"TEXT"}]';
 
-        Router.serverConfig = config;
+        Router.server = {};
+        Router.server.serverConfig = config;
         mocksMicroservice.do(mockRequest, mockResponse, Router, mockServiceInfo);
         expect(mockResponse.sendString).to.be.equal(expectedResponse);
     });
