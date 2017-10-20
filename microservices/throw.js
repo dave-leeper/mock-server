@@ -15,7 +15,7 @@ function ThrowService ( )
  */
 ThrowService.prototype.do = function ( req, res, router, serviceInfo )
 {
-    throw "ERROR";
+    throw Error("ERROR");
 };
 
 module.exports = ThrowService;
