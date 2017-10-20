@@ -85,7 +85,8 @@ describe( 'As a developer, I need need to obtain a list of microservices that ar
         let mockServiceInfo = {};
         let expectedResponse = '[{"path":"/ping","name":"Ping","description":"A basic ping service."},{"path":"/microservices","name":"Services List","description":"Provides a list of microservices registered with this server."},{"path":"/mocks","name":"Mock Services List","description":"Provides a list of mock microservices registered with this server."}]';
 
-        Router.serverConfig = config;
+        Router.server = {};
+        Router.server.serverConfig = config;
         microservicesMicroservice.do(mockRequest, mockResponse, Router, mockServiceInfo);
         expect(mockResponse.sendString).to.be.equal(expectedResponse);
     });
