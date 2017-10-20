@@ -16,11 +16,16 @@ function ServicesService ( )
 ServicesService.prototype.do = function ( req, res, router, serviceInfo )
 {
     return new Promise (( inResolve ) => {
-        if ((router) && (router.serverConfig) && (router.serverConfig.services) && (router.serverConfig.services.length)) {
-            var result = [];
+        if ((router)
+        && (router.server)
+        && (router.server.serverConfig)
+        && (router.server.serverConfig.services)
+        && (router.server.serverConfig.services.length)) {
+            let result = [];
+            let services = router.server.serverConfig.services;
 
-            for (var loop = 0; loop < router.serverConfig.services.length; loop++) {
-                var service = router.serverConfig.services[loop];
+            for (let loop = 0; loop < services.length; loop++) {
+                let service = services[loop];
 
                 result.push({
                     "path": service.path,
