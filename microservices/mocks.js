@@ -15,7 +15,6 @@ function MocksMicroservice ( )
  */
 MocksMicroservice.prototype.do = function (req, res, router, serviceInfo )
 {
-    console.log(JSON.stringify(router));
     return new Promise (( inResolve ) => {
         if ((router) && (router.serverConfig) && (router.serverConfig.mocks) && (router.serverConfig.mocks.length)) {
             var result = [];
