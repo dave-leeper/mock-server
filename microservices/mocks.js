@@ -16,11 +16,16 @@ function MocksMicroservice ( )
 MocksMicroservice.prototype.do = function (req, res, router, serviceInfo )
 {
     return new Promise (( inResolve ) => {
-        if ((router) && (router.serverConfig) && (router.serverConfig.mocks) && (router.serverConfig.mocks.length)) {
-            var result = [];
+        if ((router)
+        && (router.server)
+        && (router.server.serverConfig)
+        && (router.server.serverConfig.services)
+        && (router.server.serverConfig.services.length)) {
+            let result = [];
+            let mocks = router.server.serverConfig.mocks;
 
-            for (var loop = 0; loop < router.serverConfig.mocks.length; loop++) {
-                var mock = router.serverConfig.mocks[loop];
+            for (let loop = 0; loop < mocks.length; loop++) {
+                let mock = mocks[loop];
 
                 result.push({
                     "path": mock.path,
