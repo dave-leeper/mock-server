@@ -95,7 +95,11 @@ Router.route = function ( req, res ) {
         let microservice = new microserviceClass();
 
         Router.addHeaders(microserviceInfo, res);
-        microservice.do(req, res, Router, microserviceInfo);
+        try {
+            microservice.do(req, res, Router, microserviceInfo);
+        } catch (err) {
+            res.render("error", { message: "Error calling microservice " + microserviceInfo.name + ".", error: { status: 500, stack: err.stack} });
+        }
         return;
     }
 
