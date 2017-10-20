@@ -8,7 +8,7 @@ function ElasticSearchDatabaseConnector ( name ) {
     this.config = null;
 }
 
-ElasticSearchDatabaseConnector.prototype.connect = function (config ) {
+ElasticSearchDatabaseConnector.prototype.connect = function ( config ) {
     return new Promise (( inResolve ) => {
         // Elasticsearch mangles configs, so copy it.
         let configCopy = {};
