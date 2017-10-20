@@ -60,7 +60,7 @@ Router.getMicroserviceInfo = function (path ) {
 }
 
 Router.route = function ( req, res ) {
-    if ( log.will( log.ALL )) log.all( "Router.router: Rounting " + req.path );
+    if ( log.will( log.ALL )) log.all( "Router.router: Routing " + req.path );
     let mockResponseInfo = Router.getMockResponseInfo(req.path);
 
     if (mockResponseInfo) {
