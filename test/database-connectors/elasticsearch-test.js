@@ -9,11 +9,11 @@ var config = {
         log: "trace"
     };
 
-describe( 'As a developer, I need to work with elasticsearch.', function()
-{
+describe( 'As a developer, I need to work with elasticsearch.', function() {
     it ( 'It should connect and disconnect to and from elasticsearch', (done ) => {
         let esdc = new ElasticSearchDatabaseConnector();
 
+        console.log("=== Attempting to connect to ElasticSearch on localhost.");
         esdc.connect(config).then(( error, client ) => {
 
             esdc.ping().then(( pingResult ) => {
