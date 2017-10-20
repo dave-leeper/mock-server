@@ -30,16 +30,22 @@
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     },
     {
-      "path": "/services",
-      "name": "Services List",
+      "path": "/microservices",
+      "name": "Microservices List",
       "description": "Provides a list of services registered with this server.",
-      "serviceFile": "services.js"
+      "serviceFile": "microservices.js"
     },
     {
       "path": "/mocks",
       "name": "Mock Services List",
       "description": "Provides a list of mock services registered with this server.",
       "serviceFile": "mocks.js"
+    },
+    {
+      "path": "/throw",
+      "name": "Throw Exception",
+      "description": "A micro service that throws an exception. For testing purposes.",
+      "serviceFile": "throw.js"
     }
   ],
   "databaseConnections" : [
