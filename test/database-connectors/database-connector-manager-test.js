@@ -16,21 +16,24 @@ var config = {
             }
         }
     ]
-
 };
 
 describe( 'As a developer, I need to manage database connections.', function()
 {
-    it ( 'It should create all requested database connections', ( ) => {
+    it ( 'It should create all requested database connections', ( done ) => {
         let dcm = new DatabaseConnectorManager();
 
         expect(dcm).to.not.be.null;
-        dcm.connect(config);
-        expect(dcm.config).to.be.equal(config);
-        expect(dcm.databaseConnectors.length).to.be.equal(1);
+        dcm.connect(config).then ((error, param2) => {
+            expect(dcm.config).to.be.equal(config);
+            expect(dcm.databaseConnectors.length).to.be.equal(1);
 
-        let elasticSearchDC = dcm.getConnector("elasticsearch");
-        expect(elasticSearchDC).to.not.be.null;
+            let elasticSearchDC = dcm.getConnector("elasticsearch");
+            expect(elasticSearchDC).to.not.be.null;
+            dcm.disconnect().then(() => {
+                done();
+            });
+        });
     });
 });
 
