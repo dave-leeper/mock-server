@@ -42,7 +42,7 @@ var config = {
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         }
     ],
-    "services": [
+    "microservices": [
         {
             "path": "/ping",
             "name": "Ping",
@@ -112,7 +112,7 @@ describe( 'As a developer, I need a router that handles all GET paths, understan
         Router.server = {};
         Router.server.serverConfig = config;
         var serviceResponseRecord = Router.getMicroserviceInfo('/ping');
-        expect(serviceResponseRecord).to.be.equal(config.services[0]);
+        expect(serviceResponseRecord).to.be.equal(config.microservices[0]);
         Router.server = null;
     });
 
