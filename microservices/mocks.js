@@ -19,8 +19,8 @@ MocksMicroservice.prototype.do = function (req, res, router, serviceInfo )
         if ((router)
         && (router.server)
         && (router.server.serverConfig)
-        && (router.server.serverConfig.services)
-        && (router.server.serverConfig.services.length)) {
+        && (router.server.serverConfig.mocks)
+        && (router.server.serverConfig.mocks.length)) {
             let result = [];
             let mocks = router.server.serverConfig.mocks;
 
