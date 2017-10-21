@@ -3,7 +3,7 @@
 /**
  * @constructor
  */
-function ServicesService ( )
+function MicroservicesService ( )
 {
 }
 
@@ -13,19 +13,19 @@ function ServicesService ( )
  * @param router - The router.
  * @param serviceInfo - Service config info.
  */
-ServicesService.prototype.do = function ( req, res, router, serviceInfo )
+MicroservicesService.prototype.do = function ( req, res, router, serviceInfo )
 {
     return new Promise (( inResolve ) => {
         if ((router)
         && (router.server)
         && (router.server.serverConfig)
-        && (router.server.serverConfig.services)
-        && (router.server.serverConfig.services.length)) {
+        && (router.server.serverConfig.microservices)
+        && (router.server.serverConfig.microservices.length)) {
             let result = [];
-            let services = router.server.serverConfig.services;
+            let microservices = router.server.serverConfig.microservices;
 
-            for (let loop = 0; loop < services.length; loop++) {
-                let service = services[loop];
+            for (let loop = 0; loop < microservices.length; loop++) {
+                let service = microservices[loop];
 
                 result.push({
                     "path": service.path,
@@ -41,4 +41,4 @@ ServicesService.prototype.do = function ( req, res, router, serviceInfo )
     });
 };
 
-module.exports = ServicesService;
+module.exports = MicroservicesService;
