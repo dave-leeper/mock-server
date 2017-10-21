@@ -48,8 +48,8 @@ Router.getMicroserviceInfo = function (path ) {
     if ((!Router.server) || (!Router.server.serverConfig)) {
         return null;
     }
-    for (let loop = 0; loop < Router.server.serverConfig.services.length; loop++) {
-        let responseRecord = Router.server.serverConfig.services[loop];
+    for (let loop = 0; loop < Router.server.serverConfig.microservices.length; loop++) {
+        let responseRecord = Router.server.serverConfig.microservices[loop];
 
         if ((responseRecord.path == path)
             && (responseRecord.serviceFile)) {
