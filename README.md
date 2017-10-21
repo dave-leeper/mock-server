@@ -14,6 +14,8 @@ var serverConfig = require('./MY_SERVER_CONFIG.json');
 var server = new Server().init(port, serverConfig);
 
 # Config File
+The config file is how you control the operation of the server.
+
 ## Mocks
 Provides configuration information for mock services.
 Mock services send data from files back to the client.
