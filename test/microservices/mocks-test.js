@@ -40,7 +40,7 @@ var config = {
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         }
     ],
-    "services": [
+    "microservices": [
         {
             "path": "/ping",
             "name": "Ping",
