@@ -30,7 +30,7 @@ Router.addHeaders = function ( responseRecord, res ) {
 };
 
 Router.getMockResponseInfo = function ( path ) {
-    if ((!Router.server) || (!Router.server.serverConfig)) {
+    if ((!Router.server) || (!Router.server.serverConfig) || (!Router.server.serverConfig.mocks)) {
         return null;
     }
     for (let loop = 0; loop < Router.server.serverConfig.mocks.length; loop++) {
