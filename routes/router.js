@@ -98,6 +98,7 @@ Router.route = function ( req, res ) {
         try {
             microservice.do(req, res, Router, microserviceInfo);
         } catch (err) {
+            res.status(500);
             res.render("error", { message: "Error calling microservice " + microserviceInfo.name + ".", error: { status: 500, stack: err.stack} });
         }
         return;
