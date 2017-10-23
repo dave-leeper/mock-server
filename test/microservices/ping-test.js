@@ -39,39 +39,6 @@ var config = {
             "fileType": "TEXT",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         }
-    ],
-    "microservices": [
-        {
-            "path": "/ping",
-            "name": "Ping",
-            "description": "A basic ping service.",
-            "serviceFile": "ping.js",
-            "serviceData": { "name": "My Server", "version": "1.0" },
-            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
-        },
-        {
-            "path": "/microservices",
-            "name": "Services List",
-            "description": "Provides a list of microservices registered with this server.",
-            "serviceFile": "services.js"
-        },
-        {
-            "path": "/mocks",
-            "name": "Mock Services List",
-            "description": "Provides a list of mock microservices registered with this server.",
-            "serviceFile": "mocks.js"
-        }
-    ],
-    "databaseConnections" : [
-        {
-            "name": "elasticsearch",
-            "description": "Elasticsearch service.",
-            "databaseConnector": "elasticsearch.js",
-            "config": {
-                "host": "localhost:9200",
-                "log": "trace"
-            }
-        }
     ]
 };
 
