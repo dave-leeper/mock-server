@@ -6,7 +6,7 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const Router = require('./routes/router');
+const Router = require('./router');
 const DatabaseConnectorManager = require('./database-connectors/database-connector-manager.js');
 
 /**
@@ -27,6 +27,7 @@ function Server ( ) {
  */
 Server.prototype.init = function ( port, config, callback )
 {
+    this.startTime = new Date();
     this.express = express();
 
     // view engine setup
@@ -41,7 +42,6 @@ Server.prototype.init = function ( port, config, callback )
     this.express.use(express.static(path.join(__dirname, 'public')));
 
     // app.use('/', index);
-    Router.startTime = new Date();
     Router.server = this;
     this.express.use('/', Router.connect(router));
 
