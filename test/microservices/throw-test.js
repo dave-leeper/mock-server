@@ -3,7 +3,7 @@
 
 var chai = require( 'chai' ),
     expect = chai.expect,
-    Router = require('../../routes/router.js'),
+    Router = require('../../router.js'),
     Server = require('../../server.js'),
     MockRequest = require('../mock-request.js'),
     MockResponse = require('../mock-response.js'),
@@ -21,7 +21,7 @@ var config = {
         {
             "path": "/throw",
             "name": "Throw Exception",
-            "description": "A micro service that throws an exception. For testing purposes.",
+            "description": "A microservice that throws an exception. For testing purposes.",
             "serviceFile": "throw.js"
         }
     ]
