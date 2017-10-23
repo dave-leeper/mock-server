@@ -7,39 +7,6 @@ var chai = require( 'chai' ),
     MicroservicesMicroservice = require('../../microservices/microservices.js'),
     MockResponse = require('../mock-response.js');
 var config = {
-    "mocks": [
-        {
-            "path": "/json",
-            "responseFile": "./server-config.json",
-            "fileType": "JSON",
-            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
-        },
-        {
-            "path": "/hbs",
-            "responseFile": "index.hbs",
-            "fileType": "HBS",
-            "hbsData": {"title": "Index"},
-            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
-        },
-        {
-            "path": "/text",
-            "responseFile": "./views/index.hbs",
-            "fileType": "TEXT",
-            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
-        },
-        {
-            "path": "/json-junk",
-            "responseFile": "./JUNK.json",
-            "fileType": "JSON",
-            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
-        },
-        {
-            "path": "/text-junk",
-            "responseFile": "./JUNK.tex",
-            "fileType": "TEXT",
-            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
-        }
-    ],
     "microservices": [
         {
             "path": "/ping",
@@ -60,17 +27,6 @@ var config = {
             "name": "Mock Services List",
             "description": "Provides a list of mock microservices registered with this server.",
             "serviceFile": "mocks.js"
-        }
-    ],
-    "databaseConnections" : [
-        {
-            "name": "elasticsearch",
-            "description": "Elasticsearch service.",
-            "databaseConnector": "elasticsearch.js",
-            "config": {
-                "host": "localhost:9200",
-                "log": "trace"
-            }
         }
     ]
 };
