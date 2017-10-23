@@ -17,7 +17,7 @@ PingService.prototype.do = function ( req, res, router, serviceInfo )
 {
     return new Promise (( inResolve ) => {
         if ((!serviceInfo) || (!serviceInfo.serviceData)) {
-            res.send(JSON.stringify({"response": "Server running."}));
+            res.send(JSON.stringify({ "response": "Server running." }));
             inResolve && inResolve ( null, this );
             return;
         }
