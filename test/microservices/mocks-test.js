@@ -3,7 +3,7 @@
 
 var chai = require( 'chai' ),
     expect = chai.expect,
-    Router = require('../../routes/router.js'),
+    Router = require('../../router.js'),
     MocksMicroservice = require('../../microservices/mocks.js'),
     MockResponse = require('../mock-response.js');
 var config = {
