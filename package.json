@@ -15,11 +15,12 @@
     "morgan": "1.9.0",
     "os": "0.1.1",
     "process": "0.11.10",
+    "request": "2.81.0",
     "serve-favicon": "2.4.5"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "elasticsearch": "^13.3.1",
-    "mocha": "^4.0.1"
+    "chai": "4.1.2",
+    "elasticsearch": "13.3.1",
+    "mocha": "4.0.1"
   }
 }
