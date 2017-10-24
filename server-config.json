@@ -25,7 +25,7 @@
       "path": "/ping",
       "name": "Ping",
       "description": "A basic ping service.",
-      "serviceFile": "ping.js",
+      "serviceFile": "./microservices/ping.js",
       "serviceData": { "name": "My Server", "version": "1.0" },
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     },
@@ -33,19 +33,25 @@
       "path": "/microservices",
       "name": "Microservices List",
       "description": "Provides a list of services registered with this server.",
-      "serviceFile": "microservices.js"
+      "serviceFile": "./microservices/microservices.js"
     },
     {
       "path": "/mocks",
       "name": "Mock Services List",
       "description": "Provides a list of mock services registered with this server.",
-      "serviceFile": "mocks.js"
+      "serviceFile": "./microservices/mocks.js"
     },
     {
       "path": "/throw",
       "name": "Throw Exception",
       "description": "A micro service that throws an exception. For testing purposes.",
-      "serviceFile": "throw.js"
+      "serviceFile": "./microservices/throw.js"
+    },
+    {
+      "path": "/stop",
+      "name": "Server Stop",
+      "description": "Shuts down the server.",
+      "serviceFile": "./microservices/stop.js"
     }
   ],
   "databaseConnections" : [
