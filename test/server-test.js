@@ -43,7 +43,7 @@ var config = {
             "path": "/ping",
             "name": "Ping",
             "description": "A basic ping service.",
-            "serviceFile": "ping.js",
+            "serviceFile": "./microservices/ping.js",
             "serviceData": { "name": "My Server", "version": "1.0" },
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
@@ -51,13 +51,13 @@ var config = {
             "path": "/microservices",
             "name": "Services List",
             "description": "Provides a list of microservices registered with this server.",
-            "serviceFile": "services.js"
+            "serviceFile": "./microservices/microservices.js"
         },
         {
             "path": "/mocks",
             "name": "Mock Services List",
             "description": "Provides a list of mock microservices registered with this server.",
-            "serviceFile": "mocks.js"
+            "serviceFile": "./microservices/mocks.js"
         }
     ],
     "databaseConnections" : [
