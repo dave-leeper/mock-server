@@ -9,8 +9,103 @@ function Router ( ) { }
 Router.startTime = null;
 Router.server = null;
 
-Router.connect = function ( router ) {
-    router.get('*', Router.route);
+Router.connect = function ( router, config ) {
+    if ( !config ) {
+        return router;
+    }
+
+    let mocks = config.mocks;
+    let microservices = config.microservices;
+
+    if (mocks) {
+        for (let loop1 = 0; loop1 < mocks.length; loop1++) {
+            let mock = mocks[loop1];
+            let verb = ((mock.verb) ? mock.verb : "GET" );
+            let file = mock.responseFile;
+            let fileType = mock.fileType.toString().toUpperCase();
+            let handler;
+
+            if ("JSON" == fileType) {
+                handler = (req, res) => {
+                    Router.addHeaders(mock, res);
+                    if (!fs.existsSync( file )) {
+                        res.render("not-found", null);
+                        next();
+                        return;
+                    }
+
+                    let jsonResponseFileContents = util.readFileSync(file);
+
+                    res.send(jsonResponseFileContents);
+                }
+            } else if ("HBS" == fileType) {
+                handler = (req, res) => {
+                    Router.addHeaders(mock, res);
+                    res.render(file, mock.hbsData);
+                }
+            } else {
+                handler = (req, res) => {
+                    Router.addHeaders(mock, res);
+                    if (!fs.existsSync(file)) {
+                        res.render("not-found", null);
+                        return;
+                    }
+
+                    let textResponseFileContents = util.readFileSync(file, mock.encoding);
+
+                    res.send(textResponseFileContents);
+                }
+            }
+
+            if ("GET" === verb) {
+                router.get(mock.path, handler);
+            } else if ("PUT" === verb) {
+                router.put(mock.path, handler);
+            } else if ("POST" === verb) {
+                router.post(mock.path, handler);
+            } else if ("DELETE" === verb) {
+                router.delete(mock.path, handler);
+            }
+        }
+        return router;
+    }
+
+    if (microservices) {
+        for (let loop2 = 0; loop2 < microservices.length; loop2++) {
+            let microservice = microservices[loop2];
+            let verb = ((microservice.verb) ? microservice.verb : "GET" );
+            let microservicePath = microservice.serviceFile;
+            let microserviceClass = require( microservicePath );
+
+            let micro = new microserviceClass();
+            let handler = (req, res) => {
+                Router.addHeaders(microservice, res);
+
+                try {
+                    micro.do(req, res, Router, microservice);
+                } catch (err) {
+                    res.status(500);
+                    res.render("error", {
+                        message: "Error calling microservice " + microservice.name + ".",
+                        error: {status: 500, stack: err.stack}
+                    });
+                }
+                return;
+            }
+
+            if ("GET" === verb) {
+                router.get(microservice.path, handler);
+            } else if ("PUT" === verb) {
+                router.put(microservice.path, handler);
+            } else if ("POST" === verb) {
+                router.post(microservice.path, handler);
+            } else if ("DELETE" === verb) {
+                router.delete(microservice.path, handler);
+            }
+        }
+        return router;
+    }
+
     return router;
 };
 
@@ -57,54 +152,6 @@ Router.getMicroserviceInfo = function ( path ) {
         }
     }
     return null;
-}
-
-Router.route = function ( req, res ) {
-    if ( log.will( log.ALL )) log.all( "Router.router: Routing " + req.path );
-    let mockResponseInfo = Router.getMockResponseInfo(req.path);
-
-    if (mockResponseInfo) {
-        Router.addHeaders(mockResponseInfo, res);
-        if ("JSON" == mockResponseInfo.fileType.toString().toUpperCase()) {
-            if (!fs.existsSync(mockResponseInfo.responseFile)) {
-                res.render("not-found", null);
-                return;
-            };
-            let jsonResponseFileContents = util.readFileSync(mockResponseInfo.responseFile);
-
-            res.send(jsonResponseFileContents);
-        } else if ("HBS" == mockResponseInfo.fileType.toString().toUpperCase()) {
-            res.render(mockResponseInfo.responseFile, mockResponseInfo.hbsData);
-        } else {
-            if (!fs.existsSync(mockResponseInfo.responseFile)) {
-                res.render("not-found", null);
-                return;
-            };
-            let textResponseFileContents = util.readFileSync(mockResponseInfo.responseFile, mockResponseInfo.encoding);
-
-            res.send(textResponseFileContents);
-        }
-        return;
-    }
-
-    let microserviceInfo = Router.getMicroserviceInfo(req.path);
-
-    if (microserviceInfo) {
-        let microservicePath = "./microservices/" + microserviceInfo.serviceFile;
-        let microserviceClass = require(microservicePath);
-        let microservice = new microserviceClass();
-
-        Router.addHeaders(microserviceInfo, res);
-        try {
-            microservice.do(req, res, Router, microserviceInfo);
-        } catch (err) {
-            res.status(500);
-            res.render("error", { message: "Error calling microservice " + microserviceInfo.name + ".", error: { status: 500, stack: err.stack} });
-        }
-        return;
-    }
-
-    Router.defaultResponse(res);
-}
+};
 
 module.exports = Router;
