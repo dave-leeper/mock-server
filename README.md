@@ -20,6 +20,7 @@ The config file is how you control the operation of the server.
 Provides configuration information for mock services.
 Mock services send data from files back to the client.
 ### Fields
+* verb "POST" - The HTTP verb. Optional. Defaults to GET.
 * path "/json" - The URL path that invokes the mock.
 * responseFile "./server-config.json - The location of the response file.
 * fileType "JSON" - The type of data in the response file. Valid values
@@ -38,6 +39,7 @@ Microservices are stateless and have no lifecycle. A microservice object
  will be
 instantiated every time a request to the microservice is made.
 ### Fields
+* verb "POST" - The HTTP verb. Optional. Defaults to GET.
 * path "/ping" - The URL path that invokes the microservice.
 * name "Ping" - The human-readable name of the microservice.
 * description" "A basic ping service." - A short human-readable
