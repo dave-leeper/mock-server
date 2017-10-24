@@ -14,7 +14,7 @@ var config = {
             "path": "/ping",
             "name": "Ping",
             "description": "A basic ping service.",
-            "serviceFile": "ping.js",
+            "serviceFile": "./microservices/ping.js",
             "serviceData": { "name": "My Server", "version": "1.0" },
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
@@ -22,7 +22,7 @@ var config = {
             "path": "/throw",
             "name": "Throw Exception",
             "description": "A microservice that throws an exception. For testing purposes.",
-            "serviceFile": "throw.js"
+            "serviceFile": "./microservices/throw.js"
         }
     ]
 };
@@ -30,9 +30,8 @@ var config = {
 describe( 'As a developer, I need the server to continue running when exceptions are thrown.', function()
 {
     it ( 'should continue running after an exception is thrown', ( done ) => {
-        let port = '1337';
+        let port = 1337;
         let server = new Server();
-        let req = new MockRequest('/throw');
         let pingResponse = '{"name":"My Server","version":"1.0"}';
         let serverInitCallback = () => {
             request('http://localhost:' + port + "/throw", { json: true }, (err, res, body) => {
