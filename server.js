@@ -43,7 +43,7 @@ Server.prototype.init = function ( port, config, callback )
 
     // app.use('/', index);
     Router.server = this;
-    this.express.use('/', Router.connect(router));
+    this.express.use('/', Router.connect( router, config ));
 
     // catch 404 and forward to error handler
     this.express.use(function(req, res, next) {
@@ -113,27 +113,7 @@ Server.prototype.normalizePort = function (val) {
  */
 
 Server.prototype.onError = function (error) {
-    if (error.syscall !== 'listen') {
-        throw error;
-    }
-
-    const bind = typeof port === 'string'
-        ? 'Pipe ' + port
-        : 'Port ' + port;
-
-    // handle specific listen errors with friendly messages
-    switch (error.code) {
-        case 'EACCES':
-            console.error(bind + ' requires elevated privileges');
-            process.exit(1);
-            break;
-        case 'EADDRINUSE':
-            console.error(bind + ' is already in use');
-            process.exit(1);
-            break;
-        default:
-            throw error;
-    }
+    throw error;
 };
 
 module.exports = Server;
