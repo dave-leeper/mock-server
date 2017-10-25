@@ -10,7 +10,7 @@ Router.startTime = null;
 Router.server = null;
 
 Router.connect = function ( router, config ) {
-    if ( !config ) {
+    if ( (!config) || (!router) ) {
         return router;
     }
 
@@ -65,9 +65,10 @@ Router.connect = function ( router, config ) {
                 router.post(mock.path, handler);
             } else if ("DELETE" === verb) {
                 router.delete(mock.path, handler);
+            } else if ("OPTIONS" === verb) {
+                router.opt(microservice.path, handler);
             }
         }
-        return router;
     }
 
     if (microservices) {
@@ -101,9 +102,10 @@ Router.connect = function ( router, config ) {
                 router.post(microservice.path, handler);
             } else if ("DELETE" === verb) {
                 router.delete(microservice.path, handler);
+            } else if ("OPTIONS" === verb) {
+                router.opt(microservice.path, handler);
             }
         }
-        return router;
     }
 
     return router;
