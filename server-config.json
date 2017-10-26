@@ -7,7 +7,7 @@
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     },
     {
-      "path": "/json-array",
+      "path": "/json-string-array",
       "response": ["./server-config.json", "./test/test-data.json"],
       "responseType": "JSON",
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
@@ -19,6 +19,12 @@
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     },
     {
+      "path": "/json-object-array",
+      "response": [{"title": "Index"}, {"title": "Not Found"} ],
+      "responseType": "JSON",
+      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
       "path": "/hbs",
       "response": "index.hbs",
       "responseType": "HBS",
@@ -26,7 +32,7 @@
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     },
     {
-      "path": "/hbs-array",
+      "path": "/hbs-string-array",
       "response": [ "index.hbs", "not-found.hbs" ],
       "responseType": "HBS",
       "hbsData": [ {"title": "Index"}, {"title": "Not Found"} ],
@@ -39,8 +45,32 @@
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     },
     {
-      "path": "/text-array",
+      "path": "/text-string-array",
       "response": [ "./views/index.hbs", "./views/not-found.hbs" ],
+      "responseType": "TEXT",
+      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
+      "path": "/text-object",
+      "response": {"title": "Index"},
+      "responseType": "TEXT",
+      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
+      "path": "/text-object2",
+      "response": {"text": "Index"},
+      "responseType": "TEXT",
+      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
+      "path": "/text-object-array",
+      "response": [{"title": "Index"}, {"title": "Not Found"} ],
+      "responseType": "TEXT",
+      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
+      "path": "/text-object-array2",
+      "response": [{"text": "Index"}, {"text": "Not Found"} ],
       "responseType": "TEXT",
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     }
