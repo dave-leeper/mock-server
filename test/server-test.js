@@ -3,12 +3,13 @@
 
 var chai = require( 'chai' ),
     expect = chai.expect,
-    Server = require('../server.js');
+    Server = require('../server.js'),
+    request = require('request');
 var config = {
     "mocks": [
         {
             "path": "/json",
-            "responseFile": "./server-config.json",
+            "responseFile": "./test/test-data.json",
             "fileType": "JSON",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
@@ -105,4 +106,59 @@ describe( 'As a developer, I need a server that sets up mock services, microserv
     });
 });
 
+describe( 'As a developer, I need need to run mock services.', function()
+{
+    it ( 'should write json files as a mock service', ( done ) => {
+        let port = 1337;
+        let server = new Server();
+        let jsonResponse = '{"name":"My Server","version":"1.0"}';
+        let serverInitCallback = () => {
+            request('http://localhost:' + port + "/json", { json: true }, (err, res, body) => {
+                expect(JSON.stringify(body)).to.be.equal(jsonResponse);
+                server.stop(() => { done(); });
+            });
+        };
+        server.init( port, config, serverInitCallback );
+    });
+
+    it ( 'should return not found if the json file for a mock service does not exist', ( done ) => {
+        let port = 1337;
+        let server = new Server();
+        let jsonResponse = "\"<!DOCTYPE html>\\n<html>\\n  <head>\\n    <title></title>\\n    <link rel='stylesheet' href='/stylesheets/style.css' />\\n  </head>\\n  <body>\\n    <h1></h1>\\n<p>404 File Not Found</p>\\n\\n  </body>\\n</html>\\n\"";
+        let serverInitCallback = () => {
+            request('http://localhost:' + port + "/json-junk", { json: true }, (err, res, body) => {
+                expect(JSON.stringify(body)).to.be.equal(jsonResponse);
+                server.stop(() => { done(); });
+            });
+        };
+        server.init( port, config, serverInitCallback );
+    });
+
+    it ( 'should write text files as a mock service', ( done ) => {
+        let port = 1337;
+        let server = new Server();
+        let data = '"<h1>{{title}}</h1>\\n<p>Welcome to {{title}}</p>\\n"';
+        let serverInitCallback = () => {
+            request('http://localhost:' + port + "/text", { json: true }, (err, res, body) => {
+                expect(JSON.stringify(body)).to.be.equal(data);
+                server.stop(() => { done(); });
+            });
+        };
+        server.init( port, config, serverInitCallback );
+    });
+
+    it ( 'should return not found if the text file for a mock service does not exist', ( done ) => {
+        let port = 1337;
+        let server = new Server();
+        let jsonResponse = "\"<!DOCTYPE html>\\n<html>\\n  <head>\\n    <title></title>\\n    <link rel='stylesheet' href='/stylesheets/style.css' />\\n  </head>\\n  <body>\\n    <h1></h1>\\n<p>404 File Not Found</p>\\n\\n  </body>\\n</html>\\n\"";
+        let serverInitCallback = () => {
+            request('http://localhost:' + port + "/text-junk", { json: true }, (err, res, body) => {
+                expect(JSON.stringify(body)).to.be.equal(jsonResponse);
+                server.stop(() => { done(); });
+            });
+        };
+        server.init( port, config, serverInitCallback );
+    });
+
+});
 
