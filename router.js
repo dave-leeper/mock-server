@@ -27,15 +27,15 @@ Router.connect = function ( router, config ) {
 
             if ("JSON" == responseType) {
                 if (typeof mock.response === 'string') {
-                    handler = this.___buildJSONFileHandler( mock );
+                    handler = this.___buildJSONFileHandlerFromString( mock );
                 }
             } else if ("HBS" == responseType) {
                 if (typeof mock.response === 'string') {
-                    handler = this.___buildHandlebarsFileHandler( mock );
+                    handler = this.___buildHandlebarsFileHandlerFromString( mock );
                 }
             } else {
                 if (typeof mock.response === 'string') {
-                    handler = this.___buildTextFileHandler( mock );
+                    handler = this.___buildTextFileHandlerFromString( mock );
                 }
             }
 
@@ -141,7 +141,7 @@ Router.getMicroserviceInfo = function ( path ) {
     return null;
 };
 
-Router.___buildJSONFileHandler = function ( mock ) {
+Router.___buildJSONFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
         if (!fs.existsSync(mock.response)) {
@@ -156,7 +156,7 @@ Router.___buildJSONFileHandler = function ( mock ) {
     return handler;
 };
 
-Router.___buildHandlebarsFileHandler = function ( mock ) {
+Router.___buildHandlebarsFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
         res.render(mock.response, mock.hbsData);
@@ -164,7 +164,7 @@ Router.___buildHandlebarsFileHandler = function ( mock ) {
     return handler;
 };
 
-Router.___buildTextFileHandler = function ( mock ) {
+Router.___buildTextFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
         if (!fs.existsSync(mock.response)) {
