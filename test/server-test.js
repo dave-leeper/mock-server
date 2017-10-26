@@ -41,14 +41,6 @@ var config = {
     ],
     "microservices": [
         {
-            "path": "/ping",
-            "name": "Ping",
-            "description": "A basic ping service.",
-            "serviceFile": "./microservices/ping.js",
-            "serviceData": { "name": "My Server", "version": "1.0" },
-            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
-        },
-        {
             "path": "/microservices",
             "name": "Services List",
             "description": "Provides a list of microservices registered with this server.",
