@@ -29,8 +29,8 @@ MocksMicroservice.prototype.do = function (req, res, router, serviceInfo )
 
                 result.push({
                     "path": mock.path,
-                    "responseFile": mock.responseFile,
-                    "fileType": mock.fileType
+                    "response": mock.response,
+                    "responseType": mock.responseType
                 });
             }
             res.send(JSON.stringify(result));
