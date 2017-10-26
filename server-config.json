@@ -2,21 +2,21 @@
   "mocks": [
     {
       "path": "/json",
-      "responseFile": "./server-config.json",
-      "fileType": "JSON",
+      "response": "./server-config.json",
+      "responseType": "JSON",
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     },
     {
       "path": "/hbs",
-      "responseFile": "index.hbs",
-      "fileType": "HBS",
+      "response": "index.hbs",
+      "responseType": "HBS",
       "hbsData": {"title": "Index"},
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     },
     {
       "path": "/text",
-      "responseFile": "./views/index.hbs",
-      "fileType": "TEXT",
+      "response": "./views/index.hbs",
+      "responseType": "TEXT",
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     }
   ],
@@ -59,6 +59,8 @@
       "name": "elasticsearch",
       "description": "Elasticsearch service.",
       "databaseConnector": "elasticsearch.js",
+      "enableConnect" : true,
+      "enableAPI" : "localhost:7331",
       "config": {
         "host": "localhost:9200",
         "log": "trace"
