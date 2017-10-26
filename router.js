@@ -22,11 +22,11 @@ Router.connect = function ( router, config ) {
         for (let loop1 = 0; loop1 < mocks.length; loop1++) {
             let mock = mocks[loop1];
             let verb = ((mock.verb) ? mock.verb : "GET" );
-            let file = mock.responseFile;
-            let fileType = ((mock.fileType)? mock.fileType.toString().toUpperCase() : "" );
+            let file = mock.response;
+            let responseType = ((mock.responseType)? mock.responseType.toString().toUpperCase() : "" );
             let handler;
 
-            if ("JSON" == fileType) {
+            if ("JSON" == responseType) {
                 handler = (req, res) => {
                     Router.addHeaders(mock, res);
                     if (!fs.existsSync( file )) {
@@ -38,7 +38,7 @@ Router.connect = function ( router, config ) {
 
                     res.send(jsonResponseFileContents);
                 }
-            } else if ("HBS" == fileType) {
+            } else if ("HBS" == responseType) {
                 handler = (req, res) => {
                     Router.addHeaders(mock, res);
                     res.render(file, mock.hbsData);
@@ -137,7 +137,7 @@ Router.getMockResponseInfo = function ( path ) {
         let responseRecord = Router.server.serverConfig.mocks[loop];
 
         if ((responseRecord.path == path)
-        && (responseRecord.responseFile)) {
+        && (responseRecord.response)) {
             return responseRecord;
         }
     }
