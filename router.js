@@ -69,6 +69,8 @@ Router.connect = function ( router, config ) {
                 router.put(mock.path, handler);
             } else if ("POST" === verb) {
                 router.post(mock.path, handler);
+            } else if ("PATCH" === verb) {
+                router.patch(mock.path, handler);
             } else if ("DELETE" === verb) {
                 router.delete(mock.path, handler);
             } else if ("OPTIONS" === verb) {
@@ -112,6 +114,8 @@ Router.connect = function ( router, config ) {
                 router.put(microservice.path, handler);
             } else if ("POST" === verb) {
                 router.post(microservice.path, handler);
+            } else if ("PATCH" === verb) {
+                router.patch(microservice.path, handler);
             } else if ("DELETE" === verb) {
                 router.delete(microservice.path, handler);
             } else if ("OPTIONS" === verb) {
