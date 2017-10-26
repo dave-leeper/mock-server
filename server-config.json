@@ -13,6 +13,12 @@
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     },
     {
+      "path": "/json-object",
+      "response": {"title": "Index"},
+      "responseType": "JSON",
+      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
       "path": "/hbs",
       "response": "index.hbs",
       "responseType": "HBS",
