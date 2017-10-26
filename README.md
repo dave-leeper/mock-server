@@ -22,8 +22,8 @@ Mock services send data from files back to the client.
 ### Fields
 * verb "POST" - The HTTP verb. Optional. Defaults to GET.
 * path "/json" - The URL path that invokes the mock.
-* responseFile "./server-config.json - The location of the response file.
-* fileType "JSON" - The type of data in the response file. Valid values
+* response "./server-config.json - The location of the response file.
+* responseType "JSON" - The type of data in the response file. Valid values
 are JSON, TEXT, and HBS (a Handlebars template file).
 * headers [[ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]] -
 An array of headers that should be included in the response.
@@ -72,28 +72,16 @@ description of the database connection.
 * databaseConnector "elasticsearch.js" - The name of the javascript file
 containing the database connection class. These names are relative to
 the database-connectors directory.
+* backendURL "localhost:7331". If set, no database connection is made by
+this connector and database operations are passed through to a backend
+server, allowing for separate database servers. If not set, it is
+assumed database operations are handled by this server.
 * config { "host": "localhost:9200", "log": "trace" } - A JSON object
 that will be passed to the database connector class. It contains any
 information needed to configure the connection. It is up to the
-database connector class to interpret this data.
-
-# Object Layout
-Server (Server.js object)
-
-+- express (Express server)
-
-| ++- Router (Router class)
-
-+- server (HTTP server)
-
-+- serverConfig (Config file loaded into memory)
-
-+- databaseConnectorManager (Database Connection Manager)
-
-The server object has express, server, serverConfig, and
-databaseConnectorManager objects. The express object has the Router
-class.
-
+database connector class to interpret this data. This field is ignored
+when the connector is set up to use a backend database server using the
+backendURL parameter.
 
 
 
