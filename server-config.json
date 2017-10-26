@@ -7,6 +7,12 @@
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     },
     {
+      "path": "/json-array",
+      "response": ["./server-config.json", "./test/test-data.json"],
+      "responseType": "JSON",
+      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
       "path": "/hbs",
       "response": "index.hbs",
       "responseType": "HBS",
@@ -14,8 +20,21 @@
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     },
     {
+      "path": "/hbs-array",
+      "response": [ "index.hbs", "not-found.hbs" ],
+      "responseType": "HBS",
+      "hbsData": [ {"title": "Index"}, {"title": "Not Found"} ],
+      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
       "path": "/text",
       "response": "./views/index.hbs",
+      "responseType": "TEXT",
+      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
+      "path": "/text-array",
+      "response": [ "./views/index.hbs", "./views/not-found.hbs" ],
       "responseType": "TEXT",
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     }
