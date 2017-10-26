@@ -12,33 +12,33 @@ var config = {
     "mocks": [
         {
             "path": "/json",
-            "responseFile": "./server-config.json",
-            "fileType": "JSON",
+            "response": "./server-config.json",
+            "responseType": "JSON",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
         {
             "path": "/hbs",
-            "responseFile": "index.hbs",
-            "fileType": "HBS",
+            "response": "index.hbs",
+            "responseType": "HBS",
             "hbsData": {"title": "Index"},
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
         {
             "path": "/text",
-            "responseFile": "./views/index.hbs",
-            "fileType": "TEXT",
+            "response": "./views/index.hbs",
+            "responseType": "TEXT",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
         {
             "path": "/json-junk",
-            "responseFile": "./JUNK.json",
-            "fileType": "JSON",
+            "response": "./JUNK.json",
+            "responseType": "JSON",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
         {
             "path": "/text-junk",
-            "responseFile": "./JUNK.tex",
-            "fileType": "TEXT",
+            "response": "./JUNK.tex",
+            "responseType": "TEXT",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         }
     ],
@@ -154,6 +154,54 @@ describe( 'As a developer, I need a router that handles all GET paths, understan
         expect(resp.headers[0].value).to.equal("MY_HEADER_VALUE");
         Router.server = null;
     });
+
+    // it ( 'should write json files as a mock service', ( ) => {
+    //     Router.server = {};
+    //     Router.server.serverConfig = config;
+    //     let req = new mockRequest('/json');
+    //     let resp = new mockResponse();
+    //     let data = utils.readFileSync("./server-config.json");
+    //     Router.route(req, resp);
+    //     expect(resp.sendString).to.not.be.null;
+    //     expect(resp.sendString).to.equal(data);
+    //     Router.server = null;
+    // });
+    //
+    // it ( 'should return not found if the json file for a mock service does not exist', ( ) => {
+    //     Router.server = {};
+    //     Router.server.serverConfig = config;
+    //     let req = new mockRequest('/json-junk');
+    //     let resp = new mockResponse();
+    //     Router.route(req, resp);
+    //     expect(resp.sendString).to.be.null;
+    //     expect(resp.renderString).to.not.be.null;
+    //     expect(resp.renderString).to.equal("not-found");
+    //     Router.server = null;
+    // });
+    //
+    // it ( 'should write text files as a mock service', ( ) => {
+    //     Router.server = {};
+    //     Router.server.serverConfig = config;
+    //     let req = new mockRequest('/text');
+    //     let resp = new mockResponse();
+    //     let data = utils.readFileSync("./views/index.hbs");
+    //     Router.route(req, resp);
+    //     expect(resp.sendString).to.not.be.null;
+    //     expect(resp.sendString).to.equal(data);
+    //     Router.server = null;
+    // });
+    //
+    // it ( 'should return not found if the text file for a mock service does not exist', ( ) => {
+    //     Router.server = {};
+    //     Router.server.serverConfig = config;
+    //     let req = new mockRequest('/text-junk');
+    //     let resp = new mockResponse();
+    //     Router.route(req, resp);
+    //     expect(resp.sendString).to.be.null;
+    //     expect(resp.renderString).to.not.be.null;
+    //     expect(resp.renderString).to.equal("not-found");
+    //     Router.server = null;
+    // });
 });
 
 
