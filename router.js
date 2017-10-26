@@ -28,14 +28,20 @@ Router.connect = function ( router, config ) {
             if ("JSON" == responseType) {
                 if (typeof mock.response === 'string') {
                     handler = this.___buildJSONFileHandlerFromString( mock );
+                } else if ( Object.prototype.toString.call( mock.response ) === '[object Array]' ){
+                    handler = this.___buildJSONFileHandlerFromArray( mock );
                 }
             } else if ("HBS" == responseType) {
                 if (typeof mock.response === 'string') {
                     handler = this.___buildHandlebarsFileHandlerFromString( mock );
+                } else if ( Object.prototype.toString.call( mock.response ) === '[object Array]' ){
+                    handler = this.___buildHandlebarsFileHandlerFromArray( mock );
                 }
             } else {
                 if (typeof mock.response === 'string') {
                     handler = this.___buildTextFileHandlerFromString( mock );
+                } else if ( Object.prototype.toString.call( mock.response ) === '[object Array]' ){
+                    handler = this.___buildTextFileHandlerFromArray( mock );
                 }
             }
 
@@ -150,6 +156,7 @@ Router.___buildJSONFileHandlerFromString = function ( mock ) {
         }
 
         let jsonResponseFileContents = util.readFileSync(mock.response);
+        let checkForValidJSON = JSON.parse( jsonResponseFileContents );
 
         res.send(jsonResponseFileContents);
     };
@@ -175,6 +182,63 @@ Router.___buildTextFileHandlerFromString = function ( mock ) {
         let textResponseFileContents = util.readFileSync(mock.response, mock.encoding);
 
         res.send(textResponseFileContents);
+    };
+    return handler;
+};
+
+Router.___buildJSONFileHandlerFromArray = function ( mock ) {
+    let handler = (req, res) => {
+        let index = ((mock.___index)?  mock.___index : 0 );
+
+        Router.addHeaders(mock, res);
+        if (!fs.existsSync(mock.response[index])) {
+            res.render("not-found", null);
+            return;
+        }
+
+        let jsonResponseFileContents = util.readFileSync(mock.response[index]);
+        let checkForValidJSON = JSON.parse( jsonResponseFileContents );
+
+        res.send(jsonResponseFileContents);
+        mock.___index = index + 1;
+        if ( mock.response.length <= mock.___index ) {
+            mock.___index = 0;
+        }
+    };
+    return handler;
+};
+
+Router.___buildHandlebarsFileHandlerFromArray = function ( mock ) {
+    let handler = (req, res) => {
+        let index = ((mock.___index)?  mock.___index : 0 );
+
+        Router.addHeaders(mock, res);
+        res.render(mock.response[index], mock.hbsData[index]);
+        mock.___index = index + 1;
+        if ( mock.response.length <= mock.___index ) {
+            mock.___index = 0;
+        }
+    };
+    return handler;
+};
+
+Router.___buildTextFileHandlerFromArray = function ( mock ) {
+    let handler = (req, res) => {
+        let index = ((mock.___index)?  mock.___index : 0 );
+
+        Router.addHeaders(mock, res);
+        if (!fs.existsSync(mock.response[index])) {
+            res.render("not-found", null);
+            return;
+        }
+
+        let textResponseFileContents = util.readFileSync(mock.response[index], mock.encoding);
+
+        res.send(textResponseFileContents);
+        mock.___index = index + 1;
+        if ( mock.response.length <= mock.___index ) {
+            mock.___index = 0;
+        }
     };
     return handler;
 };
