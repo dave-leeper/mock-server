@@ -7,7 +7,7 @@ var chai = require( 'chai' ),
     mockExpressRouter = require('./mock-express-router.js'),
     mockRequest = require('./mock-request.js'),
     mockResponse = require('./mock-response.js'),
-    utils = require('../util/utilities.js');
+    utils = require('../util/file-utilities.js');
 var config = {
     "mocks": [
         {
