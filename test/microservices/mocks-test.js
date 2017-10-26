@@ -10,33 +10,33 @@ var config = {
     "mocks": [
         {
             "path": "/json",
-            "responseFile": "./server-config.json",
-            "fileType": "JSON",
+            "response": "./server-config.json",
+            "responseType": "JSON",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
         {
             "path": "/hbs",
-            "responseFile": "index.hbs",
-            "fileType": "HBS",
+            "response": "index.hbs",
+            "responseType": "HBS",
             "hbsData": {"title": "Index"},
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
         {
             "path": "/text",
-            "responseFile": "./views/index.hbs",
-            "fileType": "TEXT",
+            "response": "./views/index.hbs",
+            "responseType": "TEXT",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
         {
             "path": "/json-junk",
-            "responseFile": "./JUNK.json",
-            "fileType": "JSON",
+            "response": "./JUNK.json",
+            "responseType": "JSON",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
         {
             "path": "/text-junk",
-            "responseFile": "./JUNK.tex",
-            "fileType": "TEXT",
+            "response": "./JUNK.tex",
+            "responseType": "TEXT",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         }
     ]
@@ -50,7 +50,7 @@ describe( 'As a developer, I need need to obtain a list of mock services that ar
         let mockResponse = new MockResponse();
         let mockRequest = {};
         let mockServiceInfo = {};
-        let expectedResponse = '[{"path":"/json","responseFile":"./server-config.json","fileType":"JSON"},{"path":"/hbs","responseFile":"index.hbs","fileType":"HBS"},{"path":"/text","responseFile":"./views/index.hbs","fileType":"TEXT"},{"path":"/json-junk","responseFile":"./JUNK.json","fileType":"JSON"},{"path":"/text-junk","responseFile":"./JUNK.tex","fileType":"TEXT"}]';
+        let expectedResponse = '[{"path":"/json","response":"./server-config.json","responseType":"JSON"},{"path":"/hbs","response":"index.hbs","responseType":"HBS"},{"path":"/text","response":"./views/index.hbs","responseType":"TEXT"},{"path":"/json-junk","response":"./JUNK.json","responseType":"JSON"},{"path":"/text-junk","response":"./JUNK.tex","responseType":"TEXT"}]';
 
         Router.server = {};
         Router.server.serverConfig = config;
