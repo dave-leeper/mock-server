@@ -22,13 +22,17 @@ Mock services send data from files back to the client.
 ### Fields
 * verb "POST" - The HTTP verb. Optional. Defaults to GET.
 * path "/json" - The URL path that invokes the mock.
-* response "./server-config.json - The location of the response file.
+* response "./server-config.json" - The location of the response file.
+An array of response file paths can also be used. The server will cycle
+through the array, advancing with each request.
 * responseType "JSON" - The type of data in the response file. Valid values
 are JSON, TEXT, and HBS (a Handlebars template file).
 * headers [[ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]] -
 An array of headers that should be included in the response.
 * hbsData {"title": "Index"} - A JSON object that should be sent to the
-Handlebars template (used only for HBS type files).
+Handlebars template (used only for HBS type files). If an array is used
+in the response field, and array of equal size should also be used in
+the hbsData field.
 
 ## Microservices
 Provides simple services that should take only a few seconds to execute.
