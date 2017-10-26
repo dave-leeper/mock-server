@@ -9,34 +9,9 @@ var chai = require( 'chai' ),
 var config = {
     "mocks": [
         {
-            "path": "/json",
-            "responseFile": "./server-config.json",
-            "fileType": "JSON",
-            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
-        },
-        {
-            "path": "/hbs",
-            "responseFile": "index.hbs",
-            "fileType": "HBS",
-            "hbsData": {"title": "Index"},
-            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
-        },
-        {
-            "path": "/text",
-            "responseFile": "./views/index.hbs",
-            "fileType": "TEXT",
-            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
-        },
-        {
-            "path": "/json-junk",
-            "responseFile": "./JUNK.json",
-            "fileType": "JSON",
-            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
-        },
-        {
             "path": "/text-junk",
-            "responseFile": "./JUNK.tex",
-            "fileType": "TEXT",
+            "response": "./JUNK.tex",
+            "responseType": "TEXT",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         }
     ]
