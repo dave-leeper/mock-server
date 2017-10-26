@@ -16,13 +16,14 @@ Router.connect = function ( router, config ) {
 
     let mocks = config.mocks;
     let microservices = config.microservices;
+    let databaseConnections = config.databaseConnections;
 
     if (mocks) {
         for (let loop1 = 0; loop1 < mocks.length; loop1++) {
             let mock = mocks[loop1];
             let verb = ((mock.verb) ? mock.verb : "GET" );
             let file = mock.responseFile;
-            let fileType = mock.fileType.toString().toUpperCase();
+            let fileType = ((mock.fileType)? mock.fileType.toString().toUpperCase() : "" );
             let handler;
 
             if ("JSON" == fileType) {
@@ -30,7 +31,6 @@ Router.connect = function ( router, config ) {
                     Router.addHeaders(mock, res);
                     if (!fs.existsSync( file )) {
                         res.render("not-found", null);
-                        next();
                         return;
                     }
 
@@ -106,6 +106,9 @@ Router.connect = function ( router, config ) {
                 router.opt(microservice.path, handler);
             }
         }
+    }
+
+    if (databaseConnections) {
     }
 
     return router;
