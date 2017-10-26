@@ -154,54 +154,6 @@ describe( 'As a developer, I need a router that handles all GET paths, understan
         expect(resp.headers[0].value).to.equal("MY_HEADER_VALUE");
         Router.server = null;
     });
-
-    // it ( 'should write json files as a mock service', ( ) => {
-    //     Router.server = {};
-    //     Router.server.serverConfig = config;
-    //     let req = new mockRequest('/json');
-    //     let resp = new mockResponse();
-    //     let data = utils.readFileSync("./server-config.json");
-    //     Router.route(req, resp);
-    //     expect(resp.sendString).to.not.be.null;
-    //     expect(resp.sendString).to.equal(data);
-    //     Router.server = null;
-    // });
-    //
-    // it ( 'should return not found if the json file for a mock service does not exist', ( ) => {
-    //     Router.server = {};
-    //     Router.server.serverConfig = config;
-    //     let req = new mockRequest('/json-junk');
-    //     let resp = new mockResponse();
-    //     Router.route(req, resp);
-    //     expect(resp.sendString).to.be.null;
-    //     expect(resp.renderString).to.not.be.null;
-    //     expect(resp.renderString).to.equal("not-found");
-    //     Router.server = null;
-    // });
-    //
-    // it ( 'should write text files as a mock service', ( ) => {
-    //     Router.server = {};
-    //     Router.server.serverConfig = config;
-    //     let req = new mockRequest('/text');
-    //     let resp = new mockResponse();
-    //     let data = utils.readFileSync("./views/index.hbs");
-    //     Router.route(req, resp);
-    //     expect(resp.sendString).to.not.be.null;
-    //     expect(resp.sendString).to.equal(data);
-    //     Router.server = null;
-    // });
-    //
-    // it ( 'should return not found if the text file for a mock service does not exist', ( ) => {
-    //     Router.server = {};
-    //     Router.server.serverConfig = config;
-    //     let req = new mockRequest('/text-junk');
-    //     let resp = new mockResponse();
-    //     Router.route(req, resp);
-    //     expect(resp.sendString).to.be.null;
-    //     expect(resp.renderString).to.not.be.null;
-    //     expect(resp.renderString).to.equal("not-found");
-    //     Router.server = null;
-    // });
 });
 
 
