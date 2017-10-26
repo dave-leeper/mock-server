@@ -1,13 +1,14 @@
 'use strict'
 
-let util = require ( './util/utilities.js' );
+let files = require ( './util/file-utilities.js' );
 let log = require ( './util/logger-utilities.js' );
-let fs = require("fs");
+const indexWorkingFile = "./temp/workingindex.json";
 
 function Router ( ) { }
 
 Router.startTime = null;
 Router.server = null;
+Router.indexes = {};
 
 Router.connect = function ( router, config ) {
     if ( (!config) || (!router) ) {
@@ -25,26 +26,43 @@ Router.connect = function ( router, config ) {
             let responseType = ((mock.responseType)? mock.responseType.toString().toUpperCase() : "" );
             let handler;
 
-            if ("JSON" == responseType) {
+            if ("JSON" === responseType) {
                 if (typeof mock.response === 'string') {
                     handler = this.___buildJSONFileHandlerFromString( mock );
-                } else if ( Object.prototype.toString.call( mock.response ) === '[object Array]' ){
-                    handler = this.___buildJSONFileHandlerFromArray( mock );
+                } else if ( '[object Array]' === Object.prototype.toString.call( mock.response )  ) {
+                    if ('string' === typeof mock.response[0] ) {
+                        handler = this.___buildJSONFileHandlerFromArrayOfStrings(mock);
+                    } else if ( 'object' === typeof mock.response[0] ) {
+                        handler = this.___buildJSONFileHandlerFromArrayOfObjects(mock);
+                    }
+                } else if (( mock.response ) && ( 'object' === typeof mock.response )) {
+                    handler = this.___buildJSONFileHandlerFromObject( mock );
                 }
-            } else if ("HBS" == responseType) {
+            } else if ("HBS" === responseType) {
                 if (typeof mock.response === 'string') {
                     handler = this.___buildHandlebarsFileHandlerFromString( mock );
-                } else if ( Object.prototype.toString.call( mock.response ) === '[object Array]' ){
-                    handler = this.___buildHandlebarsFileHandlerFromArray( mock );
+                } else if ( '[object Array]' === Object.prototype.toString.call( mock.response )) {
+                    handler = this.___buildHandlebarsFileHandlerFromArrayOfStrings( mock );
                 }
             } else {
-                if (typeof mock.response === 'string') {
+                if ( 'string' === typeof mock.response ) {
                     handler = this.___buildTextFileHandlerFromString( mock );
-                } else if ( Object.prototype.toString.call( mock.response ) === '[object Array]' ){
-                    handler = this.___buildTextFileHandlerFromArray( mock );
+                } else if ( '[object Array]' === Object.prototype.toString.call( mock.response )) {
+                    if ( 'string' === typeof mock.response[0] ) {
+                        handler = this.___buildTextFileHandlerFromArrayOfStrings(mock);
+                    } else if ( 'object' === typeof mock.response[0] ) {
+                        handler = this.___buildTextFileHandlerFromArrayOfObjects(mock);
+                    }
+                } else if (( mock.response ) && ( 'object' === typeof mock.response )) {
+                    handler = this.___buildTextFileHandlerFromObject( mock );
                 }
             }
-
+            if (!handler) {
+                // if (log.will(log.ERROR)) {
+                    console.log("handler not defined for mock " + mock.path);
+                    continue;
+                // }
+            }
             if ("GET" === verb) {
                 router.get(mock.path, handler);
             } else if ("PUT" === verb) {
@@ -80,8 +98,14 @@ Router.connect = function ( router, config ) {
                     });
                 }
                 return;
-            }
+            };
 
+            if (!handler) {
+                if (log.will(log.ERROR)) {
+                    log.error("handler not defined for microservice " + microservice.path);
+                    continue;
+                }
+            }
             if ("GET" === verb) {
                 router.get(microservice.path, handler);
             } else if ("PUT" === verb) {
@@ -150,12 +174,12 @@ Router.getMicroserviceInfo = function ( path ) {
 Router.___buildJSONFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
-        if (!fs.existsSync(mock.response)) {
+        if (!files.existsSync(mock.response)) {
             res.render("not-found", null);
             return;
         }
 
-        let jsonResponseFileContents = util.readFileSync(mock.response);
+        let jsonResponseFileContents = files.readFileSync(mock.response);
         let checkForValidJSON = JSON.parse( jsonResponseFileContents );
 
         res.send(jsonResponseFileContents);
@@ -174,73 +198,135 @@ Router.___buildHandlebarsFileHandlerFromString = function ( mock ) {
 Router.___buildTextFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
-        if (!fs.existsSync(mock.response)) {
+        if (!files.existsSync(mock.response)) {
             res.render("not-found", null);
             return;
         }
 
-        let textResponseFileContents = util.readFileSync(mock.response, mock.encoding);
+        let textResponseFileContents = files.readFileSync(mock.response, mock.encoding);
 
         res.send(textResponseFileContents);
     };
     return handler;
 };
 
-Router.___buildJSONFileHandlerFromArray = function ( mock ) {
+Router.___buildJSONFileHandlerFromArrayOfStrings = function (mock ) {
     let handler = (req, res) => {
-        let index = ((mock.___index)?  mock.___index : 0 );
+        let index = Router.___getIndex( mock );
 
         Router.addHeaders(mock, res);
-        if (!fs.existsSync(mock.response[index])) {
+        if (!files.existsSync(mock.response[index])) {
             res.render("not-found", null);
             return;
         }
 
-        let jsonResponseFileContents = util.readFileSync(mock.response[index]);
+        let jsonResponseFileContents = files.readFileSync(mock.response[index], mock.encoding);
         let checkForValidJSON = JSON.parse( jsonResponseFileContents );
 
         res.send(jsonResponseFileContents);
-        mock.___index = index + 1;
-        if ( mock.response.length <= mock.___index ) {
-            mock.___index = 0;
-        }
+        Router.___incrimentIndex( mock, index );
     };
     return handler;
 };
 
-Router.___buildHandlebarsFileHandlerFromArray = function ( mock ) {
+Router.___buildHandlebarsFileHandlerFromArrayOfStrings = function ( mock ) {
     let handler = (req, res) => {
-        let index = ((mock.___index)?  mock.___index : 0 );
+        let index = Router.___getIndex( mock );
 
         Router.addHeaders(mock, res);
         res.render(mock.response[index], mock.hbsData[index]);
-        mock.___index = index + 1;
-        if ( mock.response.length <= mock.___index ) {
-            mock.___index = 0;
-        }
+        Router.___incrimentIndex( mock, index );
     };
     return handler;
 };
 
-Router.___buildTextFileHandlerFromArray = function ( mock ) {
+Router.___buildTextFileHandlerFromArrayOfStrings = function ( mock ) {
     let handler = (req, res) => {
-        let index = ((mock.___index)?  mock.___index : 0 );
+        let index = Router.___getIndex( mock );
 
         Router.addHeaders(mock, res);
-        if (!fs.existsSync(mock.response[index])) {
+        if (!files.existsSync(mock.response[index])) {
             res.render("not-found", null);
             return;
         }
 
-        let textResponseFileContents = util.readFileSync(mock.response[index], mock.encoding);
+        let textResponseFileContents = files.readFileSync(mock.response[index], mock.encoding);
 
         res.send(textResponseFileContents);
-        mock.___index = index + 1;
-        if ( mock.response.length <= mock.___index ) {
-            mock.___index = 0;
-        }
+        Router.___incrimentIndex( mock, index );
     };
     return handler;
 };
+
+Router.___buildJSONFileHandlerFromObject = function ( mock ) {
+    let handler = (req, res) => {
+        Router.addHeaders(mock, res);
+
+        let jsonResponse = JSON.stringify(mock.response);
+        let checkForValidJSON = JSON.parse( jsonResponse );
+
+        res.send(jsonResponse);
+    };
+    return handler;
+};
+
+Router.___buildTextFileHandlerFromObject = function ( mock ) {
+    let handler = (req, res) => {
+        Router.addHeaders(mock, res);
+
+        let textResponse = ((mock.response.text)? mock.response.text : JSON.stringify(mock.response) );
+
+        res.send(textResponse);
+    };
+    return handler;
+};
+
+Router.___buildJSONFileHandlerFromArrayOfObjects = function ( mock ) {
+    let handler = (req, res) => {
+        let index = Router.___getIndex( mock );
+
+        Router.addHeaders(mock, res);
+
+        let jsonResponse = JSON.stringify(mock.response[index]);
+        let checkForValidJSON = JSON.parse( jsonResponse );
+
+        res.send(jsonResponse);
+        Router.___incrimentIndex( mock, index );
+    };
+    return handler;
+};
+
+Router.___buildTextFileHandlerFromArrayOfObjects = function ( mock ) {
+    let handler = (req, res) => {
+        let index = Router.___getIndex( mock );
+
+        Router.addHeaders(mock, res);
+
+        let textResponse = ((mock.response[index].text)? mock.response[index].text : JSON.stringify(mock.response[index]) );
+
+        res.send(textResponse);
+        Router.___incrimentIndex( mock, index );
+    };
+    return handler;
+};
+
+Router.___getIndex = function ( mock ) {
+    if (!Router.indexes[mock.path]) {
+        Router.indexes[mock.path] = {};
+    }
+    if (!Router.indexes[mock.path].___index) {
+        Router.indexes[mock.path].___index = 0;
+    }
+
+    return Router.indexes[mock.path].___index;
+}
+
+Router.___incrimentIndex = function ( mock, index ) {
+    index++;
+    if ( mock.response.length <= index ) {
+        index = 0;
+    }
+    Router.indexes[mock.path].___index = index;
+}
 
 module.exports = Router;
