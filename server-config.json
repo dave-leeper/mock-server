@@ -95,6 +95,12 @@
       "serviceFile": "./microservices/mocks.js"
     },
     {
+      "path": "/download/:name",
+      "name": "File Download",
+      "description": "Downloads a file from the files directory of the server. The :name Parameter is the file name.",
+      "serviceFile": "./microservices/download.js"
+    },
+    {
       "path": "/throw",
       "name": "Throw Exception",
       "description": "A micro service that throws an exception. For testing purposes.",
