@@ -9,15 +9,15 @@ var chai = require( 'chai' ),
     MockResponse = require('../mock-response.js'),
     request = require('request');
 var config = {
-    "microservices": [
+    "mocks": [
         {
             "path": "/ping",
-            "name": "Ping",
-            "description": "A basic ping service.",
-            "serviceFile": "./microservices/ping.js",
-            "serviceData": { "name": "My Server", "version": "1.0" },
+            "response": {"name":"My Server","version":"1.0"},
+            "responseType": "JSON",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
-        },
+        }
+    ],
+    "microservices": [
         {
             "path": "/throw",
             "name": "Throw Exception",
