@@ -22,38 +22,20 @@ Router.connect = function ( router, config ) {
         for (let loop1 = 0; loop1 < mocks.length; loop1++) {
             let mock = mocks[loop1];
             let verb = ((mock.verb) ? mock.verb : "GET" );
-            let file = mock.response;
             let responseType = ((mock.responseType)? mock.responseType.toString().toUpperCase() : "" );
             let handler;
 
             if ("JSON" == responseType) {
-                handler = (req, res) => {
-                    Router.addHeaders(mock, res);
-                    if (!fs.existsSync( file )) {
-                        res.render("not-found", null);
-                        return;
-                    }
-
-                    let jsonResponseFileContents = util.readFileSync(file);
-
-                    res.send(jsonResponseFileContents);
+                if (typeof mock.response === 'string') {
+                    handler = this.___buildJSONFileHandler( mock );
                 }
             } else if ("HBS" == responseType) {
-                handler = (req, res) => {
-                    Router.addHeaders(mock, res);
-                    res.render(file, mock.hbsData);
+                if (typeof mock.response === 'string') {
+                    handler = this.___buildHandlebarsFileHandler( mock );
                 }
             } else {
-                handler = (req, res) => {
-                    Router.addHeaders(mock, res);
-                    if (!fs.existsSync(file)) {
-                        res.render("not-found", null);
-                        return;
-                    }
-
-                    let textResponseFileContents = util.readFileSync(file, mock.encoding);
-
-                    res.send(textResponseFileContents);
+                if (typeof mock.response === 'string') {
+                    handler = this.___buildTextFileHandler( mock );
                 }
             }
 
@@ -157,6 +139,44 @@ Router.getMicroserviceInfo = function ( path ) {
         }
     }
     return null;
+};
+
+Router.___buildJSONFileHandler = function ( mock ) {
+    let handler = (req, res) => {
+        Router.addHeaders(mock, res);
+        if (!fs.existsSync(mock.response)) {
+            res.render("not-found", null);
+            return;
+        }
+
+        let jsonResponseFileContents = util.readFileSync(mock.response);
+
+        res.send(jsonResponseFileContents);
+    };
+    return handler;
+};
+
+Router.___buildHandlebarsFileHandler = function ( mock ) {
+    let handler = (req, res) => {
+        Router.addHeaders(mock, res);
+        res.render(mock.response, mock.hbsData);
+    };
+    return handler;
+};
+
+Router.___buildTextFileHandler = function ( mock ) {
+    let handler = (req, res) => {
+        Router.addHeaders(mock, res);
+        if (!fs.existsSync(mock.response)) {
+            res.render("not-found", null);
+            return;
+        }
+
+        let textResponseFileContents = util.readFileSync(mock.response, mock.encoding);
+
+        res.send(textResponseFileContents);
+    };
+    return handler;
 };
 
 module.exports = Router;
