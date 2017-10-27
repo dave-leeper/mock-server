@@ -37,6 +37,61 @@ var config = {
             "response": "./JUNK.tex",
             "responseType": "TEXT",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+        },
+        {
+            "path": "/json-string-array",
+            "response": ["./test/test-data.json", "./test/test-data2.json"],
+            "responseType": "JSON",
+            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+        },
+        {
+            "path": "/json-object",
+            "response": {"title": "Index"},
+            "responseType": "JSON",
+            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+        },
+        {
+            "path": "/json-object-array",
+            "response": [{"title": "Index"}, {"title": "Not Found"} ],
+            "responseType": "JSON",
+            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+        },
+        {
+            "path": "/hbs-string-array",
+            "response": [ "index.hbs", "not-found.hbs" ],
+            "responseType": "HBS",
+            "hbsData": [ {"title": "Index"}, {"title": "Not Found"} ],
+            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+        },
+        {
+            "path": "/text-string-array",
+            "response": [ "./views/index.hbs", "./views/not-found.hbs" ],
+            "responseType": "TEXT",
+            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+        },
+        {
+            "path": "/text-object",
+            "response": {"title": "Index"},
+            "responseType": "TEXT",
+            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+        },
+        {
+            "path": "/text-object2",
+            "response": {"text": "Index"},
+            "responseType": "TEXT",
+            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+        },
+        {
+            "path": "/text-object-array",
+            "response": [{"title": "Index"}, {"title": "Not Found"} ],
+            "responseType": "TEXT",
+            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+        },
+        {
+            "path": "/text-object-array2",
+            "response": [{"text": "Index"}, {"text": "Not Found"} ],
+            "responseType": "TEXT",
+            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         }
     ],
     "microservices": [
@@ -152,5 +207,133 @@ describe( 'As a developer, I need need to run mock services.', function()
         server.init( port, config, serverInitCallback );
     });
 
+    it ( 'should loop through an array of JSON files', ( done ) => {
+        let port = 1337;
+        let server = new Server();
+        let jsonResponse = "{\"name\":\"My Server\",\"version\":\"1.0\"}";
+        let jsonResponse2 = "{\"path\":\"/ping\",\"response\":{\"name\":\"My Server\",\"version\":\"1.0\"},\"responseType\":\"JSON\",\"headers\":[{\"header\":\"MY_HEADER\",\"value\":\"MY_HEADER_VALUE\"}]}";
+        let serverInitCallback = () => {
+            request('http://localhost:' + port + "/json-string-array", { json: true }, (err, res, body) => {
+                expect(JSON.stringify(body)).to.be.equal(jsonResponse);
+                request('http://localhost:' + port + "/json-string-array", { json: true }, (err, res, body) => {
+                    expect(JSON.stringify(body)).to.be.equal(jsonResponse2);
+                    request('http://localhost:' + port + "/json-string-array", { json: true }, (err, res, body) => {
+                        expect(JSON.stringify(body)).to.be.equal(jsonResponse);
+                        server.stop(() => { done(); });
+                    });
+                });
+            });
+        };
+        server.init( port, config, serverInitCallback );
+    });
+
+    it ( 'should handle JSON objects as response values for JSON', ( done ) => {
+        let port = 1337;
+        let server = new Server();
+        let jsonResponse = {"title": "Index"};
+        let serverInitCallback = () => {
+            request('http://localhost:' + port + "/json-object", { json: true }, (err, res, body) => {
+                expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
+                server.stop(() => { done(); });
+            });
+        };
+        server.init( port, config, serverInitCallback );
+    });
+
+    it ( 'should loop through an array of JSON object responses for JSON', ( done ) => {
+        let port = 1337;
+        let server = new Server();
+        let jsonResponse = {"title": "Index"};
+        let jsonResponse2 = {"title": "Not Found"};
+        let serverInitCallback = () => {
+            request('http://localhost:' + port + "/json-object-array", { json: true }, (err, res, body) => {
+                expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
+                request('http://localhost:' + port + "/json-object-array", { json: true }, (err, res, body) => {
+                    expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse2));
+                    request('http://localhost:' + port + "/json-object-array", { json: true }, (err, res, body) => {
+                        expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
+                        server.stop(() => { done(); });
+                    });
+                });
+            });
+        };
+        server.init( port, config, serverInitCallback );
+    });
+
+    it ( 'should loop through an array of text files', ( done ) => {
+        let port = 1337;
+        let server = new Server();
+        let jsonResponse = "\"<h1>{{title}}</h1>\\n<p>Welcome to {{title}}</p>\\n\"";
+        let jsonResponse2 = "\"<h1>{{title}}</h1>\\n<p>404 File Not Found</p>\\n\"";
+        let serverInitCallback = () => {
+            request('http://localhost:' + port + "/text-string-array", { json: true }, (err, res, body) => {
+                expect(JSON.stringify(body)).to.be.equal(jsonResponse);
+                request('http://localhost:' + port + "/text-string-array", { json: true }, (err, res, body) => {
+                    expect(JSON.stringify(body)).to.be.equal(jsonResponse2);
+                    request('http://localhost:' + port + "/text-string-array", { json: true }, (err, res, body) => {
+                        expect(JSON.stringify(body)).to.be.equal(jsonResponse);
+                        server.stop(() => { done(); });
+                    });
+                });
+            });
+        };
+        server.init( port, config, serverInitCallback );
+    });
+
+    it ( 'should handle JSON objects as response values for text', ( done ) => {
+        let port = 1337;
+        let server = new Server();
+        let jsonResponse = {"title": "Index"};
+        let serverInitCallback = () => {
+            request('http://localhost:' + port + "/text-object", { json: true }, (err, res, body) => {
+                expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
+                request('http://localhost:' + port + "/text-object2", { json: true }, (err, res, body) => {
+                    expect(body).to.be.equal("Index");
+                    server.stop(() => { done(); });
+                });
+            });
+        };
+        server.init( port, config, serverInitCallback );
+    });
+
+    it ( 'should loop through an array of JSON object responses for text', ( done ) => {
+        let port = 1337;
+        let server = new Server();
+        let jsonResponse = {"title": "Index"};
+        let jsonResponse2 = {"title": "Not Found"};
+        let serverInitCallback = () => {
+            request('http://localhost:' + port + "/text-object-array", { json: true }, (err, res, body) => {
+                expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
+                request('http://localhost:' + port + "/text-object-array", { json: true }, (err, res, body) => {
+                    expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse2));
+                    request('http://localhost:' + port + "/text-object-array", { json: true }, (err, res, body) => {
+                        expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
+                        server.stop(() => { done(); });
+                    });
+                });
+            });
+        };
+        server.init( port, config, serverInitCallback );
+    });
+
+    it ( 'should loop through an array of JSON object responses for text, sending only the text field value', ( done ) => {
+        let port = 1337;
+        let server = new Server();
+        let jsonResponse = "Index";
+        let jsonResponse2 = "Not Found";
+        let serverInitCallback = () => {
+            request('http://localhost:' + port + "/text-object-array2", { json: true }, (err, res, body) => {
+                expect(body).to.be.equal(jsonResponse);
+                request('http://localhost:' + port + "/text-object-array2", { json: true }, (err, res, body) => {
+                    expect(body).to.be.equal(jsonResponse2);
+                    request('http://localhost:' + port + "/text-object-array2", { json: true }, (err, res, body) => {
+                        expect(body).to.be.equal(jsonResponse);
+                        server.stop(() => { done(); });
+                    });
+                });
+            });
+        };
+        server.init( port, config, serverInitCallback );
+    });
 });
 
