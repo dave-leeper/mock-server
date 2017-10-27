@@ -20,7 +20,6 @@ function DownloadService ( )
 DownloadService.prototype.do = function ( req, res, router, serviceInfo )
 {
     return new Promise (( inResolve ) => {
-        console.log("DownloadService");
         const fileName = ((req.params.name)? req.params.name : "filename");
         const filePath = path.join(FILE_PATH, fileName);
 
@@ -32,7 +31,6 @@ DownloadService.prototype.do = function ( req, res, router, serviceInfo )
 
             inResolve && inResolve(null, this);
         }
-        return;
     });
 };
 
