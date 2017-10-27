@@ -15,13 +15,9 @@ Router.connect = function ( router, config ) {
         return router;
     }
 
-    let mocks = config.mocks;
-    let microservices = config.microservices;
-    let databaseConnections = config.databaseConnections;
-
-    if (mocks) {
-        for (let loop1 = 0; loop1 < mocks.length; loop1++) {
-            let mock = mocks[loop1];
+    if (config.mocks) {
+        for (let loop1 = 0; loop1 < config.mocks.length; loop1++) {
+            let mock = config.mocks[loop1];
             let verb = ((mock.verb) ? mock.verb : "GET" );
             let responseType = ((mock.responseType)? mock.responseType.toString().toUpperCase() : "" );
             let handler;
@@ -79,9 +75,9 @@ Router.connect = function ( router, config ) {
         }
     }
 
-    if (microservices) {
-        for (let loop2 = 0; loop2 < microservices.length; loop2++) {
-            let microservice = microservices[loop2];
+    if (config.microservices) {
+        for (let loop2 = 0; loop2 < config.microservices.length; loop2++) {
+            let microservice = config.microservices[loop2];
             let verb = ((microservice.verb) ? microservice.verb : "GET" );
             let microservicePath = microservice.serviceFile;
             let microserviceClass = require( microservicePath );
@@ -124,7 +120,7 @@ Router.connect = function ( router, config ) {
         }
     }
 
-    if (databaseConnections) {
+    if (config.databaseConnections) {
     }
 
     return router;
