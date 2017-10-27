@@ -6,6 +6,7 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const busboy = require('connect-busboy')
 const Router = require('./router');
 const DatabaseConnectorManager = require('./database-connectors/database-connector-manager.js');
 
@@ -40,6 +41,7 @@ Server.prototype.init = function ( port, config, callback )
     this.express.use(bodyParser.urlencoded({ extended: false }));
     this.express.use(cookieParser());
     this.express.use(express.static(path.join(__dirname, 'public')));
+    this.express.use(busboy());
 
     // app.use('/', index);
     Router.server = this;
