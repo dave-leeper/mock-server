@@ -79,6 +79,12 @@
       "response": [{"text": "Index"}, {"text": "Not Found"} ],
       "responseType": "TEXT",
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
+      "path": "/uploadfile",
+      "response": "upload.hbs",
+      "responseType": "HBS",
+      "hbsData": {"title": "Upload File"}
     }
   ],
   "microservices": [
@@ -99,6 +105,13 @@
       "name": "File Download",
       "description": "Downloads a file from the files directory of the server. The :name Parameter is the file name.",
       "serviceFile": "./microservices/download.js"
+    },
+    {
+      "verb": "POST",
+      "path": "/upload",
+      "name": "File Upload",
+      "description": "Uploads a file from the client. The file was specified using upload.hbs",
+      "serviceFile": "./microservices/upload.js"
     },
     {
       "path": "/throw",
