@@ -5,6 +5,7 @@ var chai = require( 'chai' ),
     expect = chai.expect,
     Router = require('../../router.js'),
     MocksMicroservice = require('../../microservices/mocks.js'),
+    MockRequest = require('../mock-request.js'),
     MockResponse = require('../mock-response.js');
 var config = {
     "mocks": [
@@ -47,14 +48,13 @@ describe( 'As a developer, I need need to obtain a list of mock services that ar
 
     it ( 'should return a list of mock services available.', ( ) => {
         let mocksMicroservice = new MocksMicroservice();
+        let mockRequest = new MockRequest();
         let mockResponse = new MockResponse();
-        let mockRequest = {};
         let mockServiceInfo = {};
         let expectedResponse = '[{"path":"/json","response":"./server-config.json","responseType":"JSON"},{"path":"/hbs","response":"index.hbs","responseType":"HBS"},{"path":"/text","response":"./views/index.hbs","responseType":"TEXT"},{"path":"/json-junk","response":"./JUNK.json","responseType":"JSON"},{"path":"/text-junk","response":"./JUNK.tex","responseType":"TEXT"}]';
 
-        Router.server = {};
-        Router.server.serverConfig = config;
-        mocksMicroservice.do(mockRequest, mockResponse, Router, mockServiceInfo);
+        mockRequest.app.locals.___extra.serverConfig = config;
+        mocksMicroservice.do(mockRequest, mockResponse, mockServiceInfo);
         expect(mockResponse.sendString).to.be.equal(expectedResponse);
     });
 });
