@@ -37,7 +37,7 @@ describe( 'As a developer, I need the server to be able to shut down the server.
             request('http://localhost:' + port + "/stop", { json: true }, (err, res, body) => {
                 expect(JSON.stringify(body)).to.be.equal(stopResponse);
                 request('http://localhost:' + port + "/ping", { json: true }, (err, res, body) => {
-                    expect(JSON.stringify(body)).to.be.undefined;
+                    expect(body).to.be.undefined;
                     done();
                 });
             });
