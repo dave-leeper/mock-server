@@ -142,9 +142,14 @@ describe( 'As a developer, I need a server that sets up mock services, microserv
 
         server.init(port, config, () => {
             server.stop(() => {
-                expect(server.express).to.not.be.null;
                 expect(server.server).to.not.be.null;
-                expect(server.serverConfig).to.not.be.null;
+                expect(server.express).to.not.be.null;
+                expect(server.express.locals).to.not.be.null;
+                expect(server.express.locals.___extra).to.not.be.null;
+                expect(server.express.locals.___extra.startTime).to.not.be.null;
+                expect(server.express.locals.___extra.server).to.not.be.null;
+                expect(server.express.locals.___extra.router).to.not.be.null;
+                expect(server.express.locals.___extra.serverConfig).to.not.be.null;
                 expect(server.databaseConnectorManager).to.not.be.null;
                 expect(server.databaseConnectorManager.databaseConnectors.length).to.be.equal(1);
                 done();
