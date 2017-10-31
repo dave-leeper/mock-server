@@ -10,19 +10,20 @@ function MocksMicroservice ( )
 /**
  * @param req {Object} - The request object.
  * @param res {Object} - The response object.
- * @param router - The router.
  * @param serviceInfo - Service config info.
  */
-MocksMicroservice.prototype.do = function (req, res, router, serviceInfo )
+MocksMicroservice.prototype.do = function (req, res, serviceInfo )
 {
     return new Promise (( inResolve ) => {
-        if ((router)
-        && (router.server)
-        && (router.server.serverConfig)
-        && (router.server.serverConfig.mocks)
-        && (router.server.serverConfig.mocks.length)) {
+        if ((req)
+        && (req.app)
+        && (req.app.locals)
+        && (req.app.locals.___extra)
+        && (req.app.locals.___extra.serverConfig)
+        && (req.app.locals.___extra.serverConfig.mocks)
+        && (req.app.locals.___extra.serverConfig.mocks.length)) {
             let result = [];
-            let mocks = router.server.serverConfig.mocks;
+            let mocks = req.app.locals.___extra.serverConfig.mocks;
 
             for (let loop = 0; loop < mocks.length; loop++) {
                 let mock = mocks[loop];
@@ -35,7 +36,7 @@ MocksMicroservice.prototype.do = function (req, res, router, serviceInfo )
             }
             res.send(JSON.stringify(result));
         } else {
-            res.send(JSON.stringify({"response": "No registered mock microservices"}));
+            res.send(JSON.stringify({"response": "No registered mocks"}));
         }
         inResolve && inResolve ( null, this );
     });
