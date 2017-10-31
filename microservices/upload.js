@@ -15,10 +15,9 @@ function UploadService ( )
 /**
  * @param req {Object} - The request object.
  * @param res {Object} - The response object.
- * @param router - The router.
  * @param serviceInfo - Service config info.
  */
-UploadService.prototype.do = function ( req, res, router, serviceInfo )
+UploadService.prototype.do = function ( req, res, serviceInfo )
 {
     return new Promise (( inResolve ) => {
         const fileName = ((req.params.name)? req.params.name : "filename");
