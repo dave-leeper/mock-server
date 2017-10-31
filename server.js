@@ -44,8 +44,8 @@ Server.prototype.init = function ( port, config, callback )
     this.express.use(busboy());
 
     // app.use('/', index);
-    Router.server = this;
     this.express.use('/', Router.connect( router, config ));
+    this.express.locals.___extra = { startTime: new Date(), server: this, serverConfig: config, stack: router.stack };
 
     // catch 404 and forward to error handler
     this.express.use(function(req, res, next) {
@@ -78,7 +78,6 @@ Server.prototype.init = function ( port, config, callback )
     this.server = http.createServer(this.express);
     this.server.listen(normalizedPort, callback);
     this.server.on('error', this.onError);
-    this.serverConfig = config;
 
     console.log('Listening on port ' + normalizedPort);
     return this;
