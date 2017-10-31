@@ -2,12 +2,9 @@
 
 let files = require ( './util/file-utilities.js' );
 let log = require ( './util/logger-utilities.js' );
-const indexWorkingFile = "./temp/workingindex.json";
 
 function Router ( ) { }
 
-Router.startTime = null;
-Router.server = null;
 Router.indexes = {};
 
 Router.connect = function ( router, config ) {
@@ -87,7 +84,7 @@ Router.connect = function ( router, config ) {
                 Router.addHeaders(microservice, res);
 
                 try {
-                    micro.do(req, res, Router, microservice);
+                    micro.do(req, res, microservice);
                 } catch (err) {
                     res.status(500);
                     res.render("error", {
@@ -131,44 +128,13 @@ Router.defaultResponse = function ( res ) {
 };
 
 Router.addHeaders = function ( responseRecord, res ) {
-    if ((typeof responseRecord.headers === 'undefined')
-    || (!responseRecord.headers.length)){
+    if ((!responseRecord.headers) || (!responseRecord.headers.length)){
         return;
     }
     for (let loop = 0; loop < responseRecord.headers.length; loop++) {
         let header = responseRecord.headers[loop];
         res.header(header.header, header.value);
     }
-};
-
-Router.getMockResponseInfo = function ( path ) {
-    if ((!Router.server) || (!Router.server.serverConfig) || (!Router.server.serverConfig.mocks)) {
-        return null;
-    }
-    for (let loop = 0; loop < Router.server.serverConfig.mocks.length; loop++) {
-        let responseRecord = Router.server.serverConfig.mocks[loop];
-
-        if ((responseRecord.path == path)
-        && (responseRecord.response)) {
-            return responseRecord;
-        }
-    }
-    return null;
-};
-
-Router.getMicroserviceInfo = function ( path ) {
-    if ((!Router.server) || (!Router.server.serverConfig)) {
-        return null;
-    }
-    for (let loop = 0; loop < Router.server.serverConfig.microservices.length; loop++) {
-        let responseRecord = Router.server.serverConfig.microservices[loop];
-
-        if ((responseRecord.path == path)
-            && (responseRecord.serviceFile)) {
-            return responseRecord;
-        }
-    }
-    return null;
 };
 
 Router.___buildJSONFileHandlerFromString = function ( mock ) {
