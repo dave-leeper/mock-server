@@ -14,10 +14,9 @@ function DownloadService ( )
 /**
  * @param req {Object} - The request object.
  * @param res {Object} - The response object.
- * @param router - The router.
  * @param serviceInfo - Service config info.
  */
-DownloadService.prototype.do = function ( req, res, router, serviceInfo )
+DownloadService.prototype.do = function ( req, res, serviceInfo )
 {
     return new Promise (( inResolve ) => {
         const fileName = ((req.params.name)? req.params.name : "filename");
