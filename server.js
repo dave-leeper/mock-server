@@ -8,7 +8,6 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const busboy = require('connect-busboy')
 const Router = require('./router');
-const DatabaseConnectorManager = require('./database-connectors/database-connector-manager.js');
 
 /**
  * @constructor
@@ -65,10 +64,6 @@ Server.prototype.init = function ( port, config, callback )
         res.render('error');
     });
 
-    // Set up database connections
-    this.databaseConnectorManager = new DatabaseConnectorManager();
-    this.databaseConnectorManager.connect(config);
-
     /**
      * Get port from environment and store in Express.
      */
@@ -85,7 +80,7 @@ Server.prototype.init = function ( port, config, callback )
 
 Server.prototype.stop = function (callback) {
     this.server.close(callback);
-}
+};
 
 /**
  * Normalize a port into a number, string, or false.
