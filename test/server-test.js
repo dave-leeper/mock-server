@@ -107,19 +107,7 @@ var config = {
             "description": "Provides a list of mock microservices registered with this server.",
             "serviceFile": "./microservices/mocks.js"
         }
-    ],
-    "databaseConnections" : [
-        {
-            "name": "elasticsearch",
-            "description": "Elasticsearch service.",
-            "databaseConnector": "elasticsearch.js",
-            "config": {
-                "host": "localhost:9200",
-                "log": "trace"
-            }
-        }
-    ]
-};
+    ]};
 
 describe( 'As a developer, I need a server that sets up mock services, microservices, database connections, and can be started and stopped in memory.', function()
 {
