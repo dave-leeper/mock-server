@@ -150,8 +150,6 @@ describe( 'As a developer, I need a server that sets up mock services, microserv
                 expect(server.express.locals.___extra.server).to.not.be.null;
                 expect(server.express.locals.___extra.router).to.not.be.null;
                 expect(server.express.locals.___extra.serverConfig).to.not.be.null;
-                expect(server.databaseConnectorManager).to.not.be.null;
-                expect(server.databaseConnectorManager.databaseConnectors.length).to.be.equal(1);
                 done();
             });
         });
