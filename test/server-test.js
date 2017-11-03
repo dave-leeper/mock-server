@@ -107,7 +107,19 @@ var config = {
             "description": "Provides a list of mock microservices registered with this server.",
             "serviceFile": "./microservices/mocks.js"
         }
-    ]};
+    ],
+    "databaseConnections" : [
+        {
+            "name": "elasticsearch",
+            "description": "Elasticsearch service.",
+            "databaseConnector": "elasticsearch.js",
+            "config": {
+                "host": "localhost:9200",
+                "log": "trace"
+            }
+        }
+    ]
+};
 
 describe( 'As a developer, I need a server that sets up mock services, microservices, database connections, and can be started and stopped in memory.', function()
 {
@@ -129,15 +141,19 @@ describe( 'As a developer, I need a server that sets up mock services, microserv
         let server = new Server();
 
         server.init(port, config, () => {
+            expect(server.server).to.not.be.null;
+            expect(server.express).to.not.be.null;
+            expect(server.express.locals).to.not.be.null;
+            expect(server.express.locals.___extra).to.not.be.null;
+            expect(server.express.locals.___extra.startTime).to.not.be.null;
+            expect(server.express.locals.___extra.server).to.not.be.null;
+            expect(server.express.locals.___extra.router).to.not.be.null;
+            expect(server.express.locals.___extra.serverConfig).to.not.be.null;
+            expect(server.express.locals.___extra.databaseConnectionManager).to.not.be.null;
+            expect(server.express.locals.___extra.databaseConnectionManager.databaseConnectors).to.not.be.null;
+            expect(server.express.locals.___extra.databaseConnectionManager.databaseConnectors.length).to.be.equal(1);
+            expect(server.express.locals.___extra.databaseConnectionManager.getConnector("elasticsearch")).to.not.be.null;
             server.stop(() => {
-                expect(server.server).to.not.be.null;
-                expect(server.express).to.not.be.null;
-                expect(server.express.locals).to.not.be.null;
-                expect(server.express.locals.___extra).to.not.be.null;
-                expect(server.express.locals.___extra.startTime).to.not.be.null;
-                expect(server.express.locals.___extra.server).to.not.be.null;
-                expect(server.express.locals.___extra.router).to.not.be.null;
-                expect(server.express.locals.___extra.serverConfig).to.not.be.null;
                 done();
             });
         });
