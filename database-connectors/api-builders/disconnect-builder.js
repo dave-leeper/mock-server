@@ -4,12 +4,15 @@ function DisconnectBuilder ( routerClass, databaseConnectionInfo ) {
     let disconnectHandler = (req, res) => {
         routerClass.addHeaders(databaseConnectionInfo, res);
 
-        let databaseConnectionManager = req.app.locals.___extra.databaseConnectionManager;
-        if (!databaseConnectionManager) {
+        if ((!req)
+        || (!req.app)
+        || (!req.app.locals)
+        || (!req.app.locals.___extra)
+        || (!req.app.locals.___extra.databaseConnectionManager)) {
             res.render("error", {message: "No database connection manager.", error: {status: 500}});
             return;
         }
-
+        let databaseConnectionManager = req.app.locals.___extra.databaseConnectionManager;
         let databaseConnection = databaseConnectionManager.getConnector(databaseConnectionInfo.name);
         if (!databaseConnection) {
             res.render("error", {message: "No database connection.", error: {status: 500}});
@@ -17,7 +20,7 @@ function DisconnectBuilder ( routerClass, databaseConnectionInfo ) {
         }
 
         databaseConnection.disconnect(databaseConnectionInfo).then(() => {
-            res.send("Disconnected from " + databaseConnectionInfo.name + ".");
+            res.send({databaseConnection: databaseConnectionInfo.name, operation: "disconnect", isConnected: false});
         });
     };
 
