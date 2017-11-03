@@ -24,7 +24,7 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
     if (config.mocks) {
         for (let loop1 = 0; loop1 < config.mocks.length; loop1++) {
             let mock = config.mocks[loop1];
-            let verb = ((mock.verb) ? mock.verb : "GET" );
+            let verb = ((mock.verb) ? mock.verb.toUpperCase() : "GET" );
             let responseType = ((mock.responseType)? mock.responseType.toString().toUpperCase() : "" );
             let handler;
 
@@ -84,7 +84,7 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
     if (config.microservices) {
         for (let loop2 = 0; loop2 < config.microservices.length; loop2++) {
             let microservice = config.microservices[loop2];
-            let verb = ((microservice.verb) ? microservice.verb : "GET" );
+            let verb = ((microservice.verb) ? microservice.verb.toUpperCase() : "GET" );
             let microservicePath = microservice.serviceFile;
             let microserviceClass = require( microservicePath );
 
