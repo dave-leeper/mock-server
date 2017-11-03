@@ -1,5 +1,7 @@
 'use strict'
 
+let log = require ( '../util/logger-utilities.js' );
+
 function DatabaseConnectorManager ( ) {
     this.config = null;
     this.databaseConnectors = [];
@@ -48,6 +50,38 @@ DatabaseConnectorManager.prototype.getConnector = function ( name ) {
         }
     }
     return null;
+};
+
+DatabaseConnectorManager.prototype.buildConnectionAPI = function ( Router, router, databaseConnectionInfo ) {
+    let connectHandler = require("./api-builders/connect-builder.js")( Router, databaseConnectionInfo );
+    if (!connectHandler) {
+        if (log.will(log.ERROR)) {
+            log.error("Connect handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
+        }
+    }
+    let pingHandler = require("./api-builders/ping-builder.js")( Router, databaseConnectionInfo );
+    if (!pingHandler) {
+        if (log.will(log.ERROR)) {
+            log.error("Ping handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
+        }
+    }
+    let disconnectHandler = require("./api-builders/disconnect-builder.js")( Router, databaseConnectionInfo );
+    if (!disconnectHandler) {
+        if (log.will(log.ERROR)) {
+            log.error("Disconnect handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
+        }
+    }
+    let urlName = databaseConnectionInfo.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    let connectPath = "/database/connection/" + urlName + "/connect";
+    let pingPath = "/database/connection/" + urlName + "/ping";
+    let disconnectPath = "/database/connection/" + urlName + "/disconnect";
+
+    router.get(connectPath, connectHandler);
+    router.get(pingPath, pingHandler);
+    router.get(disconnectPath, disconnectHandler);
 };
 
 module.exports = DatabaseConnectorManager;
