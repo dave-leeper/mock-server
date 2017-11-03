@@ -74,14 +74,27 @@ DatabaseConnectorManager.prototype.buildConnectionAPI = function ( Router, route
             return;
         }
     }
-    let urlName = databaseConnectionInfo.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    let connectPath = "/database/connection/" + urlName + "/connect";
-    let pingPath = "/database/connection/" + urlName + "/ping";
-    let disconnectPath = "/database/connection/" + urlName + "/disconnect";
+    let paths = DatabaseConnectorManager.buildConnectionAPIPaths(databaseConnectionInfo.name);
+    let connectPath = paths[0];
+    let pingPath = paths[1];
+    let disconnectPath = paths[2];
 
     router.get(connectPath, connectHandler);
     router.get(pingPath, pingHandler);
     router.get(disconnectPath, disconnectHandler);
 };
+
+DatabaseConnectorManager.buildConnectionAPIPaths = function ( name ) {
+    let paths = [];
+    if ( !name ) {
+        return paths;
+    }
+    let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+    paths.push("/database/connection/" + urlName + "/connect");
+    paths.push("/database/connection/" + urlName + "/ping");
+    paths.push("/database/connection/" + urlName + "/disconnect");
+    return paths;
+}
 
 module.exports = DatabaseConnectorManager;
