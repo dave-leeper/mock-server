@@ -2,12 +2,22 @@
 
 let files = require ( './util/file-utilities.js' );
 let log = require ( './util/logger-utilities.js' );
+let DatabaseConnectorManager = require ( './database-connectors/database-connector-manager' );
 
 function Router ( ) { }
 
 Router.indexes = {};
+Router.databaseConnectionManager = null;
 
-Router.connect = function ( router, config ) {
+/**
+ *
+ * @param router - Express router. This method will add routers to it.
+ * @param config - The config file for the server.
+ * @param databaseConnectionCallback - Called if database connections are made. The callback
+ * will be passed the promises from creating all database connections.
+ * @returns Returns the express router.
+ */
+Router.connect = function ( router, config, databaseConnectionCallback ) {
     if ( (!config) || (!router) ) {
         return router;
     }
@@ -118,6 +128,28 @@ Router.connect = function ( router, config ) {
     }
 
     if (config.databaseConnections) {
+        Router.databaseConnectionManager = new DatabaseConnectorManager();
+        let databaseConnectionPromises = Router.databaseConnectionManager.connect(config);
+
+        for (let loop3 = 0; loop3 < config.databaseConnections.length; loop3++) {
+            let databaseConnectionInfo = config.databaseConnections[loop3];
+
+            if (databaseConnectionInfo.generateConnectionAPI) {
+                let connectHandler = require("./database-connectors/connect-builder.js")( Router, databaseConnectionInfo );
+                let pingHandler = require("./database-connectors/ping-builder.js")( Router, databaseConnectionInfo );
+                let disconnectHandler = require("./database-connectors/disconnect-builder.js")( Router, databaseConnectionInfo );
+                let connectPath = "database/connection/" + databaseConnectionInfo.name + "/connect";
+                let pingPath = "database/connection/" + databaseConnectionInfo.name + "/ping";
+                let disconnectPath = "database/connection/" + databaseConnectionInfo.name + "/disconnect";
+
+                router.get(connectPath, connectHandler);
+                router.get(pingPath, pingHandler);
+                router.get(disconnectPath, disconnectHandler);
+            }
+        }
+        if (databaseConnectionCallback) {
+            databaseConnectionCallback(databaseConnectionPromises);
+        }
     }
 
     return router;
@@ -127,12 +159,12 @@ Router.defaultResponse = function ( res ) {
     res.render('not-found', {title: 'File Not Found'});
 };
 
-Router.addHeaders = function ( responseRecord, res ) {
-    if ((!responseRecord.headers) || (!responseRecord.headers.length)){
+Router.addHeaders = function ( configRecord, res ) {
+    if ((!configRecord.headers) || (!configRecord.headers.length)){
         return;
     }
-    for (let loop = 0; loop < responseRecord.headers.length; loop++) {
-        let header = responseRecord.headers[loop];
+    for (let loop = 0; loop < configRecord.headers.length; loop++) {
+        let header = configRecord.headers[loop];
         res.header(header.header, header.value);
     }
 };
@@ -285,7 +317,7 @@ Router.___getIndex = function ( mock ) {
     }
 
     return Router.indexes[mock.path].___index;
-}
+};
 
 Router.___incrimentIndex = function ( mock, index ) {
     index++;
@@ -293,6 +325,6 @@ Router.___incrimentIndex = function ( mock, index ) {
         index = 0;
     }
     Router.indexes[mock.path].___index = index;
-}
+};
 
 module.exports = Router;
