@@ -89,16 +89,22 @@
   ],
   "microservices": [
     {
+      "path": "/mocks",
+      "name": "Mock Services List",
+      "description": "Provides a list of mock services registered with this server.",
+      "serviceFile": "./microservices/mocks.js"
+    },
+    {
       "path": "/microservices",
       "name": "Microservices List",
       "description": "Provides a list of services registered with this server.",
       "serviceFile": "./microservices/microservices.js"
     },
     {
-      "path": "/mocks",
-      "name": "Mock Services List",
-      "description": "Provides a list of mock services registered with this server.",
-      "serviceFile": "./microservices/mocks.js"
+      "path": "/databaseconnections",
+      "name": "Database Connection List",
+      "description": "Provides a list of database connections registered with this server.",
+      "serviceFile": "./microservices/databaseconnections.js"
     },
     {
       "path": "/download/:name",
