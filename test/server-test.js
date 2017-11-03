@@ -99,7 +99,8 @@ var config = {
             "path": "/microservices",
             "name": "Services List",
             "description": "Provides a list of microservices registered with this server.",
-            "serviceFile": "./microservices/microservices.js"
+            "serviceFile": "./microservices/microservices.js",
+            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
         {
             "path": "/mocks",
@@ -116,7 +117,8 @@ var config = {
             "config": {
                 "host": "localhost:9200",
                 "log": "trace"
-            }
+            },
+            "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         }
     ]
 };
@@ -338,6 +340,51 @@ describe( 'As a developer, I need need to run mock services.', function()
                         server.stop(() => { done(); });
                     });
                 });
+            });
+        };
+        server.init( port, config, serverInitCallback );
+    });
+
+    it ( 'should send headers for mocks that are configured for them.', ( done ) => {
+        let port = 1337;
+        let server = new Server();
+        let serverInitCallback = () => {
+            request('http://localhost:' + port + "/json", { json: true }, (err, res, body) => {
+                expect(res).to.not.be.null;
+                expect(res.headers).to.not.be.null;
+                expect(res.headers.MY_HEADER).to.not.be.null;
+                expect(res.headers.MY_HEADER).to.not.be.equal("MY_HEADER_VALUE");
+                server.stop(() => { done(); });
+            });
+        };
+        server.init( port, config, serverInitCallback );
+    });
+
+    it ( 'should send headers for microservices that are configured for them.', ( done ) => {
+        let port = 1337;
+        let server = new Server();
+        let serverInitCallback = () => {
+            request('http://localhost:' + port + "/microservices", { json: true }, (err, res, body) => {
+                expect(res).to.not.be.null;
+                expect(res.headers).to.not.be.null;
+                expect(res.headers.MY_HEADER).to.not.be.null;
+                expect(res.headers.MY_HEADER).to.not.be.equal("MY_HEADER_VALUE");
+                server.stop(() => { done(); });
+            });
+        };
+        server.init( port, config, serverInitCallback );
+    });
+
+    it ( 'should send headers for database connections that are configured for them.', ( done ) => {
+        let port = 1337;
+        let server = new Server();
+        let serverInitCallback = () => {
+            request('http://localhost:' + port + "/database/connection/elasticsearch/ping", { json: true }, (err, res, body) => {
+                expect(res).to.not.be.null;
+                expect(res.headers).to.not.be.null;
+                expect(res.headers.MY_HEADER).to.not.be.null;
+                expect(res.headers.MY_HEADER).to.not.be.equal("MY_HEADER_VALUE");
+                server.stop(() => { done(); });
             });
         };
         server.init( port, config, serverInitCallback );
