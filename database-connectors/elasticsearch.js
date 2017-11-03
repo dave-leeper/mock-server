@@ -29,7 +29,7 @@ ElasticSearchDatabaseConnector.prototype.ping = function (  )
         if (!this.client) {
             inResolve && inResolve ( false );
         } else {
-            this.client.ping({ requestTimeout: 30000, }, function( error ) {
+            this.client.ping({ requestTimeout: 30000 }, function( error ) {
                 if (error) {
                     inResolve && inResolve ( false );
                 } else {
