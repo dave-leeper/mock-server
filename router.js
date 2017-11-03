@@ -10,7 +10,6 @@ Router.indexes = {};
 Router.databaseConnectionManager = null;
 
 /**
- *
  * @param router - Express router. This method will add routers to it.
  * @param config - The config file for the server.
  * @param databaseConnectionCallback - Called if database connections are made. The callback
@@ -61,10 +60,10 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
                 }
             }
             if (!handler) {
-                // if (log.will(log.ERROR)) {
-                    console.log("handler not defined for mock " + mock.path);
+                if (log.will(log.ERROR)) {
+                    log.error("Handler not defined for mock " + mock.path + ".");
                     continue;
-                // }
+                }
             }
             if ("GET" === verb) {
                 router.get(mock.path, handler);
@@ -107,7 +106,7 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
 
             if (!handler) {
                 if (log.will(log.ERROR)) {
-                    log.error("handler not defined for microservice " + microservice.path);
+                    log.error("Handler not defined for microservice " + microservice.path + ".");
                     continue;
                 }
             }
@@ -135,16 +134,7 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
             let databaseConnectionInfo = config.databaseConnections[loop3];
 
             if (databaseConnectionInfo.generateConnectionAPI) {
-                let connectHandler = require("./database-connectors/connect-builder.js")( Router, databaseConnectionInfo );
-                let pingHandler = require("./database-connectors/ping-builder.js")( Router, databaseConnectionInfo );
-                let disconnectHandler = require("./database-connectors/disconnect-builder.js")( Router, databaseConnectionInfo );
-                let connectPath = "database/connection/" + databaseConnectionInfo.name + "/connect";
-                let pingPath = "database/connection/" + databaseConnectionInfo.name + "/ping";
-                let disconnectPath = "database/connection/" + databaseConnectionInfo.name + "/disconnect";
-
-                router.get(connectPath, connectHandler);
-                router.get(pingPath, pingHandler);
-                router.get(disconnectPath, disconnectHandler);
+                Router.databaseConnectionManager.buildConnectionAPI( Router, router, databaseConnectionInfo );
             }
         }
         if (databaseConnectionCallback) {
@@ -222,7 +212,7 @@ Router.___buildJSONFileHandlerFromArrayOfStrings = function (mock ) {
         let checkForValidJSON = JSON.parse( jsonResponseFileContents );
 
         res.send(jsonResponseFileContents);
-        Router.___incrimentIndex( mock, index );
+        Router.___incrementIndex( mock, index );
     };
     return handler;
 };
@@ -233,7 +223,7 @@ Router.___buildHandlebarsFileHandlerFromArrayOfStrings = function ( mock ) {
 
         Router.addHeaders(mock, res);
         res.render(mock.response[index], mock.hbsData[index]);
-        Router.___incrimentIndex( mock, index );
+        Router.___incrementIndex( mock, index );
     };
     return handler;
 };
@@ -251,7 +241,7 @@ Router.___buildTextFileHandlerFromArrayOfStrings = function ( mock ) {
         let textResponseFileContents = files.readFileSync(mock.response[index], mock.encoding);
 
         res.send(textResponseFileContents);
-        Router.___incrimentIndex( mock, index );
+        Router.___incrementIndex( mock, index );
     };
     return handler;
 };
@@ -289,7 +279,7 @@ Router.___buildJSONFileHandlerFromArrayOfObjects = function ( mock ) {
         let checkForValidJSON = JSON.parse( jsonResponse );
 
         res.send(jsonResponse);
-        Router.___incrimentIndex( mock, index );
+        Router.___incrementIndex( mock, index );
     };
     return handler;
 };
@@ -303,7 +293,7 @@ Router.___buildTextFileHandlerFromArrayOfObjects = function ( mock ) {
         let textResponse = ((mock.response[index].text)? mock.response[index].text : JSON.stringify(mock.response[index]) );
 
         res.send(textResponse);
-        Router.___incrimentIndex( mock, index );
+        Router.___incrementIndex( mock, index );
     };
     return handler;
 };
@@ -319,7 +309,7 @@ Router.___getIndex = function ( mock ) {
     return Router.indexes[mock.path].___index;
 };
 
-Router.___incrimentIndex = function ( mock, index ) {
+Router.___incrementIndex = function (mock, index ) {
     index++;
     if ( mock.response.length <= index ) {
         index = 0;
