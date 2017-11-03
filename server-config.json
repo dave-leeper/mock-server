@@ -131,8 +131,7 @@
       "name": "elasticsearch",
       "description": "Elasticsearch service.",
       "databaseConnector": "elasticsearch.js",
-      "enableConnect" : true,
-      "enableAPI" : "localhost:7331",
+      "generateConnectionAPI": true,
       "config": {
         "host": "localhost:9200",
         "log": "trace"
