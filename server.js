@@ -15,8 +15,6 @@ const Router = require('./router');
 function Server ( ) {
     this.express = null;
     this.server = null;
-    this.serverConfig = null;
-    this.databaseConnectorManager = null;
 }
 
 /**
@@ -27,7 +25,6 @@ function Server ( ) {
  */
 Server.prototype.init = function ( port, config, callback )
 {
-    this.startTime = new Date();
     this.express = express();
 
     // view engine setup
@@ -44,7 +41,13 @@ Server.prototype.init = function ( port, config, callback )
 
     // app.use('/', index);
     this.express.use('/', Router.connect( router, config ));
-    this.express.locals.___extra = { startTime: new Date(), server: this, serverConfig: config, stack: router.stack };
+    this.express.locals.___extra = {
+        startTime: new Date(),
+        server: this,
+        serverConfig: config,
+        stack: router.stack,
+        databaseConnectionManager: Router.databaseConnectionManager
+    };
 
     // catch 404 and forward to error handler
     this.express.use(function(req, res, next) {
@@ -79,6 +82,13 @@ Server.prototype.init = function ( port, config, callback )
 };
 
 Server.prototype.stop = function (callback) {
+    try {
+        if (this.express.locals.___extra.databaseConnectionManager) {
+            this.express.locals.___extra.databaseConnectionManager.disconnect();
+        }
+    } catch (err) {
+        console.log("Error shutting down database connections.");
+    }
     this.server.close(callback);
 };
 
@@ -86,7 +96,6 @@ Server.prototype.stop = function (callback) {
  * Normalize a port into a number, string, or false.
  * @param val {Object} The port number or pipe.
  */
-
 Server.prototype.normalizePort = function (val) {
     const port = parseInt(val, 10);
 
@@ -107,9 +116,8 @@ Server.prototype.normalizePort = function (val) {
  * Event listener for HTTP server "error" event.
  * @param error {Object} The error.
  */
-
 Server.prototype.onError = function (error) {
-    throw error;
+    console.log( error );
 };
 
 module.exports = Server;
