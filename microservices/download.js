@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const path = require('path');
 let files = require ( '../util/file-utilities.js' );
