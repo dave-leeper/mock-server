@@ -1,6 +1,6 @@
-'use strict'
+'use strict';
 
-var elasticsearch = require('elasticsearch');
+let elasticsearch = require('elasticsearch');
 
 function ElasticSearchDatabaseConnector ( name ) {
     this.name = name;
