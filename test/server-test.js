@@ -1,11 +1,11 @@
 //@formatter:off
 'use strict';
 
-var chai = require( 'chai' ),
+let chai = require( 'chai' ),
     expect = chai.expect,
     Server = require('../server.js'),
     request = require('request');
-var config = {
+let config = {
     "mocks": [
         {
             "path": "/json",
