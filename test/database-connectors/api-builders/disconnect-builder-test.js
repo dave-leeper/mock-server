@@ -1,14 +1,14 @@
 //@formatter:off
 'use strict';
 
-var chai = require( 'chai' ),
+let chai = require( 'chai' ),
     expect = chai.expect,
     Router = require('../../../router.js'),
     mockRequest = require('../../mock-request.js'),
     mockResponse = require('../../mock-response.js'),
     disconnectionHandlerBuilder = require('../../../database-connectors/api-builders/disconnect-builder.js'),
     DatabaseConnectorManager = require('../../../database-connectors/database-connector-manager.js');
-var config = {
+let config = {
     "databaseConnections" : [
         {
             "name": "elasticsearch",
