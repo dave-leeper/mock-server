@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 let files = require ( './util/file-utilities.js' );
 let log = require ( './util/logger-utilities.js' );
