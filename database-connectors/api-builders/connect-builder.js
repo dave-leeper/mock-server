@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 function ConnectBuilder ( routerClass, databaseConnectionInfo ) {
     let connectHandler = (req, res) => {
