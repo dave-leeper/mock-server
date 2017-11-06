@@ -1,14 +1,14 @@
 //@formatter:off
 'use strict';
 
-var chai = require( 'chai' ),
+let chai = require( 'chai' ),
     expect = chai.expect,
     Router = require('../../router.js'),
     Server = require('../../server.js'),
     MockRequest = require('../mock-request.js'),
     MockResponse = require('../mock-response.js'),
     request = require('request');
-var config = {
+let config = {
     "mocks": [
         {
             "path": "/ping",
