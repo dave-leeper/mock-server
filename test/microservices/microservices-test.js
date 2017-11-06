@@ -1,13 +1,13 @@
 //@formatter:off
 'use strict';
 
-var chai = require( 'chai' ),
+let chai = require( 'chai' ),
     expect = chai.expect,
     Router = require('../../router.js'),
     MicroservicesMicroservice = require('../../microservices/microservices.js'),
     MockRequest = require('../mock-request.js'),
     MockResponse = require('../mock-response.js');
-var config = {
+let config = {
     "microservices": [
         {
             "path": "/microservices",
