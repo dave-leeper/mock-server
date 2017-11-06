@@ -1,14 +1,14 @@
 //@formatter:off
 'use strict';
 
-var chai = require( 'chai' ),
+let chai = require( 'chai' ),
     expect = chai.expect,
     Router = require('../router.js'),
     mockExpressRouter = require('./mock-express-router.js'),
     mockRequest = require('./mock-request.js'),
     mockResponse = require('./mock-response.js'),
     utils = require('../util/file-utilities.js');
-var config = {
+let config = {
     "mocks": [
         {
             "path": "/json",
