@@ -1,10 +1,10 @@
 //@formatter:off
 'use strict';
 
-var chai = require( 'chai' ),
+let chai = require( 'chai' ),
     expect = chai.expect,
     DatabaseConnectorManager = require('../../database-connectors/database-connector-manager.js');
-var config = {
+let config = {
     databaseConnections : [
         {
             name: "elasticsearch",
