@@ -1,6 +1,6 @@
 'use strict';
 
-var log4js = require('log4js' ),
+let log4js = require('log4js' ),
     os = require("os" ),
     process = require('process');
 
