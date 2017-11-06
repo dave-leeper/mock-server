@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 function PingBuilder ( routerClass, databaseConnectionInfo ) {
     let pingHandler = (req, res) => {
