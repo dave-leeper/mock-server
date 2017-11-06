@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 function DisconnectBuilder ( routerClass, databaseConnectionInfo ) {
     let disconnectHandler = (req, res) => {
