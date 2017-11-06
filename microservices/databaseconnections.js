@@ -1,6 +1,6 @@
-'use strict'
+'use strict';
 
-var DatabaseConnectorManager = require('../database-connectors/database-connector-manager.js');
+let DatabaseConnectorManager = require('../database-connectors/database-connector-manager.js');
 
 /**
  * @constructor
