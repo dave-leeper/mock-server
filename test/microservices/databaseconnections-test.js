@@ -1,13 +1,13 @@
 //@formatter:off
 'use strict';
 
-var chai = require( 'chai' ),
+let chai = require( 'chai' ),
     expect = chai.expect,
     Router = require('../../router.js'),
     DatabaseConnectionsMicroservice = require('../../microservices/databaseconnections.js'),
     MockRequest = require('../mock-request.js'),
     MockResponse = require('../mock-response.js');
-var config = {
+let config = {
     "databaseConnections" : [
         {
             "name": "elasticsearch",
