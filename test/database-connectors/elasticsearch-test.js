@@ -1,10 +1,10 @@
 //@formatter:off
 'use strict';
 
-var chai = require( 'chai' ),
+let chai = require( 'chai' ),
     expect = chai.expect,
     ElasticSearchDatabaseConnector = require('../../database-connectors/elasticsearch.js');
-var config = {
+let config = {
         host: "localhost:9200",
         log: "trace"
     };
