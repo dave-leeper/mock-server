@@ -1,12 +1,20 @@
 'use strict';
 
-let elasticsearch = require('elasticsearch');
+const elasticsearch = require('elasticsearch');
 
+/**
+ * Database = N/A
+ * Table Definition = Mapping
+ * Table = Index/Type
+ * @param name - name of the connection.
+ * @constructor
+ */
 function ElasticSearchDatabaseConnector ( name ) {
     this.name = name;
     this.client = null;
     this.config = null;
 }
+// https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html
 
 ElasticSearchDatabaseConnector.prototype.connect = function ( config ) {
     return new Promise (( inResolve ) => {
@@ -48,6 +56,56 @@ ElasticSearchDatabaseConnector.prototype.disconnect = function ( ) {
             this.client.close();
             inResolve && inResolve ( true );
         }
+    });
+};
+
+ElasticSearchDatabaseConnector.prototype.tableExists = function ( name ) {
+    return new Promise (( inResolve ) => {
+        this.client.indices.exists({ index: name }).then(( exists ) => { inResolve && inResolve( exists ); });
+    });
+};
+
+/**
+ * @param mapping - An object that describes the table. Example:
+ * {
+ *     index: "test",
+ *     type: "document",
+ *     body: {
+ *         properties: {
+ *             title: { type: "string" },
+ *             content: { type: "string" },
+ *             suggest: {
+ *                 type: "completion",
+ *                 analyzer: "simple",
+ *                 search_analyzer: "simple",
+ *                 payloads: true
+ *             }
+ *         }
+ *     }
+ * }
+ * * @returns {Promise}
+ */
+ElasticSearchDatabaseConnector.prototype.createTable = function ( mapping ) {
+    return new Promise (( inResolve ) => {
+        let existsFunc = ( exists ) => {
+            if ( exists ) {
+                inResolve && inResolve( false );
+                return;
+            }
+            this.client.indices.create({ index: mapping.index }).then(() => {
+                this.client.indices.putMapping( mapping ).then(() => {
+                    inResolve && inResolve ( true );
+                }).error(() => { inResolve && inResolve( false ); })
+            }).error(() => { inResolve && inResolve( false ); });
+        };
+
+        this.tableExists( mapping.index ).then(( exists ) => { existsFunc( exists ); });
+    });
+};
+
+ElasticSearchDatabaseConnector.prototype.dropTable = function ( name ) {
+    return new Promise (( inResolve ) => {
+        this.client.indices.delete({ index: name }).then(( success ) => { inResolve && inResolve( success ); });
     });
 };
 
