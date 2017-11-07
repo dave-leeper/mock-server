@@ -36,8 +36,8 @@ DatabaseConnectionsService.prototype.do = function ( req, res, serviceInfo )
                 }
                 result.push({
                     "name": databaseConnection.name,
-                    "path": paths,
-                    "description": databaseConnection.description
+                    "description": databaseConnection.description,
+                    "path": paths
                 });
             }
             res.send(JSON.stringify(result));
