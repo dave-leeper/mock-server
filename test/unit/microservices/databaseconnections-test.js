@@ -14,6 +14,7 @@ let config = {
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
             "generateConnectionAPI": true,
+            "generateTableAPI": true,
             "config": {
                 "host": "localhost:9200",
                 "log": "trace"
@@ -31,16 +32,17 @@ describe( 'As a developer, I need need to obtain a list of database connections 
         let mockServiceInfo = {};
         let expectedResponse = JSON.stringify([{
             "name":"elasticsearch",
+            "description":"Elasticsearch service.",
             "path":[
                 "/database/connection/elasticsearch/connect",
                 "/database/connection/elasticsearch/ping",
                 "/database/connection/elasticsearch/disconnect"
-            ],
-            "description":"Elasticsearch service."
+            ]
         }]);
-
         mockRequest.app.locals.___extra.serverConfig = config;
         databaseConnectionsMicroservice.do(mockRequest, mockResponse, mockServiceInfo);
+        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+        console.log(JSON.stringify(mockResponse.sendString));
         expect(mockResponse.sendString).to.be.equal(expectedResponse);
     });
 });
