@@ -1,0 +1,16 @@
+{
+  "index": "test",
+  "type": "document",
+  "body": {
+    "properties": {
+      "title": { "type": "string" },
+      "content": { "type": "string" },
+      "suggest": {
+        "type": "completion",
+        "analyzer": "simple",
+        "search_analyzer": "simple",
+        "payloads": true
+      }
+    }
+  }
+}
