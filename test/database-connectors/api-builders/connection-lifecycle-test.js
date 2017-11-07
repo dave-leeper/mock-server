@@ -3,13 +3,6 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    Router = require('../../../router.js'),
-    mockExpressRouter = require('../../mock-express-router.js'),
-    mockRequest = require('../../mock-request.js'),
-    mockResponse = require('../../mock-response.js'),
-    utils = require('../../../util/file-utilities.js'),
-    connectionHandlerBuilder = require('../../../database-connectors/api-builders/connect-builder.js'),
-    DatabaseConnectorManager = require('../../../database-connectors/database-connector-manager.js'),
     Server = require('../../../server.js'),
     request = require('request');
 let config = {
@@ -27,8 +20,8 @@ let config = {
     ]
 };
 
-describe( 'As a developer, I need an API for database connections', function( done ) {
-    it ( 'should build a handler for requests to connect/ping/disconnect to/from the database', ( ) => {
+describe( 'As a developer, I need an API for database connections', function( ) {
+    it ( 'should build a handler for requests to connect/ping/disconnect to/from the database', ( done ) => {
         let port = 1337 ;
         let server = new Server();
         let connectPath = "/database/connection/elasticsearch/connect";
@@ -53,6 +46,8 @@ describe( 'As a developer, I need an API for database connections', function( do
                 });
             });
         };
+
+        server.init( port, config, callback );
     });
 });
 
