@@ -138,6 +138,7 @@
       "description": "Elasticsearch service.",
       "databaseConnector": "elasticsearch.js",
       "generateConnectionAPI": true,
+      "generateTableAPI": true,
       "config": {
         "host": "localhost:9200",
         "log": "trace"
