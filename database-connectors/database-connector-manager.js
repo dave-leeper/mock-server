@@ -84,6 +84,38 @@ DatabaseConnectorManager.prototype.buildConnectionAPI = function ( Router, route
     router.get(disconnectPath, disconnectHandler);
 };
 
+DatabaseConnectorManager.prototype.buildTableAPI = function ( Router, router, databaseConnectionInfo ) {
+    let existsHandler = require("./api-builders/table-exists-builder.js")( Router, databaseConnectionInfo );
+    if (!existsHandler) {
+        if (log.will(log.ERROR)) {
+            log.error("Table exists handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
+        }
+    }
+    let createHandler = require("./api-builders/create-table-builder.js")( Router, databaseConnectionInfo );
+    if (!createHandler) {
+        if (log.will(log.ERROR)) {
+            log.error("Create table handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
+        }
+    }
+    let dropHandler = require("./api-builders/drop-table-builder.js")( Router, databaseConnectionInfo );
+    if (!dropHandler) {
+        if (log.will(log.ERROR)) {
+            log.error("Drop table handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
+        }
+    }
+    let paths = DatabaseConnectorManager.buildTableAPIPaths(databaseConnectionInfo.name);
+    let existsPath = paths[0];
+    let createPath = paths[1];
+    let dropPath = paths[2];
+
+    router.get(existsPath, existsHandler);
+    router.get(createPath, createHandler);
+    router.get(dropPath, dropHandler);
+};
+
 DatabaseConnectorManager.buildConnectionAPIPaths = function ( name ) {
     let paths = [];
     if ( !name ) {
@@ -95,6 +127,19 @@ DatabaseConnectorManager.buildConnectionAPIPaths = function ( name ) {
     paths.push("/database/connection/" + urlName + "/ping");
     paths.push("/database/connection/" + urlName + "/disconnect");
     return paths;
-}
+};
+
+DatabaseConnectorManager.buildTableAPIPaths = function ( name ) {
+    let paths = [];
+    if ( !name ) {
+        return paths;
+    }
+    let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+    paths.push("/table/exists/" + urlName);
+    paths.push("/table");
+    paths.push("/table/" + urlName);
+    return paths;
+};
 
 module.exports = DatabaseConnectorManager;
