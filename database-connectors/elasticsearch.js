@@ -17,7 +17,7 @@ function ElasticSearchDatabaseConnector ( name ) {
 // https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html
 
 ElasticSearchDatabaseConnector.prototype.connect = function ( config ) {
-    return new Promise (( inResolve ) => {
+    return new Promise (( inResolve, inReject ) => {
         // Elasticsearch mangles configs, so copy it.
         let configCopy = {};
         let prop;
@@ -25,17 +25,21 @@ ElasticSearchDatabaseConnector.prototype.connect = function ( config ) {
         for (prop in config.config) {
             configCopy[prop] = config.config[prop];
         }
-        this.client = new elasticsearch.Client(configCopy);
-        this.config = config;
-        inResolve && inResolve ( null, this.client );
+        try {
+            this.client = new elasticsearch.Client(configCopy);
+            this.config = config;
+            inResolve && inResolve ( null, this.client );
+        } catch (err) {
+            inReject && inReject ( { status: false, error: 'Error while connecting.' } );
+        }
     });
 };
 
 ElasticSearchDatabaseConnector.prototype.ping = function (  )
 {
-    return new Promise (( inResolve ) => {
+    return new Promise (( inResolve, inReject ) => {
         if (!this.client) {
-            inResolve && inResolve ( false );
+            inReject && inReject ( { status: false, error: 'Null client.' } );
         } else {
             this.client.ping({ requestTimeout: 30000 }, function( error ) {
                 if (error) {
@@ -49,19 +53,25 @@ ElasticSearchDatabaseConnector.prototype.ping = function (  )
 };
 
 ElasticSearchDatabaseConnector.prototype.disconnect = function ( ) {
-    return new Promise (( inResolve ) => {
+    return new Promise (( inResolve, inReject ) => {
         if (!this.client) {
-            inResolve && inResolve ( false );
+            inReject && inReject ( { status: false, error: 'Null client.' } );
         } else {
-            this.client.close();
-            inResolve && inResolve ( true );
+            try {
+                this.client.close();
+                inResolve && inResolve(true);
+            } catch (err) {
+                inReject && inReject ( { status: false, error: 'Error while disconnecting.' } );
+            }
         }
     });
 };
 
 ElasticSearchDatabaseConnector.prototype.tableExists = function ( name ) {
-    return new Promise (( inResolve ) => {
-        this.client.indices.exists({ index: name }).then(( exists ) => { inResolve && inResolve( exists ); });
+    return new Promise (( inResolve, inReject ) => {
+        this.client.indices.exists({ index: name })
+            .then(( exists ) => { inResolve && inResolve( exists ); })
+            .catch(( error ) => { inReject && inReject( { status: false, error: 'Error while checking table.' } )});
     });
 };
 
@@ -77,8 +87,7 @@ ElasticSearchDatabaseConnector.prototype.tableExists = function ( name ) {
  *             suggest: {
  *                 type: "completion",
  *                 analyzer: "simple",
- *                 search_analyzer: "simple",
- *                 payloads: true
+ *                 search_analyzer: "simple"
  *             }
  *         }
  *     }
@@ -86,27 +95,61 @@ ElasticSearchDatabaseConnector.prototype.tableExists = function ( name ) {
  * * @returns {Promise}
  */
 ElasticSearchDatabaseConnector.prototype.createTable = function ( mapping ) {
-    return new Promise (( inResolve ) => {
-        let existsFunc = ( exists ) => {
-            if ( exists ) {
-                inResolve && inResolve( false );
-                return;
-            }
+    return new Promise (( inResolve, inReject ) => {
+        let createFunc = () => {
             this.client.indices.create({ index: mapping.index }).then(() => {
                 this.client.indices.putMapping( mapping ).then(() => {
-                    inResolve && inResolve ( true );
-                }).error(() => { inResolve && inResolve( false ); })
-            }).error(() => { inResolve && inResolve( false ); });
+                    inResolve && inResolve ( { status: true } );
+                }).catch(() => { inReject && inReject( { status: false, error: 'Could not add mapping.' } ); })
+            }).catch(() => { inReject && inReject( { status: false, error: 'Could not create index.' } ); });
+        };
+        let existsFunc = ( exists ) => {
+            if ( exists ) {
+                inReject && inReject({ status: false, error: 'Index already exists.' });
+                return;
+            }
+            createFunc();
         };
 
+        if ( !this.validateMapping( mapping )) {
+            inReject && inReject({ status: false, error: 'Invalid mapping.' });
+            return;
+        }
         this.tableExists( mapping.index ).then(( exists ) => { existsFunc( exists ); });
     });
 };
 
 ElasticSearchDatabaseConnector.prototype.dropTable = function ( name ) {
-    return new Promise (( inResolve ) => {
-        this.client.indices.delete({ index: name }).then(( success ) => { inResolve && inResolve( success ); });
+    return new Promise (( inResolve, inReject ) => {
+        this.client.indices.delete({ index: name })
+            .then(( success ) => { inResolve && inResolve( success ); })
+            .catch(() => { inReject && inReject( { status: false, error: 'Index does not exist.' } ); });
     });
+};
+
+ElasticSearchDatabaseConnector.prototype.validateMapping = function ( mapping ) {
+    if (( !mapping )
+    || ( !mapping.index )
+    || ( !mapping.type )
+    || ( !mapping.body )
+    || ( !mapping.body.properties )) {
+        return false;
+    }
+    if (('string' !== typeof mapping.index)
+    || ('string' !== typeof mapping.type)
+    || ('object' !== typeof mapping.body)
+    || ('object' !== typeof mapping.body.properties)) {
+        return false;
+    }
+    for ( let prop in mapping.body.properties ) {
+        if ( !mapping.body.properties[prop].type ) {
+            return false;
+        }
+        if ( 'string' !== typeof mapping.body.properties[prop].type ) {
+            return false;
+        }
+    }
+    return true;
 };
 
 module.exports = ElasticSearchDatabaseConnector;
