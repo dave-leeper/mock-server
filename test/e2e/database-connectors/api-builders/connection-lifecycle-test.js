@@ -24,9 +24,9 @@ describe( 'As a developer, I need an API for database connections', function( ) 
     it ( 'should build a handler for requests to connect/ping/disconnect to/from the database', ( done ) => {
         let port = 1337 ;
         let server = new Server();
-        let connectPath = "/database/connection/elasticsearch/connect";
-        let pingPath = "/database/connection/elasticsearch/ping";
-        let disconnectPath = "/database/connection/elasticsearch/disconnect";
+        let connectPath = "/elasticsearch/database/connection/elasticsearch/connect";
+        let pingPath = "/elasticsearch/database/connection/elasticsearch/ping";
+        let disconnectPath = "/elasticsearch/database/connection/elasticsearch/disconnect";
         let connectBody = JSON.stringify({"databaseConnection":"elasticsearch","operation":"connect","isConnected":true});
         let ping1Body = JSON.stringify({"databaseConnection":"elasticsearch","operation":"ping","isConnected":true});
         let disconnectBody = JSON.stringify({"databaseConnection":"elasticsearch","operation":"disconnect","isConnected":false});
