@@ -34,15 +34,13 @@ describe( 'As a developer, I need need to obtain a list of database connections 
             "name":"elasticsearch",
             "description":"Elasticsearch service.",
             "path":[
-                "/database/connection/elasticsearch/connect",
-                "/database/connection/elasticsearch/ping",
-                "/database/connection/elasticsearch/disconnect"
+                "/elasticsearch/database/connection/elasticsearch/connect",
+                "/elasticsearch/database/connection/elasticsearch/ping",
+                "/elasticsearch/database/connection/elasticsearch/disconnect"
             ]
         }]);
         mockRequest.app.locals.___extra.serverConfig = config;
         databaseConnectionsMicroservice.do(mockRequest, mockResponse, mockServiceInfo);
-        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-        console.log(JSON.stringify(mockResponse.sendString));
         expect(mockResponse.sendString).to.be.equal(expectedResponse);
     });
 });
