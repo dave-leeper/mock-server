@@ -18,17 +18,19 @@ function DownloadService ( )
  */
 DownloadService.prototype.do = function ( req, res, serviceInfo )
 {
-    return new Promise (( inResolve ) => {
+    return new Promise (( inResolve, inReject ) => {
         const fileName = ((req.params.name)? req.params.name : "filename");
         const filePath = path.join(FILE_PATH, fileName);
 
         if ( !files.existsSync( filePath ) ) {
-            res.render("not-found", { title: fileName });
-            inResolve && inResolve ( null, this );
+            const error = { title: fileName };
+            res.render("not-found", error);
+            inReject && inReject ( error, null );
         } else {
+            const success = { status: "success", operation: "File download" };
             res.download(filePath);
 
-            inResolve && inResolve(null, this);
+            inResolve && inResolve(null, success);
         }
     });
 };
