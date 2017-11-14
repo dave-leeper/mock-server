@@ -14,15 +14,17 @@ function StopService ( )
  */
 StopService.prototype.do = function ( req, res, serviceInfo )
 {
-    return new Promise (( inResolve ) => {
+    return new Promise (( inResolve, inReject ) => {
         if ((!req.app) || (!req.app.locals) || (!req.app.locals.___extra) || (!req.app.locals.___extra.server)) {
-            res.send(JSON.stringify({ "response": "Server not found." }));
-            inResolve && inResolve ( null, this );
+            const error = { "response": "Server not found." };
+            res.send(JSON.stringify(error));
+            inResolve && inResolve ( null, error );
             return;
         }
 
-        res.send(JSON.stringify({ "response": "Server stopping." }));
-        req.app.locals.___extra.server.stop( () => { inResolve && inResolve ( null, this ) } );
+        const success = { "response": "Server stopping." };
+        res.send(JSON.stringify(success));
+        req.app.locals.___extra.server.stop( () => { inResolve && inResolve ( null, success ) } );
     });
 };
 
