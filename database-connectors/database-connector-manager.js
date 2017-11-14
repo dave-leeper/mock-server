@@ -123,9 +123,9 @@ DatabaseConnectorManager.buildConnectionAPIPaths = function ( name ) {
     }
     let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-    paths.push("/elasticsearch/database/connection/" + urlName + "/connect");
-        paths.push("/elasticsearch/database/connection/" + urlName + "/ping");
-    paths.push("/elasticsearch/database/connection/" + urlName + "/disconnect");
+    paths.push("/database/connection/" + urlName + "/connect");
+        paths.push("/database/connection/" + urlName + "/ping");
+    paths.push("/database/connection/" + urlName + "/disconnect");
     return paths;
 };
 
@@ -136,9 +136,9 @@ DatabaseConnectorManager.buildTableAPIPaths = function ( name ) {
     }
     let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-    paths.push("/elasticsearch/database/table/exists/" + urlName);
-    paths.push("/elasticsearch/database/table");
-    paths.push("/elasticsearch/database/table/" + urlName);
+    paths.push("/database/table/exists/" + urlName);
+    paths.push("/database/table");
+    paths.push("/database/table/" + urlName);
     return paths;
 };
 
