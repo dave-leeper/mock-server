@@ -130,7 +130,7 @@
       "path": "/uploadElasticSearchMapping",
       "name": "ElasticSearch Mapping File Upload",
       "description": "Uploads a mapping for an ElasticSearch index. The file was specified using upload.hbs",
-      "serviceFile": "./microservices/uploadElasticSearchMapping.js",
+      "serviceFile": "./microservices/upload-elastic-search-mapping.js",
       "databaseConnector": "elasticsearch"
     },
     {
