@@ -84,13 +84,13 @@
       "path": "/uploadfile",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload File"}
+      "hbsData": {"title": "Upload File", "action": "upload"}
     },
     {
-      "path": "/uploadElasticSearchMapping",
+      "path": "/uploadElasticSearchMappingFile",
       "response": "upload-elasticsearch-mapping.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload ElasticSearch Mapping"}
+      "hbsData": {"title": "Upload ElasticSearch Mapping", "action": "uploadElasticSearchMapping"}
     }
   ],
   "microservices": [
@@ -128,9 +128,10 @@
     {
       "verb": "POST",
       "path": "/uploadElasticSearchMapping",
-      "name": "File Upload",
-      "description": "Uploads a mapping for an ElasticSearch index. The file was specified using upload-elasticsearch-mapping.hbs",
-      "serviceFile": "./microservices/upload.js"
+      "name": "ElasticSearch Mapping File Upload",
+      "description": "Uploads a mapping for an ElasticSearch index. The file was specified using upload.hbs",
+      "serviceFile": "./microservices/uploadElasticSearchMapping.js",
+      "databaseConnector": "elasticsearch"
     },
     {
       "path": "/throw",
