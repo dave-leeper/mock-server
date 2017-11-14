@@ -19,7 +19,7 @@ function UploadService ( )
  */
 UploadService.prototype.do = function ( req, res, serviceInfo )
 {
-    return new Promise (( inResolve ) => {
+    return new Promise (( inResolve, inReject ) => {
         const fileName = ((req.params.name)? req.params.name : "filename");
         const filePath = path.join(FILE_PATH, fileName);
 
@@ -28,20 +28,23 @@ UploadService.prototype.do = function ( req, res, serviceInfo )
             req.pipe(req.busboy);
             req.busboy.on('file', function (fieldname, file, filename) {
                 if ( files.existsSync( FILE_PATH + filename ) ) {
-                    res.render("already-exists", { title: fileName });
-                    inResolve && inResolve ( null, this );
+                    const error = { title: fileName };
+                    res.render("already-exists", error);
+                    inReject && inReject ( error, null );
                     return;
                 }
                 fstream = fs.createWriteStream(FILE_PATH + filename);
                 file.pipe(fstream);
                 fstream.on('close', function () {
-                    res.render("upload-complete", {title: fileName});
-                    inResolve && inResolve(null, this);
+                    const success = {title: fileName};
+                    res.render("upload-complete", success);
+                    inResolve && inResolve(null, success);
                 });
             });
         } catch (err) {
-            res.render("error", { message: "Error uploading file.", error: { status: 500, stack: err.stack} });
-            inResolve && inResolve(null, this);
+            const error = { message: "Error uploading file.", error: { status: 500, stack: err.stack} };
+            res.render("error", error);
+            inReject && inReject(error, null);
         }
     });
 };
