@@ -34,8 +34,10 @@ MicroservicesService.prototype.do = function ( req, res, serviceInfo )
                     "description": service.description
                 });
             }
+            res.status(200);
             res.send(JSON.stringify(result));
         } else {
+            res.status(200);
             res.send(JSON.stringify({"response": "No registered microservices"}));
         }
         inResolve && inResolve ( null, this );
