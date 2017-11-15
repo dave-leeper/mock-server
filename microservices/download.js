@@ -24,10 +24,12 @@ DownloadService.prototype.do = function ( req, res, serviceInfo )
 
         if ( !files.existsSync( filePath ) ) {
             const error = { title: fileName };
+            res.status(500);
             res.render("not-found", error);
             inReject && inReject ( error, null );
         } else {
             const success = { status: "success", operation: "File download" };
+            res.status(200);
             res.download(filePath);
 
             inResolve && inResolve(null, success);
