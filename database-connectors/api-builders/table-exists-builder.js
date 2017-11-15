@@ -22,13 +22,14 @@ function TableExistsBuilder ( routerClass, databaseConnectionInfo ) {
             return;
         }
 
-        databaseConnection.tableExists( tableName ).then(( exists ) => {
-            res.status(200);
-            res.send({ table: tableName, exists: exists });
-        }).catch(( err ) => {
-            res.status(500);
-            res.render("error", { message: "Error accessing " + tableName + ".", error: { status: 500, stack: err.stack }});
-        });
+        databaseConnection.tableExists( tableName )
+            .then(( exists ) => {
+                res.status(200);
+                res.send({ table: tableName, exists: exists });
+            }).catch(( err ) => {
+                res.status(500);
+                res.render("error", { message: "Error accessing " + tableName + ".", error: { status: 500, stack: err.stack }});
+            });
     };
 
     return tableExistsHandler;
