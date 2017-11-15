@@ -29,10 +29,12 @@ DatabaseConnectorManager.prototype.connect = function ( config ) {
 DatabaseConnectorManager.prototype.disconnect = function ( ) {
     let promises = [];
 
-    for (let loop = 0; loop < this.databaseConnectors.length; loop++) {
-        let databaseConnector = this.databaseConnectors[loop];
+    if ( this.databaseConnectors ) {
+        for (let loop = 0; loop < this.databaseConnectors.length; loop++) {
+            let databaseConnector = this.databaseConnectors[loop];
 
-        promises.push(databaseConnector.disconnect());
+            promises.push(databaseConnector.disconnect());
+        }
     }
     return Promise.all(promises);
 };
@@ -112,8 +114,8 @@ DatabaseConnectorManager.prototype.buildTableAPI = function ( Router, router, da
     let dropPath = paths[2];
 
     router.get(existsPath, existsHandler);
-    router.get(createPath, createHandler);
-    router.get(dropPath, dropHandler);
+    router.post(createPath, createHandler);
+    router.delete(dropPath, dropHandler);
 };
 
 DatabaseConnectorManager.buildConnectionAPIPaths = function ( name ) {
@@ -123,9 +125,9 @@ DatabaseConnectorManager.buildConnectionAPIPaths = function ( name ) {
     }
     let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-    paths.push("/database/connection/" + urlName + "/connect");
-        paths.push("/database/connection/" + urlName + "/ping");
-    paths.push("/database/connection/" + urlName + "/disconnect");
+    paths.push("/" + urlName + "/database/connection" + "/connect");
+    paths.push("/" + urlName + "/database/connection" + "/ping");
+    paths.push("/" + urlName + "/database/connection" + "/disconnect");
     return paths;
 };
 
@@ -136,9 +138,9 @@ DatabaseConnectorManager.buildTableAPIPaths = function ( name ) {
     }
     let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-    paths.push("/database/table/exists/" + urlName);
-    paths.push("/database/table");
-    paths.push("/database/table/" + urlName);
+    paths.push("/" + urlName + "/database/table/exists");
+    paths.push("/" + urlName + "/database/table");
+    paths.push("/" + urlName + "/database/table");
     return paths;
 };
 
