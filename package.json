@@ -6,12 +6,13 @@
     "start": "node ./app"
   },
   "dependencies": {
-    "elasticsearch": "13.3.1",
     "body-parser": "1.18.2",
     "connect-busboy": "0.0.2",
     "cookie-parser": "1.4.3",
     "debug": "2.6.9",
+    "elasticsearch": "13.3.1",
     "express": "4.15.5",
+    "express-fileupload": "^0.3.0",
     "fs-extra": "4.0.2",
     "hbs": "4.0.1",
     "log4js": "2.3.5",
