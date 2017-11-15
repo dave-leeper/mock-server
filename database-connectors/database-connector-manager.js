@@ -138,9 +138,9 @@ DatabaseConnectorManager.buildTableAPIPaths = function ( name ) {
     }
     let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-    paths.push("/" + urlName + "/database/table/exists");
+    paths.push("/" + urlName + "/database/table/:name/exists");
     paths.push("/" + urlName + "/database/table");
-    paths.push("/" + urlName + "/database/table");
+    paths.push("/" + urlName + "/database/table/:name");
     return paths;
 };
 
