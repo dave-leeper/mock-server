@@ -21,10 +21,11 @@ function PingBuilder ( routerClass, databaseConnectionInfo ) {
             return;
         }
 
-        databaseConnection.ping(databaseConnectionInfo).then((result) => {
-            res.status(200);
-            res.send({databaseConnection: databaseConnectionInfo.name, operation: "ping", isConnected: result});
-        });
+        databaseConnection.ping(databaseConnectionInfo)
+            .then((result) => {
+                res.status(200);
+                res.send({databaseConnection: databaseConnectionInfo.name, operation: "ping", isConnected: result});
+            });
     };
 
     return pingHandler;
