@@ -21,10 +21,11 @@ function ConnectBuilder ( routerClass, databaseConnectionInfo ) {
             return;
         }
 
-        databaseConnection.connect(databaseConnectionInfo).then(() => {
-            res.status(200);
-            res.send({databaseConnection: databaseConnectionInfo.name, operation: "connect", isConnected: true});
-        });
+        databaseConnection.connect(databaseConnectionInfo)
+            .then(() => {
+                res.status(200);
+                res.send({databaseConnection: databaseConnectionInfo.name, operation: "connect", isConnected: true});
+            });
     };
 
     return connectHandler;
