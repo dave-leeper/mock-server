@@ -40,8 +40,10 @@ DatabaseConnectionsService.prototype.do = function ( req, res, serviceInfo )
                     "path": paths
                 });
             }
+            res.status(200);
             res.send(JSON.stringify(result));
         } else {
+            res.status(200);
             res.send(JSON.stringify({"response": "No registered database connections"}));
         }
         inResolve && inResolve ( null, this );
