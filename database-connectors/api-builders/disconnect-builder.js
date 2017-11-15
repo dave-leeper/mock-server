@@ -21,10 +21,11 @@ function DisconnectBuilder ( routerClass, databaseConnectionInfo ) {
             return;
         }
 
-        databaseConnection.disconnect(databaseConnectionInfo).then(() => {
-            res.status(200);
-            res.send({databaseConnection: databaseConnectionInfo.name, operation: "disconnect", isConnected: false});
-        });
+        databaseConnection.disconnect(databaseConnectionInfo)
+            .then(() => {
+                res.status(200);
+                res.send({databaseConnection: databaseConnectionInfo.name, operation: "disconnect", isConnected: false});
+            });
     };
 
     return disconnectHandler;
