@@ -9,6 +9,7 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const busboy = require('connect-busboy')
+const fileUpload = require('express-fileupload');
 const Router = require('./router');
 
 /**
@@ -40,6 +41,7 @@ Server.prototype.init = function ( port, config, callback )
     this.express.use(cookieParser());
     this.express.use(express.static(path.join(__dirname, 'public')));
     this.express.use(busboy());
+    this.express.use(fileUpload());
 
     // app.use('/', index);
     this.express.use('/', Router.connect( router, config ));
