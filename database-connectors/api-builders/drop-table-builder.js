@@ -22,13 +22,14 @@ function DropTableBuilder ( routerClass, databaseConnectionInfo ) {
             return;
         }
 
-        databaseConnection.dropTable( tableName ).then(( dropResult ) => {
-            res.status(200);
-            res.send({ table: tableName, dropped: dropResult.acknowledged });
-        }).catch( (err) => {
-            res.status(500);
-            res.render("error", { message: "Error dropping " + tableName + ".", error: { status: 500, stack: err.stack }});
-        });
+        databaseConnection.dropTable( tableName )
+            .then(( dropResult ) => {
+                res.status(200);
+                res.send({ table: tableName, dropped: dropResult.acknowledged });
+            }).catch((err) => {
+                res.status(500);
+                res.render("error", { message: "Error dropping " + tableName + ".", error: { status: 500, stack: err.stack }});
+            });
     };
 
     return dropTableHandler;
