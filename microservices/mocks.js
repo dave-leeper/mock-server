@@ -34,8 +34,10 @@ MocksMicroservice.prototype.do = function (req, res, serviceInfo )
                     "responseType": mock.responseType
                 });
             }
+            res.status(200);
             res.send(JSON.stringify(result));
         } else {
+            res.status(200);
             res.send(JSON.stringify({"response": "No registered mocks"}));
         }
         inResolve && inResolve ( null, this );
