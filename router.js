@@ -119,7 +119,7 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
             } else if ("PATCH" === verb) {
                 router.patch(microservice.path, handler);
             } else if ("DELETE" === verb) {
-                router.delete(microservice.path, handler);
+                router.del(microservice.path, handler);
             } else if ("OPTIONS" === verb) {
                 router.opt(microservice.path, handler);
             }
