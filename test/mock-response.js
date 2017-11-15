@@ -8,6 +8,7 @@ function MockResponse ( )
     this.sendString = null;
     this.renderString = null;
     this.renderObject = null;
+    this.sendStatus = 0;
     this.headers = [];
 }
 
@@ -36,6 +37,14 @@ MockResponse.prototype.render = function ( render, object )
 MockResponse.prototype.header = function ( name, value )
 {
     this.headers.push({name: name, value: value});
+};
+
+/**
+ * @param status {Integer} - The status.
+ */
+MockResponse.prototype.status = function ( status )
+{
+    this.sendStatus = status;
 };
 
 module.exports = MockResponse;
