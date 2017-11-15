@@ -29,6 +29,7 @@ UploadService.prototype.do = function ( req, res, serviceInfo )
             req.busboy.on('file', function (fieldname, file, filename) {
                 if ( files.existsSync( FILE_PATH + filename ) ) {
                     const error = { title: fileName };
+                    res.status(500);
                     res.render("already-exists", error);
                     inReject && inReject ( error, null );
                     return;
@@ -37,12 +38,14 @@ UploadService.prototype.do = function ( req, res, serviceInfo )
                 file.pipe(fstream);
                 fstream.on('close', function () {
                     const success = {title: fileName};
+                    res.status(200);
                     res.render("upload-complete", success);
                     inResolve && inResolve(null, success);
                 });
             });
         } catch (err) {
             const error = { message: "Error uploading file.", error: { status: 500, stack: err.stack} };
+            res.status(500);
             res.render("error", error);
             inReject && inReject(error, null);
         }
