@@ -39,7 +39,7 @@ ElasticSearchDatabaseConnector.prototype.ping = function (  )
 {
     return new Promise (( inResolve, inReject ) => {
         if (!this.client) {
-            inReject && inReject ( { status: false, error: 'Null client.' } );
+            inReject && inReject ( { status: "Error", error: 'Null client.' } );
         } else {
             this.client.ping({ requestTimeout: 30000 }, function( error ) {
                 if (error) {
