@@ -23,9 +23,15 @@ DownloadService.prototype.do = function ( req, res, serviceInfo )
         const filePath = path.join(FILE_PATH, fileName);
 
         if ( !files.existsSync( filePath ) ) {
-            const error = { title: fileName };
-            res.status(500);
-            res.render("not-found", error);
+            const error = {
+                title: fileName,
+                message: "File Not Found.",
+                error: {
+                    status: 404
+                }
+            };
+            res.status(404);
+            res.render("error", error);
             inReject && inReject ( error, null );
         } else {
             const success = { status: "success", operation: "File download" };
