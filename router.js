@@ -149,7 +149,14 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
 };
 
 Router.defaultResponse = function ( res ) {
-    res.render('not-found', {title: 'File Not Found'});
+    const error = {
+        title: "Not Found",
+        message: "File Not Found.",
+        error: {
+            status: 404
+        }
+    };
+    res.render('error', error);
 };
 
 Router.addHeaders = function ( configRecord, res ) {
@@ -166,7 +173,14 @@ Router.___buildJSONFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
         if (!files.existsSync(mock.response)) {
-            res.render("not-found", null);
+            const error = {
+                title: mock.response,
+                message: "File Not Found.",
+                error: {
+                    status: 404
+                }
+            };
+            res.render("error", error);
             return;
         }
 
@@ -190,7 +204,14 @@ Router.___buildTextFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
         if (!files.existsSync(mock.response)) {
-            res.render("not-found", null);
+            const error = {
+                title: mock.response,
+                message: "File Not Found.",
+                error: {
+                    status: 404
+                }
+            };
+            res.render("error", error);
             return;
         }
 
@@ -207,7 +228,14 @@ Router.___buildJSONFileHandlerFromArrayOfStrings = function (mock ) {
 
         Router.addHeaders(mock, res);
         if (!files.existsSync(mock.response[index])) {
-            res.render("not-found", null);
+            const error = {
+                title: mock.response,
+                message: "File Not Found.",
+                error: {
+                    status: 404
+                }
+            };
+            res.render("error", error);
             return;
         }
 
@@ -237,7 +265,14 @@ Router.___buildTextFileHandlerFromArrayOfStrings = function ( mock ) {
 
         Router.addHeaders(mock, res);
         if (!files.existsSync(mock.response[index])) {
-            res.render("not-found", null);
+            const error = {
+                title: mock.response,
+                message: "File Not Found.",
+                error: {
+                    status: 404
+                }
+            };
+            res.render("error", error);
             return;
         }
 
