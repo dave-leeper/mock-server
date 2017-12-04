@@ -58,14 +58,14 @@ let config = {
         },
         {
             "path": "/hbs-string-array",
-            "response": [ "index.hbs", "not-found.hbs" ],
+            "response": [ "index.hbs", "error.hbs" ],
             "responseType": "HBS",
             "hbsData": [ {"title": "Index"}, {"title": "Not Found"} ],
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
         {
             "path": "/text-string-array",
-            "response": [ "./views/index.hbs", "./views/not-found.hbs" ],
+            "response": [ "./views/index.hbs", "./views/error.hbs" ],
             "responseType": "TEXT",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
@@ -180,10 +180,10 @@ describe( 'As a developer, I need need to run mock services.', function()
     it ( 'should return not found if the json file for a mock service does not exist', ( done ) => {
         let port = 1337;
         let server = new Server();
-        let jsonResponse = "\"<!DOCTYPE html>\\n<html>\\n  <head>\\n    <title></title>\\n    <link rel='stylesheet' href='/stylesheets/style.css' />\\n  </head>\\n  <body>\\n    <h1></h1>\\n<p>404 File Not Found</p>\\n\\n  </body>\\n</html>\\n\"";
+        let textResponse = "<!DOCTYPE html>\n<html>\n  <head>\n    <title>./JUNK.json</title>\n    <link rel='stylesheet' href='/stylesheets/style.css' />\n  </head>\n  <body>\n    <h1>./JUNK.json</h1>\n<h2>File Not Found.</h2>\n<h2>404</h2>\n<pre></pre>\n  </body>\n</html>\n";
         let serverInitCallback = () => {
             request('http://localhost:' + port + "/json-junk", { json: true }, (err, res, body) => {
-                expect(JSON.stringify(body)).to.be.equal(jsonResponse);
+                expect(body).to.be.equal(textResponse);
                 server.stop(() => { done(); });
             });
         };
@@ -206,10 +206,10 @@ describe( 'As a developer, I need need to run mock services.', function()
     it ( 'should return not found if the text file for a mock service does not exist', ( done ) => {
         let port = 1337;
         let server = new Server();
-        let jsonResponse = "\"<!DOCTYPE html>\\n<html>\\n  <head>\\n    <title></title>\\n    <link rel='stylesheet' href='/stylesheets/style.css' />\\n  </head>\\n  <body>\\n    <h1></h1>\\n<p>404 File Not Found</p>\\n\\n  </body>\\n</html>\\n\"";
+        let textResponse = "<!DOCTYPE html>\n<html>\n  <head>\n    <title>./JUNK.tex</title>\n    <link rel='stylesheet' href='/stylesheets/style.css' />\n  </head>\n  <body>\n    <h1>./JUNK.tex</h1>\n<h2>File Not Found.</h2>\n<h2>404</h2>\n<pre></pre>\n  </body>\n</html>\n";
         let serverInitCallback = () => {
             request('http://localhost:' + port + "/text-junk", { json: true }, (err, res, body) => {
-                expect(JSON.stringify(body)).to.be.equal(jsonResponse);
+                expect(body).to.be.equal(textResponse);
                 server.stop(() => { done(); });
             });
         };
@@ -272,15 +272,17 @@ describe( 'As a developer, I need need to run mock services.', function()
     it ( 'should loop through an array of text files', ( done ) => {
         let port = 1337;
         let server = new Server();
-        let jsonResponse = "\"<h1>{{title}}</h1>\\n<p>Welcome to {{title}}</p>\\n\"";
-        let jsonResponse2 = "\"<h1>{{title}}</h1>\\n<p>404 File Not Found</p>\\n\"";
+        let textResponse = "\"<h1>{{title}}</h1>\\n<p>Welcome to {{title}}</p>\\n\"";
+        let textResponse2 = "<h1>{{title}}</h1>\n<h2>{{message}}</h2>\n<h2>{{error.status}}</h2>\n<pre>{{error.stack}}</pre>";
         let serverInitCallback = () => {
             request('http://localhost:' + port + "/text-string-array", { json: true }, (err, res, body) => {
-                expect(JSON.stringify(body)).to.be.equal(jsonResponse);
+                expect(JSON.stringify(body)).to.be.equal(textResponse);
                 request('http://localhost:' + port + "/text-string-array", { json: true }, (err, res, body) => {
-                    expect(JSON.stringify(body)).to.be.equal(jsonResponse2);
+                    console.log("XXXXXXXXXX");
+                    console.log(body);
+                    expect(body).to.be.equal(textResponse2);
                     request('http://localhost:' + port + "/text-string-array", { json: true }, (err, res, body) => {
-                        expect(JSON.stringify(body)).to.be.equal(jsonResponse);
+                        expect(JSON.stringify(body)).to.be.equal(textResponse);
                         server.stop(() => { done(); });
                     });
                 });
