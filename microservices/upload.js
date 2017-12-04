@@ -28,9 +28,15 @@ UploadService.prototype.do = function ( req, res, serviceInfo )
             req.pipe(req.busboy);
             req.busboy.on('file', function (fieldname, file, filename) {
                 if ( files.existsSync( FILE_PATH + filename ) ) {
-                    const error = { title: fileName };
+                    const error = {
+                        title: fileName,
+                        message: "Conflict: File Already Exists.",
+                        error: {
+                            status: 409
+                        }
+                    };
                     res.status(500);
-                    res.render("already-exists", error);
+                    res.render("error", error);
                     inReject && inReject ( error, null );
                     return;
                 }
