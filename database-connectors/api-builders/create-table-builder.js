@@ -30,6 +30,13 @@ function CreateTableBuilder( routerClass, databaseConnectionInfo )
                 res.render("error", error);
                 return;
             }
+            for (const field in req) {
+                console.log("XXXXXXXXXX field: " + field);
+            }
+            for (const bodyfield in req.body) {
+                console.log("XXXXXXXXXX field: " + bodyfield);
+            }
+            console.log("XXXXXXXXXX req.body: " + JSON.stringify(req.body));
             if ((!req.files)
             || (!req.files.fileUploaded)
             || (!req.files.fileUploaded.data)) {
