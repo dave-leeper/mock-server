@@ -55,21 +55,21 @@ DatabaseConnectorManager.prototype.getConnector = function ( name ) {
 };
 
 DatabaseConnectorManager.prototype.buildConnectionAPI = function ( Router, router, databaseConnectionInfo ) {
-    let connectHandler = require("./api-builders/connect-builder.js")( Router, databaseConnectionInfo );
+    let connectHandler = require("./api-builders/database-connect-builder.js")( Router, databaseConnectionInfo );
     if (!connectHandler) {
         if (log.will(log.ERROR)) {
             log.error("Connect handler not defined for database connection " + databaseConnectionInfo.path + ".");
             return;
         }
     }
-    let pingHandler = require("./api-builders/ping-builder.js")( Router, databaseConnectionInfo );
+    let pingHandler = require("./api-builders/database-ping-builder.js")( Router, databaseConnectionInfo );
     if (!pingHandler) {
         if (log.will(log.ERROR)) {
             log.error("Ping handler not defined for database connection " + databaseConnectionInfo.path + ".");
             return;
         }
     }
-    let disconnectHandler = require("./api-builders/disconnect-builder.js")( Router, databaseConnectionInfo );
+    let disconnectHandler = require("./api-builders/database-disconnect-builder.js")( Router, databaseConnectionInfo );
     if (!disconnectHandler) {
         if (log.will(log.ERROR)) {
             log.error("Disconnect handler not defined for database connection " + databaseConnectionInfo.path + ".");
@@ -94,14 +94,14 @@ DatabaseConnectorManager.prototype.buildTableAPI = function ( Router, router, da
             return;
         }
     }
-    let createHandler = require("./api-builders/create-table-builder.js")( Router, databaseConnectionInfo );
+    let createHandler = require("./api-builders/table-create-builder.js")( Router, databaseConnectionInfo );
     if (!createHandler) {
         if (log.will(log.ERROR)) {
             log.error("Create table handler not defined for database connection " + databaseConnectionInfo.path + ".");
             return;
         }
     }
-    let dropHandler = require("./api-builders/drop-table-builder.js")( Router, databaseConnectionInfo );
+    let dropHandler = require("./api-builders/table-drop-builder.js")( Router, databaseConnectionInfo );
     if (!dropHandler) {
         if (log.will(log.ERROR)) {
             log.error("Drop table handler not defined for database connection " + databaseConnectionInfo.path + ".");
@@ -116,6 +116,47 @@ DatabaseConnectorManager.prototype.buildTableAPI = function ( Router, router, da
     router.get(existsPath, existsHandler);
     router.post(createPath, createHandler);
     router.delete(dropPath, dropHandler);
+};
+
+DatabaseConnectorManager.prototype.buildDataAPI = function ( Router, router, databaseConnectionInfo ) {
+    let insertHandler = require("./api-builders/data-insert-builder.js")( Router, databaseConnectionInfo );
+    if (!insertHandler) {
+        if (log.will(log.ERROR)) {
+            log.error("Data insert handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
+        }
+    }
+    let updateHandler = require("./api-builders/data-update-builder.js")( Router, databaseConnectionInfo );
+    if (!updateHandler) {
+        if (log.will(log.ERROR)) {
+            log.error("Data update handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
+        }
+    }
+    let deleteHandler = require("./api-builders/data-delete-builder.js")( Router, databaseConnectionInfo );
+    if (!deleteHandler) {
+        if (log.will(log.ERROR)) {
+            log.error("Data delete handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
+        }
+    }
+    let queryHandler = require("./api-builders/data-query-builder.js")( Router, databaseConnectionInfo );
+    if (!queryHandler) {
+        if (log.will(log.ERROR)) {
+            log.error("Data query handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
+        }
+    }
+    let paths = DatabaseConnectorManager.buildDataAPIPaths(databaseConnectionInfo.name);
+    let insertPath = paths[0];
+    let updatePath = paths[1];
+    let deletePath = paths[2];
+    let queryPath = paths[3];
+
+    router.get(insertPath, insertHandler);
+    router.post(updatePath, updateHandler);
+    router.delete(deletePath, deleteHandler);
+    router.delete(queryPath, queryHandler);
 };
 
 DatabaseConnectorManager.buildConnectionAPIPaths = function ( name ) {
@@ -141,6 +182,20 @@ DatabaseConnectorManager.buildTableAPIPaths = function ( name ) {
     paths.push("/" + urlName + "/database/table/:name/exists");
     paths.push("/" + urlName + "/database/table");
     paths.push("/" + urlName + "/database/table/:name");
+    return paths;
+};
+
+DatabaseConnectorManager.buildDataAPIPaths = function ( name ) {
+    let paths = [];
+    if ( !name ) {
+        return paths;
+    }
+    let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+    paths.push("/" + urlName + "/database/table/:name");
+    paths.push("/" + urlName + "/database/table/:name");
+    paths.push("/" + urlName + "/database/table/:name");
+    paths.push("/" + urlName + "/database/table/:name/query");
     return paths;
 };
 
