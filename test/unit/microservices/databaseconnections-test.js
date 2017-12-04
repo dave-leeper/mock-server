@@ -42,6 +42,7 @@ describe( 'As a developer, I need need to obtain a list of database connections 
         mockRequest.app.locals.___extra.serverConfig = config;
         databaseConnectionsMicroservice.do(mockRequest, mockResponse, mockServiceInfo);
         expect(mockResponse.sendString).to.be.equal(expectedResponse);
+        expect(mockResponse.sendStatus).to.be.equal(200);
     });
 });
 
