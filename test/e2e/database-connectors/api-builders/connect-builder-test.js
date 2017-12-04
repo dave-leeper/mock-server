@@ -6,7 +6,7 @@ let chai = require( 'chai' ),
     Router = require('../../../../router.js'),
     mockRequest = require('../../../mock-request.js'),
     mockResponse = require('../../../mock-response.js'),
-    connectionHandlerBuilder = require('../../../../database-connectors/api-builders/connect-builder.js'),
+    connectionHandlerBuilder = require('../../../../database-connectors/api-builders/database-connect-builder.js'),
     DatabaseConnectorManager = require('../../../../database-connectors/database-connector-manager.js');
 let config = {
     "databaseConnections" : [
