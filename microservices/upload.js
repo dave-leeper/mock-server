@@ -43,10 +43,10 @@ UploadService.prototype.do = function ( req, res, serviceInfo )
                 fstream = fs.createWriteStream(FILE_PATH + filename);
                 file.pipe(fstream);
                 fstream.on('close', function () {
-                    const success = {title: fileName};
+                    const message = {title: fileName, message: "Upload complete.", status: 200};
                     res.status(200);
-                    res.render("upload-complete", success);
-                    inResolve && inResolve(null, success);
+                    res.render("message", message);
+                    inResolve && inResolve(null, message);
                 });
             });
         } catch (err) {
