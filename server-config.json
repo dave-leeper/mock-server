@@ -39,7 +39,7 @@
     },
     {
       "path": "/hbs-string-array",
-      "response": [ "index.hbs", "not-found.hbs" ],
+      "response": [ "index.hbs", "error.hbs" ],
       "responseType": "HBS",
       "hbsData": [ {"title": "Index"}, {"title": "Not Found"} ],
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
@@ -52,7 +52,7 @@
     },
     {
       "path": "/text-string-array",
-      "response": [ "./views/index.hbs", "./views/not-found.hbs" ],
+      "response": [ "./views/index.hbs", "./views/error.hbs" ],
       "responseType": "TEXT",
       "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     },
