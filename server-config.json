@@ -145,6 +145,7 @@
       "databaseConnector": "elasticsearch.js",
       "generateConnectionAPI": true,
       "generateTableAPI": true,
+      "generateDataAPI": true,
       "config": {
         "host": "localhost:9200",
         "log": "trace"
