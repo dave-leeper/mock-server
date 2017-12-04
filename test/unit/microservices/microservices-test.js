@@ -36,6 +36,7 @@ describe( 'As a developer, I need need to obtain a list of microservices that ar
         mockRequest.app.locals.___extra.serverConfig = config;
         microservicesMicroservice.do(mockRequest, mockResponse, mockServiceInfo);
         expect(mockResponse.sendString).to.be.equal(expectedResponse);
+        expect(mockResponse.sendStatus).to.be.equal(200);
     });
 });
 
