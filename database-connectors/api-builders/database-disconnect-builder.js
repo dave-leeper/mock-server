@@ -1,6 +1,6 @@
 'use strict';
 
-function DisconnectBuilder ( routerClass, databaseConnectionInfo ) {
+function DatabaseDisconnectBuilder ( routerClass, databaseConnectionInfo ) {
     let disconnectHandler = (req, res) => {
         routerClass.addHeaders(databaseConnectionInfo, res);
 
@@ -31,4 +31,4 @@ function DisconnectBuilder ( routerClass, databaseConnectionInfo ) {
     return disconnectHandler;
 }
 
-module.exports = DisconnectBuilder;
+module.exports = DatabaseDisconnectBuilder;
