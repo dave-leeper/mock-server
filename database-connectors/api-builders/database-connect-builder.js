@@ -1,6 +1,6 @@
 'use strict';
 
-function ConnectBuilder ( routerClass, databaseConnectionInfo ) {
+function DatabaseConnectBuilder ( routerClass, databaseConnectionInfo ) {
     let connectHandler = (req, res) => {
         routerClass.addHeaders(databaseConnectionInfo, res);
 
@@ -31,4 +31,4 @@ function ConnectBuilder ( routerClass, databaseConnectionInfo ) {
     return connectHandler;
 }
 
-module.exports = ConnectBuilder;
+module.exports = DatabaseConnectBuilder;
