@@ -1,6 +1,6 @@
 'use strict';
 
-function CreateTableBuilder( routerClass, databaseConnectionInfo )
+function TableCreateBuilder( routerClass, databaseConnectionInfo )
 {
     let createTableHandler = (req, res) => {
         routerClass.addHeaders(databaseConnectionInfo, res);
@@ -68,4 +68,4 @@ function CreateTableBuilder( routerClass, databaseConnectionInfo )
     return createTableHandler;
 }
 
-module.exports = CreateTableBuilder;
+module.exports = TableCreateBuilder;
