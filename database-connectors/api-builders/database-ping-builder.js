@@ -1,6 +1,6 @@
 'use strict';
 
-function PingBuilder ( routerClass, databaseConnectionInfo ) {
+function DatabasePingBuilder ( routerClass, databaseConnectionInfo ) {
     let pingHandler = (req, res) => {
         routerClass.addHeaders(databaseConnectionInfo, res);
 
@@ -31,4 +31,4 @@ function PingBuilder ( routerClass, databaseConnectionInfo ) {
     return pingHandler;
 }
 
-module.exports = PingBuilder;
+module.exports = DatabasePingBuilder;
