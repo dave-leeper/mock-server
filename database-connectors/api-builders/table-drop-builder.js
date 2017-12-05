@@ -1,6 +1,6 @@
 'use strict';
 
-function DropTableBuilder ( routerClass, databaseConnectionInfo ) {
+function TableDropBuilder ( routerClass, databaseConnectionInfo ) {
     let dropTableHandler = (req, res) => {
         routerClass.addHeaders(databaseConnectionInfo, res);
 
@@ -35,4 +35,4 @@ function DropTableBuilder ( routerClass, databaseConnectionInfo ) {
     return dropTableHandler;
 }
 
-module.exports = DropTableBuilder;
+module.exports = TableDropBuilder;
