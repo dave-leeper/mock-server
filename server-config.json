@@ -87,10 +87,10 @@
       "hbsData": {"title": "Upload File", "action": "upload"}
     },
     {
-      "path": "/elasticsearch/database/table/mapping/upload",
+      "path": "/elasticsearch/table/mapping/upload",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload ElasticSearch Mapping", "action": "/elasticsearch/database/table"}
+      "hbsData": {"title": "Upload ElasticSearch Mapping", "action": "/elasticsearch/table"}
     }
   ],
   "microservices": [
