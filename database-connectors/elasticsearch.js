@@ -152,4 +152,39 @@ ElasticSearchDatabaseConnector.prototype.validateMapping = function ( mapping ) 
     return true;
 };
 
-module.exports = ElasticSearchDatabaseConnector;
+ElasticSearchDatabaseConnector.prototype.insert = function ( data ) {
+    return new Promise (( inResolve, inReject ) => {
+        this.client.indices.delete({ index: name })
+            .then(( success ) => { inResolve && inResolve( success ); })
+            .catch(() => { inReject && inReject( { status: false, error: 'Index does not exist.' } ); });
+    });
+};
+
+ElasticSearchDatabaseConnector.prototype.update = function ( data, whereClause ) {
+    return new Promise (( inResolve, inReject ) => {
+        this.client.indices.delete({ index: name })
+            .then(( success ) => { inResolve && inResolve( success ); })
+            .catch(() => { inReject && inReject( { status: false, error: 'Index does not exist.' } ); });
+    });
+};
+
+ElasticSearchDatabaseConnector.prototype.delete = function ( data, whereClause ) {
+    return new Promise (( inResolve, inReject ) => {
+        this.client.indices.delete({ index: name })
+            .then(( success ) => { inResolve && inResolve( success ); })
+            .catch(() => { inReject && inReject( { status: false, error: 'Index does not exist.' } ); });
+    });
+};
+
+ElasticSearchDatabaseConnector.prototype.read = function ( whereClause ) {
+    return new Promise (( inResolve, inReject ) => {
+        this.client.indices.delete({ index: name })
+            .then(( success ) => { inResolve && inResolve( success ); })
+            .catch(() => { inReject && inReject( { status: false, error: 'Index does not exist.' } ); });
+    });
+};
+
+// GET chapter3/_mapping
+// GET chapter3/user/_mapping
+// GET chapter3/order/_search?q=iphone
+// GET chapter3/order/_search?q=item_title:iphone
