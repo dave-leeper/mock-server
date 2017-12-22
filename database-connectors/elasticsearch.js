@@ -184,6 +184,8 @@ ElasticSearchDatabaseConnector.prototype.read = function ( whereClause ) {
     });
 };
 
+module.exports = ElasticSearchDatabaseConnector;
+
 // GET chapter3/_mapping
 // GET chapter3/user/_mapping
 // GET chapter3/order/_search?q=iphone
