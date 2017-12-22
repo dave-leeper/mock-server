@@ -17,8 +17,8 @@ function TableDropBuilder ( routerClass, databaseConnectionInfo ) {
         let databaseConnectionManager = req.app.locals.___extra.databaseConnectionManager;
         let databaseConnection = databaseConnectionManager.getConnector(databaseConnectionInfo.name);
         if (!databaseConnection) {
-            res.status(500);
-            res.render("error", {message: "No database connection.", error: {status: 500}});
+            const error = {message: "No database connection.", error: {status: 500}};
+            routerClass.sendErrorResponse(error, res);
             return;
         }
 
@@ -27,8 +27,8 @@ function TableDropBuilder ( routerClass, databaseConnectionInfo ) {
                 res.status(200);
                 res.send({ table: tableName, dropped: dropResult.acknowledged });
             }).catch((err) => {
-                res.status(500);
-                res.render("error", { message: "Error dropping " + tableName + ".", error: { status: 500, stack: err.stack }});
+                const error = { message: "Error dropping " + tableName + ".", error: { status: 500, stack: err.stack }};
+                routerClass.sendErrorResponse(error, res);
             });
     };
 
