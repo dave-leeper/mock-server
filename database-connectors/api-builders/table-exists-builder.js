@@ -13,7 +13,7 @@ function TableExistsBuilder ( routerClass, databaseConnectionInfo ) {
             res.render("error", {message: "No database connection manager.", error: {status: 500}});
             return;
         }
-        let tableName = req.params.name;
+        let tableName = req.params.index;
         let databaseConnectionManager = req.app.locals.___extra.databaseConnectionManager;
         let databaseConnection = databaseConnectionManager.getConnector(databaseConnectionInfo.name);
         if (!databaseConnection) {
