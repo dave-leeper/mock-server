@@ -153,10 +153,10 @@ DatabaseConnectorManager.prototype.buildDataAPI = function ( Router, router, dat
     let deletePath = paths[2];
     let queryPath = paths[3];
 
-    router.get(insertPath, insertHandler);
+    router.put(insertPath, insertHandler);
     router.post(updatePath, updateHandler);
     router.delete(deletePath, deleteHandler);
-    router.delete(queryPath, queryHandler);
+    router.get(queryPath, queryHandler);
 };
 
 DatabaseConnectorManager.buildConnectionAPIPaths = function ( name ) {
@@ -192,10 +192,10 @@ DatabaseConnectorManager.buildDataAPIPaths = function ( name ) {
     }
     let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-    paths.push("/" + urlName + "/database/table/:name");
-    paths.push("/" + urlName + "/database/table/:name");
-    paths.push("/" + urlName + "/database/table/:name");
-    paths.push("/" + urlName + "/database/table/:name/query");
+    paths.push("/" + urlName + "/database/table/:type/:name/:id");
+    paths.push("/" + urlName + "/database/table/:type/:name/:id");
+    paths.push("/" + urlName + "/database/table/:type/:name/:id");
+    paths.push("/" + urlName + "/database/table/:type/:name/query");
     return paths;
 };
 
