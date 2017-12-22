@@ -34,9 +34,9 @@ describe( 'As a developer, I need need to obtain a list of database connections 
             "name":"elasticsearch",
             "description":"Elasticsearch service.",
             "path":[
-                "/elasticsearch/database/connection/connect",
-                "/elasticsearch/database/connection/ping",
-                "/elasticsearch/database/connection/disconnect"
+                "/elasticsearch/database/connect",
+                "/elasticsearch/database/ping",
+                "/elasticsearch/database/disconnect"
             ]
         }]);
         mockRequest.app.locals.___extra.serverConfig = config;
