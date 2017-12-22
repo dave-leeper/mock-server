@@ -169,6 +169,11 @@ Router.addHeaders = function ( configRecord, res ) {
     }
 };
 
+Router.sendErrorResponse = function ( error, res, status ) {
+    res.status(((status)? status : 500));
+    res.render("error", error);
+};
+
 Router.___buildJSONFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
