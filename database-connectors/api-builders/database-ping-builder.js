@@ -9,15 +9,15 @@ function DatabasePingBuilder ( routerClass, databaseConnectionInfo ) {
         || (!req.app.locals)
         || (!req.app.locals.___extra)
         || (!req.app.locals.___extra.databaseConnectionManager)) {
-            res.status(500);
-            res.render("error", {message: "No database connection manager.", error: {status: 500}});
+            const error = {message: "No database connection manager.", error: {status: 500}};
+            routerClass.sendErrorResponse(error, res);
             return;
         }
         let databaseConnectionManager = req.app.locals.___extra.databaseConnectionManager;
         let databaseConnection = databaseConnectionManager.getConnector(databaseConnectionInfo.name);
         if (!databaseConnection) {
-            res.status(500);
-            res.render("error", {message: "No database connection.", error: {status: 500}});
+            const error = {message: "No database connection.", error: {status: 500}};
+            routerClass.sendErrorResponse(error, res);
             return;
         }
 
