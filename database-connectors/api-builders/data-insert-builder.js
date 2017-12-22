@@ -62,7 +62,7 @@ function DataInsertBuilder( routerClass, databaseConnectionInfo )
                 body: newData
             }, (error, response) => {
                 if (error) {
-                    const error = { message: "Error creating table. " + err.error, error: { status: 500 }};
+                    const error = { message: "Error inserting record. " + err.error, error: { status: 500 }};
                     routerClass.sendErrorResponse(error, res);
                     return;
                 }
