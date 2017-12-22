@@ -19,30 +19,20 @@ function TableCreateBuilder( routerClass, databaseConnectionInfo )
             || (!req.app.locals.___extra.databaseConnectionManager))
             {
                 const error = { message: "Error connecting to database. No database connection manager found.", error: { status: 500 }};
-                res.status(500);
-                res.render("error", error);
+                routerClass.sendErrorResponse(error, res);
                 return;
             }
             let databaseConnection = req.app.locals.___extra.databaseConnectionManager.getConnector( databaseConnectionName );
             if (!databaseConnection) {
                 const error = { message: "Error connecting to database. No connection found." + databaseConnectionName, error: { status: 500 }};
-                res.status(500);
-                res.render("error", error);
+                routerClass.sendErrorResponse(error, res);
                 return;
             }
-            for (const field in req) {
-                console.log("XXXXXXXXXX field: " + field);
-            }
-            for (const bodyfield in req.body) {
-                console.log("XXXXXXXXXX field: " + bodyfield);
-            }
-            console.log("XXXXXXXXXX req.body: " + JSON.stringify(req.body));
             if ((!req.files)
             || (!req.files.fileUploaded)
             || (!req.files.fileUploaded.data)) {
                 const error = { message: "Error, no mapping file was uploaded.", error: { status: 500 }};
-                res.status(500);
-                res.render("error", error);
+                routerClass.sendErrorResponse(error, res);
                 return;
             }
 
@@ -55,13 +45,11 @@ function TableCreateBuilder( routerClass, databaseConnectionInfo )
                 })
                 .catch(( err ) => {
                     const error = { message: "Error creating table. " + err.error, error: { status: 500 }};
-                    res.status(500);
-                    res.render("error", error);
+                    routerClass.sendErrorResponse(error, res);
                 });
         } catch (err) {
             const error = { message: "Error uploading ElasticSearch mapping file.", error: { status: 500, stack: err.stack }};
-            res.status(500);
-            res.render("error", error);
+            routerClass.sendErrorResponse(error, res);
         }
     };
 
