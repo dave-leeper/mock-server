@@ -35,7 +35,7 @@ function DataInsertBuilder( routerClass, databaseConnectionInfo )
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
-            if (req.param('name')) {
+            if (req.param('index')) {
                 const error = { message: "Error, no table name provided.", error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
                 return;
@@ -51,9 +51,9 @@ function DataInsertBuilder( routerClass, databaseConnectionInfo )
                 return;
             }
             let newData = JSON.parse(req.files.fileUploaded.data.toString());
-            let index = req.param('name');
-            let type = req.param('type');
-            let id = req.param('id');
+            let index = req.params.index;
+            let type = req.params.type;
+            let id = req.params.id;
 
             databaseConnection.index({
                 index: index,
