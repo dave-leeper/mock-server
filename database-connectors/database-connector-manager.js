@@ -166,9 +166,9 @@ DatabaseConnectorManager.buildConnectionAPIPaths = function ( name ) {
     }
     let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-    paths.push("/" + urlName + "/database/connection" + "/connect");
-    paths.push("/" + urlName + "/database/connection" + "/ping");
-    paths.push("/" + urlName + "/database/connection" + "/disconnect");
+    paths.push("/" + urlName + "/database" + "/connect");
+    paths.push("/" + urlName + "/database" + "/ping");
+    paths.push("/" + urlName + "/database" + "/disconnect");
     return paths;
 };
 
@@ -179,9 +179,9 @@ DatabaseConnectorManager.buildTableAPIPaths = function ( name ) {
     }
     let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-    paths.push("/" + urlName + "/database/table/:name/exists");
-    paths.push("/" + urlName + "/database/table");
-    paths.push("/" + urlName + "/database/table/:name");
+    paths.push("/" + urlName + "/table/:index/exists");
+    paths.push("/" + urlName + "/table");
+    paths.push("/" + urlName + "/table/:index");
     return paths;
 };
 
@@ -192,10 +192,10 @@ DatabaseConnectorManager.buildDataAPIPaths = function ( name ) {
     }
     let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-    paths.push("/" + urlName + "/database/table/:type/:name/:id");
-    paths.push("/" + urlName + "/database/table/:type/:name/:id");
-    paths.push("/" + urlName + "/database/table/:type/:name/:id");
-    paths.push("/" + urlName + "/database/table/:type/:name/query");
+    paths.push("/" + urlName + "/data/:index/:type/:id");
+    paths.push("/" + urlName + "/data/:index/:type/:id");
+    paths.push("/" + urlName + "/data/:index/:type/:id");
+    paths.push("/" + urlName + "/data/:index/:type/:id");
     return paths;
 };
 
