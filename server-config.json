@@ -84,25 +84,25 @@
       "path": "/uploadfile",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload File", "action": "upload"}
+      "hbsData": {"title": "Upload File", "action": "upload", "verb": "POST"}
     },
     {
       "path": "/elasticsearch/index/upload",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload ElasticSearch Index", "action": "/elasticsearch/index"}
+      "hbsData": {"title": "Upload ElasticSearch Index", "action": "/elasticsearch/index", "verb": "POST"}
     },
     {
       "path": "/elasticsearch/index/mapping/upload",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload ElasticSearch Mapping", "action": "/elasticsearch/index/mapping"}
+      "hbsData": {"title": "Upload ElasticSearch Mapping", "action": "/elasticsearch/index/mapping", "verb": "POST"}
     },
     {
       "path": "/elasticsearch/data/upload",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload ElasticSearch Data", "action": "/elasticsearch/data/test/document/1"}
+      "hbsData": {"title": "Upload ElasticSearch Data", "action": "/elasticsearch/data/test/my-type/1", "verb": "POST"}
     }
   ],
   "microservices": [
