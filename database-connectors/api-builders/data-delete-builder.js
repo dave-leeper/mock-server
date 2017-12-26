@@ -77,6 +77,8 @@ function DataDeleteBuilder( routerClass, databaseConnectionInfo )
     return deleteDataHandler;
 }
 
+module.exports = DataDeleteBuilder;
+
 // module.exports = DataDeleteBuilder;
 // client.delete({
 //     index: 'myindex',
