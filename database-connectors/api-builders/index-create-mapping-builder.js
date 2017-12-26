@@ -39,7 +39,7 @@ function IndexCreateMappingBuilder( routerClass, databaseConnectionInfo )
             let mappingData = JSON.parse(req.files.fileUploaded.data.toString());
             databaseConnection.createIndexMapping( mappingData )
                 .then(() => {
-                    const success = {status: "success", operation: "Create index mapping " + mappingData.index};
+                    const success = {status: "success", operation: "Create index mapping " + mappingData.index + "/" + mappingData.type + "."};
                     res.status(200);
                     res.send(JSON.stringify(success));
                 })
