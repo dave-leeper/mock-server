@@ -3,8 +3,12 @@
   "type": "document",
   "body": {
     "properties": {
-      "title": { "type": "string" },
-      "content": { "type": "string" },
+      "title": {
+        "type": "string"
+      },
+      "content": {
+        "type": "string"
+      },
       "suggest": {
         "type": "completion",
         "analyzer": "simple",
