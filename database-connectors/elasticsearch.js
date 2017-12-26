@@ -67,7 +67,7 @@ ElasticSearchDatabaseConnector.prototype.disconnect = function ( ) {
     });
 };
 
-ElasticSearchDatabaseConnector.prototype.tableExists = function ( name ) {
+ElasticSearchDatabaseConnector.prototype.indexExists = function (name ) {
     return new Promise (( inResolve, inReject ) => {
         this.client.indices.exists({ index: name })
             .then(( exists ) => { inResolve && inResolve( exists ); })
@@ -76,7 +76,45 @@ ElasticSearchDatabaseConnector.prototype.tableExists = function ( name ) {
 };
 
 /**
- * @param mapping - An object that describes the table. Example:
+ * @param index - An object that describes the index. Example:
+ * {
+ *     index: "test",
+ * }
+ * @returns {Promise}
+ */
+ElasticSearchDatabaseConnector.prototype.createIndex = function ( index ) {
+    return new Promise (( inResolve, inReject ) => {
+        let createFunc = () => {
+            this.client.indices.create({ index: index.index }).then(() => {
+                inResolve && inResolve ( { status: true } );
+            }).catch(() => { inReject && inReject( { status: false, error: 'Could not create index.' } ); });
+        };
+        let existsFunc = ( exists ) => {
+            if ( exists ) {
+                inReject && inReject({ status: false, error: 'Index already exists.' });
+                return;
+            }
+            createFunc();
+        };
+
+        if ( !this.validateIndex( index )) {
+            inReject && inReject({ status: false, error: 'Invalid index.' });
+            return;
+        }
+        this.indexExists( index.index ).then((exists ) => { existsFunc( exists ); });
+    });
+};
+
+ElasticSearchDatabaseConnector.prototype.dropIndex = function (name ) {
+    return new Promise (( inResolve, inReject ) => {
+        this.client.indices.delete({ index: name })
+            .then(( success ) => { inResolve && inResolve( success ); })
+            .catch(() => { inReject && inReject( { status: false, error: 'Index does not exist.' } ); });
+    });
+};
+
+/**
+ * @param mapping - An object that describes the index mapping. Example:
  * {
  *     index: "test",
  *     type: "document",
@@ -92,63 +130,65 @@ ElasticSearchDatabaseConnector.prototype.tableExists = function ( name ) {
  *         }
  *     }
  * }
- * * @returns {Promise}
+ * @returns {Promise}
  */
-ElasticSearchDatabaseConnector.prototype.createTable = function ( mapping ) {
+ElasticSearchDatabaseConnector.prototype.createIndexMapping = function ( mapping ) {
     return new Promise (( inResolve, inReject ) => {
-        let createFunc = () => {
-            this.client.indices.create({ index: mapping.index }).then(() => {
-                this.client.indices.putMapping( mapping ).then(() => {
-                    inResolve && inResolve ( { status: true } );
-                }).catch(() => { inReject && inReject( { status: false, error: 'Could not add mapping.' } ); })
-            }).catch(() => { inReject && inReject( { status: false, error: 'Could not create index.' } ); });
+        let createMappingFunc = () => {
+            console.log("XXXXXXXXXX: " + JSON.stringify(mapping));
+            this.client.indices.putMapping( mapping ).then(() => {
+                inResolve && inResolve ( { status: true } );
+            }).catch((err) => { inReject && inReject( { status: false, error: 'Could not create index mapping.' + err } ); });
         };
         let existsFunc = ( exists ) => {
-            if ( exists ) {
-                inReject && inReject({ status: false, error: 'Index already exists.' });
+            if ( !exists ) {
+                inReject && inReject({ status: false, error: 'Index does not exist.' });
                 return;
             }
-            createFunc();
+            createMappingFunc();
         };
 
-        if ( !this.validateMapping( mapping )) {
-            inReject && inReject({ status: false, error: 'Invalid mapping.' });
+        if ( !this.validateIndex( mapping )) {
+            inReject && inReject({ status: false, error: 'Invalid index.' });
             return;
         }
-        this.tableExists( mapping.index ).then(( exists ) => { existsFunc( exists ); });
+        this.indexExists( mapping.index ).then((exists ) => { existsFunc( exists ); });
     });
 };
 
-ElasticSearchDatabaseConnector.prototype.dropTable = function ( name ) {
-    return new Promise (( inResolve, inReject ) => {
-        this.client.indices.delete({ index: name })
-            .then(( success ) => { inResolve && inResolve( success ); })
-            .catch(() => { inReject && inReject( { status: false, error: 'Index does not exist.' } ); });
-    });
+ElasticSearchDatabaseConnector.prototype.validateIndex = function ( mapping ) {
+    if (( !mapping )
+    || ( !mapping.index )) {
+        return false;
+    }
+    if ('string' !== typeof mapping.index) {
+        return false;
+    }
+    return true;
 };
 
 ElasticSearchDatabaseConnector.prototype.validateMapping = function ( mapping ) {
-    if (( !mapping )
-    || ( !mapping.index )
-    || ( !mapping.type )
-    || ( !mapping.body )
-    || ( !mapping.body.properties )) {
-        return false;
-    }
-    if (('string' !== typeof mapping.index)
-    || ('string' !== typeof mapping.type)
-    || ('object' !== typeof mapping.body)
-    || ('object' !== typeof mapping.body.properties)) {
-        return false;
-    }
-    for ( let prop in mapping.body.properties ) {
-        if ( !mapping.body.properties[prop].type ) {
-            return false;
-        }
-        if ( 'string' !== typeof mapping.body.properties[prop].type ) {
-            return false;
-        }
-    }
+    // if (( !mapping )
+    // || ( !mapping.index )
+    // || ( !mapping.type )
+    // || ( !mapping.body )
+    // || ( !mapping.body.properties )) {
+    //     return false;
+    // }
+    // if (('string' !== typeof mapping.index)
+    // || ('string' !== typeof mapping.type)
+    // || ('object' !== typeof mapping.body)
+    // || ('object' !== typeof mapping.body.properties)) {
+    //     return false;
+    // }
+    // for ( let prop in mapping.body.properties ) {
+    //     if ( !mapping.body.properties[prop].type ) {
+    //         return false;
+    //     }
+    //     if ( 'string' !== typeof mapping.body.properties[prop].type ) {
+    //         return false;
+    //     }
+    // }
     return true;
 };
 
