@@ -36,7 +36,7 @@ function DataInsertBuilder( routerClass, databaseConnectionInfo )
                 return;
             }
             if (req.param('index')) {
-                const error = { message: "Error, no table name provided.", error: { status: 500 }};
+                const error = { message: "Error, no index name provided.", error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
