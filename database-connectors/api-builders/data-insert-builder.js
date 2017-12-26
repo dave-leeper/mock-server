@@ -68,7 +68,7 @@ function DataInsertBuilder( routerClass, databaseConnectionInfo )
                 res.send(JSON.stringify(success));
             })
             .catch(( err ) => {
-                const error = { message: "Error inserting record. " + err.error, error: { status: 500 }};
+                const error = { message: "Error inserting record. " + err, error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
             });
         } catch (err) {
