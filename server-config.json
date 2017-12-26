@@ -87,10 +87,22 @@
       "hbsData": {"title": "Upload File", "action": "upload"}
     },
     {
-      "path": "/elasticsearch/table/mapping/upload",
+      "path": "/elasticsearch/index/upload",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload ElasticSearch Mapping", "action": "/elasticsearch/table"}
+      "hbsData": {"title": "Upload ElasticSearch Index", "action": "/elasticsearch/index"}
+    },
+    {
+      "path": "/elasticsearch/index/mapping/upload",
+      "response": "upload.hbs",
+      "responseType": "HBS",
+      "hbsData": {"title": "Upload ElasticSearch Mapping", "action": "/elasticsearch/index/mapping"}
+    },
+    {
+      "path": "/elasticsearch/data/upload",
+      "response": "upload.hbs",
+      "responseType": "HBS",
+      "hbsData": {"title": "Upload ElasticSearch Data", "action": "/elasticsearch/data/test/document/1"}
     }
   ],
   "microservices": [
@@ -144,7 +156,7 @@
       "description": "Elasticsearch service.",
       "databaseConnector": "elasticsearch.js",
       "generateConnectionAPI": true,
-      "generateTableAPI": true,
+      "generateIndexAPI": true,
       "generateDataAPI": true,
       "config": {
         "host": "localhost:9200",
