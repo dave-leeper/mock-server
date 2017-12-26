@@ -35,8 +35,8 @@ function DataQueryBuilder( routerClass, databaseConnectionInfo )
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
-            if (req.param('name')) {
-                const error = { message: "Error, no table name provided.", error: { status: 500 }};
+            if (req.param('index')) {
+                const error = { message: "Error, no index name provided.", error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
@@ -70,11 +70,11 @@ function DataQueryBuilder( routerClass, databaseConnectionInfo )
                     res.send(JSON.stringify(success));
                 },
                 function (err) {
-                    const error = { message: "Error searching table. " + err.error, error: { status: 500 }};
+                    const error = { message: "Error querying ElasticSearch index. " + err.error, error: { status: 500 }};
                     routerClass.sendErrorResponse(error, res);
                 });
         } catch (err) {
-            const error = { message: "Error inserting ElasticSearch data.", error: { status: 500, stack: err.stack }};
+            const error = { message: "Error querying ElasticSearch data.", error: { status: 500, stack: err.stack }};
             routerClass.sendErrorResponse(error, res);
         }
     };
@@ -182,7 +182,7 @@ module.exports = DataQueryBuilder;
 //
 // function GetQuery( req ) {
 //     if (req.param('name')) {
-//         const error = { message: "Error, no table name provided.", error: { status: 500 }};
+//         const error = { message: "Error, no index name provided.", error: { status: 500 }};
 //         routerClass.sendErrorResponse(error, res);
 //         return;
 //     }
