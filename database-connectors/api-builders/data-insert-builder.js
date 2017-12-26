@@ -62,15 +62,15 @@ function DataInsertBuilder( routerClass, databaseConnectionInfo )
             };
 
             databaseConnection.insert(data)
-            .then(( response ) => {
-                const success = {status: "success", operation: "Insert data to " + index + "/" + type + "."};
-                res.status(200);
-                res.send(JSON.stringify(success));
-            })
-            .catch(( err ) => {
-                const error = { message: "Error inserting record. " + err, error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
-            });
+                .then(( response ) => {
+                    const success = {status: "success", operation: "Insert data to " + index + "/" + type + "."};
+                    res.status(200);
+                    res.send(JSON.stringify(success));
+                })
+                .catch(( err ) => {
+                    const error = { message: "Error inserting record. " + err, error: { status: 500 }};
+                    routerClass.sendErrorResponse(error, res);
+                });
         } catch (err) {
             const error = { message: "Error inserting ElasticSearch data.", error: { status: 500, stack: err.stack }};
             routerClass.sendErrorResponse(error, res);
