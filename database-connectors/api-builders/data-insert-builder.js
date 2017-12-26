@@ -61,10 +61,6 @@ function DataInsertBuilder( routerClass, databaseConnectionInfo )
                 body: newData
             };
 
-            console.log("XXXXXXXXXX newData: " + JSON.stringify(newData));
-            console.log("XXXXXXXXXX index: " + index);
-            console.log("XXXXXXXXXX type: " + type);
-            console.log("XXXXXXXXXX id: " + id);
             databaseConnection.insert(data)
             .then(( response ) => {
                 const success = {status: "success", operation: "Insert data to " + index};
