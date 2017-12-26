@@ -35,17 +35,17 @@ function DataInsertBuilder( routerClass, databaseConnectionInfo )
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
-            if (req.param('index')) {
+            if (req.param.index) {
                 const error = { message: "Error, no index name provided.", error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
-            if (req.param('type')) {
+            if (req.param.type) {
                 const error = { message: "Error, no data type provided.", error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
-            if (req.param('id')) {
+            if (req.param.id) {
                 const error = { message: "Error, no record id provided.", error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
                 return;
@@ -54,21 +54,26 @@ function DataInsertBuilder( routerClass, databaseConnectionInfo )
             let index = req.params.index;
             let type = req.params.type;
             let id = req.params.id;
-
-            databaseConnection.index({
+            let data = {
                 index: index,
                 type: type,
                 id: id,
                 body: newData
-            }, (error, response) => {
-                if (error) {
-                    const error = { message: "Error inserting record. " + err.error, error: { status: 500 }};
-                    routerClass.sendErrorResponse(error, res);
-                    return;
-                }
+            };
+
+            console.log("XXXXXXXXXX newData: " + JSON.stringify(newData));
+            console.log("XXXXXXXXXX index: " + index);
+            console.log("XXXXXXXXXX type: " + type);
+            console.log("XXXXXXXXXX id: " + id);
+            databaseConnection.insert(data)
+            .then(( response ) => {
                 const success = {status: "success", operation: "Insert data to " + index};
                 res.status(200);
                 res.send(JSON.stringify(success));
+            })
+            .catch(( err ) => {
+                const error = { message: "Error inserting record. " + err.error, error: { status: 500 }};
+                routerClass.sendErrorResponse(error, res);
             });
         } catch (err) {
             const error = { message: "Error inserting ElasticSearch data.", error: { status: 500, stack: err.stack }};
