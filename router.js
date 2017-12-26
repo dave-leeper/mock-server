@@ -137,7 +137,10 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
                 Router.databaseConnectionManager.buildConnectionAPI( Router, router, databaseConnectionInfo );
             }
             if (databaseConnectionInfo.generateIndexAPI) {
-                Router.databaseConnectionManager.buildTableAPI( Router, router, databaseConnectionInfo );
+                Router.databaseConnectionManager.buildIndexAPI( Router, router, databaseConnectionInfo );
+            }
+            if (databaseConnectionInfo.generateDataAPI) {
+                Router.databaseConnectionManager.buildDataAPI( Router, router, databaseConnectionInfo );
             }
         }
         if (databaseConnectionCallback) {
