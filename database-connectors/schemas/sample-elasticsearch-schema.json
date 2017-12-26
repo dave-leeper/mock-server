@@ -1,6 +1,6 @@
 {
   "index": "test",
-  "type": "document",
+  "type": "my-type",
   "body": {
     "properties": {
       "title": {
