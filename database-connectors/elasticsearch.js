@@ -167,39 +167,44 @@ ElasticSearchDatabaseConnector.prototype.validateIndex = function ( mapping ) {
 };
 
 ElasticSearchDatabaseConnector.prototype.validateMapping = function ( mapping ) {
-    // if (( !mapping )
-    // || ( !mapping.index )
-    // || ( !mapping.type )
-    // || ( !mapping.body )
-    // || ( !mapping.body.properties )) {
-    //     return false;
-    // }
-    // if (('string' !== typeof mapping.index)
-    // || ('string' !== typeof mapping.type)
-    // || ('object' !== typeof mapping.body)
-    // || ('object' !== typeof mapping.body.properties)) {
-    //     return false;
-    // }
-    // for ( let prop in mapping.body.properties ) {
-    //     if ( !mapping.body.properties[prop].type ) {
-    //         return false;
-    //     }
-    //     if ( 'string' !== typeof mapping.body.properties[prop].type ) {
-    //         return false;
-    //     }
-    // }
+    if (( !mapping )
+    || ( !mapping.index )
+    || ( !mapping.type )
+    || ( !mapping.body )
+    || ( !mapping.body.properties )) {
+        return false;
+    }
+    if (('string' !== typeof mapping.index)
+    || ('string' !== typeof mapping.type)
+    || ('object' !== typeof mapping.body)
+    || ('object' !== typeof mapping.body.properties)) {
+        return false;
+    }
+    for ( let prop in mapping.body.properties ) {
+        if ( !mapping.body.properties[prop].type ) {
+            return false;
+        }
+        if ( 'string' !== typeof mapping.body.properties[prop].type ) {
+            return false;
+        }
+    }
     return true;
 };
 
 ElasticSearchDatabaseConnector.prototype.insert = function ( data ) {
     return new Promise (( inResolve, inReject ) => {
-        this.client.indices.delete({ index: name })
-            .then(( success ) => { inResolve && inResolve( success ); })
-            .catch(() => { inReject && inReject( { status: false, error: 'Index does not exist.' } ); });
+        this.client.index( data, (error, response) => {
+            console.log("XXXXXXXXXX");
+            if (error) {
+                inReject && inReject( { status: false, error: error } );
+                return;
+            }
+            inResolve && inResolve( response );
+        })
     });
 };
 
-ElasticSearchDatabaseConnector.prototype.update = function ( data, whereClause ) {
+ElasticSearchDatabaseConnector.prototype.update = function ( whereClause ) {
     return new Promise (( inResolve, inReject ) => {
         this.client.indices.delete({ index: name })
             .then(( success ) => { inResolve && inResolve( success ); })
