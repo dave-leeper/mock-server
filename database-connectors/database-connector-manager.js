@@ -86,7 +86,7 @@ DatabaseConnectorManager.prototype.buildConnectionAPI = function ( Router, route
     router.get(disconnectPath, disconnectHandler);
 };
 
-DatabaseConnectorManager.prototype.buildTableAPI = function ( Router, router, databaseConnectionInfo ) {
+DatabaseConnectorManager.prototype.buildIndexAPI = function (Router, router, databaseConnectionInfo ) {
     let existsHandler = require("./api-builders/index-exists-builder.js")( Router, databaseConnectionInfo );
     if (!existsHandler) {
         if (log.will(log.ERROR)) {
@@ -162,8 +162,8 @@ DatabaseConnectorManager.prototype.buildDataAPI = function ( Router, router, dat
     let deletePath = paths[2];
     let queryPath = paths[3];
 
-    router.put(insertPath, insertHandler);
-    router.post(updatePath, updateHandler);
+    router.put(insertPath, updateHandler);
+    router.post(updatePath, insertHandler);
     router.delete(deletePath, deleteHandler);
     router.get(queryPath, queryHandler);
 };
