@@ -6,7 +6,7 @@ let chai = require( 'chai' ),
     Router = require('../../../../router.js'),
     mockRequest = require('../../../mock-request.js'),
     mockResponse = require('../../../mock-response.js'),
-    pingHandlerBuilder = require('../../../../database-connectors/api-builders/database-ping-builder.js'),
+    pingHandlerBuilder = require('../../../../database-connectors/api-builders/connection-ping-builder.js'),
     DatabaseConnectorManager = require('../../../../database-connectors/database-connector-manager.js');
 let config = {
     "databaseConnections" : [
