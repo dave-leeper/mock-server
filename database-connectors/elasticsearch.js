@@ -135,7 +135,6 @@ ElasticSearchDatabaseConnector.prototype.dropIndex = function (name ) {
 ElasticSearchDatabaseConnector.prototype.createIndexMapping = function ( mapping ) {
     return new Promise (( inResolve, inReject ) => {
         let createMappingFunc = () => {
-            console.log("XXXXXXXXXX: " + JSON.stringify(mapping));
             this.client.indices.putMapping( mapping ).then(() => {
                 inResolve && inResolve ( { status: true } );
             }).catch((err) => { inReject && inReject( { status: false, error: 'Could not create index mapping.' + err } ); });
