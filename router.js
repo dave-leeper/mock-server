@@ -85,7 +85,7 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
         for (let loop2 = 0; loop2 < config.microservices.length; loop2++) {
             let microservice = config.microservices[loop2];
             let verb = ((microservice.verb) ? microservice.verb.toUpperCase() : "GET" );
-            let microservicePath = microservice.serviceFile;
+            let microservicePath = "./microservices/" + microservice.serviceFile;
             let microserviceClass = require( microservicePath );
 
             let micro = new microserviceClass();
