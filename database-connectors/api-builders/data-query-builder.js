@@ -28,13 +28,6 @@ function DataQueryBuilder( routerClass, databaseConnectionInfo )
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
-            if ((!req.files)
-            || (!req.files.fileUploaded)
-            || (!req.files.fileUploaded.data)) {
-                const error = { message: "Error, no data file was uploaded.", error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
-                return;
-            }
             if (req.param('index')) {
                 const error = { message: "Error, no index name provided.", error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
@@ -98,13 +91,13 @@ function getQueryFrom( req ) {
 
 function getQuery( req ) {
     if ((!!req.query) || (!req.query.length)) {
-        return { "match_all": {}};
+        return { match_all: {}};
     }
 
     let query = { query: { bool: { must: []}}};
-    for ( let term in req.query ) {
-        let value = req.query[term];
-        let condition = {term: { term: value }};
+    for ( let theTerm in req.query ) {
+        let value = req.query[theTerm];
+        let condition = {term: { theTerm : value }};
         query.query.bool.must.push(condition);
     }
     return query;
