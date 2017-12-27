@@ -78,7 +78,7 @@ ElasticSearchDatabaseConnector.prototype.indexExists = function (name ) {
 /**
  * @param index - An object that describes the index. Example:
  * {
- *     index: "test",
+ *     index: "test"
  * }
  * @returns {Promise}
  */
@@ -194,7 +194,6 @@ ElasticSearchDatabaseConnector.prototype.validateMapping = function ( mapping ) 
 ElasticSearchDatabaseConnector.prototype.insert = function ( data ) {
     return new Promise (( inResolve, inReject ) => {
         this.client.index( data, (error, response) => {
-            console.log("XXXXXXXXXX");
             if (error) {
                 inReject && inReject( { status: false, error: error } );
                 return;
