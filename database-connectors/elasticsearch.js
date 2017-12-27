@@ -221,9 +221,14 @@ ElasticSearchDatabaseConnector.prototype.delete = function ( data, whereClause )
 
 ElasticSearchDatabaseConnector.prototype.read = function ( whereClause ) {
     return new Promise (( inResolve, inReject ) => {
-        this.client.indices.delete({ index: name })
-            .then(( success ) => { inResolve && inResolve( success ); })
-            .catch(() => { inReject && inReject( { status: false, error: 'Index does not exist.' } ); });
+        this.client.search( whereClause,(error, response) => {
+        // this.client.search( {index: 'test', q: 'title:my title'},(error, response) => {
+            if (error) {
+                inReject && inReject( { status: false, error: error } );
+                return;
+            }
+            inResolve && inResolve( response );
+        })
     });
 };
 
