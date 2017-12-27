@@ -1,14 +1,14 @@
 # To Run 
-npm start
+<p><code>npm start</code></p>
 
 # To Test 
-mocha "test/**/*.js"
+<p><code>mocha "test/**/*.js"</code></p>
 
 # To Start In-Memory Server 
-var Server = require('./server.js');
-var port = MY_PORT_NUMBER;
-var serverConfig = require('./MY_SERVER_CONFIG.json');
-var server = new Server().init(port, serverConfig);
+<p><code>var Server = require('./server.js');<br/>
+var port = MY_PORT_NUMBER;<br/>
+var serverConfig = require('./MY_SERVER_CONFIG.json');<br/>
+var server = new Server().init(port, serverConfig);</code></p>
 
 # Config File
 The config file is how you control the operation of the server.
@@ -17,19 +17,101 @@ The config file is how you control the operation of the server.
 Provides configuration information for mock services.
 Mock services send data from files back to the client.
 ### Fields
-* verb "POST" - The HTTP verb. Optional. Defaults to GET.
-* path "/json" - The URL path that invokes the mock.
-* response "./server-config.json" - The location of the response file.
+* **verb**<br/>
+Example: "POST"<br/>
+The HTTP verb. Optional. Defaults to GET.
+* **path**<br/>
+Example: "/json"<br/>
+The URL path that invokes the mock.
+* **response**<br/>
+Example: "./server-config.json"<br/>
+The location of the response file.
 An array of response file paths can also be used. The server will cycle
 through the array, advancing with each request.
-* responseType "JSON" - The type of data in the response file. Valid values
+* **responseType**<br/>
+Example: "JSON"<br/>
+The type of data in the response file. Valid values
 are JSON, TEXT, and HBS (a Handlebars template file).
-* headers [[ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]] -
+* **headers**<br/>
+Example: [[ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]]<br/>
 An array of headers that should be included in the response.
-* hbsData {"title": "Index"} - A JSON object that should be sent to the
+* **hbsData**<br/>
+Example: {"title": "Index"}<br/>
+A JSON object that should be sent to the
 Handlebars template (used only for HBS type files). If an array is used
 in the response field, and array of equal size should also be used in
 the hbsData field.
+### Examples
+* A mock service at GET /ping. It returns a JSON object and sets a header
+named MY_HEADER to MY_HEADER_VALUE.
+  <p><code>"mocks": [<br/>
+    {<br/>
+        "path": "/ping",<br/>
+        "response": {"name":"My Server","version":"1.0"},<br/>
+        "responseType": "JSON",<br/>
+        "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]<br/>
+    }]</code></p>
+
+* A mock service that returns JSON objects read from files. There are
+multiple files. They will be returned one after the other on multiple
+requests.
+  <p><code>"mocks": [<br/>
+    {<br/>
+        "path": "/json-string-array",<br/>
+        "response": ["./server-config.json", "./test/test-data.json"],<br/>
+        "responseType": "JSON",<br/>
+    }]</code></p>
+
+* A mock service that sends a JSON object as a response. A Handlebars
+form, index.hbs, is used to display the data. Handlebars forms are in
+the views directory.
+  <p><code>"mocks": [<br/>
+    {<br/>
+        "path": "/hbs",<br/>
+        "response": "index.hbs",<br/>
+        "responseType": "HBS",<br/>
+        "hbsData": {"title": "Index"},<br/>
+    }]</code></p>
+
+* A mock service that sends multiple JSON objects as a response.
+Handlebars forms are used to display the data. The objects and forms
+will cycle through one per request.
+  <p><code>"mocks": [<br/>
+    {<br/>
+        "path": "/hbs-string-array",<br/>
+        "response": [ "index.hbs", "error.hbs" ],<br/>
+        "responseType": "HBS",<br/>
+        "hbsData": [ {"title": "Index"}, {"title": "Not Found"} ],<br/>
+    }]</code></p>
+
+* A mock service that returns a text file as a response.
+  <p><code>"mocks": [<br/>
+    {<br/>
+        "path": "/text",<br/>
+        "response": "./views/index.hbs",<br/>
+        "responseType": "TEXT",<br/>
+    }]</code></p>
+
+* A mock service that sends multiple text files as a response, one per
+request.
+  <p><code>"mocks": [<br/>
+    {<br/>
+        "path": "/text-string-array",<br/>
+        "response": [ "./views/index.hbs", "./views/error.hbs" ],<br/>
+        "responseType": "TEXT",<br/>
+    }]</code></p>
+
+* A mock service that presents a file upload form to the client and
+stores the uploaded file in the files directory. The hbsData field is
+required and the JSON must have the title text, action URL, and HTTP
+verb fields.
+  <p><code>"mocks": [<br/>
+    {<br/>
+        "path": "/uploadfile",<br/>
+        "response": "upload.hbs",<br/>
+        "responseType": "HBS",<br/>
+        "hbsData": {"title": "Upload File", "action": "upload", "verb": "POST"}<br/>
+    }]</code></p>
 
 ## Microservices
 Provides simple services that should take only a few seconds to execute.
@@ -37,22 +119,43 @@ Microservices have a do(req, res, router, serviceInfo) method that
 returns a promise.
 The promise is fulfilled when the microservice completes a request.
 Microservices are stateless and have no lifecycle. A microservice object
- will be
-instantiated every time a request to the microservice is made.
+ will be instantiated every time a request to the microservice is made.
 ### Fields
-* verb "POST" - The HTTP verb. Optional. Defaults to GET.
-* path "/ping" - The URL path that invokes the microservice.
-* name "Ping" - The human-readable name of the microservice.
-* description" "A basic ping service." - A short human-readable
- description of the microservice.
-serviceFile "ping.js" - The name of the javascript file containing the
+* **verb**<br/>
+Example: "POST"<br/>
+The HTTP verb. Optional. Defaults to GET.
+* **path**<br/>
+Example: "/throw"<br/>
+The URL path that invokes the microservice.
+* **name**<br/>
+Example: "Throw Exception"<br/>
+The human-readable name of the microservice.
+* **description**<br/>
+Example: "A micro service that throws an exception. For testing purposes."<br/>
+A short human-readable description of the microservice.<br/>
+* **serviceFile**<br/>
+Example: "/throw.js"<br/>
+The name of the javascript file containing the
 microservice. These names are relative to the microservices directory.
-* serviceData { "name": "My Server", "version": "1.0" } - An optional
+* **serviceData**<br/>
+Example: { "name": "My Server", "version": "1.0" }<br/>
+An optional
 field that provides a JSON object for use by the micro service.
-Currently used only by the ping micro service, where it stores the
-response sent to the client.
-* headers [[ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]] -
-An array of headers that should be included in the response.
+* **headers**<br/>
+Example: [[ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]]<br/>
+An optional array of headers that should be included in the response.
+
+### Examples
+ * A microservice service at GET /download/:name that downloads the file
+ :name from the files directory. The microservices/download.js file
+ contains the code for the service.
+    <p><code>"microservices": [<br/>
+    {<br/>
+        "path": "/download/:name",<br/>
+        "name": "File Download",<br/>
+        "description": "Downloads a file from the files directory of the server. The :name Parameter is the file name.",<br/>
+        "serviceFile": "download.js"<br/>
+    }]</code></p>
 
 ## DatabaseConnections
 Database connections are used to work with databases. All database
@@ -64,26 +167,67 @@ or to obtain an individual database connection object by name.
 
 Each database connection object has methods to connect, disconnect, and
 ping that connection.
-
 ### Fields
-* name "elasticsearch" - The name given to a connection.A database can
-have multiple connections, each with a unique name.
-* description": "Elasticsearch service." - A short human-readable
-description of the database connection.
-* databaseConnector "elasticsearch.js" - The name of the javascript file
-containing the database connection class. These names are relative to
-the database-connectors directory.
-* backendURL "localhost:7331". If set, no database connection is made by
-this connector and database operations are passed through to a backend
-server, allowing for separate database servers. If not set, it is
-assumed database operations are handled by this server.
-* config { "host": "localhost:9200", "log": "trace" } - A JSON object
-that will be passed to the database connector class. It contains any
-information needed to configure the connection. It is up to the
-database connector class to interpret this data. This field is ignored
-when the connector is set up to use a backend database server using the
-backendURL parameter.
+* **name**<br/>
+Example: "elasticsearch"<br/>
+The name given to a connection.A database can have multiple connections,
+each with a unique name.
+* **description"**<br/>
+Example: "Elasticsearch service."<br/>
+A short human-readable description of the database connection.
+* **databaseConnector**<br/>
+Example: "elasticsearch.js"<br/>
+The name of the javascript file containing the database connection
+class. These names are relative to the database-connectors directory.
+* **config**<br/>
+Example: { "host": "localhost:9200", "log": "trace" }<br/>
+A JSON object that will be passed to the database connector class. It
+contains any information needed to configure the connection. It is up to
+the database connector class to interpret this data. This field is
+ignored when the connector is set up to use a backend database server
+using the backendURL parameter.
+* **generateConnectionAPI**<br/>
+Example: true<br/>
+A boolean value indicating if connection REST APIs should be generated
+for the connection. These APIs are described in the API section, below.
+* **generateIndexAPI**<br/>
+Example: true<br/>
+A boolean value indicating if index REST APIs should be generated for
+the connection. These APIs are described in the API section, below.
+### API
+#### Connection API
+* **GET database-connection-name/connection/connect**<br/>
+Connects to the database.
+* **GET database-connection-name/connection/disconnect**<br/>
+Disconnects from the database.
+* **GET database-connection-name/connection/ping**<br/>
+Pings the database connection.
 
-
-
+#### Index API
+* **GET database-connection-name/index/:index/exists**<br/>
+Determines if the index named :index exists.
+* **POST database-connection-name/index**<br/>
+Creates an index. The body of the request has a JSON object indicating
+the index name. Example:<br/>
+<code>{ index: "test" }</code>
+* **DELETE database-connection-name/index/:index**<br/>
+Drops the index indicated by the :index parameter.
+* **POST database-connection-name/index/mapping**<br/>
+Creates a mapping in an index. The body of the request has a JSON
+object indicating the mapping information. Example:
+<br/><code>{<br/>
+    index: "test",<br/>
+    type: "document",<br/>
+    body: {<br/>
+        properties: {<br/>
+            title: { type: "string" },<br/>
+            content: { type: "string" },<br/>
+            suggest: {<br/>
+                type: "completion",<br/>
+                analyzer: "simple",<br/>
+                search_analyzer: "simple"<br/>
+            }<br/>
+        }<br/>
+    }<br/>
+}</code>
 
