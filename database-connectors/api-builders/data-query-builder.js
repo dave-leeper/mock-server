@@ -28,17 +28,17 @@ function DataQueryBuilder( routerClass, databaseConnectionInfo )
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
-            if (req.param('index')) {
+            if (req.param.index) {
                 const error = { message: "Error, no index name provided.", error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
-            if (req.param('type')) {
+            if (req.param.type) {
                 const error = { message: "Error, no data type provided.", error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
-            if (req.param('id')) {
+            if (req.param.id) {
                 const error = { message: "Error, no record id provided.", error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
                 return;
@@ -47,23 +47,24 @@ function DataQueryBuilder( routerClass, databaseConnectionInfo )
             let type = req.params.type;
             let id = req.params.id.toLowerCase();
             let search = { index: index, type: type };
+            let query = getQuery( req );
 
-            if ( "_all" !== id) {
-                search.id = parseInt(id);
-            } else {
-                search.size = getQuerySize( req );
-                search.from = getQueryFrom( req );
-                search.body = getQuery( req );
+            search.index = index;
+            search.type = type;
+            search.size = getQuerySize( req );
+            search.from = getQueryFrom( req );
+            if (query) {
+                search.q = query;
             }
 
-            databaseConnection.search(search)
+            databaseConnection.read(search)
                 .then(( response ) => {
-                    const success = { status: "success", data: response };
+                    const success = { status: "success", data: formatQueryResults( response )};
                     res.status(200);
                     res.send(JSON.stringify(success));
-                },
-                function (err) {
-                    const error = { message: "Error querying ElasticSearch index. " + err.error, error: { status: 500 }};
+                })
+                .catch(( err ) => {
+                    const error = { message: "Error querying database. " + JSON.stringify(err), error: { status: 500 }};
                     routerClass.sendErrorResponse(error, res);
                 });
         } catch (err) {
@@ -89,95 +90,34 @@ function getQueryFrom( req ) {
     return 0;
 }
 
+// http://www.lucenetutorial.com/lucene-query-syntax.html
 function getQuery( req ) {
-    if ((!!req.query) || (!req.query.length)) {
-        return { match_all: {}};
-    }
+    let query = "";
 
-    let query = { query: { bool: { must: []}}};
-    for ( let theTerm in req.query ) {
-        let value = req.query[theTerm];
-        let condition = {term: { theTerm : value }};
-        query.query.bool.must.push(condition);
+    if ((req.params.id) && ("_all" !== req.params.id)) {
+        query += "_id:" + req.params.id;
+    }
+    for ( let term in req.query ) {
+        let value = req.query[term];
+
+        if ( 0 < query.length ) {
+            query += " AND ";
+        }
+        query += term + ": \"" + value + "\"";
     }
     return query;
+}
 
-    // {
-    //     "query": {
-    //     "bool": {
-    //         "must": [
-    //             {
-    //                 "term": {
-    //                     "field1": "X"
-    //                 }
-    //             },
-    //             {
-    //                 "term": {
-    //                     "field3": "Z"
-    //                 }
-    //             }
-    //         ],
-    //             "must_not": {
-    //             "term": {
-    //                 "field2": "Y"
-    //             }
-    //         }
-    //     }
+function formatQueryResults( results ) {
+    let newResults = [];
+
+    if ((!results) || (!results.hits) || (!results.hits.hits)) {
+        return newResults;
+    }
+    for (let result in results.hits.hits) {
+        newResults.push(results.hits.hits[result]._source);
+    }
+    return newResults;
 }
 
 module.exports = DataQueryBuilder;
-
-// Query keywords:
-// _all
-// _size
-// _from
-//
-// client.search({
-//     index: 'twitter',
-//     type: 'tweets',
-//     body: {
-//         query: {
-//             match: {
-//                 body: 'elasticsearch'
-//             }
-//         }
-//     }
-// }).then(function (resp) {
-//     var hits = resp.hits.hits;
-// }, function (err) {
-//     console.trace(err.message);
-// });
-//
-// "http://localhost:9200/[your_index_name]/_search
-// {
-//     "size": [your value] //default 10
-//     "from": [your start index] //default 0
-//     "query":
-//     {
-//         "match_all": {}
-//     }
-// }
-//
-// search on all documents across all types within the twitter index:
-// GET /twitter/_search?q=user:kimchy
-//
-// search within specific types:
-// GET /twitter/tweet,user/_search?q=user:kimchy
-//
-// search all tweets with a certain tag across several indices (for example, when each user has his own index):
-// GET /kimchy,elasticsearch/tweet/_search?q=tag:wow
-//
-// search all tweets across all available indices using _all placeholder:
-// GET /_all/tweet/_search?q=tag:wow
-//
-// search across all indices and all types:
-// GET /_search?q=tag:wow
-//
-// function GetQuery( req ) {
-//     if (req.param('name')) {
-//         const error = { message: "Error, no index name provided.", error: { status: 500 }};
-//         routerClass.sendErrorResponse(error, res);
-//         return;
-//     }
-//
-// }
