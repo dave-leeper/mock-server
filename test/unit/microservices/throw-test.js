@@ -22,7 +22,7 @@ let config = {
             "path": "/throw",
             "name": "Throw Exception",
             "description": "A microservice that throws an exception. For testing purposes.",
-            "serviceFile": "./microservices/throw.js"
+            "serviceFile": "throw.js"
         }
     ]
 };
