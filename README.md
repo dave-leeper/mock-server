@@ -256,3 +256,19 @@ object indicating the mapping information. Example:
     }<br/>
 }</code>
 
+#### Data API
+* **POST database-connection-name/data/:index/:type/:id**<br/>
+Inserts the data in the body of the request into the database. Example:
+<br/><code>{<br/>
+  "title": "my title",<br/>
+  "content": "my content",<br/>
+  "suggest": "my suggest"<br/>
+}</code>
+
+* **GET database-connection-name/data/:index/:type/:id**<br/>
+Selects data from the database. If the :id parameter is set to _all, all
+records from the index/type are returned. Query parameters can be used
+in conjunction with the _all id to narrow down the results. Use the
+_size and _from query parameters to handle the page size of the returned
+values. See the Query Parameters section, below, for more information.
+
