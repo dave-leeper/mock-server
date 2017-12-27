@@ -64,7 +64,7 @@ function DataInsertBuilder( routerClass, databaseConnectionInfo )
             databaseConnection.insert(data)
                 .then(( response ) => {
                     const success = {status: "success", operation: "Insert data to " + index + "/" + type + "."};
-                    res.status(200);
+                    res.status(201);
                     res.send(JSON.stringify(success));
                 })
                 .catch(( err ) => {
