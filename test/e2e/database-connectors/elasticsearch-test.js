@@ -78,7 +78,6 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
                 esdc.createIndex( invalidSchema ).then((createResult ) => {
                     expect( false ).to.be.equal( true );
                 }).catch((error) => {
-                    expect( error.status ).to.be.equal( false );
                     done();
                 });
             });
