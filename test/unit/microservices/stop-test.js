@@ -22,7 +22,7 @@ let config = {
             "path": "/stop",
             "name": "Server Stop",
             "description": "Shuts down the server.",
-            "serviceFile": "./microservices/stop.js"
+            "serviceFile": "stop.js"
         }
     ]
 };
