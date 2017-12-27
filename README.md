@@ -189,12 +189,37 @@ using the backendURL parameter.
 * **generateConnectionAPI**<br/>
 Example: true<br/>
 A boolean value indicating if connection REST APIs should be generated
-for the connection. These APIs are described in the API section, below.
+for the connection. Optional. Defaults to false. These APIs are
+described in the API section, below.
 * **generateIndexAPI**<br/>
 Example: true<br/>
 A boolean value indicating if index REST APIs should be generated for
-the connection. These APIs are described in the API section, below.
+the connection. Optional. Defaults to false. These APIs are described in
+the API section, below.
+### Examples
+ * A simple config for Elasticsearch.
+  <code>"databaseConnections" : [<br/>
+    {<br/>
+      "name": "elasticsearch",<br/>
+      "description": "Elasticsearch service.",<br/>
+      "databaseConnector": "elasticsearch.js",<br/>
+      "generateConnectionAPI": true,<br/>
+      "generateIndexAPI": true,<br/>
+      "generateDataAPI": true,<br/>
+      "config": {<br/>
+        "host": "localhost:9200",<br/>
+        "log": "trace"<br/>
+      }<br/>
+    }]</code>
+
 ### API
+By default, the database APIs are not generated. See the fields section,
+above, for information on how to set the flags needed to generate the
+APIs.
+
+The intent of the APIs is to quickly and easily provide endpoints for
+basic database operations.
+
 #### Connection API
 * **GET database-connection-name/connection/connect**<br/>
 Connects to the database.
