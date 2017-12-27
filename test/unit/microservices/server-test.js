@@ -278,7 +278,6 @@ describe( 'As a developer, I need need to run mock services.', function()
             request('http://localhost:' + port + "/text-string-array", { json: true }, (err, res, body) => {
                 expect(JSON.stringify(body)).to.be.equal(textResponse);
                 request('http://localhost:' + port + "/text-string-array", { json: true }, (err, res, body) => {
-                    console.log("XXXXXXXXXX");
                     console.log(body);
                     expect(body).to.be.equal(textResponse2);
                     request('http://localhost:' + port + "/text-string-array", { json: true }, (err, res, body) => {
