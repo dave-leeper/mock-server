@@ -99,14 +99,14 @@ let config = {
             "path": "/microservices",
             "name": "Services List",
             "description": "Provides a list of microservices registered with this server.",
-            "serviceFile": "./microservices/microservices.js",
+            "serviceFile": "microservices.js",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
         {
             "path": "/mocks",
             "name": "Mock Services List",
             "description": "Provides a list of mock microservices registered with this server.",
-            "serviceFile": "./microservices/mocks.js"
+            "serviceFile": "mocks.js"
         }
     ],
     "databaseConnections" : [
