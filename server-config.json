@@ -110,44 +110,44 @@
       "path": "/mocks",
       "name": "Mock Services List",
       "description": "Provides a list of mock services registered with this server.",
-      "serviceFile": "./microservices/mocks.js"
+      "serviceFile": "mocks.js"
     },
     {
       "path": "/microservices",
       "name": "Microservices List",
       "description": "Provides a list of services registered with this server.",
-      "serviceFile": "./microservices/microservices.js"
+      "serviceFile": "microservices.js"
     },
     {
       "path": "/databaseconnections",
       "name": "Database Connection List",
       "description": "Provides a list of database connections registered with this server.",
-      "serviceFile": "./microservices/databaseconnections.js"
+      "serviceFile": "databaseconnections.js"
     },
     {
       "path": "/download/:name",
       "name": "File Download",
       "description": "Downloads a file from the files directory of the server. The :name Parameter is the file name.",
-      "serviceFile": "./microservices/download.js"
+      "serviceFile": "download.js"
     },
     {
       "verb": "POST",
       "path": "/upload",
       "name": "File Upload",
       "description": "Uploads a file from the client. The file was specified using upload.hbs",
-      "serviceFile": "./microservices/upload.js"
+      "serviceFile": "upload.js"
     },
     {
       "path": "/throw",
       "name": "Throw Exception",
       "description": "A micro service that throws an exception. For testing purposes.",
-      "serviceFile": "./microservices/throw.js"
+      "serviceFile": "throw.js"
     },
     {
       "path": "/stop",
       "name": "Server Stop",
       "description": "Shuts down the server.",
-      "serviceFile": "./microservices/stop.js"
+      "serviceFile": "stop.js"
     }
   ],
   "databaseConnections" : [
