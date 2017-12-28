@@ -98,13 +98,16 @@ function getQuery( req ) {
         query += "_id:" + req.params.id;
     }
     for ( let term in req.query ) {
+        if (( "_from" === term ) || ( "_size" === term )) {
+            continue;
+        }
         let value = req.query[term];
-
         if ( 0 < query.length ) {
             query += " AND ";
         }
-        query += term + ": \"" + value + "\"";
+        query += term + ":'" + value + "'";
     }
+    query.replace(/ /g, "+")
     return query;
 }
 
