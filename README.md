@@ -270,5 +270,31 @@ Selects data from the database. If the :id parameter is set to _all, all
 records from the index/type are returned. Query parameters can be used
 in conjunction with the _all id to narrow down the results. Use the
 _size and _from query parameters to handle the page size of the returned
-values. See the Query Parameters section, below, for more information.
+values. The data returned is a status and an array of matching records.
+Example:
+<br/><code>{<br/>
+  "status":"success",<br/>
+  "data":[{<br/>
+  "title":"title2",<br/>
+  "content":"content2",<br/>
+  "suggest":"suggest2"},<br/>
+  {"title":"my title",<br/>
+  "content":"my content",<br/>
+  "suggest":"my suggest"}]<br/>
+}</code>
+
+##### Examples
+* **GET database-connection-name/data/test/my-type/1**<br/>
+Gets the data of type my-type from index test with an _id value of 1.
+* **GET database-connection-name/data/test/my-type/_all**<br/>
+Gets all data of type my-type from index test.
+* **GET database-connection-name/data/test/my-type/_all?title=my+title**<br/>
+Gets all data of type my-type from index test where title = "my title".
+* **GET database-connection-name/data/test/my-type/_all?title=my+title&content=my+content**<br/>
+Gets all data of type my-type from index test where title equals "my title"
+and content equals "my content".
+* **GET database-connection-name/data/test/my-type/_all?title=my+title&_size=5&_from=50**<br/>
+Gets all data of type my-type from index test where title = "my title".
+Only five records are returned, starting from the 50th record of the results.
+
 
