@@ -274,7 +274,7 @@ values. The data returned is a status and an array of matching records.
 Example:
 <br/><code>{<br/>
   "status":"success",<br/>
-  "data":[{<br/>
+  "data": [{<br/>
   "title":"title2",<br/>
   "content":"content2",<br/>
   "suggest":"suggest2"},<br/>
