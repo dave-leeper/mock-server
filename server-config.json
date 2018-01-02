@@ -103,6 +103,12 @@
       "response": "upload.hbs",
       "responseType": "HBS",
       "hbsData": {"title": "Upload ElasticSearch Data", "action": "/elasticsearch/data/test/my-type/1", "verb": "POST"}
+    },
+    {
+      "path": "/elasticsearch/data/update",
+      "response": "upload.hbs",
+      "responseType": "HBS",
+      "hbsData": {"title": "Update ElasticSearch Data", "action": "/elasticsearch/data/test/my-type/1", "verb": "PUT"}
     }
   ],
   "microservices": [
