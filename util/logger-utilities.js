@@ -6,6 +6,16 @@ let log4js = require('log4js' ),
 
 class LoggerUtilities
 {
+
+    /**
+     * Configures the logger.
+     * @param {Object} inConfig - Logging config. Follows standard log4js format.
+     */
+    static config ( inConfig )
+    {
+        log4js.configure( inConfig );
+    }
+
     /**
      * Formats a string in a manner similar to sprintf or Microsoft's String.Format() method.
      *
@@ -41,7 +51,6 @@ class LoggerUtilities
     static get WARN() { return log4js.levels.WARN; }
     static get ERROR() { return log4js.levels.ERROR; }
     static get FATAL() { return log4js.levels.FATAL; }
-    static get MARK() { return log4js.levels.MARK; }
     static get OFF() { return log4js.levels.OFF; }
 
     /**
@@ -85,11 +94,10 @@ class LoggerUtilities
      */
     static log ( inLogLevel, inPayload )
     {
-        var strmachineId = os.hostname();
+        var strMachineId = os.hostname();
         var strProcessID = process.pid;
-        var struserId = process.getuid();
         var strHostname = os.hostname();
-        var strLogMessage = ' | ' + strProcessID + ' | ' + struserId + ' | ' + struserId + ' | ' + strmachineId + ' | ' + strHostname + ' | ' + inPayload;
+        var strLogMessage = ' | ' + strProcessID + ' | ' + strMachineId + ' | ' + strHostname + ' | ' + inPayload;
 
         log4js.getLogger().log ( inLogLevel, strLogMessage );
     }
@@ -155,15 +163,6 @@ class LoggerUtilities
     static fatal ( inPayload )
     {
         this.log ( this.FATAL, inPayload );
-    }
-
-    /**
-     * Logs a message using P3 standards.
-     * @param {String} inPayload - The message to log.
-     */
-    static mark ( inPayload )
-    {
-        this.log ( this.MARK, inPayload );
     }
 }
 
