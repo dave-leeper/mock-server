@@ -39,6 +39,7 @@ the <b>logging</b> section. An example is shown below.
     }
   },
 ```
+See [log4js-node](https://log4js-node.github.io/log4js-node/) for details on the log4js configuration.
 
 ## Mocks
 Provides configuration information for mock services.
