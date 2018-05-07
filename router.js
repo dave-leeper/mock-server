@@ -97,6 +97,7 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
             let micro = new microserviceClass();
             let handler = (req, res) => {
                 Router.addHeaders(microservice, res);
+                Router.addCookies(microservice, res);
 
                 try {
                     micro.do(req, res, microservice);
@@ -180,6 +181,25 @@ Router.addHeaders = function ( configRecord, res ) {
     }
 };
 
+Router.addCookies = function ( configRecord, res ) {
+    if ((!configRecord.cookies) || (!configRecord.cookies.length)){
+        return;
+    }
+    for (let loop = 0; loop < configRecord.cookies.length; loop++) {
+        let cookie = { name: configRecord.cookies[loop].name, value: configRecord.cookies[loop].value };
+        let age = null;
+        if (configRecord.cookies[loop].expires) {
+            let offset = parseInt( configRecord.cookies[loop].expires );
+            let expireTime = new Date(Number(new Date()) + offset); ;
+            age = { expires: expireTime };
+        } else if (configRecord.cookies[loop].maxAge) {
+            age = { maxAge: parseInt( configRecord.cookies[loop].maxAge )};
+        }
+        if (!age) res.cookie( cookie.name, cookie.value);
+        else res.cookie( cookie.name, cookie.value, age);
+    }
+};
+
 Router.sendErrorResponse = function ( error, res, status ) {
     res.status(((status)? status : 500));
     res.render("error", error);
@@ -188,6 +208,7 @@ Router.sendErrorResponse = function ( error, res, status ) {
 Router.___buildJSONFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
+        Router.addCookies(mock, res);
         let responseFile = Router.___replaceResponseParams(mock.response, req );
         if (!files.existsSync(responseFile)) {
             const error = {
@@ -212,6 +233,7 @@ Router.___buildJSONFileHandlerFromString = function ( mock ) {
 Router.___buildHandlebarsFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
+        Router.addCookies(mock, res);
         let responseFile = Router.___replaceResponseParams(mock.response, req );
         res.render(responseFile, mock.hbsData);
     };
@@ -221,6 +243,7 @@ Router.___buildHandlebarsFileHandlerFromString = function ( mock ) {
 Router.___buildTextFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
+        Router.addCookies(mock, res);
         let responseFile = Router.___replaceResponseParams(mock.response, req );
         if (!files.existsSync(responseFile)) {
             const error = {
@@ -244,6 +267,7 @@ Router.___buildTextFileHandlerFromString = function ( mock ) {
 Router.___buildBLOBFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
+        Router.addCookies(mock, res);
         let responseFile = Router.___replaceResponseParams(mock.response, req );
         console.log(responseFile);
         if (!files.existsSync(responseFile)) {
@@ -276,6 +300,7 @@ Router.___buildJSONFileHandlerFromArrayOfStrings = function (mock ) {
         let responseFile = Router.___replaceResponseParams(mock.response[index], req );
 
         Router.addHeaders(mock, res);
+        Router.addCookies(mock, res);
         if (!files.existsSync(responseFile)) {
             const error = {
                 title: responseFile,
@@ -303,6 +328,7 @@ Router.___buildHandlebarsFileHandlerFromArrayOfStrings = function ( mock ) {
         let responseFile = Router.___replaceResponseParams(mock.response[index], req );
 
         Router.addHeaders(mock, res);
+        Router.addCookies(mock, res);
         res.render(responseFile, mock.hbsData[index]);
         Router.___incrementIndex( mock, index );
     };
@@ -315,6 +341,7 @@ Router.___buildTextFileHandlerFromArrayOfStrings = function ( mock ) {
         let responseFile = Router.___replaceResponseParams(mock.response[index], req );
 
         Router.addHeaders(mock, res);
+        Router.addCookies(mock, res);
         if (!files.existsSync(responseFile)) {
             const error = {
                 title: responseFile,
@@ -340,6 +367,7 @@ Router.___buildBLOBFileHandlerFromArrayOfStrings = function (mock ) {
         let responseFile = Router.___replaceResponseParams(mock.response[index], req );
 
         Router.addHeaders(mock, res);
+        Router.addCookies(mock, res);
         if (!files.existsSync(responseFile)) {
             const error = {
                 title: responseFile,
@@ -367,6 +395,7 @@ Router.___buildBLOBFileHandlerFromArrayOfStrings = function (mock ) {
 Router.___buildJSONFileHandlerFromObject = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
+        Router.addCookies(mock, res);
 
         let jsonResponse = JSON.stringify(mock.response);
         let checkForValidJSON = JSON.parse( jsonResponse );
@@ -379,6 +408,7 @@ Router.___buildJSONFileHandlerFromObject = function ( mock ) {
 Router.___buildTextFileHandlerFromObject = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
+        Router.addCookies(mock, res);
 
         let textResponse = ((mock.response.text)? mock.response.text : JSON.stringify(mock.response) );
 
@@ -392,6 +422,7 @@ Router.___buildJSONFileHandlerFromArrayOfObjects = function ( mock ) {
         let index = Router.___getIndex( mock );
 
         Router.addHeaders(mock, res);
+        Router.addCookies(mock, res);
 
         let jsonResponse = JSON.stringify(mock.response[index]);
         let checkForValidJSON = JSON.parse( jsonResponse );
@@ -407,6 +438,7 @@ Router.___buildTextFileHandlerFromArrayOfObjects = function ( mock ) {
         let index = Router.___getIndex( mock );
 
         Router.addHeaders(mock, res);
+        Router.addCookies(mock, res);
 
         let textResponse = ((mock.response[index].text)? mock.response[index].text : JSON.stringify(mock.response[index]) );
 

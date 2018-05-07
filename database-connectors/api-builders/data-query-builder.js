@@ -4,6 +4,7 @@ function DataQueryBuilder( routerClass, databaseConnectionInfo )
 {
     let queryDataHandler = (req, res) => {
         routerClass.addHeaders(databaseConnectionInfo, res);
+        routerClass.addCookies(databaseConnectionInfo, res);
 
         try {
             let databaseConnectionName = databaseConnectionInfo.name;

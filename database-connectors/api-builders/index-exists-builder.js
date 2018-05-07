@@ -3,6 +3,7 @@
 function IndexExistsBuilder ( routerClass, databaseConnectionInfo ) {
     let indexExistsHandler = (req, res) => {
         routerClass.addHeaders(databaseConnectionInfo, res);
+        routerClass.addCookies(databaseConnectionInfo, res);
 
         if ((!req)
         || (!req.app)

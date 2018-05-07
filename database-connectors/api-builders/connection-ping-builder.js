@@ -3,7 +3,8 @@
 function DatabasePingBuilder ( routerClass, databaseConnectionInfo ) {
     let pingHandler = (req, res) => {
         routerClass.addHeaders(databaseConnectionInfo, res);
-
+        routerClass.addCookies(databaseConnectionInfo, res);
+s
         if ((!req)
         || (!req.app)
         || (!req.app.locals)

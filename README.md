@@ -189,12 +189,24 @@ Example: "/throw.js"<br/>
 The name of the javascript file containing the
 microservice. These names are relative to the microservices directory.
 * **serviceData**<br/>
-Example: { "name": "My Server", "version": "1.0" }<br/>
+Example: "serviceData": { "level": "DEBUG", "json": true, }<br/>
 An optional
-field that provides a JSON object for use by the micro service.
+field that provides a JSON object for use by the micro service. Currently, only
+the log-request microservice uses this field. It has the following options:
+level The logging level used to write to the log. Can be ALL, TRACE, DEBUG, INFO, WARN,
+ERROR, or FATAL.
+json: True if the data being written is JSON.
 * **headers**<br/>
-Example: [[ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]]<br/>
+Example: [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]<br/>
 An optional array of headers that should be included in the response.
+
+* **cookies**<br/>
+Example: [ 
+    { "name": "MY_COOKIE1", "value": "MY_COOKIE_VALUE1" },  
+    { "name": "MY_COOKIE2", "value": "MY_COOKIE_VALUE2", "expires": 9999 },  
+    { "name": "MY_COOKIE3", "value": "MY_COOKIE_VALUE3", "maxAge" : 9999 }
+    ]<br/>
+An optional array of cookies that should be included in the response.
 
 ### Examples
  * A microservice service at GET /download/:name that downloads the file

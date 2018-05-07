@@ -4,6 +4,7 @@ function IndexCreateMappingBuilder( routerClass, databaseConnectionInfo )
 {
     let createIndexMappingHandler = (req, res) => {
         routerClass.addHeaders(databaseConnectionInfo, res);
+        routerClass.addCookies(databaseConnectionInfo, res);
 
         try {
             let databaseConnectionName = databaseConnectionInfo.name;

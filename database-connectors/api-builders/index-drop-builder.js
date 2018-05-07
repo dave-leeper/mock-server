@@ -3,6 +3,7 @@
 function IndexDropBuilder ( routerClass, databaseConnectionInfo ) {
     let dropIndexHandler = (req, res) => {
         routerClass.addHeaders(databaseConnectionInfo, res);
+        routerClass.addCookies(databaseConnectionInfo, res);
 
         if ((!req)
         || (!req.app)
