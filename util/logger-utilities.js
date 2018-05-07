@@ -115,7 +115,7 @@ class LoggerUtilities
      * Logs a message using P3 standards.
      * @param {String} inPayload - The message to log.
      */
-    static trace ( inPayload, inStatus, inSessionID )
+    static trace ( inPayload )
     {
         this.log ( this.TRACE, inPayload );
     }
