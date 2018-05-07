@@ -11,6 +11,7 @@ const bodyParser = require('body-parser');
 const busboy = require('connect-busboy')
 const fileUpload = require('express-fileupload');
 const Router = require('./router');
+const loggerUtilities = require('./util/logger-utilities');
 
 /**
  * @constructor
@@ -30,12 +31,16 @@ Server.prototype.init = function ( port, config, callback )
 {
     this.express = express();
 
+    // Logger setup
+    if (config.logging) {
+        loggerUtilities.config( config.logging );
+    }
+
     // view engine setup
     this.express.set('views', path.join(__dirname, 'views'));
     this.express.set('view engine', 'hbs');
 
     this.express.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-    this.express.use(logger('dev'));
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
     this.express.use(cookieParser());
