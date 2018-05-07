@@ -1,4 +1,17 @@
 {
+  "logging": {
+    "appenders": {
+      "out": { "type": "stdout" },
+      "app": { "type": "file", "filename": "application.log" }
+    },
+    "categories": {
+      "default":
+      {
+        "appenders": ["out", "app"],
+        "level" : "debug"
+      }
+    }
+  },
   "mocks": [
     {
       "path": "/ping",
@@ -198,6 +211,12 @@
       "name": "File Upload",
       "description": "Uploads a file from the client. The file was specified using upload.hbs",
       "serviceFile": "upload.js"
+    },
+    {
+      "path": "/log",
+      "name": "Body To Log",
+      "description": "Prints a request's body to the log. Ensure that server logging is configured.",
+      "serviceFile": "body-to-log.js"
     },
     {
       "path": "/throw",
