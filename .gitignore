@@ -5,7 +5,7 @@
 
 #logs
 log/
-.idea/
+application.log
 
 # testing
 /coverage
@@ -19,6 +19,8 @@ log/
 .env.development.local
 .env.test.local
 .env.production.local
+.idea/
+
 
 npm-debug.log*
 yarn-debug.log*
