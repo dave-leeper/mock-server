@@ -216,7 +216,8 @@
       "path": "/log",
       "name": "Body To Log",
       "description": "Prints a request's body to the log. Ensure that server logging is configured.",
-      "serviceFile": "body-to-log.js"
+      "serviceFile": "body-to-log.js",
+      "serviceData": { "level": "DEBUG", "json": true }
     },
     {
       "path": "/throw",
