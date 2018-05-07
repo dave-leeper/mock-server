@@ -112,7 +112,6 @@ function getQuery( req ) {
 }
 
 function formatQueryResults( results ) {
-    // TODO: We need to manually add the _id value.
     // https://stackoverflow.com/questions/33834141/elasticsearch-and-nest-why-amd-i-missing-the-id-field-on-a-query
     let newResults = [];
 
