@@ -1,17 +1,44 @@
 # To Run 
-<p><code>npm start</code></p>
+```
+npm start
+```
 
 # To Test 
-<p><code>mocha "test/**/*.js"</code></p>
+```
+mocha "test/**/*.js"
+```
 
 # To Start In-Memory Server 
-<p><code>var Server = require('./server.js');<br/>
-var port = MY_PORT_NUMBER;<br/>
-var serverConfig = require('./MY_SERVER_CONFIG.json');<br/>
-var server = new Server().init(port, serverConfig);</code></p>
+```
+var Server = require('./server.js');
+var port = MY_PORT_NUMBER;
+var serverConfig = require('./MY_SERVER_CONFIG.json');
+var server = new Server().init(port, serverConfig);
+```
 
 # Config File
 The config file is how you control the operation of the server.
+
+## Logging
+The mock server uses standard log4js logging. You configure logging
+by adding standard log4js configuration to the server's config file in 
+the <b>logging</b> section. An example is shown below.
+
+```
+  "logging": {
+    "appenders": {
+      "out": { "type": "stdout" },
+      "app": { "type": "file", "filename": "application.log" }
+    },
+    "categories": {
+      "default":
+      {
+        "appenders": ["out", "app"],
+        "level" : "debug"
+      }
+    }
+  },
+```
 
 ## Mocks
 Provides configuration information for mock services.
@@ -53,74 +80,88 @@ Example: {"title": "Index"}<br/>
 ### Examples
 * A mock service at GET /ping. It returns a JSON object and sets a header
 named MY_HEADER to MY_HEADER_VALUE.
-  <p><code>"mocks": [<br/>
-    {<br/>
-        "path": "/ping",<br/>
-        "response": {"name":"My Server","version":"1.0"},<br/>
-        "responseType": "JSON",<br/>
-        "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]<br/>
-    }]</code></p>
+```
+  "mocks": [
+    {
+        "path": "/ping",
+        "response": {"name":"My Server","version":"1.0"},
+        "responseType": "JSON",
+        "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    }]
+```
 
 * A mock service that returns JSON objects read from files. There are
 multiple files. They will be returned one after the other on multiple
 requests.
-  <p><code>"mocks": [<br/>
-    {<br/>
-        "path": "/json-string-array",<br/>
-        "response": ["./server-config.json", "./test/test-data.json"],<br/>
-        "responseType": "JSON",<br/>
-    }]</code></p>
+```
+  "mocks": [
+    {
+        "path": "/json-string-array",
+        "response": ["./server-config.json", "./test/test-data.json"],
+        "responseType": "JSON",
+    }]
+```
 
 * A mock service that sends a JSON object as a response. A Handlebars
 form, index.hbs, is used to display the data. Handlebars forms are in
 the views directory.
-  <p><code>"mocks": [<br/>
-    {<br/>
-        "path": "/hbs",<br/>
-        "response": "index.hbs",<br/>
-        "responseType": "HBS",<br/>
-        "hbsData": {"title": "Index"},<br/>
-    }]</code></p>
+```
+  "mocks": [
+    {
+        "path": "/hbs",
+        "response": "index.hbs",
+        "responseType": "HBS",
+        "hbsData": {"title": "Index"},
+    }]
+```
 
 * A mock service that sends multiple JSON objects as a response.
 Handlebars forms are used to display the data. The objects and forms
 will cycle through one per request.
-  <p><code>"mocks": [<br/>
-    {<br/>
-        "path": "/hbs-string-array",<br/>
-        "response": [ "index.hbs", "error.hbs" ],<br/>
-        "responseType": "HBS",<br/>
-        "hbsData": [ {"title": "Index"}, {"title": "Not Found"} ],<br/>
-    }]</code></p>
+```
+  "mocks": [
+    {
+        "path": "/hbs-string-array",
+        "response": [ "index.hbs", "error.hbs" ],
+        "responseType": "HBS",
+        "hbsData": [ {"title": "Index"}, {"title": "Not Found"} ],
+    }]
+```
 
 * A mock service that returns a text file as a response.
-  <p><code>"mocks": [<br/>
-    {<br/>
-        "path": "/text",<br/>
-        "response": "./views/index.hbs",<br/>
-        "responseType": "TEXT",<br/>
-    }]</code></p>
+```
+  "mocks": [
+    {
+        "path": "/text",
+        "response": "./views/index.hbs",
+        "responseType": "TEXT",
+    }]
+```
 
 * A mock service that sends multiple text files as a response, one per
 request.
-  <p><code>"mocks": [<br/>
-    {<br/>
-        "path": "/text-string-array",<br/>
-        "response": [ "./views/index.hbs", "./views/error.hbs" ],<br/>
-        "responseType": "TEXT",<br/>
-    }]</code></p>
+```
+  "mocks": [
+    {
+        "path": "/text-string-array",
+        "response": [ "./views/index.hbs", "./views/error.hbs" ],
+        "responseType": "TEXT",
+    }]
+```
 
 * A mock service that presents a file upload form to the client and
 stores the uploaded file in the files directory. The hbsData field is
 required and the JSON must have the title text, action URL, and HTTP
 verb fields.
-  <p><code>"mocks": [<br/>
-    {<br/>
-        "path": "/uploadfile",<br/>
-        "response": "upload.hbs",<br/>
-        "responseType": "HBS",<br/>
-        "hbsData": {"title": "Upload File", "action": "upload", "verb": "POST"}<br/>
-    }]</code></p>
+```
+  "mocks": [
+    {
+        "path": "/uploadfile",
+        "response": "upload.hbs",
+        "responseType": "HBS",
+        "hbsData": {"title": "Upload File", "action": "upload", "verb": "POST"}
+    }]
+```
 
 ## Microservices
 Provides simple services that should take only a few seconds to execute.
@@ -158,13 +199,15 @@ An optional array of headers that should be included in the response.
  * A microservice service at GET /download/:name that downloads the file
  :name from the files directory. The microservices/download.js file
  contains the code for the service.
-    <p><code>"microservices": [<br/>
-    {<br/>
-        "path": "/download/:name",<br/>
-        "name": "File Download",<br/>
-        "description": "Downloads a file from the files directory of the server. The :name Parameter is the file name.",<br/>
-        "serviceFile": "download.js"<br/>
-    }]</code></p>
+```
+    "microservices": [
+    {
+        "path": "/download/:name",
+        "name": "File Download",
+        "description": "Downloads a file from the files directory of the server. The :name Parameter is the file name.",
+        "serviceFile": "download.js"
+    }]
+```
 
 ## DatabaseConnections
 Database connections are used to work with databases. All database
@@ -207,20 +250,22 @@ the connection. Optional. Defaults to false. These APIs are described in
 the API section, below.
 ### Examples
  * A simple config for Elasticsearch.
-  <code>"databaseConnections" : [<br/>
+```
+  "databaseConnections" : [
     {<br/>
-      "name": "elasticsearch",<br/>
-      "description": "Elasticsearch service.",<br/>
-      "databaseConnector": "elasticsearch.js",<br/>
-      "generateConnectionAPI": true,<br/>
-      "generateIndexAPI": true,<br/>
-      "generateDataAPI": true,<br/>
-      "config": {<br/>
-        "host": "localhost:9200",<br/>
-        "log": "trace"<br/>
-      }<br/>
-    }]</code>
-
+      "name": "elasticsearch",
+      "description": "Elasticsearch service.",
+      "databaseConnector": "elasticsearch.js",
+      "generateConnectionAPI": true,
+      "generateIndexAPI": true,
+      "generateDataAPI": true,
+      "config": {
+        "host": "localhost:9200",
+        "log": "trace"
+      }
+    }]
+```
+    
 ### API
 By default, the database APIs are not generated. See the fields section,
 above, for information on how to set the flags needed to generate the
@@ -243,36 +288,42 @@ Determines if the index named :index exists.
 * **POST database-connection-name/index**<br/>
 Creates an index. The body of the request has a JSON object indicating
 the index name. Example:<br/>
-<code>{ index: "test" }</code>
+```
+{ index: "test" }
+```
 * **DELETE database-connection-name/index/:index**<br/>
 Drops the index indicated by the :index parameter.
 * **POST database-connection-name/index/mapping**<br/>
 Creates a mapping in an index. The body of the request has a JSON
 object indicating the mapping information. Example:
-<br/><code>{<br/>
-    index: "test",<br/>
-    type: "document",<br/>
-    body: {<br/>
-        properties: {<br/>
-            title: { type: "string" },<br/>
-            content: { type: "string" },<br/>
-            suggest: {<br/>
-                type: "completion",<br/>
-                analyzer: "simple",<br/>
-                search_analyzer: "simple"<br/>
-            }<br/>
-        }<br/>
-    }<br/>
-}</code>
+```
+{
+    index: "test",
+    type: "document",
+    body: {
+        properties: {
+            title: { type: "string" },
+            content: { type: "string" },
+            suggest: {
+                type: "completion",
+                analyzer: "simple",
+                search_analyzer: "simple"
+            }
+        }
+    }
+}
+```
 
 #### Data API
 * **POST database-connection-name/data/:index/:type/:id**<br/>
 Inserts the data in the body of the request into the database. Example:
-<br/><code>{<br/>
-  "title": "my title",<br/>
-  "content": "my content",<br/>
-  "suggest": "my suggest"<br/>
-}</code>
+```
+{
+  "title": "my title",
+  "content": "my content",
+  "suggest": "my suggest"
+}
+```
 
 * **GET database-connection-name/data/:index/:type/:id**<br/>
 Selects data from the database. If the :id parameter is set to _all, all
@@ -281,16 +332,21 @@ in conjunction with the _all id to narrow down the results. Use the
 _size and _from query parameters to handle the page size of the returned
 values. The data returned is a status and an array of matching records.
 Example:
-<br/><code>{<br/>
-  "status":"success",<br/>
-  "data": [{<br/>
-  "title":"title2",<br/>
-  "content":"content2",<br/>
-  "suggest":"suggest2"},<br/>
-  {"title":"my title",<br/>
-  "content":"my content",<br/>
-  "suggest":"my suggest"}]<br/>
-}</code>
+```
+{
+  "status":"success",
+  "data": [{
+    "title":"title2",
+    "content":"content2",
+    "suggest":"suggest2"
+  },
+  {
+    "title":"my title",
+    "content":"my content",
+    "suggest":"my suggest"
+  }]
+}
+```
 
 ##### Examples
 * **GET database-connection-name/data/test/my-type/1**<br/>
