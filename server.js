@@ -55,7 +55,7 @@ Server.prototype.init = function ( port, config, callback )
 
     // catch 404 and forward to error handler
     this.express.use(function(req, res, next) {
-        let err = new Error('Not Found');
+        let err = new Error('Not Found: ' + req.url);
         err.status = 404;
         next(err);
     });

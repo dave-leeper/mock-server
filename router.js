@@ -46,6 +46,12 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
                 } else if ( '[object Array]' === Object.prototype.toString.call( mock.response )) {
                     handler = this.___buildHandlebarsFileHandlerFromArrayOfStrings( mock );
                 }
+            } else if ("BLOB" === responseType) {
+                if (typeof mock.response === 'string') {
+                    handler = this.___buildBLOBFileHandlerFromString( mock );
+                } else if ( '[object Array]' === Object.prototype.toString.call( mock.response )) {
+                    handler = this.___buildBLOBFileHandlerFromArrayOfStrings( mock );
+                }
             } else {
                 if ( 'string' === typeof mock.response ) {
                     handler = this.___buildTextFileHandlerFromString( mock );
@@ -151,13 +157,15 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
     return router;
 };
 
-Router.defaultResponse = function ( res ) {
+Router.defaultResponse = function ( req, res ) {
+    let originalURL = ((req && req.originalUrl)? req.originalUrl : undefined);
     const error = {
         title: "Not Found",
         message: "File Not Found.",
         error: {
             status: 404
-        }
+        },
+        requestURL: originalURL
     };
     res.render('error', error);
 };
@@ -180,10 +188,11 @@ Router.sendErrorResponse = function ( error, res, status ) {
 Router.___buildJSONFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
-        if (!files.existsSync(mock.response)) {
+        let responseFile = Router.___replaceResponseParams(mock.response, req );
+        if (!files.existsSync(responseFile)) {
             const error = {
-                title: mock.response,
-                message: "File Not Found.",
+                title: responseFile,
+                message: "File Not Found: " + responseFile + ".",
                 error: {
                     status: 404
                 }
@@ -192,7 +201,7 @@ Router.___buildJSONFileHandlerFromString = function ( mock ) {
             return;
         }
 
-        let jsonResponseFileContents = files.readFileSync(mock.response);
+        let jsonResponseFileContents = files.readFileSync(responseFile);
         let checkForValidJSON = JSON.parse( jsonResponseFileContents );
 
         res.send(jsonResponseFileContents);
@@ -203,7 +212,8 @@ Router.___buildJSONFileHandlerFromString = function ( mock ) {
 Router.___buildHandlebarsFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
-        res.render(mock.response, mock.hbsData);
+        let responseFile = Router.___replaceResponseParams(mock.response, req );
+        res.render(responseFile, mock.hbsData);
     };
     return handler;
 };
@@ -211,9 +221,10 @@ Router.___buildHandlebarsFileHandlerFromString = function ( mock ) {
 Router.___buildTextFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
-        if (!files.existsSync(mock.response)) {
+        let responseFile = Router.___replaceResponseParams(mock.response, req );
+        if (!files.existsSync(responseFile)) {
             const error = {
-                title: mock.response,
+                title: responseFile,
                 message: "File Not Found.",
                 error: {
                     status: 404
@@ -223,9 +234,38 @@ Router.___buildTextFileHandlerFromString = function ( mock ) {
             return;
         }
 
-        let textResponseFileContents = files.readFileSync(mock.response, mock.encoding);
+        let textResponseFileContents = files.readFileSync(responseFile, mock.encoding);
 
         res.send(textResponseFileContents);
+    };
+    return handler;
+};
+
+Router.___buildBLOBFileHandlerFromString = function ( mock ) {
+    let handler = (req, res) => {
+        Router.addHeaders(mock, res);
+        let responseFile = Router.___replaceResponseParams(mock.response, req );
+        console.log(responseFile);
+        if (!files.existsSync(responseFile)) {
+            const error = {
+                title: responseFile,
+                message: "File Not Found.",
+                error: {
+                    status: 404
+                }
+            };
+            res.render("error", error);
+            return;
+        }
+
+        let bufferResponseFileContents = files.readBLOBFileSync(responseFile);
+
+        // res.writeHead(200, {
+        //     'Content-Type': ((mock.mimeType)? mock.mimeType : Router.___guessBLOBMIMEType(responseFile)),
+        //     'Content-Length': bufferResponseFileContents.length
+        // });
+        res.sendFile(responseFile);
+        // res.end(bufferResponseFileContents);
     };
     return handler;
 };
@@ -233,11 +273,12 @@ Router.___buildTextFileHandlerFromString = function ( mock ) {
 Router.___buildJSONFileHandlerFromArrayOfStrings = function (mock ) {
     let handler = (req, res) => {
         let index = Router.___getIndex( mock );
+        let responseFile = Router.___replaceResponseParams(mock.response[index], req );
 
         Router.addHeaders(mock, res);
-        if (!files.existsSync(mock.response[index])) {
+        if (!files.existsSync(responseFile)) {
             const error = {
-                title: mock.response,
+                title: responseFile,
                 message: "File Not Found.",
                 error: {
                     status: 404
@@ -247,7 +288,7 @@ Router.___buildJSONFileHandlerFromArrayOfStrings = function (mock ) {
             return;
         }
 
-        let jsonResponseFileContents = files.readFileSync(mock.response[index], mock.encoding);
+        let jsonResponseFileContents = files.readFileSync(responseFile, mock.encoding);
         let checkForValidJSON = JSON.parse( jsonResponseFileContents );
 
         res.send(jsonResponseFileContents);
@@ -259,9 +300,10 @@ Router.___buildJSONFileHandlerFromArrayOfStrings = function (mock ) {
 Router.___buildHandlebarsFileHandlerFromArrayOfStrings = function ( mock ) {
     let handler = (req, res) => {
         let index = Router.___getIndex( mock );
+        let responseFile = Router.___replaceResponseParams(mock.response[index], req );
 
         Router.addHeaders(mock, res);
-        res.render(mock.response[index], mock.hbsData[index]);
+        res.render(responseFile, mock.hbsData[index]);
         Router.___incrementIndex( mock, index );
     };
     return handler;
@@ -270,11 +312,12 @@ Router.___buildHandlebarsFileHandlerFromArrayOfStrings = function ( mock ) {
 Router.___buildTextFileHandlerFromArrayOfStrings = function ( mock ) {
     let handler = (req, res) => {
         let index = Router.___getIndex( mock );
+        let responseFile = Router.___replaceResponseParams(mock.response[index], req );
 
         Router.addHeaders(mock, res);
-        if (!files.existsSync(mock.response[index])) {
+        if (!files.existsSync(responseFile)) {
             const error = {
-                title: mock.response,
+                title: responseFile,
                 message: "File Not Found.",
                 error: {
                     status: 404
@@ -284,14 +327,43 @@ Router.___buildTextFileHandlerFromArrayOfStrings = function ( mock ) {
             return;
         }
 
-        let textResponseFileContents = files.readFileSync(mock.response[index], mock.encoding);
+        let textResponseFileContents = files.readFileSync(responseFile, mock.encoding);
 
         res.send(textResponseFileContents);
         Router.___incrementIndex( mock, index );
     };
     return handler;
 };
+Router.___buildBLOBFileHandlerFromArrayOfStrings = function (mock ) {
+    let handler = (req, res) => {
+        let index = Router.___getIndex( mock );
+        let responseFile = Router.___replaceResponseParams(mock.response[index], req );
 
+        Router.addHeaders(mock, res);
+        if (!files.existsSync(responseFile)) {
+            const error = {
+                title: responseFile,
+                message: "File Not Found.",
+                error: {
+                    status: 404
+                }
+            };
+            res.render("error", error);
+            return;
+        }
+
+        let bufferResponseFileContents = files.readBLOBFileSync(responseFile);
+
+        res.writeHead(200, {
+            'Content-Type': ((mock.mimeType)? mock.mimeType : Router.___guessBLOBMIMEType(responseFile)),
+            'Content-disposition': 'attachment;filename=' + responseFile,
+            'Content-Length': bufferResponseFileContents.length
+        });
+        res.end(new Buffer(bufferResponseFileContents, 'binary'));
+        Router.___incrementIndex( mock, index );
+    };
+    return handler;
+};
 Router.___buildJSONFileHandlerFromObject = function ( mock ) {
     let handler = (req, res) => {
         Router.addHeaders(mock, res);
@@ -361,6 +433,24 @@ Router.___incrementIndex = function (mock, index ) {
         index = 0;
     }
     Router.indexes[mock.path].___index = index;
+};
+Router.___replaceResponseParams = function (responseValue, httpRequestObject ) {
+    let paramIndex = responseValue.indexOf(':');
+    let finalResponse = responseValue;
+    if (-1 != paramIndex) {
+        let param = responseValue.substr(paramIndex + 1);
+        if (httpRequestObject.query[param]) {
+            finalResponse = responseValue.substr(0, paramIndex) + httpRequestObject.query[param];
+        }
+    }
+    return finalResponse;
+};
+Router.___guessBLOBMIMEType = function ( fileName ) {
+    if (fileName.endsWith('.jpg')) return 'image/jpeg';
+    if (fileName.endsWith('.jpeg')) return 'image/jpeg';
+    if (fileName.endsWith('.gif')) return 'image/gif';
+    if (fileName.endsWith('.gif')) return 'image/png';
+    return 'application/octet-stream';
 };
 
 module.exports = Router;

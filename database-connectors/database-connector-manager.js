@@ -86,6 +86,19 @@ DatabaseConnectorManager.prototype.buildConnectionAPI = function ( Router, route
     router.get(disconnectPath, disconnectHandler);
 };
 
+DatabaseConnectorManager.buildConnectionAPIPaths = function ( name ) {
+    let paths = [];
+    if ( !name ) {
+        return paths;
+    }
+    let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+    paths.push("/" + urlName + "/connection/connect");      // connect
+    paths.push("/" + urlName + "/connection/ping");         // ping
+    paths.push("/" + urlName + "/connection/disconnect");   // disconnect
+    return paths;
+};
+
 DatabaseConnectorManager.prototype.buildIndexAPI = function (Router, router, databaseConnectionInfo ) {
     let existsHandler = require("./api-builders/index-exists-builder.js")( Router, databaseConnectionInfo );
     if (!existsHandler) {
@@ -127,6 +140,20 @@ DatabaseConnectorManager.prototype.buildIndexAPI = function (Router, router, dat
     router.post(createMappingPath, createMappingHandler);
 };
 
+DatabaseConnectorManager.buildIndexAPIPaths = function (name ) {
+    let paths = [];
+    if ( !name ) {
+        return paths;
+    }
+    let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+    paths.push("/" + urlName + "/index/:index/exists"); // exists
+    paths.push("/" + urlName + "/index");               // create
+    paths.push("/" + urlName + "/index/:index");        // drop
+    paths.push("/" + urlName + "/index/mapping");       // create mapping
+    return paths;
+};
+
 DatabaseConnectorManager.prototype.buildDataAPI = function ( Router, router, databaseConnectionInfo ) {
     let insertHandler = require("./api-builders/data-insert-builder.js")( Router, databaseConnectionInfo );
     if (!insertHandler) {
@@ -162,37 +189,10 @@ DatabaseConnectorManager.prototype.buildDataAPI = function ( Router, router, dat
     let deletePath = paths[2];
     let queryPath = paths[3];
 
-    router.put(insertPath, updateHandler);
-    router.post(updatePath, insertHandler);
+    router.post(insertPath, insertHandler);
+    router.post(updatePath, updateHandler);
     router.delete(deletePath, deleteHandler);
     router.get(queryPath, queryHandler);
-};
-
-DatabaseConnectorManager.buildConnectionAPIPaths = function ( name ) {
-    let paths = [];
-    if ( !name ) {
-        return paths;
-    }
-    let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-
-    paths.push("/" + urlName + "/connection/connect");
-    paths.push("/" + urlName + "/connection/ping");
-    paths.push("/" + urlName + "/connection/disconnect");
-    return paths;
-};
-
-DatabaseConnectorManager.buildIndexAPIPaths = function (name ) {
-    let paths = [];
-    if ( !name ) {
-        return paths;
-    }
-    let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-
-    paths.push("/" + urlName + "/index/:index/exists");
-    paths.push("/" + urlName + "/index");
-    paths.push("/" + urlName + "/index/:index");
-    paths.push("/" + urlName + "/index/mapping");
-    return paths;
 };
 
 DatabaseConnectorManager.buildDataAPIPaths = function ( name ) {
@@ -202,10 +202,10 @@ DatabaseConnectorManager.buildDataAPIPaths = function ( name ) {
     }
     let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-    paths.push("/" + urlName + "/data/:index/:type/:id");
-    paths.push("/" + urlName + "/data/:index/:type/:id");
-    paths.push("/" + urlName + "/data/:index/:type/:id");
-    paths.push("/" + urlName + "/data/:index/:type/:id");
+    paths.push("/" + urlName + "/data");                    // insert
+    paths.push("/" + urlName + "/data/update");             // update
+    paths.push("/" + urlName + "/data/:index/:type/:id");   // delete
+    paths.push("/" + urlName + "/data/:index/:type/:id");   // query
     return paths;
 };
 

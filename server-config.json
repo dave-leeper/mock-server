@@ -102,13 +102,69 @@
       "path": "/elasticsearch/data/upload",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload ElasticSearch Data", "action": "/elasticsearch/data/test/my-type/1", "verb": "POST"}
+      "hbsData": {"title": "Upload ElasticSearch Data", "action": "/elasticsearch/data", "verb": "POST"}
     },
     {
       "path": "/elasticsearch/data/update",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Update ElasticSearch Data", "action": "/elasticsearch/data/test/my-type/1", "verb": "PUT"}
+      "hbsData": {"title": "Update ElasticSearch Data", "action": "/elasticsearch/data/update", "verb": "POST"}
+    },
+    {
+      "path": "/feed",
+      "response": "./files/feed.json",
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" }, { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
+      "path": "/post/creator",
+      "response": "./files/post.creator.json",
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" }, { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
+      "path": "/profile",
+      "response": "./files/profile.json",
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" }, { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
+      "path": "/notification",
+      "response": ["./files/notifications.json", "./files/notifications2.json"],
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" }, { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
+      "verb": "DELETE",
+      "path": "/notification",
+      "response": { "status": 200 },
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" }, { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
+      "verb": "DELETE",
+      "path": "/notification/:id",
+      "response": { "status": 200 },
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" }, { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
+      "path": "/search",
+      "response": "./files/search.json",
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" }, { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+    },
+    {
+      "path": "/Talkr/comment",
+      "response": "./files/comments.json",
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/Talkr/photo",
+      "response": "./files/:id",
+      "responseType": "BLOB",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     }
   ],
   "microservices": [

@@ -27,13 +27,19 @@ The URL path that invokes the mock.
 Example: "./server-config.json"<br/>
 The location of the response file.
 An array of response file paths can also be used. The server will cycle
-through the array, advancing with each request.
+through the array, advancing with each request.<br/>
+A parameter token can be added to the end of the response and that token 
+will be replaced with the value of the query parameter with the same
+name.<br>
+Example: "./:id"<br/>
+The file whose name matches the value of the :id query parameter will be
+returned.<br/>
 * **responseType**<br/>
 Example: "JSON"<br/>
 The type of data in the response file. Valid values
-are JSON, TEXT, and HBS (a Handlebars template file).
+are JSON, TEXT, BLOB, and HBS (a Handlebars template file).
 * **headers**<br/>
-Example: [[ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]]<br/>
+Example: [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]<br/>
 An array of headers that should be included in the response.
 * **hbsData**<br/>
 Example: {"title": "Index"}<br/>
@@ -41,6 +47,9 @@ A JSON object that should be sent to the
 Handlebars template (used only for HBS type files). If an array is used
 in the response field, and array of equal size should also be used in
 the hbsData field.
+* **mimeType**<br/>
+Example: {"title": "Index"}<br/>
+
 ### Examples
 * A mock service at GET /ping. It returns a JSON object and sets a header
 named MY_HEADER to MY_HEADER_VALUE.

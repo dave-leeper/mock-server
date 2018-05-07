@@ -1,5 +1,10 @@
 {
-  "title": "my title",
-  "content": "my content",
-  "suggest": "my suggest"
+  "data":{
+    "title": "my title",
+    "content": "my content",
+    "suggest": "my suggest"
+  },
+  "id": 1,
+  "type": "my-type",
+  "index": "test"
 }

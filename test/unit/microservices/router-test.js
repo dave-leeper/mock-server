@@ -73,8 +73,9 @@ describe( 'As a developer, I need a router that handles all GET paths, understan
     });
 
     it ( 'should provide a default response of file not found', ( ) => {
+        let req = new mockRequest();
         let resp = new mockResponse();
-        Router.defaultResponse(resp);
+        Router.defaultResponse(req, resp);
         expect(resp.renderString).to.be.equal('error');
         expect(resp.renderObject).to.not.be.null;
         expect(resp.renderObject.message).to.not.be.null;

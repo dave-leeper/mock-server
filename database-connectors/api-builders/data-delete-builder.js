@@ -28,24 +28,17 @@ function DataDeleteBuilder( routerClass, databaseConnectionInfo )
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
-            if ((!req.files)
-            || (!req.files.fileUploaded)
-            || (!req.files.fileUploaded.data)) {
-                const error = { message: "Error, no data file was uploaded.", error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
-                return;
-            }
-            if (req.param('index')) {
+            if (!req.params.index) {
                 const error = { message: "Error, no index name provided.", error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
-            if (req.param('type')) {
+            if (!req.params.type) {
                 const error = { message: "Error, no data type provided.", error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
-            if (req.param('id')) {
+            if (!req.params.id) {
                 const error = { message: "Error, no record id provided.", error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
                 return;
@@ -53,23 +46,24 @@ function DataDeleteBuilder( routerClass, databaseConnectionInfo )
             let index = req.params.index;
             let type = req.params.type;
             let id = req.params.id;
-
-            databaseConnection.delete({
+            let query = {
                 index: index,
                 type: type,
                 id: id
-            }, (error, response) => {
-                if (error) {
-                    const error = { message: "Error deleting record (id: " + id + "). " + err.error, error: { status: 500 }};
+            };
+
+            databaseConnection.delete( query )
+                .then(( response ) => {
+                    const success = {status: "success", operation: "Delete record from " + index};
+                    res.status(200);
+                    res.send(JSON.stringify(success));
+                })
+                .catch(( err ) => {
+                    const error = { message: "Error deleting record (index: " + index + ", type: " + type + ", id: " + id + "). " + err.error, error: { status: 500 }};
                     routerClass.sendErrorResponse(error, res);
-                    return;
-                }
-                const success = {status: "success", operation: "Delete record from " + index};
-                res.status(200);
-                res.send(JSON.stringify(success));
-            });
+                });
         } catch (err) {
-            const error = { message: "Error inserting ElasticSearch data.", error: { status: 500, stack: err.stack }};
+            const error = { message: "Error deleting ElasticSearch data.", error: { status: 500, stack: err.stack }};
             routerClass.sendErrorResponse(error, res);
         }
     };

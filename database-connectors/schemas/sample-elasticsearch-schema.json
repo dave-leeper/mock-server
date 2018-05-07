@@ -4,10 +4,10 @@
   "body": {
     "properties": {
       "title": {
-        "type": "string"
+        "type": "text"
       },
       "content": {
-        "type": "string"
+        "type": "text"
       },
       "suggest": {
         "type": "completion",

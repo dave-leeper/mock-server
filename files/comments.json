@@ -1,0 +1,127 @@
+{
+  "comments": [
+    {
+      "_id": 1,
+      "creator": "user1",
+      "createdAt": "20180418170613",
+      "comment": "My important comment that you must read.",
+      "comments": "0",
+      "parent": "blog-post-1",
+      "root": "blog-post-1",
+      "depth": 0,
+      "upvotes": 14,
+      "downvotes": 2,
+      "score": 12
+    },
+    {
+      "_id": 2,
+      "creator": "user2",
+      "createdAt": "20180418170613",
+      "comment": "My important comment that is even more important than your comment.",
+      "comments": "0",
+      "parent": 1,
+      "root": "blog-post-1",
+      "depth": 1,
+      "upvotes": 3,
+      "downvotes": 3,
+      "score": 0
+    },
+    {
+      "_id": 3,
+      "creator": "user3",
+      "createdAt": "20180418170613",
+      "comment": "My important comment which is the most important comment ever!",
+      "comments": "0",
+      "parent": 2,
+      "root": "blog-post-1",
+      "depth": 2,
+      "upvotes": 0,
+      "downvotes": 5,
+      "score": -5
+    },
+    {
+      "_id": 4,
+      "creator": "user4",
+      "createdAt": "20180418170613",
+      "comment": "I don't have anything to say, I just like typing.",
+      "comments": "0",
+      "parent": "blog-post-1",
+      "root": "blog-post-1",
+      "depth": 0,
+      "upvotes": 7,
+      "downvotes": 3,
+      "score": 4
+    },
+    {
+      "_id": 5,
+      "creator": "user5",
+      "createdAt": "20180418170613",
+      "comment": "First!",
+      "comments": "0",
+      "parent": "blog-post-1",
+      "root": "blog-post-1",
+      "depth": 0,
+      "upvotes": 99999,
+      "downvotes": 0,
+      "score": 99999
+    }
+
+  ],
+  "users": [
+    {
+      "id": "Davidkleeper",
+      "username": "David leeper",
+      "name": "David Leeper",
+      "private": false,
+      "profilePhoto": "c02fcbf7-60d9-4c82-9a82-282b2c092c44",
+      "username": "Davidkleeper",
+      "verified": true
+    },
+    {
+      "id": "user1",
+      "username": "User1",
+      "name": "User One",
+      "private": false,
+      "profilePhoto": "user1.jpg",
+      "followed": true,
+      "bio": "Bio 1"
+    },
+    {
+      "id": "user2",
+      "username": "User2",
+      "name": "User Two",
+      "profilePhoto": "user2.png",
+      "private": false,
+      "followed": true,
+      "bio": "Bio 2"
+    },
+    {
+      "id": "user3",
+      "username": "User3",
+      "name": "User Three",
+      "private": false,
+      "profilePhoto": "user3.jpg",
+      "followed": true,
+      "bio": "Bio 3"
+    },
+    {
+      "id": "user4",
+      "username": "User4",
+      "name": "User Four",
+      "private": false,
+      "profilePhoto": "user4.jpg",
+      "followed": true,
+      "bio": "Bio 4"
+    },
+    {
+      "id": "user5",
+      "username": "User5",
+      "name": "User Five",
+      "private": false,
+      "profilePhoto": "user5.jpg",
+      "followed": true,
+      "bio": "Bio 5"
+    }
+
+  ]
+}

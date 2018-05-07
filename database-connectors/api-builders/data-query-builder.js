@@ -28,17 +28,17 @@ function DataQueryBuilder( routerClass, databaseConnectionInfo )
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
-            if (req.param.index) {
+            if (!req.params.index) {
                 const error = { message: "Error, no index name provided.", error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
-            if (req.param.type) {
+            if (!req.params.type) {
                 const error = { message: "Error, no data type provided.", error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
                 return;
             }
-            if (req.param.id) {
+            if (!req.params.id) {
                 const error = { message: "Error, no record id provided.", error: { status: 500 }};
                 routerClass.sendErrorResponse(error, res);
                 return;
@@ -112,13 +112,17 @@ function getQuery( req ) {
 }
 
 function formatQueryResults( results ) {
+    // TODO: We need to manually add the _id value.
+    // https://stackoverflow.com/questions/33834141/elasticsearch-and-nest-why-amd-i-missing-the-id-field-on-a-query
     let newResults = [];
 
     if ((!results) || (!results.hits) || (!results.hits.hits)) {
         return newResults;
     }
     for (let result in results.hits.hits) {
-        newResults.push(results.hits.hits[result]._source);
+        let record = results.hits.hits[result]._source;
+        record._id = results.hits.hits[result]._id;
+        newResults.push( record );
     }
     return newResults;
 }

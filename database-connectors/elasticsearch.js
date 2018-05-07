@@ -215,11 +215,11 @@ ElasticSearchDatabaseConnector.prototype.update = function ( data ) {
      });
 };
 
-ElasticSearchDatabaseConnector.prototype.delete = function ( data, whereClause ) {
+ElasticSearchDatabaseConnector.prototype.delete = function ( data ) {
     return new Promise (( inResolve, inReject ) => {
-        this.client.indices.delete({ index: name })
+        this.client.delete( data )
             .then(( success ) => { inResolve && inResolve( success ); })
-            .catch(() => { inReject && inReject( { status: false, error: 'Index does not exist.' } ); });
+            .catch((error) => { inReject && inReject( { status: false, error: error } ); });
     });
 };
 
