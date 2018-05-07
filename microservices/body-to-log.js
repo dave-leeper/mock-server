@@ -21,13 +21,17 @@ BodyToLogService.prototype.do = function (req, res, serviceInfo )
         if (serviceInfo && serviceInfo.serviceData && serviceInfo.serviceData.level) {
             level = serviceInfo.serviceData.level.toUpperCase();
         }
-        if ( "ALL" === level ) logger.all(req.body);
-        else if ( "TRACE" === level ) logger.trace(req.body);
-        else if ( "DEBUG" === level ) logger.debug(req.body);
-        else if ( "INFO" === level ) logger.info(req.body);
-        else if ( "WARN" === level ) logger.warn(req.body);
-        else if ( "ERROR" === level ) logger.error(req.body);
-        else if ( "FATAL" === level ) logger.fatal(req.body);
+        let logMessage = req.body;
+        if (serviceInfo && serviceInfo.serviceData && serviceInfo.serviceData.json) {
+            logMessage = JSON.stringify(logMessage);
+        }
+        if ( "ALL" === level ) logger.all(logMessage);
+        else if ( "TRACE" === level ) logger.trace(logMessage);
+        else if ( "DEBUG" === level ) logger.debug(logMessage);
+        else if ( "INFO" === level ) logger.info(logMessage);
+        else if ( "WARN" === level ) logger.warn(logMessage);
+        else if ( "ERROR" === level ) logger.error(logMessage);
+        else if ( "FATAL" === level ) logger.fatal(logMessage);
         else {
             const error = { status: "error", operation: "Invalid logging level supplied in service information." };
             res.status(400);
@@ -35,7 +39,7 @@ BodyToLogService.prototype.do = function (req, res, serviceInfo )
             inReject && inReject(error, null);
             return;
         }
-        const success = { status: "success", operation: "Print body to console" };
+        const success = { status: "success", operation: "Print body to log" };
         res.status(200);
         res.send(JSON.stringify(success));
         inResolve && inResolve(null, success);
