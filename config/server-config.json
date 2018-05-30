@@ -1,14 +1,14 @@
 {
   "logging": {
     "appenders": {
-      "out": { "type": "stdout" },
-      "app": { "type": "file", "filename": "application.log" }
+      "app": { "type": "file", "filename": "mock-server.log" },
+      "out": { "type": "stdout" }
     },
     "categories": {
       "default":
       {
-        "appenders": ["out", "app"],
-        "level" : "debug"
+        "appenders": ["app", "out"],
+        "level" : "trace"
       }
     }
   },

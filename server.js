@@ -10,9 +10,9 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const busboy = require('connect-busboy')
 const fileUpload = require('express-fileupload');
-const Router = require('./router');
-const Log = require('./util/log');
-const FileUtilities = require('./util/file-utilities.js');
+const Router = require('./src/router');
+const Log = require('./src/util/log');
+const FileUtilities = require('./src/util/file-utilities.js');
 
 /**
  * @constructor
@@ -39,7 +39,7 @@ class Server {
                 loadedConfigs.push(require(configFileNames[loop]));
             }
             return loadedConfigs;
-        }
+        };
         let mergeConfigs = (loadedConfigs) => {
             let mergedConfig = {};
             for (let loop = 0; loop < loadedConfigs.length; loop++) {
@@ -72,7 +72,7 @@ class Server {
         }
 
         // view engine setup
-        this.express.set('views', path.join(__dirname, 'views'));
+        this.express.set('views', path.join(__dirname, 'src', 'views'));
         this.express.set('view engine', 'hbs');
 
         this.express.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

@@ -3,7 +3,7 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    Router = require('../../../../router.js'),
+    Router = require('../../../../src/router.js'),
     mockRequest = require('../../../mock-request.js'),
     mockResponse = require('../../../mock-response.js'),
     connectionHandlerBuilder = require('../../../../database-connectors/api-builders/connection-connect-builder.js'),

@@ -3,11 +3,11 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    Router = require('../../../router.js'),
+    Router = require('../../../src/router.js'),
     mockExpressRouter = require('../../mock-express-router.js'),
     mockRequest = require('../../mock-request.js'),
     mockResponse = require('../../mock-response.js'),
-    utils = require('../../../util/file-utilities.js');
+    utils = require('../../../src/util/file-utilities.js');
 let config = {
     "mocks": [
         {
