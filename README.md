@@ -15,6 +15,10 @@ var port = MY_PORT_NUMBER;
 var serverConfig = require('./MY_SERVER_CONFIG.json');
 var server = new Server().init(port, serverConfig);
 ```
+# To Set The Port 
+The port used by the mock server defaults to 3000. You can override this by setting the
+MOCK_SEREVER_PORT environment variable to the desired port. When using the mock server as
+an in-memory server, just pass the desired port number.
 
 # Config File
 The config file is how you control the operation of the server.
