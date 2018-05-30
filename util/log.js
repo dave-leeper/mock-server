@@ -5,7 +5,7 @@ let log4js = require('log4js' ),
     process = require('process'),
     stringifyObject = require('stringify-object');
 
-class LoggerUtilities {
+class Log {
     /**
      * Configures the logger.
      * @param {Object} inConfig - Logging config. Follows standard log4js format.
@@ -44,6 +44,17 @@ class LoggerUtilities {
     static get OFF() { return log4js.levels.OFF; }
     static set level( inLogLevel ) { log4js.getLogger().setLevel(inLogLevel); }
     static get level( ) { return log4js.getLogger().level; }
+    static getLevelFromString ( inLogLevel ) {
+        if (!inLogLevel) return Log.OFF;
+        if ("ALL" === inLogLevel.toUpperCase()) return Log.ALL;
+        if ("TRACE" === inLogLevel.toUpperCase()) return Log.TRACE;
+        if ("DEBUG" === inLogLevel.toUpperCase()) return Log.DEBUG;
+        if ("INFO" === inLogLevel.toUpperCase()) return Log.INFO;
+        if ("WARN" === inLogLevel.toUpperCase()) return Log.WARN;
+        if ("ERROR" === inLogLevel.toUpperCase()) return Log.ERROR;
+        if ("FATAL" === inLogLevel.toUpperCase()) return Log.FATAL;
+        return Log.OFF;
+    }
     static will ( inLogLevel ) { return log4js.getLogger().isLevelEnabled ( inLogLevel ); }
     static log ( inLogLevel, inPayload ) {
         let strMachineId = os.hostname();
@@ -61,4 +72,4 @@ class LoggerUtilities {
     static error ( inPayload ) { this.log ( this.ERROR, inPayload ); }
     static fatal ( inPayload ) { this.log ( this.FATAL, inPayload ); }
 }
-module.exports = LoggerUtilities;
+module.exports = Log;

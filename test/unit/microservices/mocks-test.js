@@ -43,10 +43,10 @@ let config = {
     ]
 };
 
-describe( 'As a developer, I need need to obtain a list of mock services that are available.', function()
+describe( 'As a developer, I need need to obtain a list of mock util that are available.', function()
 {
 
-    it ( 'should return a list of mock services available.', ( ) => {
+    it ( 'should return a list of mock util available.', ( ) => {
         let mocksMicroservice = new MocksMicroservice();
         let mockRequest = new MockRequest();
         let mockResponse = new MockResponse();

@@ -170,12 +170,42 @@ verb fields.
 
 ## Microservices
 Provides simple services that should take only a few seconds to execute.
-Microservices have a do(req, res, router, serviceInfo) method that
-returns a promise.
+Microservices have a do(params) method that returns a promise. The resolve()
+and reject() methods of the promise will be passed a microservice result object.
 The promise is fulfilled when the microservice completes a request.
 Microservices are stateless and have no lifecycle. A microservice object
  will be instantiated every time a request to the microservice is made.
-### Fields
+### Params
+The params object passed into the microservice has the following members:
+```
+{
+    server:         Object.     The server object.
+    serverConfig:   Object.     The server configuration (JSON).
+    serviceInfo:    Object.     Information about this service (JSON).
+    body:           Object.     The body of the request that invoked this microservice.
+    params:         Array.      The params of the request that invoked this microservice.
+    files:          Array.      The files of the request that invoked this microservice.
+    headers:        Array.      The headers of the request that invoked this microservice.
+    cookies:        Array.      The cookies of the request that invoked this microservice.
+    pipe            Function.   Used to upload a file from the client.
+    busboy          Object.     Used to upload a file from the client.
+}
+```
+### Microservice Result Object
+Resolve and request functions are passed a microservice result object, which has the following
+members:
+```
+    status:             Number.             The HTTP status of the operation.
+    send:               String or String[]  Strings that should be written to the response.
+    fileDownloadPath:   String              A file that should be downloaded in the response.
+    viewName:           String              The name of a view to send as the response.
+    viewObject:         JSON                An object used to render the view.
+```
+Send, fileDownloadPath, and viewName/viewObject are mutually exclusive. You can use only one
+of these three methods of sending data in the response per response. The only exception to this
+is on reject, in which case the server will always check the send field for an error message to
+log, even if fileDownloadPath or viewName/viewObject are used.
+### Config Fields
 * **verb**<br/>
 Example: "POST"<br/>
 The HTTP verb. Optional. Defaults to GET.

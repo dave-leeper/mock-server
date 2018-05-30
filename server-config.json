@@ -203,7 +203,7 @@
       "path": "/databaseconnections",
       "name": "Database Connection List",
       "description": "Provides a list of database connections registered with this server.",
-      "serviceFile": "databaseconnections.js"
+      "serviceFile": "database-connections.js"
     },
     {
       "path": "/download/:name",

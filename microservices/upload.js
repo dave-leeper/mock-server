@@ -1,10 +1,4 @@
 'use strict';
-
-const path = require('path');
-let fs = require('fs-extra');
-let files = require ( '../util/file-utilities.js' );
-
-const FILE_PATH = path.join(__dirname , "/../files/");
 /**
  * @constructor
  */

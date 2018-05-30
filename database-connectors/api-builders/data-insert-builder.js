@@ -1,5 +1,5 @@
 'use strict';
-let logger = require('../../util/logger-utilities');
+let logger = require('../../util/log');
 
 function DataInsertBuilder( routerClass, databaseConnectionInfo )
 {

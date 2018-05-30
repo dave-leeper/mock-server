@@ -11,7 +11,7 @@ const bodyParser = require('body-parser');
 const busboy = require('connect-busboy')
 const fileUpload = require('express-fileupload');
 const Router = require('./router');
-const loggerUtilities = require('./util/logger-utilities');
+const loggerUtilities = require('./util/log');
 
 /**
  * @constructor

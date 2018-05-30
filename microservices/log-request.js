@@ -1,6 +1,6 @@
 'use strict';
 
-const logger = require('../util/logger-utilities');
+const logger = require('../util/log');
 
 /**
  * @constructor

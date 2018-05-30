@@ -1,6 +1,6 @@
 'use strict';
 
-let log = require ( '../util/logger-utilities.js' );
+let log = require ( '../util/log.js' );
 
 function DatabaseConnectorManager ( ) {
     this.config = null;

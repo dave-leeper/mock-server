@@ -13,7 +13,7 @@ let config = {
             "path": "/microservices",
             "name": "Services List",
             "description": "Provides a list of microservices registered with this server.",
-            "serviceFile": "services.js"
+            "serviceFile": "util.js"
         },
         {
             "path": "/mocks",

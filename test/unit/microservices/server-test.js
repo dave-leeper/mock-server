@@ -123,7 +123,7 @@ let config = {
     ]
 };
 
-describe( 'As a developer, I need a server that sets up mock services, microservices, database connections, and can be started and stopped in memory.', function()
+describe( 'As a developer, I need a server that sets up mock util, microservices, database connections, and can be started and stopped in memory.', function()
 {
     it ( 'should be be able to start and stop from within javascript', ( done ) => {
         let port = '1337';
@@ -162,7 +162,7 @@ describe( 'As a developer, I need a server that sets up mock services, microserv
     });
 });
 
-describe( 'As a developer, I need need to run mock services.', function()
+describe( 'As a developer, I need need to run mock util.', function()
 {
     it ( 'should write json files as a mock service', ( done ) => {
         let port = 1337;

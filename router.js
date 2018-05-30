@@ -1,7 +1,7 @@
 'use strict';
 
 let files = require ( './util/file-utilities.js' );
-let log = require ( './util/logger-utilities.js' );
+let Log = require ( './util/log.js' );
 let DatabaseConnectorManager = require ( './database-connectors/database-connector-manager' );
 
 function Router ( ) { }
@@ -66,8 +66,8 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
                 }
             }
             if (!handler) {
-                if (log.will(log.ERROR)) {
-                    log.error("Handler not defined for mock " + mock.path + ".");
+                if (Log.will(Log.ERROR)) {
+                    Log.error("Handler not defined for mock " + mock.path + ".");
                     continue;
                 }
             }
@@ -91,7 +91,7 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
         for (let loop2 = 0; loop2 < config.microservices.length; loop2++) {
             let microservice = config.microservices[loop2];
             let verb = ((microservice.verb) ? microservice.verb.toUpperCase() : "GET" );
-            let microservicePath = "./microservices/" + microservice.serviceFile;
+            let microservicePath = "./new-microservices/" + microservice.serviceFile;
             let microserviceClass = require( microservicePath );
 
             let micro = new microserviceClass();
@@ -100,20 +100,58 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
                 Router.addCookies(microservice, res);
 
                 try {
-                    micro.do(req, res, next, microservice);
-                } catch (err) {
-                    res.status(500);
-                    res.render("error", {
-                        message: "Error calling microservice " + microservice.name + ".",
-                        error: {status: 500, stack: err.stack}
+                    let params = {
+                        server: req.app.locals.___extra.server,
+                        serverConfig: req.app.locals.___extra.serverConfig,
+                        serviceInfo: microservice,
+                        body: req.body,
+                        params: req.params,
+                        files: req.files,
+                        headers: req.headers,
+                        cookies: req.cookies,
+                        pipe: req.pipe,
+                        busboy: req.busboy,
+                    };
+                    Log.trace('Executing ' + microservice.name + ' microservice with service information of ' + Log.stringify(microservice));
+                    micro.do(params).then(( data ) => {
+                        Log.trace(microservice.name + ' executed successfully.');
+                        res.status(data.status);
+                        if (data.send) {
+                            if (Array.isArray(data.send)) res.send(data.send.map(x => x));
+                            else res.send(data.send);
+                        } else if (data.fileDownloadPath) {
+                            res.download(data.fileDownloadPath);
+                        } else if (data.viewName) {
+                            res.render( data.viewName, data.viewObject );
+                        }
+                    }, ( error ) => {
+                        Log.trace(microservice.name + ' executed with error(s).');
+                        res.status(data.status);
+                        if (error.send) {
+                            if (Array.isArray(data.send)) Log.error(data.send.map(x => x));
+                            else Log.error(data.send);
+                            if (!error.fileDownloadPath && !data.viewName)  {
+                                if (Array.isArray(data.send)) res.send(data.send.map(x => x));
+                                else res.send(data.send);
+                            }
+                        } else if (data.fileDownloadPath) {
+                            res.download(data.fileDownloadPath);
+                        } else if (data.viewName) {
+                            res.render( data.viewName, data.viewObject );
+                        }
                     });
+                } catch (err) {
+                    let error = 'Error executing microservice ' + microservice.name + '.';
+                    Log.error(error);
+                    res.status(500);
+                    res.render("error", { message: error, error: { status: 500, stack: err.stack }});
                 }
                 return;
             };
 
             if (!handler) {
-                if (log.will(log.ERROR)) {
-                    log.error("Handler not defined for microservice " + microservice.path + ".");
+                if (Log.will(Log.ERROR)) {
+                    Log.error("Handler not defined for microservice " + microservice.path + ".");
                     continue;
                 }
             }

@@ -4,7 +4,7 @@
 let chai = require( 'chai' ),
     expect = chai.expect,
     Router = require('../../../router.js'),
-    DatabaseConnectionsMicroservice = require('../../../microservices/databaseconnections.js'),
+    DatabaseConnectionsMicroservice = require('../../../microservices/database-connections.js'),
     MockRequest = require('../../mock-request.js'),
     MockResponse = require('../../mock-response.js');
 let config = {
