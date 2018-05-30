@@ -17,7 +17,7 @@ function UploadService ( )
  * @param res {Object} - The response object.
  * @param serviceInfo - Service config info.
  */
-UploadService.prototype.do = function ( req, res, serviceInfo )
+UploadService.prototype.do = function ( req, res, next, serviceInfo )
 {
     return new Promise (( inResolve, inReject ) => {
         const fileName = ((req.params.name)? req.params.name : "filename");
@@ -37,7 +37,7 @@ UploadService.prototype.do = function ( req, res, serviceInfo )
                     };
                     res.status(500);
                     res.render("error", error);
-                    inReject && inReject ( error, null );
+                    inReject && inReject ( error );
                     return;
                 }
                 fstream = fs.createWriteStream(FILE_PATH + filename);
@@ -46,7 +46,8 @@ UploadService.prototype.do = function ( req, res, serviceInfo )
                     const message = {title: fileName, message: "Upload complete.", status: 200};
                     res.status(200);
                     res.render("message", message);
-                    inResolve && inResolve(null, message);
+                    next();
+                    inResolve && inResolve(message);
                 });
             });
         } catch (err) {

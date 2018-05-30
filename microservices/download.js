@@ -16,7 +16,7 @@ function DownloadService ( )
  * @param res {Object} - The response object.
  * @param serviceInfo - Service config info.
  */
-DownloadService.prototype.do = function ( req, res, serviceInfo )
+DownloadService.prototype.do = function ( req, res, next, serviceInfo )
 {
     return new Promise (( inResolve, inReject ) => {
         const fileName = ((req.params.name)? req.params.name : "filename");
@@ -37,8 +37,8 @@ DownloadService.prototype.do = function ( req, res, serviceInfo )
             const success = { status: "success", operation: "File download" };
             res.status(200);
             res.download(filePath);
-
-            inResolve && inResolve(null, success);
+            next();
+            inResolve && inResolve(success);
         }
     });
 };

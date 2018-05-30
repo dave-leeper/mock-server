@@ -95,12 +95,12 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
             let microserviceClass = require( microservicePath );
 
             let micro = new microserviceClass();
-            let handler = (req, res) => {
+            let handler = (req, res, next) => {
                 Router.addHeaders(microservice, res);
                 Router.addCookies(microservice, res);
 
                 try {
-                    micro.do(req, res, microservice);
+                    micro.do(req, res, next, microservice);
                 } catch (err) {
                     res.status(500);
                     res.render("error", {

@@ -12,9 +12,9 @@ function MocksMicroservice ( )
  * @param res {Object} - The response object.
  * @param serviceInfo - Service config info.
  */
-MocksMicroservice.prototype.do = function (req, res, serviceInfo )
+MocksMicroservice.prototype.do = function (req, res, next, serviceInfo )
 {
-    return new Promise (( inResolve ) => {
+    return new Promise (( inResolve, inReject ) => {
         if ((req)
         && (req.app)
         && (req.app.locals)
@@ -36,11 +36,12 @@ MocksMicroservice.prototype.do = function (req, res, serviceInfo )
             }
             res.status(200);
             res.send(JSON.stringify(result));
+            next();
         } else {
             res.status(200);
             res.send(JSON.stringify({"response": "No registered mocks"}));
         }
-        inResolve && inResolve ( null, this );
+        inResolve && inResolve ( this );
     });
 };
 

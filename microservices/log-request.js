@@ -14,7 +14,7 @@ function LogRequestService ( )
  * @param res {Object} - The response object.
  * @param serviceInfo - Servic  e config info.
  */
-LogRequestService.prototype.do = function (req, res, serviceInfo )
+LogRequestService.prototype.do = function (req, res, next, serviceInfo )
 {
     return new Promise (( inResolve, inReject ) => {
         // Calculate log level.
@@ -32,7 +32,7 @@ LogRequestService.prototype.do = function (req, res, serviceInfo )
         if (logError) {
             res.status(404);
             res.render("error", logError);
-            inReject && inReject ( logError, null );
+            inReject && inReject ( logError );
             return;
         }
 
@@ -50,7 +50,7 @@ LogRequestService.prototype.do = function (req, res, serviceInfo )
         if (logError) {
             res.status(404);
             res.render("error", logError);
-            inReject && inReject ( logError, null );
+            inReject && inReject ( logError );
             return;
         }
 
@@ -59,7 +59,7 @@ LogRequestService.prototype.do = function (req, res, serviceInfo )
         if (logError) {
             res.status(404);
             res.render("error", logError);
-            inReject && inReject ( logError, null );
+            inReject && inReject ( logError );
             return;
         }
 
@@ -68,14 +68,15 @@ LogRequestService.prototype.do = function (req, res, serviceInfo )
         if (logError) {
             res.status(404);
             res.render("error", logError);
-            inReject && inReject ( logError, null );
+            inReject && inReject ( logError );
             return;
         }
 
         const success = { status: "success", operation: "Print request to log" };
         res.status(200);
         res.send(JSON.stringify(success));
-        inResolve && inResolve(null, success);
+        next();
+        inResolve && inResolve(success);
     });
 };
 

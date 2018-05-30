@@ -14,7 +14,7 @@ function DatabaseConnectionsService ( )
  * @param res {Object} - The response object.
  * @param serviceInfo - Service config info.
  */
-DatabaseConnectionsService.prototype.do = function ( req, res, serviceInfo )
+DatabaseConnectionsService.prototype.do = function ( req, res, next, serviceInfo )
 {
     return new Promise (( inResolve ) => {
         if ((req)
@@ -42,11 +42,12 @@ DatabaseConnectionsService.prototype.do = function ( req, res, serviceInfo )
             }
             res.status(200);
             res.send(JSON.stringify(result));
+            next();
         } else {
             res.status(200);
             res.send(JSON.stringify({"response": "No registered database connections"}));
         }
-        inResolve && inResolve ( null, this );
+        inResolve && inResolve ( this );
     });
 };
 

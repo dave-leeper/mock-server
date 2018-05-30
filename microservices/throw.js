@@ -12,7 +12,7 @@ function ThrowService ( )
  * @param res {Object} - The response object.
  * @param serviceInfo - Service config info.
  */
-ThrowService.prototype.do = function ( req, res, serviceInfo )
+ThrowService.prototype.do = function ( req, res, next, serviceInfo )
 {
     throw Error("ERROR");
 };

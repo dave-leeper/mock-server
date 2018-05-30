@@ -28,7 +28,7 @@ ElasticSearchDatabaseConnector.prototype.connect = function ( config ) {
         try {
             this.client = new elasticsearch.Client(configCopy);
             this.config = config;
-            inResolve && inResolve ( null, this.client );
+            inResolve && inResolve ( this.client );
         } catch (err) {
             inReject && inReject ( { status: false, error: 'Error while connecting.' } );
         }
