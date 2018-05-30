@@ -1,8 +1,9 @@
 'use strict';
 
 let fs = require("fs");
+let path = require("path");
 
-class Utilities {
+class FileUtilities {
     /**
      * Reads a file and returns the contents.
      * @param inFilepath {String} The path to the file.
@@ -51,6 +52,24 @@ class Utilities {
         fs.unlinkSync(inFilepath);
     }
 
-}
+    /**
+     * returns a list of files.
+     * @param inFilepath {String} The path to the directory to search.
+     * @param inNameMatches {RegExp} Only files that match will be returned. Can be null to skip this check.
+     * @param inSkipDirectories {Boolean} If true, no directories are returned in the list.
+     * @param inSkipFiles {Boolean} If true, no files are returned in the list.
+     */
+    static getFileList(inFilepath, inNameMatches, inSkipDirectories, inSkipFiles) {
+        let results = [];
+        fs.readdirSync(inFilepath).forEach((fileName) => {
+            let stat =  fs.statSync(path.join(inFilepath, fileName));
+            if (inSkipDirectories && stat && stat.isDirectory()) return;
+            if (inSkipFiles && stat && stat.isFile()) return;
+            if (inNameMatches && !inNameMatches.test(fileName)) return;
+            results.push(fileName);
+        });
 
-module.exports = Utilities;
+        return results;
+    }
+}
+module.exports = FileUtilities;

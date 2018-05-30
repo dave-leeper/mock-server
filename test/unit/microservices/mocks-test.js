@@ -43,7 +43,7 @@ let config = {
     ]
 };
 
-describe( 'As a developer, I need need to obtain a list of mock util that are available.', function()
+describe( 'As a developer, I need need to obtain a list of mocks that are available.', function()
 {
 
     it ( 'should return a list of mock util available.', ( ) => {

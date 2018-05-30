@@ -11,122 +11,146 @@ const bodyParser = require('body-parser');
 const busboy = require('connect-busboy')
 const fileUpload = require('express-fileupload');
 const Router = require('./router');
-const loggerUtilities = require('./util/log');
+const Log = require('./util/log');
+const FileUtilities = require('./util/file-utilities.js');
 
 /**
  * @constructor
  */
-function Server ( ) {
-    this.express = null;
-    this.server = null;
-}
-
-/**
- * Initialize the server.
- * @param port {Integer} The server port.
- * @param config {Object} The server config.
- * @param callback {Function} The function called once the server has started.
- */
-Server.prototype.init = function ( port, config, callback )
-{
-    this.express = express();
-
-    // Logger setup
-    if (config.logging) {
-        loggerUtilities.config( config.logging );
+class Server {
+    constructor() {
+        this.express = null;
+        this.server = null;
     }
 
-    // view engine setup
-    this.express.set('views', path.join(__dirname, 'views'));
-    this.express.set('view engine', 'hbs');
+    init(port, configPath, callback) {
+        let getConfigFileNames = () => {
+            let configList = FileUtilities.getFileList(configPath, /.json/i, true, false);
+            if (!configList) [];
+            for (let loop = 0; loop < configList.length; loop++) {
+                let fullPath = path.join(__dirname, path.join(configPath, configList[loop]));
+                configList[loop] = fullPath;
+            }
+            return configList;
+        };
+        let loadConfigs = (configFileNames) => {
+            let loadedConfigs = [];
+            for (let loop = 0; loop < configFileNames.length; loop++) {
+                loadedConfigs.push(require(configFileNames[loop]));
+            }
+            return loadedConfigs;
+        }
+        let mergeConfigs = (loadedConfigs) => {
+            let mergedConfig = {};
+            for (let loop = 0; loop < loadedConfigs.length; loop++) {
+                let config = loadedConfigs[loop];
+                // Only first logging config is used
+                if (config.logging && !mergedConfig.logging) mergedConfig.logging = config.logging;
+                if (config.mocks) {
+                    if (!mergedConfig.mocks) mergedConfig.mocks = [];
+                    mergedConfig.mocks = mergedConfig.mocks.concat(config.mocks);
+                }
+                if (config.microservices) {
+                    if (!mergedConfig.microservices) mergedConfig.microservices = [];
+                    mergedConfig.microservices = mergedConfig.microservices.concat(config.microservices);
+                }
+                if (config.databaseConnections) {
+                    if (!mergedConfig.databaseConnections) mergedConfig.databaseConnections = [];
+                    mergedConfig.databaseConnections = mergedConfig.databaseConnections.concat(config.databaseConnections);
+                }
+            }
+            return mergedConfig;
+        };
+        let serverConfig = mergeConfigs(loadConfigs(getConfigFileNames()));
+        console.log(Log.stringify(serverConfig));
 
-    this.express.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-    this.express.use(bodyParser.json());
-    this.express.use(bodyParser.urlencoded({ extended: false }));
-    this.express.use(cookieParser());
-    this.express.use(express.static(path.join(__dirname, 'public')));
-    this.express.use(busboy());
-    this.express.use(fileUpload());
+        this.express = express();
 
-    // app.use('/', index);
-    this.express.use('/', Router.connect( router, config ));
-    this.express.locals.___extra = {
-        startTime: new Date(),
-        server: this,
-        serverConfig: config,
-        stack: router.stack,
-        databaseConnectionManager: Router.databaseConnectionManager
-    };
+        // Logger setup
+        if (serverConfig.logging) {
+            Log.config(serverConfig.logging);
+        }
 
-    // catch 404 and forward to error handler
-    this.express.use(function(req, res, next) {
-        let err = new Error('Not Found: ' + req.url);
-        err.status = 404;
-        next(err);
-    });
+        // view engine setup
+        this.express.set('views', path.join(__dirname, 'views'));
+        this.express.set('view engine', 'hbs');
 
-    // error handler
-    this.express.use(function(err, req, res, next) {
-        // set locals, only providing error in development
-        res.locals.message = err.message;
-        res.locals.error = req.app.get('env') === 'development' ? err : {};
+        this.express.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+        this.express.use(bodyParser.json());
+        this.express.use(bodyParser.urlencoded({extended: false}));
+        this.express.use(cookieParser());
+        this.express.use(express.static(path.join(__dirname, 'public')));
+        this.express.use(busboy());
+        this.express.use(fileUpload());
 
-        // render the error page
-        res.status(err.status || 500);
-        res.render('error');
-    });
+        // app.use('/', index);
+        this.express.use('/', Router.connect(router, serverConfig));
+        this.express.locals.___extra = {
+            startTime: new Date(),
+            server: this,
+            serverConfig: serverConfig,
+            stack: router.stack,
+            databaseConnectionManager: Router.databaseConnectionManager
+        };
+
+        // catch 404 and forward to error handler
+        this.express.use(function (req, res, next) {
+            let err = new Error('Not Found: ' + req.url);
+            err.status = 404;
+            next(err);
+        });
+
+        // error handler
+        this.express.use(function (err, req, res, next) {
+            // set locals, only providing error in development
+            res.locals.message = err.message;
+            res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+            // render the error page
+            res.status(err.status || 500);
+            res.render('error');
+        });
+
+        /**
+         * Get port from environment and store in Express.
+         */
+        const normalizedPort = this.normalizePort(port);
+        this.express.set('port', normalizedPort);
+
+        this.server = http.createServer(this.express);
+        this.server.listen(normalizedPort, callback);
+        this.server.on('error', this.onError);
+
+        console.log('Listening on port ' + normalizedPort);
+        return this;
+    }
+
+    stop(callback) {
+        try {
+            if (this.express.locals.___extra.databaseConnectionManager) {
+                this.express.locals.___extra.databaseConnectionManager.disconnect();
+            }
+        } catch (err) {
+            console.log("Error shutting down database connections.");
+        }
+        this.server.close(callback);
+    }
 
     /**
-     * Get port from environment and store in Express.
+     * Normalize a port into a number, string, or false.
+     * @param val {Object} The port number or pipe.
      */
-    const normalizedPort = this.normalizePort(port);
-    this.express.set('port', normalizedPort);
-
-    this.server = http.createServer(this.express);
-    this.server.listen(normalizedPort, callback);
-    this.server.on('error', this.onError);
-
-    console.log('Listening on port ' + normalizedPort);
-    return this;
-};
-
-Server.prototype.stop = function (callback) {
-    try {
-        if (this.express.locals.___extra.databaseConnectionManager) {
-            this.express.locals.___extra.databaseConnectionManager.disconnect();
-        }
-    } catch (err) {
-        console.log("Error shutting down database connections.");
-    }
-    this.server.close(callback);
-};
-
-/**
- * Normalize a port into a number, string, or false.
- * @param val {Object} The port number or pipe.
- */
-Server.prototype.normalizePort = function (val) {
-    const port = parseInt(val, 10);
-
-    if (isNaN(port)) {
+    normalizePort(val) {
+        const port = parseInt(val, 10);
         // named pipe
-        return val;
-    }
-
-    if (port >= 0) {
+        if (isNaN(port)) return val;
         // port number
-        return port;
+        if (port >= 0) return port;
+        return false;
     }
-
-    return false;
-};
-
-/**
- * Event listener for HTTP server "error" event.
- * @param error {Object} The error.
- */
-Server.prototype.onError = function (error) {
-    console.log( error );
-};
+    onError(error) {
+        console.log(error);
+    }
+}
 
 module.exports = Server;
