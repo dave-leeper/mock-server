@@ -6,8 +6,8 @@ let chai = require( 'chai' ),
     Router = require('../../../../src/router.js'),
     mockRequest = require('../../../mock-request.js'),
     mockResponse = require('../../../mock-response.js'),
-    pingHandlerBuilder = require('../../../../database-connectors/api-builders/connection-ping-builder.js'),
-    DatabaseConnectorManager = require('../../../../database-connectors/database-connector-manager.js');
+    pingHandlerBuilder = require('../../../../src/database-connectors/api-builders/connection-ping-builder.js'),
+    DatabaseConnectorManager = require('../../../../src/database-connectors/database-connector-manager.js');
 let config = {
     "databaseConnections" : [
         {

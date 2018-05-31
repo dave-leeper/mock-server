@@ -3,10 +3,7 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    Router = require('../../../src/router.js'),
-    MocksMicroservice = require('../../../src/microservices/mocks.js'),
-    MockRequest = require('../../mock-request.js'),
-    MockResponse = require('../../mock-response.js');
+    MocksMicroservice = require('../../../src/new-microservices/mocks.js');
 let config = {
     "mocks": [
         {
@@ -43,20 +40,14 @@ let config = {
     ]
 };
 
-describe( 'As a developer, I need need to obtain a list of mocks that are available.', function()
-{
-
+describe( 'As a developer, I need need to obtain a list of mocks that are available.', function() {
     it ( 'should return a list of mock util available.', ( ) => {
         let mocksMicroservice = new MocksMicroservice();
-        let mockRequest = new MockRequest();
-        let mockResponse = new MockResponse();
-        let mockServiceInfo = {};
         let expectedResponse = '[{"path":"/json","response":"./server-config.json","responseType":"JSON"},{"path":"/hbs","response":"index.hbs","responseType":"HBS"},{"path":"/text","response":"./views/index.hbs","responseType":"TEXT"},{"path":"/json-junk","response":"./JUNK.json","responseType":"JSON"},{"path":"/text-junk","response":"./JUNK.tex","responseType":"TEXT"}]';
-
-        mockRequest.app.locals.___extra.serverConfig = config;
-        mocksMicroservice.do(mockRequest, mockResponse, mockServiceInfo);
-        expect(mockResponse.sendString).to.be.equal(expectedResponse);
-        expect(mockResponse.sendStatus).to.be.equal(200);
+        let params = { serverConfig: config };
+        let response = mocksMicroservice.do(params);
+        expect(response.send).to.be.equal(expectedResponse);
+        expect(response.status).to.be.equal(200);
     });
 });
 

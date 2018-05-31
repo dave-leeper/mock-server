@@ -93,7 +93,6 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
             let verb = ((microservice.verb) ? microservice.verb.toUpperCase() : "GET" );
             let microservicePath = "./new-microservices/" + microservice.serviceFile;
             let microserviceClass = require( microservicePath );
-
             let micro = new microserviceClass();
             let handler = (req, res, next) => {
                 Router.addHeaders(microservice, res);
@@ -142,11 +141,10 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
                     });
                 } catch (err) {
                     let error = 'Error executing microservice ' + microservice.name + '.';
-                    Log.error(error);
+                    Log.error(error + ' Error: ' + Log.stringify(err));
                     res.status(500);
                     res.render("error", { message: error, error: { status: 500, stack: err.stack }});
                 }
-                return;
             };
 
             if (!handler) {

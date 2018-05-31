@@ -3,7 +3,7 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    DatabaseConnectorManager = require('../../../database-connectors/database-connector-manager.js');
+    DatabaseConnectorManager = require('../../../src/database-connectors/database-connector-manager.js');
 let config = {
     databaseConnections : [
         {

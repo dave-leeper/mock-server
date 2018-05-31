@@ -3,10 +3,7 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    Router = require('../../../src/router.js'),
-    DatabaseConnectionsMicroservice = require('../../../src/microservices/database-connections.js'),
-    MockRequest = require('../../mock-request.js'),
-    MockResponse = require('../../mock-response.js');
+    DatabaseConnectionsMicroservice = require('../../../src/new-microservices/database-connections.js');
 let config = {
     "databaseConnections" : [
         {
@@ -23,13 +20,9 @@ let config = {
     ]
 };
 
-describe( 'As a developer, I need need to obtain a list of database connections that are available.', function()
-{
+describe( 'As a developer, I need need to obtain a list of database connections that are available.', function() {
     it ( 'should return a list of database connections available.', ( ) => {
         let databaseConnectionsMicroservice = new DatabaseConnectionsMicroservice();
-        let mockRequest = new MockRequest();
-        let mockResponse = new MockResponse();
-        let mockServiceInfo = {};
         let expectedResponse = JSON.stringify([{
             "name":"elasticsearch",
             "description":"Elasticsearch service.",
@@ -39,10 +32,10 @@ describe( 'As a developer, I need need to obtain a list of database connections 
                 "/elasticsearch/connection/disconnect"
             ]
         }]);
-        mockRequest.app.locals.___extra.serverConfig = config;
-        databaseConnectionsMicroservice.do(mockRequest, mockResponse, mockServiceInfo);
-        expect(mockResponse.sendString).to.be.equal(expectedResponse);
-        expect(mockResponse.sendStatus).to.be.equal(200);
+        let params = { serverConfig: config };
+        let response = databaseConnectionsMicroservice.do(params);
+        expect(response.send).to.be.equal(expectedResponse);
+        expect(response.status).to.be.equal(200);
     });
 });
 

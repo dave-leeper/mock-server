@@ -3,7 +3,7 @@
 
 const chai = require( 'chai' ),
     expect = chai.expect,
-    ElasticSearchDatabaseConnector = require('../../../database-connectors/elasticsearch.js');
+    ElasticSearchDatabaseConnector = require('../../../src/database-connectors/elasticsearch.js');
 const config = {
         host: "localhost:9200",
         log: "trace"

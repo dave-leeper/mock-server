@@ -23,12 +23,12 @@ class Server {
         this.server = null;
     }
 
-    init(port, configPath, callback) {
-        let getConfigFileNames = () => {
-            let configList = FileUtilities.getFileList(configPath, /.json/i, true, false);
+    init(port, config, callback) {
+        let getConfigFileNames = (config) => {
+            let configList = FileUtilities.getFileList(config, /.json/i, true, false);
             if (!configList) [];
             for (let loop = 0; loop < configList.length; loop++) {
-                let fullPath = path.join(__dirname, path.join(configPath, configList[loop]));
+                let fullPath = path.join(__dirname, path.join(config, configList[loop]));
                 configList[loop] = fullPath;
             }
             return configList;
@@ -61,15 +61,14 @@ class Server {
             }
             return mergedConfig;
         };
-        let serverConfig = mergeConfigs(loadConfigs(getConfigFileNames()));
-        console.log(Log.stringify(serverConfig));
+        let serverConfig = config;
+        if ("string" === typeof config) serverConfig = mergeConfigs(loadConfigs(getConfigFileNames(config)));
+        Log.trace(Log.stringify(serverConfig));
 
         this.express = express();
 
         // Logger setup
-        if (serverConfig.logging) {
-            Log.config(serverConfig.logging);
-        }
+        if (serverConfig.logging) Log.config(serverConfig.logging);
 
         // view engine setup
         this.express.set('views', path.join(__dirname, 'src', 'views'));
@@ -111,15 +110,13 @@ class Server {
             res.render('error');
         });
 
-        /**
-         * Get port from environment and store in Express.
-         */
         const normalizedPort = this.normalizePort(port);
         this.express.set('port', normalizedPort);
 
         this.server = http.createServer(this.express);
         this.server.listen(normalizedPort, callback);
         this.server.on('error', this.onError);
+
 
         console.log('Listening on port ' + normalizedPort);
         return this;

@@ -1,3 +1,8 @@
+# To nstall 
+```
+npm install
+```
+
 # To Run 
 ```
 npm start
@@ -5,7 +10,7 @@ npm start
 
 # To Test 
 ```
-mocha "test/**/*.js"
+npm run test
 ```
 
 # To Start In-Memory Server 

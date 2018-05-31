@@ -3,10 +3,7 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    Router = require('../../../src/router.js'),
-    MicroservicesMicroservice = require('../../../src/microservices/microservices.js'),
-    MockRequest = require('../../mock-request.js'),
-    MockResponse = require('../../mock-response.js');
+    MicroservicesMicroservice = require('../../../src/new-microservices/microservices.js');
 let config = {
     "microservices": [
         {
@@ -24,19 +21,14 @@ let config = {
     ]
 };
 
-describe( 'As a developer, I need need to obtain a list of microservices that are available.', function()
-{
+describe( 'As a developer, I need need to obtain a list of microservices that are available.', function() {
     it ( 'should return a list of microservices available.', ( ) => {
         let microservicesMicroservice = new MicroservicesMicroservice();
-        let mockRequest = new MockRequest();
-        let mockResponse = new MockResponse();
-        let mockServiceInfo = {};
         let expectedResponse = '[{"name":"Services List","path":"/microservices","description":"Provides a list of microservices registered with this server."},{"name":"Mock Services List","path":"/mocks","description":"Provides a list of mock microservices registered with this server."}]';
-
-        mockRequest.app.locals.___extra.serverConfig = config;
-        microservicesMicroservice.do(mockRequest, mockResponse, mockServiceInfo);
-        expect(mockResponse.sendString).to.be.equal(expectedResponse);
-        expect(mockResponse.sendStatus).to.be.equal(200);
+        let params = { serverConfig: config };
+        let response = microservicesMicroservice.do(params);
+        expect(response.send).to.be.equal(expectedResponse);
+        expect(response.status).to.be.equal(200);
     });
 });
 
