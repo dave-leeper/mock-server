@@ -1,5 +1,6 @@
 //@formatter:off
 'use strict';
+let Log = require('../../../src/util/log' );
 
 let chai = require( 'chai' ),
     expect = chai.expect,
@@ -22,13 +23,26 @@ let config = {
 };
 
 describe( 'As a developer, I need need to obtain a list of microservices that are available.', function() {
-    it ( 'should return a list of microservices available.', ( ) => {
+    it ( 'should return a list of microservices available.', ( done ) => {
         let microservicesMicroservice = new MicroservicesMicroservice();
-        let expectedResponse = '[{"name":"Services List","path":"/microservices","description":"Provides a list of microservices registered with this server."},{"name":"Mock Services List","path":"/mocks","description":"Provides a list of mock microservices registered with this server."}]';
+        let expectedResponse = Log.stringify([{
+            name:"Services List",
+            path: "/microservices",
+            description: "Provides a list of microservices registered with this server."
+        },
+        {
+            name:"Mock Services List",
+            path:"/mocks",
+            description:"Provides a list of mock microservices registered with this server."
+        }]);
         let params = { serverConfig: config };
-        let response = microservicesMicroservice.do(params);
-        expect(response.send).to.be.equal(expectedResponse);
-        expect(response.status).to.be.equal(200);
+        microservicesMicroservice.do(params).then(( response ) => {
+            expect(response.send).to.be.equal(expectedResponse);
+            expect(response.status).to.be.equal(200);
+            done();
+        }, ( error ) => {
+            expect(true).to.be.equal(false);
+        });
     });
 });
 

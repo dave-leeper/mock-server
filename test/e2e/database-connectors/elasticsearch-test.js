@@ -3,22 +3,22 @@
 
 const chai = require( 'chai' ),
     expect = chai.expect,
-    ElasticSearchDatabaseConnector = require('../../../src/database-connectors/elasticsearch.js');
+    ElasticsearchConnector = require('../../../src/database-connectors/elasticsearch-connector.js');
 const config = {
         host: "localhost:9200",
         log: "trace"
     };
 let schema = {
-    "index": "test",
-    "type": "document",
-    "body": {
-        "properties": {
-            "title": { "type": "string" },
-            "content": { "type": "string" },
-            "suggest": {
-                "type": "completion",
-                "analyzer": "simple",
-                "search_analyzer": "simple"
+    index: "test",
+    type: "document",
+    body: {
+        properties: {
+            title: { "type": "string" },
+            content: { "type": "string" },
+            suggest: {
+                type: "completion",
+                analyzer: "simple",
+                search_analyzer: "simple"
             }
         }
     }
@@ -26,7 +26,7 @@ let schema = {
 
 describe( 'As a developer, I need to connect, ping, and disconnect to/from elasticsearch.', function() {
     it ( 'should connect and disconnect to and from elasticsearch', ( done ) => {
-        const esdc = new ElasticSearchDatabaseConnector();
+        const esdc = new ElasticsearchConnector();
 
         console.log("=== Attempting to connect to ElasticSearch on localhost:9200. ===");
         esdc.connect( config ).then(( error, client ) => {
@@ -37,8 +37,12 @@ describe( 'As a developer, I need to connect, ping, and disconnect to/from elast
                     esdc.ping().then(( pingResult2 ) => {
                         expect( pingResult2 ).to.be.equal( false );
                         done();
+                    }, ( error ) => {
+                        expect( true ).to.be.equal( false );
                     });
                 });
+            }, ( error ) => {
+                expect( true ).to.be.equal( false );
             });
         });
 
@@ -48,7 +52,7 @@ describe( 'As a developer, I need to connect, ping, and disconnect to/from elast
 describe( 'As a developer, I need to create, check for the existence of, and drop elasticsearch indexes.', function() {
 
     it ( 'should validate the mapping.', ( ) => {
-        const esdc = new ElasticSearchDatabaseConnector();
+        const esdc = new ElasticsearchConnector();
         expect( esdc.validateMapping()).to.be.equal( false );
         expect( esdc.validateMapping({})).to.be.equal( false );
         expect( esdc.validateMapping({index:""})).to.be.equal( false );
@@ -70,23 +74,26 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
     });
 
     it ( 'should not create indexes (tables) with invalid mappings.', ( done ) => {
-        const esdc = new ElasticSearchDatabaseConnector();
+        const dbConnector = new ElasticsearchConnector();
         const invalidSchema = {index:"test",type:"",body:{properties:{"title": { "type": "string" }}}};
         const testFunc = () => {
-            esdc.indexExists( invalidSchema.index ).then((existsResult ) => {
+            dbConnector.indexExists( invalidSchema.index ).then(( existsResult ) => {
                 expect( existsResult ).to.be.equal( false );
-                esdc.createIndex( invalidSchema ).then((createResult ) => {
-                    expect( false ).to.be.equal( true );
-                }).catch((error) => {
-                    done();
+                dbConnector.createIndex( invalidSchema ).then(( createResult ) => {
+                    expect( createResult.status ).to.be.equal( true );
+                    dbConnector.createIndexMapping( invalidSchema ).then(( createResult ) => {
+                        expect( false ).to.be.equal( true );
+                    }, ( error ) => {
+                        done();
+                    });
                 });
             });
         };
         const beforeFunc = () => {
-            esdc.connect(config).then(( error, client ) => {
-                esdc.indexExists( schema.index ).then((existsResult ) => {
+            dbConnector.connect(config).then(( error, client ) => {
+                dbConnector.indexExists( schema.index ).then(( existsResult ) => {
                     if ( existsResult ) {
-                        esdc.dropIndex( schema.index ).then((dropResult ) => {
+                        dbConnector.dropIndex( schema.index ).then(( dropResult ) => {
                             testFunc();
                         });
                     } else {
@@ -100,17 +107,17 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
     });
 
     it ( 'should be able to create, drop, and detect the existence of indexes (tables).', ( done ) => {
-        const esdc = new ElasticSearchDatabaseConnector();
+        const dbConnector = new ElasticsearchConnector();
         const testFunc = () => {
-            esdc.indexExists( schema.index ).then((existsResult ) => {
+            dbConnector.indexExists( schema.index ).then((existsResult ) => {
                 expect( existsResult ).to.be.equal( false );
-                esdc.createIndex( schema ).then((createResult ) => {
+                dbConnector.createIndex( schema ).then((createResult ) => {
                     expect( createResult.status ).to.be.equal( true );
-                    esdc.indexExists( schema.index ).then((existsResult2 ) => {
+                    dbConnector.indexExists( schema.index ).then((existsResult2 ) => {
                         expect( existsResult2 ).to.be.equal( true );
-                        esdc.dropIndex( schema.index ).then((dropResult ) => {
+                        dbConnector.dropIndex( schema.index ).then((dropResult ) => {
                             expect( dropResult.acknowledged ).to.be.equal( true );
-                            esdc.indexExists( schema.index ).then((existsResult3 ) => {
+                            dbConnector.indexExists( schema.index ).then((existsResult3 ) => {
                                 expect( existsResult3 ).to.be.equal( false );
                                 done();
                             });
@@ -120,10 +127,10 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
             });
         };
         const beforeFunc = () => {
-            esdc.connect(config).then(( error, client ) => {
-                esdc.indexExists( schema.index ).then((existsResult ) => {
+            dbConnector.connect(config).then(( error, client ) => {
+                dbConnector.indexExists( schema.index ).then((existsResult ) => {
                     if ( existsResult ) {
-                        esdc.dropIndex( schema.index ).then((dropResult ) => {
+                        dbConnector.dropIndex( schema.index ).then((dropResult ) => {
                             testFunc();
                         });
                     } else {
@@ -137,31 +144,45 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
     });
 
     it ( 'should not create indexes that already exist.', ( done ) => {
-        const esdc = new ElasticSearchDatabaseConnector();
+        const esdc = new ElasticsearchConnector();
         const testFunc = () => {
-            esdc.indexExists( schema.index ).then((existsResult ) => {
+            esdc.indexExists( schema.index ).then(( existsResult ) => {
+                console.log('existsResult: ' + existsResult);
                 expect( existsResult ).to.be.equal( false );
-                esdc.createIndex( schema ).then((createResult ) => {
+                esdc.createIndex( schema ).then(( createResult ) => {
                     expect( createResult.status ).to.be.equal( true );
-                    esdc.indexExists( schema.index ).then((existsResult2 ) => {
+                    esdc.indexExists( schema.index ).then(( existsResult2 ) => {
+                        console.log('existsResult2: ' + existsResult2);
                         expect( existsResult2 ).to.be.equal( true );
-                        esdc.createIndex( schema ).then((createResult2 ) => {
+                        esdc.createIndex( schema ).then(( createResult2 ) => {
                             expect( true ).to.be.equal( false );
-                        }).catch(() => {
+                        }, ( error ) => {
                             esdc.dropIndex( schema.index ).then((dropResult ) => {
                                 expect( dropResult.acknowledged ).to.be.equal( true );
                                 done();
-                            });
+                            },( error ) => {
+                                expect( true ).to.be.equal( false );
+                                done();
+                           });
                         });
+                    }, ( error ) => {
+                        expect( true ).to.be.equal( false );
+                        done();
                     });
+                }, ( error ) => {
+                    expect( true ).to.be.equal( false );
+                    done();
                 });
+            }, ( error ) => {
+                expect( true ).to.be.equal( false );
+                done();
             });
         };
         const beforeFunc = () => {
-            esdc.connect(config).then(( error, client ) => {
+            esdc.connect(config).then(( client ) => {
                 esdc.indexExists( schema.index ).then((existsResult ) => {
                     if ( existsResult ) {
-                        esdc.dropIndex( schema.index ).then((dropResult ) => {
+                        esdc.dropIndex( schema.index ).then(( dropResult ) => {
                             testFunc();
                         });
                     } else {
@@ -175,7 +196,7 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
     });
 
     it ( 'should not delete indexes that dont exist.', ( done ) => {
-        const esdc = new ElasticSearchDatabaseConnector();
+        const esdc = new ElasticsearchConnector();
         const testFunc = () => {
             esdc.dropIndex( schema.index ).then((dropResult ) => {
                 expect( true ).to.be.equal( false );
@@ -186,9 +207,9 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
         };
         const beforeFunc = () => {
             esdc.connect(config).then(( error, client ) => {
-                esdc.indexExists( schema.index ).then((existsResult ) => {
+                esdc.indexExists( schema.index ).then(( existsResult ) => {
                     if ( existsResult ) {
-                        esdc.dropIndex( schema.index ).then((dropResult ) => {
+                        esdc.dropIndex( schema.index ).then(( dropResult ) => {
                             testFunc();
                         });
                     } else {

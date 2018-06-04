@@ -1,6 +1,6 @@
 'use strict';
 
-const elasticsearch = require('elasticsearch');
+const elasticsearchConnector = require('elasticsearch');
 
 /**
  * Database = N/A
@@ -9,33 +9,28 @@ const elasticsearch = require('elasticsearch');
  * @param name - name of the connection.
  * @constructor
  */
-function ElasticSearchDatabaseConnector ( name ) {
+function ElasticsearchConnector ( name ) {
     this.name = name;
     this.client = null;
     this.config = null;
 }
 // https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html
 
-ElasticSearchDatabaseConnector.prototype.connect = function ( config ) {
+ElasticsearchConnector.prototype.connect = function ( config ) {
     return new Promise (( inResolve, inReject ) => {
         // Elasticsearch mangles configs, so copy it.
-        let configCopy = {};
-        let prop;
-
-        for (prop in config.config) {
-            configCopy[prop] = config.config[prop];
-        }
+        let configCopy = { ...config };
         try {
-            this.client = new elasticsearch.Client(configCopy);
+            this.client = new elasticsearchConnector.Client(configCopy);
             this.config = config;
-            inResolve && inResolve ( this.client );
+            inResolve && inResolve( this.client );
         } catch (err) {
-            inReject && inReject ( { status: false, error: 'Error while connecting.' } );
+            inReject && inReject({ status: false, error: 'Error while connecting.' });
         }
     });
 };
 
-ElasticSearchDatabaseConnector.prototype.ping = function (  )
+ElasticsearchConnector.prototype.ping = function (  )
 {
     return new Promise (( inResolve, inReject ) => {
         if (!this.client) {
@@ -43,19 +38,19 @@ ElasticSearchDatabaseConnector.prototype.ping = function (  )
         } else {
             this.client.ping({ requestTimeout: 30000 }, function( error ) {
                 if (error) {
-                    inResolve && inResolve ( false );
+                    inResolve && inResolve( false );
                 } else {
-                    inResolve && inResolve ( true );
+                    inResolve && inResolve( true );
                 }
             });
         }
     });
 };
 
-ElasticSearchDatabaseConnector.prototype.disconnect = function ( ) {
+ElasticsearchConnector.prototype.disconnect = function ( ) {
     return new Promise (( inResolve, inReject ) => {
         if (!this.client) {
-            inReject && inReject ( { status: false, error: 'Null client.' } );
+            inReject && inReject({ status: false, error: 'Null client.' });
         } else {
             try {
                 this.client.close();
@@ -67,7 +62,7 @@ ElasticSearchDatabaseConnector.prototype.disconnect = function ( ) {
     });
 };
 
-ElasticSearchDatabaseConnector.prototype.indexExists = function (name ) {
+ElasticsearchConnector.prototype.indexExists = function ( name ) {
     return new Promise (( inResolve, inReject ) => {
         this.client.indices.exists({ index: name })
             .then(( exists ) => { inResolve && inResolve( exists ); })
@@ -82,15 +77,20 @@ ElasticSearchDatabaseConnector.prototype.indexExists = function (name ) {
  * }
  * @returns {Promise}
  */
-ElasticSearchDatabaseConnector.prototype.createIndex = function ( index ) {
+ElasticsearchConnector.prototype.createIndex = function ( index ) {
     return new Promise (( inResolve, inReject ) => {
         let createFunc = () => {
             this.client.indices.create({ index: index.index }).then(() => {
-                inResolve && inResolve ( { status: true } );
-            }).catch(() => { inReject && inReject( { status: false, error: 'Could not create index.' } ); });
+                inResolve && inResolve({ status: true });
+            }, ( error ) => {
+                console.log('102 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+                console.log(JSON.stringify(error));
+                inReject && inReject({ status: false, error: 'Could not create index.' });
+            });
         };
         let existsFunc = ( exists ) => {
             if ( exists ) {
+                console.log('101 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
                 inReject && inReject({ status: false, error: 'Index already exists.' });
                 return;
             }
@@ -98,18 +98,21 @@ ElasticSearchDatabaseConnector.prototype.createIndex = function ( index ) {
         };
 
         if ( !this.validateIndex( index )) {
+            console.log('100 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
             inReject && inReject({ status: false, error: 'Invalid index.' });
             return;
         }
-        this.indexExists( index.index ).then((exists ) => { existsFunc( exists ); });
+        this.indexExists( index.index ).then(( exists ) => { existsFunc( exists ); });
     });
 };
 
-ElasticSearchDatabaseConnector.prototype.dropIndex = function (name ) {
+ElasticsearchConnector.prototype.dropIndex = function ( name ) {
     return new Promise (( inResolve, inReject ) => {
-        this.client.indices.delete({ index: name })
-            .then(( success ) => { inResolve && inResolve( success ); })
-            .catch(() => { inReject && inReject( { status: false, error: 'Index does not exist.' } ); });
+        this.client.indices.delete({ index: name }).then(( success ) => {
+            inResolve && inResolve( success );
+        }, ( error ) => {
+            inReject && inReject({ status: false, error: error });
+        });
     });
 };
 
@@ -132,12 +135,14 @@ ElasticSearchDatabaseConnector.prototype.dropIndex = function (name ) {
  * }
  * @returns {Promise}
  */
-ElasticSearchDatabaseConnector.prototype.createIndexMapping = function ( mapping ) {
+ElasticsearchConnector.prototype.createIndexMapping = function ( mapping ) {
     return new Promise (( inResolve, inReject ) => {
         let createMappingFunc = () => {
             this.client.indices.putMapping( mapping ).then(() => {
-                inResolve && inResolve ( { status: true } );
-            }).catch((err) => { inReject && inReject( { status: false, error: 'Could not create index mapping.' + err } ); });
+                inResolve && inResolve ({ status: true });
+            }).catch((err) => {
+                inReject && inReject({ status: false, error: 'Could not create index mapping.' + err });
+            });
         };
         let existsFunc = ( exists ) => {
             if ( !exists ) {
@@ -151,11 +156,11 @@ ElasticSearchDatabaseConnector.prototype.createIndexMapping = function ( mapping
             inReject && inReject({ status: false, error: 'Invalid index.' });
             return;
         }
-        this.indexExists( mapping.index ).then((exists ) => { existsFunc( exists ); });
+        this.indexExists( mapping.index ).then(( exists ) => { existsFunc( exists ); });
     });
 };
 
-ElasticSearchDatabaseConnector.prototype.validateIndex = function ( mapping ) {
+ElasticsearchConnector.prototype.validateIndex = function ( mapping ) {
     if (( !mapping )
     || ( !mapping.index )) {
         return false;
@@ -166,7 +171,7 @@ ElasticSearchDatabaseConnector.prototype.validateIndex = function ( mapping ) {
     return true;
 };
 
-ElasticSearchDatabaseConnector.prototype.validateMapping = function ( mapping ) {
+ElasticsearchConnector.prototype.validateMapping = function ( mapping ) {
     if (( !mapping )
     || ( !mapping.index )
     || ( !mapping.type )
@@ -191,7 +196,7 @@ ElasticSearchDatabaseConnector.prototype.validateMapping = function ( mapping ) 
     return true;
 };
 
-ElasticSearchDatabaseConnector.prototype.insert = function ( data ) {
+ElasticsearchConnector.prototype.insert = function ( data ) {
     return new Promise (( inResolve, inReject ) => {
         this.client.index( data, (error, response) => {
             if (error) {
@@ -203,7 +208,7 @@ ElasticSearchDatabaseConnector.prototype.insert = function ( data ) {
     });
 };
 
-ElasticSearchDatabaseConnector.prototype.update = function ( data ) {
+ElasticsearchConnector.prototype.update = function ( data ) {
     return new Promise (( inResolve, inReject ) => {
         this.client.update( data, (error, response) => {
             if (error) {
@@ -215,7 +220,7 @@ ElasticSearchDatabaseConnector.prototype.update = function ( data ) {
      });
 };
 
-ElasticSearchDatabaseConnector.prototype.delete = function ( data ) {
+ElasticsearchConnector.prototype.delete = function ( data ) {
     return new Promise (( inResolve, inReject ) => {
         this.client.delete( data )
             .then(( success ) => { inResolve && inResolve( success ); })
@@ -223,7 +228,7 @@ ElasticSearchDatabaseConnector.prototype.delete = function ( data ) {
     });
 };
 
-ElasticSearchDatabaseConnector.prototype.read = function ( whereClause ) {
+ElasticsearchConnector.prototype.read = function ( whereClause ) {
     return new Promise (( inResolve, inReject ) => {
         this.client.search( whereClause,(error, response) => {
             if (error) {
@@ -235,7 +240,7 @@ ElasticSearchDatabaseConnector.prototype.read = function ( whereClause ) {
     });
 };
 
-module.exports = ElasticSearchDatabaseConnector;
+module.exports = ElasticsearchConnector;
 
 // GET chapter3/_mapping
 // GET chapter3/user/_mapping

@@ -31,7 +31,6 @@ describe( 'As a developer, I need the server to continue running when exceptions
 {
     it ( 'should continue running after an exception is thrown', ( done ) => {
         let port = 1337;
-        console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX 17');
         let server = new Server();
         let pingResponse = '{"name":"My Server","version":"1.0"}';
         let serverInitCallback = () => {

@@ -273,14 +273,14 @@ Each database connection object has methods to connect, disconnect, and
 ping that connection.
 ### Fields
 * **name**<br/>
-Example: "elasticsearch"<br/>
+Example: "elasticsearchConnector"<br/>
 The name given to a connection.A database can have multiple connections,
 each with a unique name.
 * **description"**<br/>
 Example: "Elasticsearch service."<br/>
 A short human-readable description of the database connection.
 * **databaseConnector**<br/>
-Example: "elasticsearch.js"<br/>
+Example: "elasticsearchConnector-database-connector.js"<br/>
 The name of the javascript file containing the database connection
 class. These names are relative to the database-connectors directory.
 * **config**<br/>
@@ -305,9 +305,9 @@ the API section, below.
 ```
   "databaseConnections" : [
     {<br/>
-      "name": "elasticsearch",
+      "name": "elasticsearchConnector",
       "description": "Elasticsearch service.",
-      "databaseConnector": "elasticsearch.js",
+      "databaseConnector": "elasticsearchConnector-database-connector.js",
       "generateConnectionAPI": true,
       "generateIndexAPI": true,
       "generateDataAPI": true,

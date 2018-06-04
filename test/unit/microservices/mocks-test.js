@@ -1,5 +1,6 @@
 //@formatter:off
 'use strict';
+let Log = require('../../../src/util/log' );
 
 let chai = require( 'chai' ),
     expect = chai.expect,
@@ -41,13 +42,41 @@ let config = {
 };
 
 describe( 'As a developer, I need need to obtain a list of mocks that are available.', function() {
-    it ( 'should return a list of mock util available.', ( ) => {
+    it ( 'should return a list of mock util available.', ( done ) => {
         let mocksMicroservice = new MocksMicroservice();
-        let expectedResponse = '[{"path":"/json","response":"./server-config.json","responseType":"JSON"},{"path":"/hbs","response":"index.hbs","responseType":"HBS"},{"path":"/text","response":"./views/index.hbs","responseType":"TEXT"},{"path":"/json-junk","response":"./JUNK.json","responseType":"JSON"},{"path":"/text-junk","response":"./JUNK.tex","responseType":"TEXT"}]';
+        let expectedResponse = Log.stringify([{
+            path:"/json",
+            response:"./server-config.json",
+            responseType:"JSON"
+        },
+        {
+            path:"/hbs",
+            response:"index.hbs",
+            responseType:"HBS"
+        },
+        {
+            path:"/text",
+            response:"./views/index.hbs",
+            responseType:"TEXT"
+        },
+        {
+            path:"/json-junk",
+            response:"./JUNK.json",
+            responseType:"JSON"
+        },
+        {
+            path:"/text-junk",
+            response:"./JUNK.tex",
+            responseType:"TEXT"
+        }]);
         let params = { serverConfig: config };
-        let response = mocksMicroservice.do(params);
-        expect(response.send).to.be.equal(expectedResponse);
-        expect(response.status).to.be.equal(200);
+        mocksMicroservice.do(params).then((response) => {
+            expect(response.send).to.be.equal(expectedResponse);
+            expect(response.status).to.be.equal(200);
+            done();
+        }, ( error ) => {
+            expect(true).to.be.equal(false);
+        });
     });
 });
 

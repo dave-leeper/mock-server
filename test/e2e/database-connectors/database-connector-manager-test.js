@@ -9,7 +9,7 @@ let config = {
         {
             name: "elasticsearch",
             description: "Elasticsearch service.",
-            databaseConnector: "elasticsearch.js",
+            databaseConnector: "elasticsearch-connector.js",
             config: {
                 host: "localhost:9200",
                 log: "trace"
@@ -21,17 +21,17 @@ let config = {
 describe( 'As a developer, I need to manage database connections.', function()
 {
     it ( 'It should create all requested database connections', ( done ) => {
-        let dcm = new DatabaseConnectorManager();
+        let dbConnectionManager = new DatabaseConnectorManager();
 
-        expect(dcm).to.not.be.null;
+        expect(dbConnectionManager).to.not.be.null;
         console.log("=== Attempting to connect to ElasticSearch on localhost.");
-        dcm.connect(config).then ((error, param2) => {
-            expect(dcm.config).to.be.equal(config);
-            expect(dcm.databaseConnectors.length).to.be.equal(1);
+        dbConnectionManager.connect(config).then ((error, param2) => {
+            expect(dbConnectionManager.config).to.be.equal(config);
+            expect(dbConnectionManager.databaseConnectors.length).to.be.equal(1);
 
-            let elasticSearchDC = dcm.getConnector("elasticsearch");
+            let elasticSearchDC = dbConnectionManager.getConnector("elasticsearch");
             expect(elasticSearchDC).to.not.be.null;
-            dcm.disconnect().then(() => {
+            dbConnectionManager.disconnect().then(() => {
                 done();
             });
         });
