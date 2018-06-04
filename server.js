@@ -44,7 +44,7 @@ class Server {
             let mergedConfig = {};
             for (let loop = 0; loop < loadedConfigs.length; loop++) {
                 let config = loadedConfigs[loop];
-                // Only first logging config is used
+                // Only first logging configure is used
                 if (config.logging && !mergedConfig.logging) mergedConfig.logging = config.logging;
                 if (config.mocks) {
                     if (!mergedConfig.mocks) mergedConfig.mocks = [];
@@ -63,12 +63,12 @@ class Server {
         };
         let serverConfig = config;
         if ("string" === typeof config) serverConfig = mergeConfigs(loadConfigs(getConfigFileNames(config)));
-        Log.trace(Log.stringify(serverConfig));
 
         this.express = express();
 
         // Logger setup
-        if (serverConfig.logging) Log.config(serverConfig.logging);
+        if (serverConfig.logging) Log.configure(serverConfig.logging);
+        Log.trace(Log.stringify(serverConfig));
 
         // view engine setup
         this.express.set('views', path.join(__dirname, 'src', 'views'));

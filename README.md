@@ -1,4 +1,4 @@
-# To nstall 
+# To Install 
 ```
 npm install
 ```

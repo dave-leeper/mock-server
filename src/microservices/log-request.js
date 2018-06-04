@@ -12,7 +12,7 @@ function LogRequestService ( )
 /**
  * @param req {Object} - The request object.
  * @param res {Object} - The response object.
- * @param serviceInfo - Servic  e config info.
+ * @param serviceInfo - Servic  e configure info.
  */
 LogRequestService.prototype.do = function (req, res, next, serviceInfo )
 {
@@ -83,7 +83,7 @@ LogRequestService.prototype.do = function (req, res, next, serviceInfo )
 /**
  * @param req {Object} - The request object.
  * @param res {Object} - The response object.
- * @param serviceInfo - Servic  e config info.
+ * @param serviceInfo - Servic  e configure info.
  */
 LogRequestService.prototype.log = function (level, logMessage ) {
     if ( "ALL" === level ) logger.all(logMessage);

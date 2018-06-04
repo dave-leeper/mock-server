@@ -5,8 +5,7 @@
       "out": { "type": "stdout" }
     },
     "categories": {
-      "default":
-      {
+      "default": {
         "appenders": ["app", "out"],
         "level" : "trace"
       }
@@ -179,12 +178,6 @@
       "name": "Throw Exception",
       "description": "A micro service that throws an exception. For testing purposes.",
       "serviceFile": "throw.js"
-    },
-    {
-      "path": "/stop",
-      "name": "Server Stop",
-      "description": "Shuts down the server.",
-      "serviceFile": "stop.js"
     }
   ],
   "databaseConnections" : [

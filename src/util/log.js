@@ -8,9 +8,9 @@ let log4js = require('log4js' ),
 class Log {
     /**
      * Configures the logger.
-     * @param {Object} inConfig - Logging config. Follows standard log4js format.
+     * @param {Object} inConfig - Logging configure. Follows standard log4js format.
      */
-    static config ( inConfig ) {
+    static configure (inConfig ) {
         log4js.configure( inConfig );
     }
     /**

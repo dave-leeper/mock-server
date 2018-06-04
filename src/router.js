@@ -11,7 +11,7 @@ Router.databaseConnectionManager = null;
 
 /**
  * @param router - Express router. This method will add routers to it.
- * @param config - The config file for the server.
+ * @param config - The configure file for the server.
  * @param databaseConnectionCallback - Called if database connections are made. The callback
  * will be passed the promises from creating all database connections.
  * @returns Returns the express router.

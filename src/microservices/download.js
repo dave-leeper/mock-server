@@ -14,7 +14,7 @@ function DownloadService ( )
 /**
  * @param req {Object} - The request object.
  * @param res {Object} - The response object.
- * @param serviceInfo - Service config info.
+ * @param serviceInfo - Service configure info.
  */
 DownloadService.prototype.do = function ( req, res, next, serviceInfo )
 {

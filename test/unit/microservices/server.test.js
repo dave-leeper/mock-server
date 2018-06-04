@@ -138,7 +138,7 @@ describe( 'As a developer, I need a server that sets up mock util, microservices
 
     });
 
-    it ( 'should create an express object, a server object, and a databaseConnectorManager object and store the config.', ( done ) => {
+    it ( 'should create an express object, a server object, and a databaseConnectorManager object and store the configure.', ( done ) => {
         let port = '1337';
         let server = new Server();
 

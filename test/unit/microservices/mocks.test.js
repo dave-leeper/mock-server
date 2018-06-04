@@ -9,7 +9,7 @@ let config = {
     "mocks": [
         {
             "path": "/json",
-            "response": "./server-config.json",
+            "response": "./server-configure.json",
             "responseType": "JSON",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
@@ -46,7 +46,7 @@ describe( 'As a developer, I need need to obtain a list of mocks that are availa
         let mocksMicroservice = new MocksMicroservice();
         let expectedResponse = Log.stringify([{
             path:"/json",
-            response:"./server-config.json",
+            response:"./server-configure.json",
             responseType:"JSON"
         },
         {
