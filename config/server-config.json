@@ -1,4 +1,5 @@
 {
+  "port": 1337,
   "logging": {
     "appenders": {
       "app": { "type": "file", "filename": "mock-server.log" },
@@ -16,7 +17,7 @@
       "path": "/ping",
       "response": {"name":"My Server","version":"1.0"},
       "responseType": "JSON",
-      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" }, { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
     },
     {
       "path": "/json",

@@ -24,6 +24,9 @@ class Server {
     }
 
     init(port, config, callback) {
+        let locals = {
+            port: port
+        };
         let getConfigFileNames = (config) => {
             let configList = FileUtilities.getFileList(config, /.json/i, true, false);
             if (!configList) [];
@@ -46,6 +49,7 @@ class Server {
                 let config = loadedConfigs[loop];
                 // Only first logging configure is used
                 if (config.logging && !mergedConfig.logging) mergedConfig.logging = config.logging;
+                if (config.port) mergedConfig.port = config.port;
                 if (config.mocks) {
                     if (!mergedConfig.mocks) mergedConfig.mocks = [];
                     mergedConfig.mocks = mergedConfig.mocks.concat(config.mocks);
@@ -69,6 +73,9 @@ class Server {
         // Logger setup
         if (serverConfig.logging) Log.configure(serverConfig.logging);
         Log.trace(Log.stringify(serverConfig));
+
+        // Override port
+        if (serverConfig.port) locals.port = serverConfig.port;
 
         // view engine setup
         this.express.set('views', path.join(__dirname, 'src', 'views'));
@@ -110,7 +117,7 @@ class Server {
             res.render('error');
         });
 
-        const normalizedPort = this.normalizePort(port);
+        const normalizedPort = this.normalizePort(locals.port);
         this.express.set('port', normalizedPort);
 
         this.server = http.createServer(this.express);
