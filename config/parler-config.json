@@ -51,6 +51,12 @@
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
+      "path": "/assets/:file",
+      "response": "./files/:file",
+      "responseType": "BLOB",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
       "verb": "OPTIONS",
       "path": "/Talkr/comment",
       "response": {"name":"My Server","version":"1.0"},

@@ -215,7 +215,7 @@ Router.addHeaders = function ( configRecord, res ) {
         let header = configRecord.headers[loop];
         res.header(header.header, header.value);
     }
-    Log.trace( 'Added headers: ' + Log.stringify(configRecord.headers) );
+    Log.all( 'Added headers: ' + Log.stringify(configRecord.headers) );
 };
 
 Router.addCookies = function ( configRecord, res ) {
@@ -235,7 +235,7 @@ Router.addCookies = function ( configRecord, res ) {
         if (!age) res.cookie( cookie.name, cookie.value);
         else res.cookie( cookie.name, cookie.value, age);
     }
-    Log.trace( 'Added cookies: ' + Log.stringify(configRecord.cookies) );
+    Log.all( 'Added cookies: ' + Log.stringify(configRecord.cookies) );
 };
 
 Router.sendErrorResponse = function ( error, res, status ) {
@@ -521,8 +521,15 @@ Router.___replaceResponseParams = function (responseValue, httpRequestObject ) {
     let finalResponse = responseValue;
     if (-1 != paramIndex) {
         let param = responseValue.substr(paramIndex + 1);
+        if (httpRequestObject.params[param]) {
+            finalResponse = responseValue.substr(0, paramIndex) + httpRequestObject.params[param];
+        }
+    }
+    paramIndex = finalResponse.indexOf(':');
+    if (-1 != paramIndex) {
+        let param = finalResponse.substr(paramIndex + 1);
         if (httpRequestObject.query[param]) {
-            finalResponse = responseValue.substr(0, paramIndex) + httpRequestObject.query[param];
+            finalResponse = finalResponse.substr(0, paramIndex) + httpRequestObject.query[param];
         }
     }
     return finalResponse;
