@@ -17,117 +17,123 @@
       "path": "/ping",
       "response": {"name":"My Server","version":"1.0"},
       "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" }, { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/json",
       "response": "./server-config.json",
       "responseType": "JSON",
-      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/json-string-array",
       "response": ["./server-config.json", "./test/test-data.json"],
       "responseType": "JSON",
-      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/json-object",
       "response": {"title": "Index"},
       "responseType": "JSON",
-      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/json-object-array",
       "response": [{"title": "Index"}, {"title": "Not Found"} ],
       "responseType": "JSON",
-      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/hbs",
       "response": "index.hbs",
       "responseType": "HBS",
       "hbsData": {"title": "Index"},
-      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/hbs-string-array",
       "response": [ "index.hbs", "error.hbs" ],
       "responseType": "HBS",
       "hbsData": [ {"title": "Index"}, {"title": "Not Found"} ],
-      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/text",
       "response": "./views/index.hbs",
       "responseType": "TEXT",
-      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/text-string-array",
       "response": [ "./views/index.hbs", "./views/error.hbs" ],
       "responseType": "TEXT",
-      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/text-object",
       "response": {"title": "Index"},
       "responseType": "TEXT",
-      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/text-object2",
       "response": {"text": "Index"},
       "responseType": "TEXT",
-      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/text-object-array",
       "response": [{"title": "Index"}, {"title": "Not Found"} ],
       "responseType": "TEXT",
-      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/text-object-array2",
       "response": [{"text": "Index"}, {"text": "Not Found"} ],
       "responseType": "TEXT",
-      "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/uploadfile",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload File", "action": "upload", "verb": "POST"}
+      "hbsData": {"title": "Upload File", "action": "upload", "verb": "POST"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/elasticsearch/index/upload",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload ElasticSearch Index", "action": "/elasticsearch/index", "verb": "POST"}
+      "hbsData": {"title": "Upload ElasticSearch Index", "action": "/elasticsearch/index", "verb": "POST"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/elasticsearch/index/mapping/upload",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload ElasticSearch Mapping", "action": "/elasticsearch/index/mapping", "verb": "POST"}
+      "hbsData": {"title": "Upload ElasticSearch Mapping", "action": "/elasticsearch/index/mapping", "verb": "POST"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/elasticsearch/data/upload",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload ElasticSearch Data", "action": "/elasticsearch/data", "verb": "POST"}
+      "hbsData": {"title": "Upload ElasticSearch Data", "action": "/elasticsearch/data", "verb": "POST"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/elasticsearch/data/update",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Update ElasticSearch Data", "action": "/elasticsearch/data/update", "verb": "POST"}
+      "hbsData": {"title": "Update ElasticSearch Data", "action": "/elasticsearch/data/update", "verb": "POST"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/upload/log",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload to log", "action": "/log", "verb": "POST"}
+      "hbsData": {"title": "Upload to log", "action": "/log", "verb": "POST"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     }
   ],
   "microservices": [

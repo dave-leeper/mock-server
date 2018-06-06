@@ -4,45 +4,62 @@
       "path": "/feed",
       "response": "./files/feed.json",
       "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" }, { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/post/creator",
       "response": "./files/post.creator.json",
       "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" }, { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/profile",
       "response": "./files/profile.json",
       "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" }, { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/notification",
       "response": ["./files/notifications.json", "./files/notifications2.json"],
       "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" }, { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "verb": "DELETE",
       "path": "/notification",
       "response": { "status": 200 },
       "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" }, { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "verb": "DELETE",
       "path": "/notification/:id",
       "response": { "status": 200 },
       "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" }, { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/search",
       "response": "./files/search.json",
       "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" }, { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/Talkr/photo",
+      "response": "./files/:id",
+      "responseType": "BLOB",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "verb": "OPTIONS",
+      "path": "/Talkr/comment",
+      "response": {"name":"My Server","version":"1.0"},
+      "responseType": "JSON",
+      "headers": [
+        { "header": "Access-Control-Allow-Origin", "value": "*" },
+        { "header": "Access-Control-Allow-Headers", "value": "Authorization,Content-Type" },
+        { "header": "Access-Control-Allow-Method", "value": "GET" }
+      ]
     },
     {
       "path": "/Talkr/comment",
@@ -51,9 +68,21 @@
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
-      "path": "/Talkr/photo",
-      "response": "./files/:id",
-      "responseType": "BLOB",
+      "verb": "OPTIONS",
+      "path": "/Talkr/view",
+      "response": {"name":"My Server","version":"1.0"},
+      "responseType": "JSON",
+      "headers": [
+        { "header": "Access-Control-Allow-Origin", "value": "*" },
+        { "header": "Access-Control-Allow-Headers", "value": "Authorization,Content-Type" },
+        { "header": "Access-Control-Allow-Method", "value": "POST" }
+      ]
+    },
+    {
+      "verb": "POST",
+      "path": "/Talkr/view",
+      "response": {"name":"My Server","version":"1.0"},
+      "responseType": "JSON",
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     }
   ],
@@ -64,7 +93,8 @@
       "name": "WordPress Post To Log",
       "description": "Prints a WordPress post to the log. Ensure that server logging is configured.",
       "serviceFile": "log-request.js",
-      "serviceData": { "level": "DEBUG", "json": true }
+      "serviceData": { "level": "DEBUG", "json": true },
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     }
   ]
 }

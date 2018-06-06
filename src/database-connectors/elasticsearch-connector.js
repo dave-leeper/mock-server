@@ -83,14 +83,11 @@ ElasticsearchConnector.prototype.createIndex = function ( index ) {
             this.client.indices.create({ index: index.index }).then(() => {
                 inResolve && inResolve({ status: true });
             }, ( error ) => {
-                console.log('102 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-                console.log(JSON.stringify(error));
                 inReject && inReject({ status: false, error: 'Could not create index.' });
             });
         };
         let existsFunc = ( exists ) => {
             if ( exists ) {
-                console.log('101 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
                 inReject && inReject({ status: false, error: 'Index already exists.' });
                 return;
             }
@@ -98,7 +95,6 @@ ElasticsearchConnector.prototype.createIndex = function ( index ) {
         };
 
         if ( !this.validateIndex( index )) {
-            console.log('100 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
             inReject && inReject({ status: false, error: 'Invalid index.' });
             return;
         }

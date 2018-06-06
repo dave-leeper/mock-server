@@ -82,7 +82,7 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
             } else if ("DELETE" === verb) {
                 router.delete(mock.path, handler);
             } else if ("OPTIONS" === verb) {
-                router.opt(microservice.path, handler);
+                router.options(mock.path, handler);
             }
         }
     }
@@ -164,7 +164,7 @@ Router.connect = function ( router, config, databaseConnectionCallback ) {
             } else if ("DELETE" === verb) {
                 router.del(microservice.path, handler);
             } else if ("OPTIONS" === verb) {
-                router.opt(microservice.path, handler);
+                router.options(microservice.path, handler);
             }
         }
     }
@@ -215,6 +215,7 @@ Router.addHeaders = function ( configRecord, res ) {
         let header = configRecord.headers[loop];
         res.header(header.header, header.value);
     }
+    Log.trace( 'Added headers: ' + Log.stringify(configRecord.headers) );
 };
 
 Router.addCookies = function ( configRecord, res ) {
@@ -234,6 +235,7 @@ Router.addCookies = function ( configRecord, res ) {
         if (!age) res.cookie( cookie.name, cookie.value);
         else res.cookie( cookie.name, cookie.value, age);
     }
+    Log.trace( 'Added cookies: ' + Log.stringify(configRecord.cookies) );
 };
 
 Router.sendErrorResponse = function ( error, res, status ) {
@@ -243,6 +245,7 @@ Router.sendErrorResponse = function ( error, res, status ) {
 
 Router.___buildJSONFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
+        Router.___logMockRequest( mock, req );
         Router.addHeaders(mock, res);
         Router.addCookies(mock, res);
         let responseFile = Router.___replaceResponseParams(mock.response, req );
@@ -259,7 +262,7 @@ Router.___buildJSONFileHandlerFromString = function ( mock ) {
         }
 
         let jsonResponseFileContents = files.readFileSync(responseFile);
-        let checkForValidJSON = JSON.parse( jsonResponseFileContents );
+        JSON.parse( jsonResponseFileContents ); // Parse JSON to make sure it's valid.
 
         res.send(jsonResponseFileContents);
     };
@@ -268,6 +271,7 @@ Router.___buildJSONFileHandlerFromString = function ( mock ) {
 
 Router.___buildHandlebarsFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
+        Router.___logMockRequest( mock, req );
         Router.addHeaders(mock, res);
         Router.addCookies(mock, res);
         let responseFile = Router.___replaceResponseParams(mock.response, req );
@@ -278,6 +282,7 @@ Router.___buildHandlebarsFileHandlerFromString = function ( mock ) {
 
 Router.___buildTextFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
+        Router.___logMockRequest( mock, req );
         Router.addHeaders(mock, res);
         Router.addCookies(mock, res);
         let responseFile = Router.___replaceResponseParams(mock.response, req );
@@ -302,10 +307,11 @@ Router.___buildTextFileHandlerFromString = function ( mock ) {
 
 Router.___buildBLOBFileHandlerFromString = function ( mock ) {
     let handler = (req, res) => {
+        Router.___logMockRequest( mock, req );
         Router.addHeaders(mock, res);
         Router.addCookies(mock, res);
         let responseFile = Router.___replaceResponseParams(mock.response, req );
-        console.log(responseFile);
+        Log.trace('Sending file: ' + responseFile + '.');
         if (!files.existsSync(responseFile)) {
             const error = {
                 title: responseFile,
@@ -332,6 +338,7 @@ Router.___buildBLOBFileHandlerFromString = function ( mock ) {
 
 Router.___buildJSONFileHandlerFromArrayOfStrings = function (mock ) {
     let handler = (req, res) => {
+        Router.___logMockRequest( mock, req );
         let index = Router.___getIndex( mock );
         let responseFile = Router.___replaceResponseParams(mock.response[index], req );
 
@@ -360,6 +367,7 @@ Router.___buildJSONFileHandlerFromArrayOfStrings = function (mock ) {
 
 Router.___buildHandlebarsFileHandlerFromArrayOfStrings = function ( mock ) {
     let handler = (req, res) => {
+        Router.___logMockRequest( mock, req );
         let index = Router.___getIndex( mock );
         let responseFile = Router.___replaceResponseParams(mock.response[index], req );
 
@@ -373,6 +381,7 @@ Router.___buildHandlebarsFileHandlerFromArrayOfStrings = function ( mock ) {
 
 Router.___buildTextFileHandlerFromArrayOfStrings = function ( mock ) {
     let handler = (req, res) => {
+        Router.___logMockRequest( mock, req );
         let index = Router.___getIndex( mock );
         let responseFile = Router.___replaceResponseParams(mock.response[index], req );
 
@@ -399,6 +408,7 @@ Router.___buildTextFileHandlerFromArrayOfStrings = function ( mock ) {
 };
 Router.___buildBLOBFileHandlerFromArrayOfStrings = function (mock ) {
     let handler = (req, res) => {
+        Router.___logMockRequest( mock, req );
         let index = Router.___getIndex( mock );
         let responseFile = Router.___replaceResponseParams(mock.response[index], req );
 
@@ -430,6 +440,7 @@ Router.___buildBLOBFileHandlerFromArrayOfStrings = function (mock ) {
 };
 Router.___buildJSONFileHandlerFromObject = function ( mock ) {
     let handler = (req, res) => {
+        Router.___logMockRequest( mock, req );
         Router.addHeaders(mock, res);
         Router.addCookies(mock, res);
 
@@ -443,6 +454,7 @@ Router.___buildJSONFileHandlerFromObject = function ( mock ) {
 
 Router.___buildTextFileHandlerFromObject = function ( mock ) {
     let handler = (req, res) => {
+        Router.___logMockRequest( mock, req );
         Router.addHeaders(mock, res);
         Router.addCookies(mock, res);
 
@@ -455,6 +467,7 @@ Router.___buildTextFileHandlerFromObject = function ( mock ) {
 
 Router.___buildJSONFileHandlerFromArrayOfObjects = function ( mock ) {
     let handler = (req, res) => {
+        Router.___logMockRequest( mock, req );
         let index = Router.___getIndex( mock );
 
         Router.addHeaders(mock, res);
@@ -471,6 +484,7 @@ Router.___buildJSONFileHandlerFromArrayOfObjects = function ( mock ) {
 
 Router.___buildTextFileHandlerFromArrayOfObjects = function ( mock ) {
     let handler = (req, res) => {
+        Router.___logMockRequest( mock, req );
         let index = Router.___getIndex( mock );
 
         Router.addHeaders(mock, res);
@@ -520,5 +534,10 @@ Router.___guessBLOBMIMEType = function ( fileName ) {
     if (fileName.endsWith('.gif')) return 'image/png';
     return 'application/octet-stream';
 };
+Router.___logMockRequest = function ( mock, req ) {
+    Log.trace('Received request for mock service at ' + ((mock.verb)? mock.verb : 'GET' ) + ' ' + mock.path);
+};
+
+
 
 module.exports = Router;
