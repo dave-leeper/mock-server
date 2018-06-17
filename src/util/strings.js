@@ -1,9 +1,9 @@
 function Strings(){}
-Strings.LOGIN_NOT_CONFIGURED = 'Login not configured.';
-Strings.INCORRECT_USER_NAME = 'Incorrect username.';
-Strings.INCORRECT_PASSWORD = 'Incorrect password.';
-Strings.LOGIN_SUCCESSFUL = 'Login successful.';
-Strings.LISTENING_ON_PORT = 'Listening on port {1}.';
+Strings.LOGIN_NOT_CONFIGURED = 0;
+Strings.INCORRECT_USER_NAME = 1;
+Strings.INCORRECT_PASSWORD = 2;
+Strings.LOGIN_SUCCESSFUL = 3;
+Strings.LISTENING_ON_PORT = 4;
 
 module.exports = Strings;
 
