@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-let files = require ( '../util/file-utilities.js' );
+let files = require ( '../util/files.js' );
 
 const FILE_PATH = path.join(__dirname , "/../files/");
 /**

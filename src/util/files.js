@@ -3,7 +3,7 @@
 let fs = require("fs");
 let path = require("path");
 
-class FileUtilities {
+class Files {
     /**
      * Reads a file and returns the contents.
      * @param inFilepath {String} The path to the file.
@@ -72,4 +72,4 @@ class FileUtilities {
         return results;
     }
 }
-module.exports = FileUtilities;
+module.exports = Files;

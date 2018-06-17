@@ -1,6 +1,6 @@
 let path = require('path');
 let fs = require('fs-extra');
-let files = require ( '../util/file-utilities.js' );
+let files = require ( '../util/files.js' );
 
 class Upload {
     do(params) {

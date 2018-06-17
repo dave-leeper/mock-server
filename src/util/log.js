@@ -13,26 +13,6 @@ class Log {
     static configure (inConfig ) {
         log4js.configure( inConfig );
     }
-    /**
-     * Formats a string in a manner similar to sprintf or Microsoft's String.Format() method.
-     *
-     * @example
-     * format('{0} is not {1}! {0} {2}', 'Sale', 'Sail');
-     * results in:
-     * Sale is not Sail! Sale {2}
-     * @param inFormat {String} The format string.
-     * @Param ... {String} ALL comma separated list of string parameters used to format the inFormat string.
-     * @returns {String} The formatted string.
-     */
-    static format ( inFormat ) {
-        let aArgs = Array.prototype.slice.call ( arguments, 1 );
-        return inFormat.replace(
-            /{(\d+)}/g,
-            function ( inMatch, inNumber ) {
-                return typeof aArgs[ inNumber ] !== 'undefined' ? aArgs[ inNumber ] : inMatch;
-            }
-        );
-    }
     static stringify(obj) { return stringifyObject(obj); }
     static get ALL() { return log4js.levels.ALL; }
     static get TRACE() { return log4js.levels.TRACE; }

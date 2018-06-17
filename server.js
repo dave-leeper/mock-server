@@ -5,14 +5,16 @@ const http = require('http');
 const router = express.Router();
 const path = require('path');
 const favicon = require('serve-favicon');
-const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const busboy = require('connect-busboy')
 const fileUpload = require('express-fileupload');
+const passport = require('passport');
 const Router = require('./src/router');
+const Strings = require('./src/util/strings' );
+const I18n = require('./src/util/i18n' );
 const Log = require('./src/util/log');
-const FileUtilities = require('./src/util/file-utilities.js');
+const FileUtilities = require('./src/util/files.js');
 
 /**
  * @constructor
@@ -88,6 +90,8 @@ class Server {
         this.express.use(express.static(path.join(__dirname, 'public')));
         this.express.use(busboy());
         this.express.use(fileUpload());
+        this.express.use(passport.initialize());
+        this.express.use(passport.session());
 
         // app.use('/', index);
         this.express.use('/', Router.connect(router, serverConfig));
@@ -124,8 +128,7 @@ class Server {
         this.server.listen(normalizedPort, callback);
         this.server.on('error', this.onError);
 
-
-        console.log('Listening on port ' + normalizedPort);
+        Log.info( I18n.format( I18n.get( Strings.LISTENING_ON_PORT ), normalizedPort ));
         return this;
     }
 
@@ -135,7 +138,7 @@ class Server {
                 this.express.locals.___extra.databaseConnectionManager.disconnect();
             }
         } catch (err) {
-            console.log("Error shutting down database connections.");
+            Log.error("Error shutting down database connections. Error: " + Log.stringify(err));
         }
         this.server.close(callback);
     }
@@ -153,7 +156,7 @@ class Server {
         return false;
     }
     onError(error) {
-        console.log(error);
+        Log.error(Log.stringify(error));
     }
 }
 

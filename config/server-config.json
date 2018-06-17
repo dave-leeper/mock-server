@@ -23,7 +23,10 @@
       "path": "/json",
       "response": "./server-config.json",
       "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ],
+      "authentication": "local",
+      "authorization": "local",
+      "accounting": "log"
     },
     {
       "path": "/json-string-array",

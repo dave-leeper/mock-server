@@ -1,6 +1,6 @@
 'use strict';
 
-let files = require ( './util/file-utilities.js' );
+let files = require ( './util/files.js' );
 let Log = require ( './util/log.js' );
 let DatabaseConnectorManager = require ( './database-connectors/database-connector-manager' );
 
@@ -17,9 +17,7 @@ Router.databaseConnectionManager = null;
  * @returns Returns the express router.
  */
 Router.connect = function ( router, config, databaseConnectionCallback ) {
-    if ( (!config) || (!router) ) {
-        return router;
-    }
+    if ( (!config) || (!router) ) return router;
 
     if (config.mocks) {
         for (let loop1 = 0; loop1 < config.mocks.length; loop1++) {
@@ -199,9 +197,7 @@ Router.defaultResponse = function ( req, res ) {
     const error = {
         title: "Not Found",
         message: "File Not Found.",
-        error: {
-            status: 404
-        },
+        error: { status: 404 },
         requestURL: originalURL
     };
     res.render('error', error);
@@ -253,9 +249,7 @@ Router.___buildJSONFileHandlerFromString = function ( mock ) {
             const error = {
                 title: responseFile,
                 message: "File Not Found: " + responseFile + ".",
-                error: {
-                    status: 404
-                }
+                error: { status: 404 }
             };
             res.render("error", error);
             return;
@@ -290,9 +284,7 @@ Router.___buildTextFileHandlerFromString = function ( mock ) {
             const error = {
                 title: responseFile,
                 message: "File Not Found.",
-                error: {
-                    status: 404
-                }
+                error: { status: 404 }
             };
             res.render("error", error);
             return;
@@ -316,9 +308,7 @@ Router.___buildBLOBFileHandlerFromString = function ( mock ) {
             const error = {
                 title: responseFile,
                 message: "File Not Found.",
-                error: {
-                    status: 404
-                }
+                error: { status: 404 }
             };
             res.render("error", error);
             return;
@@ -348,9 +338,7 @@ Router.___buildJSONFileHandlerFromArrayOfStrings = function (mock ) {
             const error = {
                 title: responseFile,
                 message: "File Not Found.",
-                error: {
-                    status: 404
-                }
+                error: { status: 404 }
             };
             res.render("error", error);
             return;
@@ -391,9 +379,7 @@ Router.___buildTextFileHandlerFromArrayOfStrings = function ( mock ) {
             const error = {
                 title: responseFile,
                 message: "File Not Found.",
-                error: {
-                    status: 404
-                }
+                error: { status: 404 }
             };
             res.render("error", error);
             return;
@@ -418,9 +404,7 @@ Router.___buildBLOBFileHandlerFromArrayOfStrings = function (mock ) {
             const error = {
                 title: responseFile,
                 message: "File Not Found.",
-                error: {
-                    status: 404
-                }
+                error: { status: 404 }
             };
             res.render("error", error);
             return;
@@ -544,7 +528,5 @@ Router.___guessBLOBMIMEType = function ( fileName ) {
 Router.___logMockRequest = function ( mock, req ) {
     Log.trace('Received request for mock service at ' + ((mock.verb)? mock.verb : 'GET' ) + ' ' + mock.path);
 };
-
-
 
 module.exports = Router;

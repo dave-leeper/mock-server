@@ -1,0 +1,7 @@
+{
+  "permissions": [{
+      "account": "admin",
+      "permissions": "all"
+    }
+  ]
+}

@@ -4,7 +4,7 @@ class LogRequest {
     do(params) {
         return new Promise (( inResolve, inReject ) => {
             let level = Log.getLevelFromString("DEBUG");
-            let serviceData = ((params.serviceInfo && params.serviceInfo.serviceData && params.serviceInfo.serviceData)? params.serviceInfo && params.serviceInfo.serviceData && params.serviceInfo.serviceData : null );
+            let serviceData = ((params.serviceInfo && params.serviceInfo.serviceData && params.serviceInfo.serviceData)? params.serviceInfo.serviceData : null );
             if (serviceData && serviceData.level) level = Log.getLevelFromString(serviceData.level);
             let body = params.body;
             if (body && serviceData && serviceData.json) body = Log.stringify(body);
