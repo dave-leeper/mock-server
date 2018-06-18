@@ -32,11 +32,11 @@ describe( 'As a developer, I need the server to continue running when exceptions
     it ( 'should continue running after an exception is thrown', ( done ) => {
         let port = 1337;
         let server = new Server();
-        let pingResponse = '{"name":"My Server","version":"1.0"}';
         let serverInitCallback = () => {
             request('http://localhost:' + port + "/throw", { json: true }, (err, res, body) => {
                 request('http://localhost:' + port + "/ping", { json: true }, (err, res, body) => {
-                    expect(JSON.stringify(body)).to.be.equal(pingResponse);
+                    expect(body.name).to.be.equal("My Server");
+                    expect(body.version).to.be.equal("1.0");
                     server.stop(() => {done(); });
                 });
             });

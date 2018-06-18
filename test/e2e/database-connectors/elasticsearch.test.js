@@ -25,6 +25,15 @@ let schema = {
 };
 
 describe( 'As a developer, I need to connect, ping, and disconnect to/from elasticsearch.', function() {
+    before(() => {
+    });
+    beforeEach(() => {
+        Registry.unregisterAll();
+    });
+    afterEach(() => {
+    });
+    after(function() {
+    });
     it ( 'should connect and disconnect to and from elasticsearch', ( done ) => {
         const esdc = new ElasticsearchConnector();
 

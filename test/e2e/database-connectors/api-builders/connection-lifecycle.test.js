@@ -4,7 +4,8 @@
 let chai = require( 'chai' ),
     expect = chai.expect,
     Server = require('../../../../server.js'),
-    request = require('request');
+    request = require('request'),
+    Registry = require('../../../../src/util/registry.js');
 let config = {
     "databaseConnections" : [
         {
@@ -12,15 +13,28 @@ let config = {
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
             "generateConnectionAPI": true,
+            "generateIndexAPI": true,
+            "generateDataAPI": true,
             "config": {
                 "host": "localhost:9200",
                 "log": "trace"
-            }
+            },
+            "cookies": [{ "name": "MY_COOKIE1", "value": "MY_COOKIE_VALUE1" }],
+            "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
         }
     ]
 };
 
 describe( 'As a developer, I need an API for database connections', function( ) {
+    before(() => {
+    });
+    beforeEach(() => {
+        Registry.unregisterAll();
+    });
+    afterEach(() => {
+    });
+    after(function() {
+    });
     it ( 'should build a handler for requests to connect/ping/disconnect to/from the database', ( done ) => {
         let port = 1337 ;
         let server = new Server();

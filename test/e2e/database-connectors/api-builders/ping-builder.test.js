@@ -3,11 +3,12 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    Router = require('../../../../src/routers/route-builder.js'),
-    mockRequest = require('../../../mock-request.js'),
-    mockResponse = require('../../../mock-response.js'),
-    pingHandlerBuilder = require('../../../../src/routers/data-route-builders/connection-ping-builder.js'),
-    DatabaseConnectorManager = require('../../../../src/database/database-connection-manager.js');
+    MockRequest = require('../../../mock-request.js'),
+    MockResponse = require('../../../mock-response.js'),
+    MockRouteBuilderBase = require('../../../mock-route-builder-base.js'),
+    ConnectionPingBuilder = require('../../../../src/routers/data-route-builders/connection-ping-builder.js'),
+    DatabaseConnectorManager = require('../../../../src/database/database-connection-manager.js'),
+    Registry = require('../../../../src/util/registry.js');
 let config = {
     "databaseConnections" : [
         {
@@ -15,28 +16,40 @@ let config = {
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
             "generateConnectionAPI": true,
+            "generateIndexAPI": true,
+            "generateDataAPI": true,
             "config": {
                 "host": "localhost:9200",
                 "log": "trace"
-            }
+            },
+            "cookies": [{ "name": "MY_COOKIE1", "value": "MY_COOKIE_VALUE1" }],
+            "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
         }
     ]
 };
 
 describe( 'As a developer, I need an API for database connections', function() {
-    it ( 'should build a handler for requests to disconnect from the database', ( ) => {
-        let connectionHandler = pingHandlerBuilder( Router, config.databaseConnections[0] );
+    before(() => {
+    });
+    beforeEach(() => {
+        Registry.unregisterAll();
+    });
+    afterEach(() => {
+    });
+    after(function() {
+    });
+    it ( 'should build a handler for requests to ping the database', ( ) => {
+        let mockRouteBuilderBase = new MockRouteBuilderBase();
+        let connectionHandler = ConnectionPingBuilder( mockRouteBuilderBase, config.databaseConnections[0] );
         expect(connectionHandler).to.not.be.null;
 
-        let req = new mockRequest();
-        let res = new mockResponse();
+        let req = new MockRequest();
+        let res = new MockResponse();
         connectionHandler( req, res );
-        expect(res.renderString).to.be.equal("error");
-        expect(JSON.stringify(res.renderObject)).to.be.equal(JSON.stringify({message: "No database connection manager.", error: {status: 500}}));
+        expect(JSON.stringify(mockRouteBuilderBase.err)).to.be.equal(JSON.stringify({message: "No database connection manager.", error: {status: 500}}));
 
-        req.app.locals.___extra.databaseConnectionManager = new DatabaseConnectorManager();
+        Registry.register(new DatabaseConnectorManager(), 'DatabaseConnectorManager')
         connectionHandler( req, res );
-        expect(res.renderString).to.be.equal("error");
-        expect(JSON.stringify(res.renderObject)).to.be.equal(JSON.stringify({message: "No database connection.", error: {status: 500}}));
+        expect(JSON.stringify(mockRouteBuilderBase.err)).to.be.equal(JSON.stringify({message: 'Error connecting to database. No connection found for elasticsearch.', error: {status: 500}}));
     });
 });

@@ -20,6 +20,15 @@ let config = {
 
 describe( 'As a developer, I need to manage database connections.', function()
 {
+    before(() => {
+    });
+    beforeEach(() => {
+        Registry.unregisterAll();
+    });
+    afterEach(() => {
+    });
+    after(function() {
+    });
     it ( 'It should create all requested database connections', ( done ) => {
         let dbConnectionManager = new DatabaseConnectorManager();
 
