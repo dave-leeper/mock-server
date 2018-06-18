@@ -3,10 +3,10 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    Router = require('../../../../src/routers/route-builder.js'),
-    mockRequest = require('../../../mock-request.js'),
-    mockResponse = require('../../../mock-response.js'),
-    connectionHandlerBuilder = require('../../../../src/routers/data-route-builders/connection-connect-builder.js'),
+    MockRequest = require('../../../mock-request.js'),
+    MockResponse = require('../../../mock-response.js'),
+    MockRouteBuilderBase = require('../../../mock-route-builder-base.js'),
+    ConnectionConnectBuilder = require('../../../../src/routers/data-route-builders/connection-connect-builder.js'),
     DatabaseConnectorManager = require('../../../../src/database/database-connection-manager.js');
 let config = {
     "databaseConnections" : [
@@ -25,18 +25,18 @@ let config = {
 
 describe( 'As a developer, I need an API for database connections', function() {
     it ( 'should build a handler for requests to connect to the database', ( ) => {
-        let connectionHandler = connectionHandlerBuilder( Router, config.databaseConnections[0] );
-        expect(connectionHandler).to.not.be.null;
+        let mockRouteBuilderBase = new MockRouteBuilderBase();
+        let connectionConnectBuilder = ConnectionConnectBuilder(mockRouteBuilderBase, config.databaseConnections[0] );
+        expect(connectionConnectBuilder).to.not.be.null;
 
-        let req = new mockRequest();
-        let res = new mockResponse();
-        connectionHandler( req, res );
+        let req = new MockRequest();
+        let res = new MockResponse();
+        connectionConnectBuilder( req, res );
         expect(res.renderString).to.be.equal("error");
         expect(JSON.stringify(res.renderObject)).to.be.equal(JSON.stringify({message: "No database connection manager.", error: {status: 500}}));
 
         req.app.locals.___extra.databaseConnectionManager = new DatabaseConnectorManager();
-        connectionHandler( req, res );
-        expect(res.renderString).to.be.equal("error");
-        expect(JSON.stringify(res.renderObject)).to.be.equal(JSON.stringify({message: "No database connection.", error: {status: 500}}));
+        connectionConnectBuilder( req, res );
+        expect(JSON.stringify(mockRouteBuilderBase.err)).to.be.equal(JSON.stringify({message: "No database connection.", error: {status: 500}}));
     });
 });

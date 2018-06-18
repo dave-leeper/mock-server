@@ -5,7 +5,7 @@ let Log = require('../../../src/util/log' );
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    DatabaseConnectionsMicroservice = require('../../../src/new-microservices/database-connections.js');
+    DatabaseConnectionsMicroservice = require('../../../src/microservices/database-connections.js');
 let config = {
     "databaseConnections" : [
         {

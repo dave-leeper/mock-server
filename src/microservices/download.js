@@ -1,46 +1,26 @@
-'use strict';
+let Log = require('../util/log' );
 
-const path = require('path');
-let files = require ( '../util/files.js' );
-
-const FILE_PATH = path.join(__dirname , "/../files/");
-/**
- * @constructor
- */
-function DownloadService ( )
-{
+class Download {
+    do(params) {
+        return new Promise (( inResolve, inReject ) => {
+            const FILE_PATH = path.join(__dirname , "/../files/");
+            const fileName = ((params.params.name) ? params.params.name : "filename");
+            const filePath = path.join(FILE_PATH, fileName);
+            if (!files.existsSync(filePath)) {
+                let error = 'File (' + filePath + ') Not Found.';
+                inReject && inReject({
+                    status: 404,
+                    send: error,
+                    viewName: 'error',
+                    viewObject: {
+                        title: fileName,
+                        message: error,
+                        error: {status: 404}
+                    },
+                });
+            }
+            inResolve && inResolve({status: 200, fileDownloadPath: filePath});
+        });
+    }
 }
-
-/**
- * @param req {Object} - The request object.
- * @param res {Object} - The response object.
- * @param serviceInfo - Service configure info.
- */
-DownloadService.prototype.do = function ( req, res, next, serviceInfo )
-{
-    return new Promise (( inResolve, inReject ) => {
-        const fileName = ((req.params.name)? req.params.name : "filename");
-        const filePath = path.join(FILE_PATH, fileName);
-
-        if ( !files.existsSync( filePath ) ) {
-            const error = {
-                title: fileName,
-                message: "File Not Found.",
-                error: {
-                    status: 404
-                }
-            };
-            res.status(404);
-            res.render("error", error);
-            inReject && inReject ( error, null );
-        } else {
-            const success = { status: "success", operation: "File download" };
-            res.status(200);
-            res.download(filePath);
-            next();
-            inResolve && inResolve(success);
-        }
-    });
-};
-
-module.exports = DownloadService;
+module.exports = Download;

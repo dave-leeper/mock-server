@@ -1,5 +1,5 @@
 'use strict';
-let logger = require('../../util/log');
+let Registry = require ( '../../util/registry.js' );
 
 function DataInsertBuilder( builder, databaseConnectionInfo )
 {
@@ -15,16 +15,13 @@ function DataInsertBuilder( builder, databaseConnectionInfo )
                 res.render("error", error);
                 return;
             }
-            if ((!req.app)
-            || (!req.app.locals)
-            || (!req.app.locals.___extra)
-            || (!req.app.locals.___extra.databaseConnectionManager))
-            {
+            let databaseConnectionManager = Registry.get('DatabaseConnectorManager');
+            if (!databaseConnectionManager) {
                 const error = { message: "Error connecting to database. No database connection manager found.", error: { status: 500 }};
                 builder.sendErrorResponse(error, res);
                 return;
             }
-            let databaseConnection = req.app.locals.___extra.databaseConnectionManager.getConnection( databaseConnectionName );
+            let databaseConnection = databaseConnectionManager.getConnection( databaseConnectionName );
             if (!databaseConnection) {
                 const error = { message: "Error connecting to database. No connection found." + databaseConnectionName, error: { status: 500 }};
                 builder.sendErrorResponse(error, res);

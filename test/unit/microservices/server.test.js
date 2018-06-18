@@ -96,16 +96,16 @@ let config = {
     ],
     "microservices": [
         {
-            "path": "/microservices",
+            "path": "/endpoionts",
             "name": "Services List",
-            "description": "Provides a list of microservices registered with this server.",
+            "description": "Provides a list of endpoionts registered with this server.",
             "serviceFile": "microservices.js",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
         {
             "path": "/mocks",
             "name": "Mock Services List",
-            "description": "Provides a list of mock microservices registered with this server.",
+            "description": "Provides a list of mock endpoionts registered with this server.",
             "serviceFile": "mocks.js"
         }
     ],
@@ -123,7 +123,7 @@ let config = {
     ]
 };
 
-describe( 'As a developer, I need a server that sets up mock util, microservices, database connections, and can be started and stopped in memory.', function()
+describe( 'As a developer, I need a server that sets up mock util, endpoionts, database connections, and can be started and stopped in memory.', function()
 {
     it ( 'should be be able to start and stop from within javascript', ( done ) => {
         let port = '1337';
@@ -360,11 +360,11 @@ describe( 'As a developer, I need need to run mock util.', function()
         server.init( port, config, serverInitCallback );
     });
 
-    it ( 'should send headers for microservices that are configured for them.', ( done ) => {
+    it ( 'should send headers for endpoionts that are configured for them.', ( done ) => {
         let port = 1337;
         let server = new Server();
         let serverInitCallback = () => {
-            request('http://localhost:' + port + "/microservices", { json: true }, (err, res, body) => {
+            request('http://localhost:' + port + "/endpoionts", { json: true }, (err, res, body) => {
                 expect(res).to.not.be.null;
                 expect(res.headers).to.not.be.null;
                 expect(res.headers.MY_HEADER).to.not.be.null;

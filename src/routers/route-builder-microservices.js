@@ -9,7 +9,7 @@ class RouteBuilderMicroservices extends RouteBuilderBase {
         for (let loop2 = 0; loop2 < config.microservices.length; loop2++) {
             let microservice = config.microservices[loop2];
             let verb = ((microservice.verb) ? microservice.verb.toUpperCase() : "GET" );
-            let microservicePath = "../new-microservices/" + microservice.serviceFile;
+            let microservicePath = "../microservices/" + microservice.serviceFile;
             let microserviceClass = require( microservicePath );
             let micro = new microserviceClass();
             let handler = (req, res, next) => {

@@ -1,20 +1,17 @@
 'use strict';
+let Registry = require ( '../../util/registry.js' );
 
-function DatabasePingBuilder ( builder, databaseConnectionInfo ) {
+function ConnectionPingBuilder ( builder, databaseConnectionInfo ) {
     let pingHandler = (req, res) => {
-        routerClass.addHeaders(databaseConnectionInfo, res);
-        routerClass.addCookies(databaseConnectionInfo, res);
+        builder.addHeaders(databaseConnectionInfo, res);
+        builder.addCookies(databaseConnectionInfo, res);
 
-        if ((!req)
-        || (!req.app)
-        || (!req.app.locals)
-        || (!req.app.locals.___extra)
-        || (!req.app.locals.___extra.databaseConnectionManager)) {
+        let databaseConnectionManager = Registry.get('DatabaseConnectorManager');
+        if (!databaseConnectionManager) {
             const error = {message: "No database connection manager.", error: {status: 500}};
             builder.sendErrorResponse(error, res);
             return;
         }
-        let databaseConnectionManager = req.app.locals.___extra.databaseConnectionManager;
         let databaseConnection = databaseConnectionManager.getConnection(databaseConnectionInfo.name);
         if (!databaseConnection) {
             const error = {message: "No database connection.", error: {status: 500}};
@@ -32,4 +29,4 @@ function DatabasePingBuilder ( builder, databaseConnectionInfo ) {
     return pingHandler;
 }
 
-module.exports = DatabasePingBuilder;
+module.exports = ConnectionPingBuilder;

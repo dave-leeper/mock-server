@@ -8,7 +8,7 @@ let chai = require( 'chai' ),
     mockRequest = require('../../mock-request.js'),
     mockResponse = require('../../mock-response.js');
 
-describe( 'As a developer, I need a router that handles all GET paths, understands the server configure file, and invokes mocks and microservices.', function()  {
+describe( 'As a developer, I need a router that handles all GET paths, understands the server configure file, and invokes mocks and endpoionts.', function()  {
     it ( 'should handle a GET requests using the provided function and return the router parameter', ( ) => {
         let r = new mockExpressRouter();
         let returnValue = Router.connect(r);

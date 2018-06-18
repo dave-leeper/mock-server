@@ -128,8 +128,8 @@ class Server {
         const normalizedPort = this.normalizePort(locals.port);
         this.express.set('port', normalizedPort);
 
-        this.server = http.createServer(this.express);
-        this.server.listen(normalizedPort, callback);
+        this.server = this.express.listen(normalizedPort, null, null, callback);
+        this.server.on('error', this.onError);
         this.server.on('error', this.onError);
 
         Log.info( I18n.format( I18n.get( Strings.LISTENING_ON_PORT ), normalizedPort ));

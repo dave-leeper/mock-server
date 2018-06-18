@@ -4,7 +4,7 @@ let Log = require('../../../src/util/log' );
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    MocksMicroservice = require('../../../src/new-microservices/mocks.js');
+    MocksMicroservice = require('../../../src/microservices/mocks.js');
 let config = {
     "mocks": [
         {
