@@ -3,7 +3,8 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    DatabaseConnectorManager = require('../../../src/database/database-connection-manager.js');
+    DatabaseConnectorManager = require('../../../src/database/database-connection-manager.js'),
+    Registry = require('../../../src/util/registry.js');
 let config = {
     databaseConnections : [
         {
@@ -27,7 +28,7 @@ describe( 'As a developer, I need to manage database connections.', function()
     });
     afterEach(() => {
     });
-    after(function() {
+    after(() => {
     });
     it ( 'It should create all requested database connections', ( done ) => {
         let dbConnectionManager = new DatabaseConnectorManager();

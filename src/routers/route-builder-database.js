@@ -31,24 +31,20 @@ class RouteBuilderDatabase extends RouteBuilderBase {
     buildConnectionAPI(builder, router, databaseConnectionInfo) {
         let connectHandler = require("./data-route-builders/connection-connect-builder.js")(this, databaseConnectionInfo);
         if (!connectHandler) {
-            if (log.will(log.ERROR)) {
-                log.error("Connect handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            if (Log.will(Log.ERROR)) {
+                Log.error("Connect handler not defined for database connection " + databaseConnectionInfo.path + ".");
                 return;
             }
         }
         let pingHandler = require("./data-route-builders/connection-ping-builder.js")(this, databaseConnectionInfo);
         if (!pingHandler) {
-            if (log.will(log.ERROR)) {
-                log.error("Ping handler not defined for database connection " + databaseConnectionInfo.path + ".");
-                return;
-            }
+            if (Log.will(Log.ERROR)) Log.error("Ping handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
         }
         let disconnectHandler = require("./data-route-builders/connection-disconnect-builder.js")(this, databaseConnectionInfo);
         if (!disconnectHandler) {
-            if (log.will(log.ERROR)) {
-                log.error("Disconnect handler not defined for database connection " + databaseConnectionInfo.path + ".");
-                return;
-            }
+            if (Log.will(Log.ERROR))Log.error("Disconnect handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
         }
         let paths = this.buildConnectionAPIPaths(databaseConnectionInfo.name);
         let connectPath = paths[0];
@@ -76,31 +72,23 @@ class RouteBuilderDatabase extends RouteBuilderBase {
     buildIndexAPI(builder, router, databaseConnectionInfo) {
         let existsHandler = require("./data-route-builders/index-exists-builder.js")(databaseConnectionInfo);
         if (!existsHandler) {
-            if (log.will(log.ERROR)) {
-                log.error("Index exists handler not defined for database connection " + databaseConnectionInfo.path + ".");
-                return;
-            }
+            if (Log.will(Log.ERROR)) Log.error("Index exists handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
         }
         let createHandler = require("./data-route-builders/index-create-builder.js")(this, databaseConnectionInfo);
         if (!createHandler) {
-            if (log.will(log.ERROR)) {
-                log.error("Create index handler not defined for database connection " + databaseConnectionInfo.path + ".");
-                return;
-            }
+            if (Log.will(Log.ERROR)) Log.error("Create index handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
         }
         let dropHandler = require("./data-route-builders/index-drop-builder.js")(this, databaseConnectionInfo);
         if (!dropHandler) {
-            if (log.will(log.ERROR)) {
-                log.error("Drop index handler not defined for database connection " + databaseConnectionInfo.path + ".");
-                return;
-            }
+            if (Log.will(Log.ERROR)) Log.error("Drop index handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
         }
         let createMappingHandler = require("./data-route-builders/index-create-mapping-builder.js")(builder, databaseConnectionInfo);
         if (!createMappingHandler) {
-            if (log.will(log.ERROR)) {
-                log.error("Create index mapping handler not defined for database connection " + databaseConnectionInfo.path + ".");
-                return;
-            }
+            if (Log.will(Log.ERROR)) Log.error("Create index mapping handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
         }
         let paths = this.buildIndexAPIPaths(databaseConnectionInfo.name);
         let existsPath = paths[0];
@@ -131,31 +119,23 @@ class RouteBuilderDatabase extends RouteBuilderBase {
     buildDataAPI(builder, router, databaseConnectionInfo) {
         let insertHandler = require("./data-route-builders/data-insert-builder.js")(this, databaseConnectionInfo);
         if (!insertHandler) {
-            if (log.will(log.ERROR)) {
-                log.error("Data insert handler not defined for database connection " + databaseConnectionInfo.path + ".");
-                return;
-            }
+            if (Log.will(Log.ERROR)) Log.error("Data insert handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
         }
         let updateHandler = require("./data-route-builders/data-update-builder.js")(this, databaseConnectionInfo);
         if (!updateHandler) {
-            if (log.will(log.ERROR)) {
-                log.error("Data update handler not defined for database connection " + databaseConnectionInfo.path + ".");
-                return;
-            }
+            if (Log.will(Log.ERROR)) Log.error("Data update handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
         }
         let deleteHandler = require("./data-route-builders/data-delete-builder.js")(this, databaseConnectionInfo);
         if (!deleteHandler) {
-            if (log.will(log.ERROR)) {
-                log.error("Data delete handler not defined for database connection " + databaseConnectionInfo.path + ".");
-                return;
-            }
+            if (Log.will(Log.ERROR)) Log.error("Data delete handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
         }
         let queryHandler = require("./data-route-builders/data-query-builder.js")(this, databaseConnectionInfo);
         if (!queryHandler) {
-            if (log.will(log.ERROR)) {
-                log.error("Data query handler not defined for database connection " + databaseConnectionInfo.path + ".");
-                return;
-            }
+            if (Log.will(Log.ERROR)) Log.error("Data query handler not defined for database connection " + databaseConnectionInfo.path + ".");
+            return;
         }
         let paths = this.buildDataAPIPaths(databaseConnectionInfo.name);
         let insertPath = paths[0];

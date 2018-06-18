@@ -1,10 +1,14 @@
 'use strict';
-let validateDatabaseConnection = require('./validate-database-connection.js');
+let ValidationHelper = require('./validation-helper.js');
 
 function IndexExistsBuilder ( builder, databaseConnectionInfo ) {
-    let indexExistsHandler = (req, res) => {
-        let databaseConnection = validateDatabaseConnection( builder, res, databaseConnectionInfo );
+    if (!ValidationHelper.validateBuilder(builder) || !ValidationHelper.validateDatabaseConnectionInfo(databaseConnectionInfo)) return;
+    return (req, res) => {
+        let databaseConnection = ValidationHelper.validateDatabaseConnection( builder, res, databaseConnectionInfo );
         if (!databaseConnection) return;
+        if (!ValidationHelper.validateIndexParam(builder, req, databaseConnectionInfo)) return;
+
+        let indexName = req.params.index;
         databaseConnection.indexExists( indexName ).then(( exists ) => {
             res.status(200);
             res.send({ index: indexName, exists: exists });
@@ -13,7 +17,6 @@ function IndexExistsBuilder ( builder, databaseConnectionInfo ) {
             builder.sendErrorResponse(error, res);
         });
     };
-    return indexExistsHandler;
 }
 
 module.exports = IndexExistsBuilder;

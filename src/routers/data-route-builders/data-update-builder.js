@@ -1,13 +1,13 @@
 'use strict';
-let validateDatabaseConnection = require('./validate-database-connection.js');
-let validateUploadFile = require('./validate-upload-file.js');
+let ValidationHelper = require('./validation-helper.js');
 
 function DataUpdateBuilder( builder, databaseConnectionInfo )
 {
-    let updateDataHandler = (req, res) => {
-        let databaseConnection = validateDatabaseConnection( builder, res, databaseConnectionInfo );
+    if (!ValidationHelper.validateBuilder(builder) || !ValidationHelper.validateDatabaseConnectionInfo(databaseConnectionInfo)) return;
+    return (req, res) => {
+        let databaseConnection = ValidationHelper.validateDatabaseConnection( builder, res, databaseConnectionInfo );
         if (!databaseConnection) return;
-        if (!validateUploadFile(builder, req, res)) return;
+        if (!ValidationHelper.validateUploadFile(builder, req, res)) return;
 
         let updateDoc = JSON.parse(req.files.fileUploaded.data.toString());
         let data = { index: updateDoc.index, type: updateDoc.type, id: updateDoc.id, body: { doc: updateDoc.data }};
@@ -20,25 +20,6 @@ function DataUpdateBuilder( builder, databaseConnectionInfo )
             builder.sendErrorResponse(error, res);
         });
     };
-
-    return updateDataHandler;
 }
 
 module.exports = DataUpdateBuilder;
-
-// client.update({
-//     index: 'myindex',
-//     type: 'mytype',
-//     id: '1',
-//     body: {
-//         // put the partial document under the `doc` key
-//         doc: {
-//             title: 'Updated'
-//         }
-//     }
-// }, function (error, response) {
-//     // ...
-// })
-
-// updateByQuery
-// https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference.html

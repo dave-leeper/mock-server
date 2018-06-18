@@ -6,9 +6,9 @@
 function MockRequest ( path )
 {
     this.path = path;
-    this.app = {};
-    this.app.locals = {};
-    this.app.locals.___extra = {};
+    this.params = {};
+    this.query = {};
+    this.files = {fileUploaded:{data: JSON.stringify({ name: 'name' })}};;
 }
 
 module.exports = MockRequest;

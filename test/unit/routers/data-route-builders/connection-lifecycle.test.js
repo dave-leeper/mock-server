@@ -33,7 +33,7 @@ describe( 'As a developer, I need an API for database connections', function( ) 
     });
     afterEach(() => {
     });
-    after(function() {
+    after(() => {
     });
     it ( 'should build a handler for requests to connect/ping/disconnect to/from the database', ( done ) => {
         let port = 1337 ;
@@ -54,8 +54,7 @@ describe( 'As a developer, I need an API for database connections', function( ) 
                         expect(JSON.stringify(body)).to.be.equal(disconnectBody);
                         request('http://localhost:' + port + pingPath, { json: true }, (err, res, body) => {
                             expect(JSON.stringify(body)).to.be.equal(ping2Body);
-                            server.stop();
-                            done();
+                            server.stop(() => { done(); });
                         });
                     });
                 });

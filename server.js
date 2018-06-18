@@ -14,6 +14,7 @@ const Router = require('./src/routers/route-builder');
 const Strings = require('./src/util/strings' );
 const I18n = require('./src/util/i18n' );
 const Log = require('./src/util/log');
+const Registry = require('./src/util/registry');
 const FileUtilities = require('./src/util/files.js');
 
 /**
@@ -99,13 +100,10 @@ class Server {
 
         // app.use('/', index);
         this.express.use('/', Router.connect(router, serverConfig));
-        this.express.locals.___extra = {
-            startTime: new Date(),
-            server: this,
-            serverConfig: serverConfig,
-            stack: router.stack,
-            databaseConnectionManager: Router.databaseConnectionManager
-        };
+        Registry.register(new Date(), 'ServerStartTime');
+        Registry.register(this, 'Server');
+        Registry.register(serverConfig, 'ServerConfig');
+        Registry.register(router.stack, 'RouterStack');
 
         // catch 404 and forward to error handler
         this.express.use(function (req, res, next) {

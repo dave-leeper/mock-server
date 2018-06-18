@@ -1,10 +1,14 @@
 'use strict';
-let validateDatabaseConnection = require('./validate-database-connection.js');
+let ValidationHelper = require('./validation-helper.js');
 
 function IndexDropBuilder ( builder, databaseConnectionInfo ) {
-    let dropIndexHandler = (req, res) => {
-        let databaseConnection = validateDatabaseConnection( builder, res, databaseConnectionInfo );
+    if (!ValidationHelper.validateBuilder(builder) || !ValidationHelper.validateDatabaseConnectionInfo(databaseConnectionInfo)) return;
+    return (req, res) => {
+        let databaseConnection = ValidationHelper.validateDatabaseConnection( builder, res, databaseConnectionInfo );
         if (!databaseConnection) return;
+        if (!ValidationHelper.validateIndexParam(builder, req, databaseConnectionInfo)) return;
+
+        let indexName = req.params.index;
         databaseConnection.dropIndex( indexName ).then(( dropResult ) => {
             res.status(200);
             res.send({ index: indexName, dropped: dropResult.acknowledged });
@@ -13,7 +17,6 @@ function IndexDropBuilder ( builder, databaseConnectionInfo ) {
             builder.sendErrorResponse(error, res);
         });
     };
-    return dropIndexHandler;
 }
 
 module.exports = IndexDropBuilder;

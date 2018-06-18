@@ -3,8 +3,9 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    Server = require('../../../server.js'),
-    request = require('request');
+    Server = require('../../server.js'),
+    request = require('request'),
+    Registry = require('../../src/util/registry.js');
 let config = {
     "mocks": [
         {
@@ -125,6 +126,15 @@ let config = {
 
 describe( 'As a developer, I need a server that sets up mock util, endpoionts, database connections, and can be started and stopped in memory.', function()
 {
+    before(() => {
+    });
+    beforeEach(() => {
+        Registry.unregisterAll();
+    });
+    afterEach(() => {
+    });
+    after(() => {
+    });
     it ( 'should be be able to start and stop from within javascript', ( done ) => {
         let port = '1337';
         let server = new Server();
@@ -143,18 +153,21 @@ describe( 'As a developer, I need a server that sets up mock util, endpoionts, d
         let server = new Server();
 
         server.init(port, config, () => {
+            let databaseConnectionManager = Registry.get('DatabaseConnectorManager');
+            let serverStartTime = Registry.get('ServerStartTime');
+            let server2 = Registry.get('Server');
+            let routerStack = Registry.get('RouterStack');
+            expect(databaseConnectionManager).to.not.be.null;
+            expect(databaseConnectionManager.databaseConnectors).to.not.be.null;
+            expect(databaseConnectionManager.databaseConnectors.length).to.be.equal(1);
+            expect(databaseConnectionManager.getConnection("elasticsearch")).to.not.be.null;
+            expect(serverStartTime).to.not.be.null;
+            expect(serverStartTime instanceof Date).to.be(true);
+            expect(server2).to.not.be.null;
+            expect(server2).to.be.equal(server);
+            expect(routerStack).to.not.be.null;
             expect(server.server).to.not.be.null;
             expect(server.express).to.not.be.null;
-            expect(server.express.locals).to.not.be.null;
-            expect(server.express.locals.___extra).to.not.be.null;
-            expect(server.express.locals.___extra.startTime).to.not.be.null;
-            expect(server.express.locals.___extra.server).to.not.be.null;
-            expect(server.express.locals.___extra.router).to.not.be.null;
-            expect(server.express.locals.___extra.serverConfig).to.not.be.null;
-            expect(server.express.locals.___extra.databaseConnectionManager).to.not.be.null;
-            expect(server.express.locals.___extra.databaseConnectionManager.databaseConnectors).to.not.be.null;
-            expect(server.express.locals.___extra.databaseConnectionManager.databaseConnectors.length).to.be.equal(1);
-            expect(server.express.locals.___extra.databaseConnectionManager.getConnection("elasticsearch")).to.not.be.null;
             server.stop(() => {
                 done();
             });
@@ -162,7 +175,7 @@ describe( 'As a developer, I need a server that sets up mock util, endpoionts, d
     });
 });
 
-describe( 'As a developer, I need need to run mock util.', function()
+describe( 'As a developer, I need need to run mock services.', function()
 {
     it ( 'should write json files as a mock service', ( done ) => {
         let port = 1337;

@@ -3,7 +3,8 @@
 
 const chai = require( 'chai' ),
     expect = chai.expect,
-    ElasticsearchConnector = require('../../../src/database/elasticsearch.js');
+    ElasticsearchConnector = require('../../../src/database/elasticsearch.js'),
+    Registry = require('../../../src/util/registry.js');
 const config = {
         host: "localhost:9200",
         log: "trace"
@@ -32,7 +33,7 @@ describe( 'As a developer, I need to connect, ping, and disconnect to/from elast
     });
     afterEach(() => {
     });
-    after(function() {
+    after(() => {
     });
     it ( 'should connect and disconnect to and from elasticsearch', ( done ) => {
         const esdc = new ElasticsearchConnector();

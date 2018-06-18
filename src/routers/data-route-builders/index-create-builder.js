@@ -1,13 +1,13 @@
 'use strict';
-let validateDatabaseConnection = require('./validate-database-connection.js');
-let validateUploadFile = require('./validate-upload-file.js');
+let ValidationHelper = require('./validation-helper.js');
 
 function IndexCreateBuilder( builder, databaseConnectionInfo )
 {
-    let createIndexHandler = (req, res) => {
-        let databaseConnection = validateDatabaseConnection( builder, res, databaseConnectionInfo );
+    if (!ValidationHelper.validateBuilder(builder) || !ValidationHelper.validateDatabaseConnectionInfo(databaseConnectionInfo)) return;
+    return (req, res) => {
+        let databaseConnection = ValidationHelper.validateDatabaseConnection( builder, res, databaseConnectionInfo );
         if (!databaseConnection) return;
-        if (!validateUploadFile(builder, req, res)) return;
+        if (!ValidationHelper.validateUploadFile(builder, req, res)) return;
 
         let indexData = JSON.parse(req.files.fileUploaded.data.toString());
         databaseConnection.createIndex( indexData ).then(() => {
@@ -19,8 +19,6 @@ function IndexCreateBuilder( builder, databaseConnectionInfo )
             builder.sendErrorResponse(error, res);
         });
     };
-
-    return createIndexHandler;
 }
 
 module.exports = IndexCreateBuilder;

@@ -1,13 +1,13 @@
 'use strict';
-let validateDatabaseConnection = require('./validate-database-connection.js');
-let validateParams = require('./validate-params.js');
+let ValidationHelper = require('./validation-helper.js');
 
 function DataQueryBuilder( builder, databaseConnectionInfo )
 {
-    let queryDataHandler = (req, res) => {
-        let databaseConnection = validateDatabaseConnection( builder, res, databaseConnectionInfo );
+    if (!ValidationHelper.validateBuilder(builder) || !ValidationHelper.validateDatabaseConnectionInfo(databaseConnectionInfo)) return;
+    return (req, res) => {
+        let databaseConnection = ValidationHelper.validateDatabaseConnection( builder, res, databaseConnectionInfo );
         if (!databaseConnection) return;
-        if (!validateParams(builder, req, res)) return;
+        if (!ValidationHelper.validateParams(builder, req, res)) return;
         let index = req.params.index;
         let type = req.params.type;
         let id = req.params.id.toLowerCase();
@@ -29,7 +29,6 @@ function DataQueryBuilder( builder, databaseConnectionInfo )
             builder.sendErrorResponse(error, res);
         });
     };
-    return queryDataHandler;
 }
 
 function getQuerySize( req ) {
