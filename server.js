@@ -10,7 +10,7 @@ const bodyParser = require('body-parser');
 const busboy = require('connect-busboy')
 const fileUpload = require('express-fileupload');
 const passport = require('passport');
-const Router = require('./src/router');
+const Router = require('./src/routers/route-builder');
 const Strings = require('./src/util/strings' );
 const I18n = require('./src/util/i18n' );
 const Log = require('./src/util/log');
@@ -55,6 +55,10 @@ class Server {
                 if (config.mocks) {
                     if (!mergedConfig.mocks) mergedConfig.mocks = [];
                     mergedConfig.mocks = mergedConfig.mocks.concat(config.mocks);
+                }
+                if (config.authentication) {
+                    if (!mergedConfig.authentication) mergedConfig.authentication = [];
+                    mergedConfig.authentication = mergedConfig.authentication.concat(config.authentication);
                 }
                 if (config.microservices) {
                     if (!mergedConfig.microservices) mergedConfig.microservices = [];

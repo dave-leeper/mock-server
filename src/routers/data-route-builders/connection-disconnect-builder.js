@@ -1,9 +1,10 @@
 'use strict';
+let RouteBuilderBase = require ( '../route-builder-base.js' );
 
-function DatabaseDisconnectBuilder ( routerClass, databaseConnectionInfo ) {
+function DatabaseDisconnectBuilder ( builder, databaseConnectionInfo ) {
     let disconnectHandler = (req, res) => {
-        routerClass.addHeaders(databaseConnectionInfo, res);
-        routerClass.addCookies(databaseConnectionInfo, res);
+        builder.addHeaders(databaseConnectionInfo, res);
+        builder.addCookies(databaseConnectionInfo, res);
 
         if ((!req)
         || (!req.app)
@@ -15,10 +16,10 @@ function DatabaseDisconnectBuilder ( routerClass, databaseConnectionInfo ) {
             return;
         }
         let databaseConnectionManager = req.app.locals.___extra.databaseConnectionManager;
-        let databaseConnection = databaseConnectionManager.getConnector(databaseConnectionInfo.name);
+        let databaseConnection = databaseConnectionManager.getConnection(databaseConnectionInfo.name);
         if (!databaseConnection) {
             const error = {message: "No database connection.", error: {status: 500}};
-            routerClass.sendErrorResponse(error, res);
+            builder.sendErrorResponse(error, res);
             return;
         }
 

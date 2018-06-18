@@ -1,9 +1,9 @@
 'use strict';
 
-function IndexDropBuilder ( routerClass, databaseConnectionInfo ) {
+function IndexDropBuilder ( builder, databaseConnectionInfo ) {
     let dropIndexHandler = (req, res) => {
-        routerClass.addHeaders(databaseConnectionInfo, res);
-        routerClass.addCookies(databaseConnectionInfo, res);
+        builder.addHeaders(databaseConnectionInfo, res);
+        builder.addCookies(databaseConnectionInfo, res);
 
         if ((!req)
         || (!req.app)
@@ -16,10 +16,10 @@ function IndexDropBuilder ( routerClass, databaseConnectionInfo ) {
         }
         let indexName = req.params.index;
         let databaseConnectionManager = req.app.locals.___extra.databaseConnectionManager;
-        let databaseConnection = databaseConnectionManager.getConnector(databaseConnectionInfo.name);
+        let databaseConnection = databaseConnectionManager.getConnection(databaseConnectionInfo.name);
         if (!databaseConnection) {
             const error = {message: "No database connection.", error: {status: 500}};
-            routerClass.sendErrorResponse(error, res);
+            builder.sendErrorResponse(error, res);
             return;
         }
 
@@ -29,7 +29,7 @@ function IndexDropBuilder ( routerClass, databaseConnectionInfo ) {
                 res.send({ index: indexName, dropped: dropResult.acknowledged });
             }).catch((err) => {
                 const error = { message: "Error dropping " + indexName + ".", error: { status: 500, stack: err.stack }};
-                routerClass.sendErrorResponse(error, res);
+            builder.sendErrorResponse(error, res);
             });
     };
 

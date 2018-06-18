@@ -10,7 +10,7 @@ let config = {
         {
             "name": "elasticsearch",
             "description": "Elasticsearch service.",
-            "databaseConnector": "elasticsearch-connector.js",
+            "databaseConnector": "elasticsearch.js",
             "generateConnectionAPI": true,
             "config": {
                 "host": "localhost:9200",

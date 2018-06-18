@@ -1,10 +1,10 @@
 'use strict';
 
-function IndexCreateMappingBuilder( routerClass, databaseConnectionInfo )
+function IndexCreateMappingBuilder( builder, databaseConnectionInfo )
 {
     let createIndexMappingHandler = (req, res) => {
-        routerClass.addHeaders(databaseConnectionInfo, res);
-        routerClass.addCookies(databaseConnectionInfo, res);
+        builder.addHeaders(databaseConnectionInfo, res);
+        builder.addCookies(databaseConnectionInfo, res);
 
         try {
             let databaseConnectionName = databaseConnectionInfo.name;
@@ -20,20 +20,20 @@ function IndexCreateMappingBuilder( routerClass, databaseConnectionInfo )
             || (!req.app.locals.___extra.databaseConnectionManager))
             {
                 const error = { message: "Error connecting to database. No database connection manager found.", error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
+                builder.sendErrorResponse(error, res);
                 return;
             }
-            let databaseConnection = req.app.locals.___extra.databaseConnectionManager.getConnector( databaseConnectionName );
+            let databaseConnection = req.app.locals.___extra.databaseConnectionManager.getConnection( databaseConnectionName );
             if (!databaseConnection) {
                 const error = { message: "Error connecting to database. No connection found." + databaseConnectionName, error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
+                builder.sendErrorResponse(error, res);
                 return;
             }
             if ((!req.files)
             || (!req.files.fileUploaded)
             || (!req.files.fileUploaded.data)) {
                 const error = { message: "Error, no mapping file was uploaded.", error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
+                builder.sendErrorResponse(error, res);
                 return;
             }
 
@@ -50,7 +50,7 @@ function IndexCreateMappingBuilder( routerClass, databaseConnectionInfo )
                 });
         } catch (err) {
             const error = { message: "Error uploading ElasticSearch mapping file.", error: { status: 500, stack: err.stack }};
-            routerClass.sendErrorResponse(error, res);
+            builder.sendErrorResponse(error, res);
         }
     };
 

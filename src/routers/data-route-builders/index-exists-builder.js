@@ -1,9 +1,9 @@
 'use strict';
 
-function IndexExistsBuilder ( routerClass, databaseConnectionInfo ) {
+function IndexExistsBuilder ( builder, databaseConnectionInfo ) {
     let indexExistsHandler = (req, res) => {
-        routerClass.addHeaders(databaseConnectionInfo, res);
-        routerClass.addCookies(databaseConnectionInfo, res);
+        builder.addHeaders(databaseConnectionInfo, res);
+        builder.addCookies(databaseConnectionInfo, res);
 
         if ((!req)
         || (!req.app)
@@ -16,10 +16,10 @@ function IndexExistsBuilder ( routerClass, databaseConnectionInfo ) {
         }
         let indexName = req.params.index;
         let databaseConnectionManager = req.app.locals.___extra.databaseConnectionManager;
-        let databaseConnection = databaseConnectionManager.getConnector(databaseConnectionInfo.name);
+        let databaseConnection = databaseConnectionManager.getConnection(databaseConnectionInfo.name);
         if (!databaseConnection) {
             const error = {message: "No database connection.", error: {status: 500}};
-            routerClass.sendErrorResponse(error, res);
+            builder.sendErrorResponse(error, res);
             return;
         }
 
@@ -29,7 +29,7 @@ function IndexExistsBuilder ( routerClass, databaseConnectionInfo ) {
                 res.send({ index: indexName, exists: exists });
             }).catch(( err ) => {
                 const error = { message: "Error accessing " + indexName + ".", error: { status: 500, stack: err.stack }};
-                routerClass.sendErrorResponse(error, res);
+            builder.sendErrorResponse(error, res);
             });
     };
 

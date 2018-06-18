@@ -3,7 +3,7 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    Router = require('../../../src/router.js'),
+    Router = require('../../../src/routers/route-builder.js'),
     mockExpressRouter = require('../../mock-express-router.js'),
     mockRequest = require('../../mock-request.js'),
     mockResponse = require('../../mock-response.js');

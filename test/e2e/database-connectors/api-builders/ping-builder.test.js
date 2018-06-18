@@ -3,17 +3,17 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    Router = require('../../../../src/router.js'),
+    Router = require('../../../../src/routers/route-builder.js'),
     mockRequest = require('../../../mock-request.js'),
     mockResponse = require('../../../mock-response.js'),
-    pingHandlerBuilder = require('../../../../src/database-connectors/api-builders/connection-ping-builder.js'),
-    DatabaseConnectorManager = require('../../../../src/database-connectors/database-connector-manager.js');
+    pingHandlerBuilder = require('../../../../src/routers/data-route-builders/connection-ping-builder.js'),
+    DatabaseConnectorManager = require('../../../../src/database/database-connection-manager.js');
 let config = {
     "databaseConnections" : [
         {
             "name": "elasticsearch",
             "description": "Elasticsearch service.",
-            "databaseConnector": "elasticsearch-connector.js",
+            "databaseConnector": "elasticsearch.js",
             "generateConnectionAPI": true,
             "config": {
                 "host": "localhost:9200",

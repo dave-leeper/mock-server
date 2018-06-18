@@ -3,13 +3,13 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    DatabaseConnectorManager = require('../../../src/database-connectors/database-connector-manager.js');
+    DatabaseConnectorManager = require('../../../src/database/database-connection-manager.js');
 let config = {
     databaseConnections : [
         {
             name: "elasticsearch",
             description: "Elasticsearch service.",
-            databaseConnector: "elasticsearch-connector.js",
+            databaseConnector: "elasticsearch.js",
             config: {
                 host: "localhost:9200",
                 log: "trace"
@@ -29,7 +29,7 @@ describe( 'As a developer, I need to manage database connections.', function()
             expect(dbConnectionManager.config).to.be.equal(config);
             expect(dbConnectionManager.databaseConnectors.length).to.be.equal(1);
 
-            let elasticSearchDC = dbConnectionManager.getConnector("elasticsearch");
+            let elasticSearchDC = dbConnectionManager.getConnection("elasticsearch");
             expect(elasticSearchDC).to.not.be.null;
             dbConnectionManager.disconnect().then(() => {
                 done();

@@ -1,10 +1,10 @@
 'use strict';
 
-function DataQueryBuilder( routerClass, databaseConnectionInfo )
+function DataQueryBuilder( builder, databaseConnectionInfo )
 {
     let queryDataHandler = (req, res) => {
-        routerClass.addHeaders(databaseConnectionInfo, res);
-        routerClass.addCookies(databaseConnectionInfo, res);
+        builder.addHeaders(databaseConnectionInfo, res);
+        builder.addCookies(databaseConnectionInfo, res);
 
         try {
             let databaseConnectionName = databaseConnectionInfo.name;
@@ -20,28 +20,28 @@ function DataQueryBuilder( routerClass, databaseConnectionInfo )
             || (!req.app.locals.___extra.databaseConnectionManager))
             {
                 const error = { message: "Error connecting to database. No database connection manager found.", error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
+                builder.sendErrorResponse(error, res);
                 return;
             }
-            let databaseConnection = req.app.locals.___extra.databaseConnectionManager.getConnector( databaseConnectionName );
+            let databaseConnection = req.app.locals.___extra.databaseConnectionManager.getConnection( databaseConnectionName );
             if (!databaseConnection) {
                 const error = { message: "Error connecting to database. No connection found." + databaseConnectionName, error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
+                builder.sendErrorResponse(error, res);
                 return;
             }
             if (!req.params.index) {
                 const error = { message: "Error, no index name provided.", error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
+                builder.sendErrorResponse(error, res);
                 return;
             }
             if (!req.params.type) {
                 const error = { message: "Error, no data type provided.", error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
+                builder.sendErrorResponse(error, res);
                 return;
             }
             if (!req.params.id) {
                 const error = { message: "Error, no record id provided.", error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
+                builder.sendErrorResponse(error, res);
                 return;
             }
             let index = req.params.index;
@@ -66,11 +66,11 @@ function DataQueryBuilder( routerClass, databaseConnectionInfo )
                 })
                 .catch(( err ) => {
                     const error = { message: "Error querying database. " + JSON.stringify(err), error: { status: 500 }};
-                    routerClass.sendErrorResponse(error, res);
+                    builder.sendErrorResponse(error, res);
                 });
         } catch (err) {
             const error = { message: "Error querying ElasticSearch data.", error: { status: 500, stack: err.stack }};
-            routerClass.sendErrorResponse(error, res);
+            builder.sendErrorResponse(error, res);
         }
     };
 

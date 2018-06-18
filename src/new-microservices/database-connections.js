@@ -1,5 +1,5 @@
 let Log = require('../util/log' );
-let DatabaseConnectorManager = require('../database-connectors/database-connector-manager' );
+let DatabaseConnectorManager = require('../database/database-connection-manager' );
 
 class DatabaseConnections {
     do(params) {

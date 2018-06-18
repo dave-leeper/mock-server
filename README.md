@@ -266,21 +266,21 @@ Database connections are used to work with databases. All database
 connections listed in the server config file will be automatically
 connected to their respective databases.
 
-Use the DatabaseConnectorManager to disconnect all database connections
+Use the DatabaseConnectionManager to disconnect all database connections
 or to obtain an individual database connection object by name.
 
 Each database connection object has methods to connect, disconnect, and
 ping that connection.
 ### Fields
 * **name**<br/>
-Example: "elasticsearchConnector"<br/>
+Example: "elasticsearch"<br/>
 The name given to a connection.A database can have multiple connections,
 each with a unique name.
 * **description"**<br/>
 Example: "Elasticsearch service."<br/>
 A short human-readable description of the database connection.
 * **databaseConnector**<br/>
-Example: "elasticsearchConnector-database-connector.js"<br/>
+Example: "elasticsearch-database-connector.js"<br/>
 The name of the javascript file containing the database connection
 class. These names are relative to the database-connectors directory.
 * **config**<br/>
@@ -305,9 +305,9 @@ the API section, below.
 ```
   "databaseConnections" : [
     {<br/>
-      "name": "elasticsearchConnector",
+      "name": "elasticsearch",
       "description": "Elasticsearch service.",
-      "databaseConnector": "elasticsearchConnector-database-connector.js",
+      "databaseConnector": "elasticsearch-database-connector.js",
       "generateConnectionAPI": true,
       "generateIndexAPI": true,
       "generateDataAPI": true,

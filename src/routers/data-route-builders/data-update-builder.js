@@ -1,10 +1,10 @@
 'use strict';
 
-function DataUpdateBuilder( routerClass, databaseConnectionInfo )
+function DataUpdateBuilder( builder, databaseConnectionInfo )
 {
     let updateDataHandler = (req, res) => {
-        routerClass.addHeaders(databaseConnectionInfo, res);
-        routerClass.addCookies(databaseConnectionInfo, res);
+        builder.addHeaders(databaseConnectionInfo, res);
+        builder.addCookies(databaseConnectionInfo, res);
 
         try {
             let databaseConnectionName = databaseConnectionInfo.name;
@@ -20,20 +20,20 @@ function DataUpdateBuilder( routerClass, databaseConnectionInfo )
             || (!req.app.locals.___extra.databaseConnectionManager))
             {
                 const error = { message: "Error connecting to database. No database connection manager found.", error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
+                builder.sendErrorResponse(error, res);
                 return;
             }
-            let databaseConnection = req.app.locals.___extra.databaseConnectionManager.getConnector( databaseConnectionName );
+            let databaseConnection = req.app.locals.___extra.databaseConnectionManager.getConnection( databaseConnectionName );
             if (!databaseConnection) {
                 const error = { message: "Error connecting to database. No connection found." + databaseConnectionName, error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
+                builder.sendErrorResponse(error, res);
                 return;
             }
             if ((!req.files)
             || (!req.files.fileUploaded)
             || (!req.files.fileUploaded.data)) {
                 const error = { message: "Error, no data file was uploaded.", error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
+                builder.sendErrorResponse(error, res);
                 return;
             }
             let updateDoc = JSON.parse(req.files.fileUploaded.data.toString());
@@ -52,11 +52,11 @@ function DataUpdateBuilder( routerClass, databaseConnectionInfo )
                 })
                 .catch(( err ) => {
                     const error = { message: "Error updating record (id: " + updateDoc.id + "). " + JSON.stringify(err), error: { status: 500 }};
-                    routerClass.sendErrorResponse(error, res);
+                    builder.sendErrorResponse(error, res);
                 });
         } catch (err) {
             const error = { message: "Error updating ElasticSearch data.", error: { status: 500, stack: err.stack }};
-            routerClass.sendErrorResponse(error, res);
+            builder.sendErrorResponse(error, res);
         }
     };
 

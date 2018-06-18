@@ -113,7 +113,7 @@ let config = {
         {
             "name": "elasticsearch",
             "description": "Elasticsearch service.",
-            "databaseConnector": "elasticsearch-connector.js",
+            "databaseConnector": "elasticsearch.js",
             "config": {
                 "host": "localhost:9200",
                 "log": "trace"
@@ -154,7 +154,7 @@ describe( 'As a developer, I need a server that sets up mock util, microservices
             expect(server.express.locals.___extra.databaseConnectionManager).to.not.be.null;
             expect(server.express.locals.___extra.databaseConnectionManager.databaseConnectors).to.not.be.null;
             expect(server.express.locals.___extra.databaseConnectionManager.databaseConnectors.length).to.be.equal(1);
-            expect(server.express.locals.___extra.databaseConnectionManager.getConnector("elasticsearch")).to.not.be.null;
+            expect(server.express.locals.___extra.databaseConnectionManager.getConnection("elasticsearch")).to.not.be.null;
             server.stop(() => {
                 done();
             });

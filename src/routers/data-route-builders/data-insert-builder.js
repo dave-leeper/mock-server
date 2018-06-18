@@ -1,11 +1,11 @@
 'use strict';
 let logger = require('../../util/log');
 
-function DataInsertBuilder( routerClass, databaseConnectionInfo )
+function DataInsertBuilder( builder, databaseConnectionInfo )
 {
     let insertDataHandler = (req, res) => {
-        routerClass.addHeaders(databaseConnectionInfo, res);
-        routerClass.addCookies(databaseConnectionInfo, res);
+        builder.addHeaders(databaseConnectionInfo, res);
+        builder.addCookies(databaseConnectionInfo, res);
 
         try {
             let databaseConnectionName = databaseConnectionInfo.name;
@@ -21,20 +21,20 @@ function DataInsertBuilder( routerClass, databaseConnectionInfo )
             || (!req.app.locals.___extra.databaseConnectionManager))
             {
                 const error = { message: "Error connecting to database. No database connection manager found.", error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
+                builder.sendErrorResponse(error, res);
                 return;
             }
-            let databaseConnection = req.app.locals.___extra.databaseConnectionManager.getConnector( databaseConnectionName );
+            let databaseConnection = req.app.locals.___extra.databaseConnectionManager.getConnection( databaseConnectionName );
             if (!databaseConnection) {
                 const error = { message: "Error connecting to database. No connection found." + databaseConnectionName, error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
+                builder.sendErrorResponse(error, res);
                 return;
             }
             if ((!req.files)
             || (!req.files.fileUploaded)
             || (!req.files.fileUploaded.data)) {
                 const error = { message: "Error, no data file was uploaded.", error: { status: 500 }};
-                routerClass.sendErrorResponse(error, res);
+                builder.sendErrorResponse(error, res);
                 return;
             }
             let newData = JSON.parse(req.files.fileUploaded.data.toString());
@@ -53,11 +53,11 @@ function DataInsertBuilder( routerClass, databaseConnectionInfo )
                 })
                 .catch(( err ) => {
                     const error = { message: "Error inserting record. " + err, error: { status: 500 }};
-                    routerClass.sendErrorResponse(error, res);
+                    builder.sendErrorResponse(error, res);
                 });
         } catch (err) {
             const error = { message: "Error inserting ElasticSearch data.", error: { status: 500, stack: err.stack }};
-            routerClass.sendErrorResponse(error, res);
+            builder.sendErrorResponse(error, res);
         }
     };
 

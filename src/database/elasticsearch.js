@@ -1,6 +1,6 @@
 'use strict';
 
-const elasticsearchConnector = require('elasticsearch');
+const elasticsearch = require('elasticsearch');
 
 /**
  * Database = N/A
@@ -21,7 +21,7 @@ ElasticsearchConnector.prototype.connect = function ( config ) {
         // Elasticsearch mangles configs, so copy it.
         let configCopy = { ...config };
         try {
-            this.client = new elasticsearchConnector.Client(configCopy);
+            this.client = new elasticsearch.Client(configCopy);
             this.config = config;
             inResolve && inResolve( this.client );
         } catch (err) {
