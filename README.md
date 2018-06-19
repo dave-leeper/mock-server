@@ -26,7 +26,10 @@ MOCK_SEREVER_PORT environment variable to the desired port. When using the mock 
 an in-memory server, just pass the desired port number.
 
 # Config File
-The config file is how you control the operation of the server.
+The config file is how you control the operation of the server. Config files are JSON files
+that you place in the /src/config directory. If there are multiple config files, mock-server
+will merge their values together into a single config structure. Only logging values are 
+not merged, the first logging config encountered is used, all others are ignored.
 
 ## Logging
 The mock server uses standard log4js logging. You configure logging

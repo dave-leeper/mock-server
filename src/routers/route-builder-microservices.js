@@ -18,8 +18,6 @@ class RouteBuilderMicroservices extends RouteBuilderBase {
 
                 try {
                     let params = {
-                        server: req.app.locals.___extra.server,
-                        serverConfig: req.app.locals.___extra.serverConfig,
                         serviceInfo: microservice,
                         body: req.body,
                         params: req.params,
@@ -43,18 +41,18 @@ class RouteBuilderMicroservices extends RouteBuilderBase {
                         }
                     }, ( error ) => {
                         Log.trace(microservice.name + ' executed with error(s).');
-                        res.status(data.status);
+                        res.status(error.status);
                         if (error.send) {
-                            if (Array.isArray(data.send)) Log.error(data.send.map(x => x));
-                            else Log.error(data.send);
-                            if (!error.fileDownloadPath && !data.viewName)  {
-                                if (Array.isArray(data.send)) res.send(data.send.map(x => x));
-                                else res.send(data.send);
+                            if (Array.isArray(error.send)) Log.error(error.send.map(x => x));
+                            else Log.error(error.send);
+                            if (!error.fileDownloadPath && !error.viewName)  {
+                                if (Array.isArray(error.send)) res.send(error.send.map(x => x));
+                                else res.send(error.send);
                             }
-                        } else if (data.fileDownloadPath) {
-                            res.download(data.fileDownloadPath);
-                        } else if (data.viewName) {
-                            res.render( data.viewName, data.viewObject );
+                        } else if (error.fileDownloadPath) {
+                            res.download(error.fileDownloadPath);
+                        } else if (error.viewName) {
+                            res.render( error.viewName, error.viewObject );
                         }
                     });
                 } catch (err) {

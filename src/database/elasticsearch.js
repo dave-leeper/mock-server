@@ -9,14 +9,14 @@ const elasticsearch = require('elasticsearch');
  * @param name - name of the connection.
  * @constructor
  */
-function ElasticsearchConnector ( name ) {
+function Elasticsearch (name ) {
     this.name = name;
     this.client = null;
     this.config = null;
 }
 // https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html
 
-ElasticsearchConnector.prototype.connect = function ( config ) {
+Elasticsearch.prototype.connect = function (config ) {
     return new Promise (( inResolve, inReject ) => {
         // Elasticsearch mangles configs, so copy it.
         let configCopy = { ...config };
@@ -30,7 +30,7 @@ ElasticsearchConnector.prototype.connect = function ( config ) {
     });
 };
 
-ElasticsearchConnector.prototype.ping = function (  )
+Elasticsearch.prototype.ping = function (  )
 {
     return new Promise (( inResolve, inReject ) => {
         if (!this.client) {
@@ -47,7 +47,7 @@ ElasticsearchConnector.prototype.ping = function (  )
     });
 };
 
-ElasticsearchConnector.prototype.disconnect = function ( ) {
+Elasticsearch.prototype.disconnect = function ( ) {
     return new Promise (( inResolve, inReject ) => {
         if (!this.client) {
             inReject && inReject({ status: false, error: 'Null client.' });
@@ -62,11 +62,13 @@ ElasticsearchConnector.prototype.disconnect = function ( ) {
     });
 };
 
-ElasticsearchConnector.prototype.indexExists = function ( name ) {
+Elasticsearch.prototype.indexExists = function (name ) {
     return new Promise (( inResolve, inReject ) => {
-        this.client.indices.exists({ index: name })
-            .then(( exists ) => { inResolve && inResolve( exists ); })
-            .catch(( error ) => { inReject && inReject( { status: false, error: 'Error while checking table.' } )});
+        this.client.indices.exists({ index: name }).then(( exists ) => {
+            inResolve && inResolve( exists );
+        }, (error) => {
+            inReject && inReject( { status: false, error: 'Error while checking table.' } )
+        });
     });
 };
 
@@ -77,32 +79,17 @@ ElasticsearchConnector.prototype.indexExists = function ( name ) {
  * }
  * @returns {Promise}
  */
-ElasticsearchConnector.prototype.createIndex = function ( index ) {
+Elasticsearch.prototype.createIndex = function (index ) {
     return new Promise (( inResolve, inReject ) => {
-        let createFunc = () => {
-            this.client.indices.create({ index: index.index }).then(() => {
-                inResolve && inResolve({ status: true });
-            }, ( error ) => {
-                inReject && inReject({ status: false, error: 'Could not create index.' });
-            });
-        };
-        let existsFunc = ( exists ) => {
-            if ( exists ) {
-                inReject && inReject({ status: false, error: 'Index already exists.' });
-                return;
-            }
-            createFunc();
-        };
-
-        if ( !this.validateIndex( index )) {
-            inReject && inReject({ status: false, error: 'Invalid index.' });
-            return;
-        }
-        this.indexExists( index.index ).then(( exists ) => { existsFunc( exists ); });
+        this.client.indices.create({ index: index.index }).then(() => {
+            inResolve && inResolve({ status: true });
+        }, ( error ) => {
+            inReject && inReject({ status: false, error: 'Could not create index.' });
+        });
     });
 };
 
-ElasticsearchConnector.prototype.dropIndex = function ( name ) {
+Elasticsearch.prototype.dropIndex = function (name ) {
     return new Promise (( inResolve, inReject ) => {
         this.client.indices.delete({ index: name }).then(( success ) => {
             inResolve && inResolve( success );
@@ -131,7 +118,7 @@ ElasticsearchConnector.prototype.dropIndex = function ( name ) {
  * }
  * @returns {Promise}
  */
-ElasticsearchConnector.prototype.createIndexMapping = function ( mapping ) {
+Elasticsearch.prototype.createIndexMapping = function (mapping ) {
     return new Promise (( inResolve, inReject ) => {
         let createMappingFunc = () => {
             this.client.indices.putMapping( mapping ).then(() => {
@@ -156,7 +143,7 @@ ElasticsearchConnector.prototype.createIndexMapping = function ( mapping ) {
     });
 };
 
-ElasticsearchConnector.prototype.validateIndex = function ( mapping ) {
+Elasticsearch.prototype.validateIndex = function (mapping ) {
     if (( !mapping )
     || ( !mapping.index )) {
         return false;
@@ -167,7 +154,7 @@ ElasticsearchConnector.prototype.validateIndex = function ( mapping ) {
     return true;
 };
 
-ElasticsearchConnector.prototype.validateMapping = function ( mapping ) {
+Elasticsearch.prototype.validateMapping = function (mapping ) {
     if (( !mapping )
     || ( !mapping.index )
     || ( !mapping.type )
@@ -192,7 +179,7 @@ ElasticsearchConnector.prototype.validateMapping = function ( mapping ) {
     return true;
 };
 
-ElasticsearchConnector.prototype.insert = function ( data ) {
+Elasticsearch.prototype.insert = function (data ) {
     return new Promise (( inResolve, inReject ) => {
         this.client.index( data, (error, response) => {
             if (error) {
@@ -204,7 +191,7 @@ ElasticsearchConnector.prototype.insert = function ( data ) {
     });
 };
 
-ElasticsearchConnector.prototype.update = function ( data ) {
+Elasticsearch.prototype.update = function (data ) {
     return new Promise (( inResolve, inReject ) => {
         this.client.update( data, (error, response) => {
             if (error) {
@@ -216,7 +203,7 @@ ElasticsearchConnector.prototype.update = function ( data ) {
      });
 };
 
-ElasticsearchConnector.prototype.delete = function ( data ) {
+Elasticsearch.prototype.delete = function (data ) {
     return new Promise (( inResolve, inReject ) => {
         this.client.delete( data )
             .then(( success ) => { inResolve && inResolve( success ); })
@@ -224,7 +211,7 @@ ElasticsearchConnector.prototype.delete = function ( data ) {
     });
 };
 
-ElasticsearchConnector.prototype.read = function ( whereClause ) {
+Elasticsearch.prototype.read = function (whereClause ) {
     return new Promise (( inResolve, inReject ) => {
         this.client.search( whereClause,(error, response) => {
             if (error) {
@@ -236,9 +223,4 @@ ElasticsearchConnector.prototype.read = function ( whereClause ) {
     });
 };
 
-module.exports = ElasticsearchConnector;
-
-// GET chapter3/_mapping
-// GET chapter3/user/_mapping
-// GET chapter3/order/_search?q=iphone
-// GET chapter3/order/_search?q=item_title:iphone
+module.exports = Elasticsearch;

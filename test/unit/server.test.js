@@ -162,7 +162,7 @@ describe( 'As a developer, I need a server that sets up mock util, endpoionts, d
             expect(databaseConnectionManager.databaseConnectors.length).to.be.equal(1);
             expect(databaseConnectionManager.getConnection("elasticsearch")).to.not.be.null;
             expect(serverStartTime).to.not.be.null;
-            expect(serverStartTime instanceof Date).to.be(true);
+            expect(serverStartTime instanceof Date).to.be.equal(true);
             expect(server2).to.not.be.null;
             expect(server2).to.be.equal(server);
             expect(routerStack).to.not.be.null;

@@ -1,20 +1,21 @@
 let Log = require('../util/log' );
+let Registry = require('../util/registry' );
 
 class Microservices {
     do(params) {
         return new Promise (( inResolve, inReject ) => {
-            if ((!params.serverConfig)
-            || (!params.serverConfig.microservices)) {
+            let serverConfig = Registry.get('ServerConfig');
+            if ((!serverConfig) || (!serverConfig.microservices)) {
                 let error = 'Error looking up endpoionts.';
                 inReject && inReject({status: 500, send: error });
                 return;
             }
-            if (0 === params.serverConfig.microservices.length) {
+            if (0 === serverConfig.microservices.length) {
                 inResolve && inResolve({status: 200, send: 'There are no endpoionts.'});
                 return;
             }
             let result = [];
-            let microservices = params.serverConfig.microservices;
+            let microservices = serverConfig.microservices;
             for (let loop = 0; loop < microservices.length; loop++) {
                 let service = microservices[loop];
                 result.push({
