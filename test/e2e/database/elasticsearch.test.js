@@ -5,11 +5,16 @@ const chai = require( 'chai' ),
     expect = chai.expect,
     ElasticSearch = require('../../../src/database/elasticsearch.js'),
     Registry = require('../../../src/util/registry.js');
-const config = {
+const elasticSearch = new ElasticSearch();
+let configInfo = {
+    name: "elasticsearch",
+    description: "Elasticsearch service.",
+    databaseConnector: "elasticsearch.js",
+    config: {
         host: "localhost:9200",
         log: "trace"
-    };
-const elasticSearch = new ElasticSearch();
+    }
+};
 let schema = {
     index: "test",
     type: "document",
@@ -28,24 +33,21 @@ let schema = {
 
 describe( 'As a developer, I need to connect, ping, and disconnect to/from elasticsearch.', function() {
     before(() => {
-        elasticSearch.connect( schema );
     });
     beforeEach(() => {
         Registry.unregisterAll();
-        elasticSearch.dropIndex( schema.index );
     });
     afterEach(() => {
     });
     after(() => {
-        elasticSearch.disconnect();
     });
-    it ( 'should be able to ping the connection', ( done ) => {
-        elasticSearch.ping().then(( pingResult ) => {
-            expect( pingResult ).to.be.equal( true );
-            elasticSearch.disconnect().then(() => {
-                elasticSearch.ping().then(( pingResult2 ) => {
-                    expect( pingResult2 ).to.be.equal( false );
-                    elasticSearch.connect( schema ).then(() => {
+    it ( 'should be able to connect, ping, and disconnect the connection', ( done ) => {
+        elasticSearch.connect( configInfo ).then(() => {
+            elasticSearch.ping().then(( pingResult ) => {
+                expect( pingResult ).to.be.equal( true );
+                elasticSearch.disconnect().then(() => {
+                    elasticSearch.ping().then(( pingResult2 ) => {
+                        expect( pingResult2 ).to.be.equal( false );
                         done();
                     });
                 });
@@ -55,17 +57,26 @@ describe( 'As a developer, I need to connect, ping, and disconnect to/from elast
 });
 
 describe( 'As a developer, I need to create, check for the existence of, and drop elasticsearch indexes.', function() {
-    before(() => {
-        elasticSearch.connect(schema);
+    before(( done ) => {
+        elasticSearch.connect(configInfo).then(() => {
+            done();
+        });
     });
-    beforeEach(() => {
+    beforeEach(( done ) => {
         Registry.unregisterAll();
-        elasticSearch.dropIndex( schema.index );
+        elasticSearch.indexExists( schema.index ).then(( exits ) => {
+            if (!exits) done();
+            else elasticSearch.dropIndex( schema.index ).then(() => {
+                done();
+            });
+        });
     });
     afterEach(() => {
     });
-    after(() => {
-        elasticSearch.disconnect();
+    after(( done ) => {
+        elasticSearch.disconnect().then(() => {
+            done();
+        });
     });
     it ( 'should validate the mapping.', ( ) => {
         const esdc = new ElasticSearch();
@@ -98,8 +109,10 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
             }, ( error ) => {
                 done();
             });
+        }, ( error ) => {
+            expect( false ).to.be.equal( true );
         });
-    }).timeout(5000);
+    });
 
     it ( 'should be able to to tell when an index does not exist.', ( done ) => {
         elasticSearch.indexExists( 'JUNK' ).then(( existsResult ) => {
@@ -125,7 +138,7 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
                 done();
            });
         });
-    }).timeout(5000);
+    });
 
     it ( 'should not create indexes that already exist.', ( done ) => {
         elasticSearch.createIndex( schema ).then(( createResult ) => {
@@ -136,7 +149,7 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
                 done();
             });
         });
-    }).timeout(5000);
+    });
 });
 
 

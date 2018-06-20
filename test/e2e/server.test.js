@@ -41,7 +41,7 @@ let config = {
         },
         {
             "path": "/json-string-array",
-            "response": ["./test/data/test-data.json", "./test/test-data2.json"],
+            "response": ["./test/data/test-data.json", "./test/data/test-data2.json"],
             "responseType": "JSON",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
@@ -97,7 +97,7 @@ let config = {
     ],
     "microservices": [
         {
-            "path": "/endpoints",
+            "path": "/microservices",
             "name": "Services List",
             "description": "Provides a list of endpoints registered with this server.",
             "serviceFile": "microservices.js",
@@ -115,6 +115,9 @@ let config = {
             "name": "elasticsearch",
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
+            "generateConnectionAPI": true,
+            "generateIndexAPI": true,
+            "generateDataAPI": true,
             "config": {
                 "host": "localhost:9200",
                 "log": "trace"
@@ -217,7 +220,7 @@ describe( 'As a developer, I need need to run mock services.', function() {
             request('http://localhost:' + port + "/json-string-array", { json: true }, (err, res, body) => {
                 expect(JSON.stringify(body).length).to.be.equal(147);
                 request('http://localhost:' + port + "/json-string-array", { json: true }, (err, res, body) => {
-                    expect(JSON.stringify(body)).to.be.equal(jsonResponse2);
+                    expect(JSON.stringify(body)).to.be.equal(jsonResponse);
                     done();
                 });
             });
@@ -309,28 +312,24 @@ describe( 'As a developer, I need need to run mock services.', function() {
     it ( 'should send headers for mocks that are configured for them.', ( done ) => {
         request('http://localhost:' + port + "/json", { json: true }, (err, res, body) => {
             expect(res).to.not.be.null;
-            expect(res.headers).to.not.be.null;
-            expect(res.headers.MY_HEADER).to.not.be.null;
-            expect(res.headers.MY_HEADER).to.not.be.equal("MY_HEADER_VALUE");
+            expect(res.headers.my_header).to.be.equal('MY_HEADER_VALUE');
             done();
         });
     });
 
-    it ( 'should send headers for endpoints that are configured for them.', ( done ) => {
-        request('http://localhost:' + port + "/endpoints", { json: true }, (err, res, body) => {
+    it ( 'should send headers for microservicesa that are configured for them.', ( done ) => {
+        request('http://localhost:' + port + "/microservices", { json: true }, (err, res, body) => {
             expect(res).to.not.be.null;
-            expect(res.headers).to.not.be.null;
-            expect(res.headers.MY_HEADER).to.not.be.null;
-            expect(res.headers.MY_HEADER).to.not.be.equal("MY_HEADER_VALUE");
+            expect(res.headers.my_header).to.be.equal('MY_HEADER_VALUE');
             done();
         });
     });
 
     it ( 'should send headers for database connections that are configured for them.', ( done ) => {
-        request('http://localhost:' + port + "/database/connection/elasticsearch/ping", { json: true }, (err, res, body) => {
+        request('http://localhost:' + port + "/elasticsearch/connection/ping", { json: true }, (err, res, body) => {
             expect(res).to.not.be.null;
             expect(res.headers).to.not.be.null;
-            expect(res.headers.MY_HEADER).to.be.equal("MY_HEADER_VALUE");
+            expect(res.headers.my_header).to.be.equal('MY_HEADER_VALUE');
             done();
         });
     });
