@@ -292,6 +292,7 @@ class RouteBuilderMocks extends RouteBuilderBase {
             message: 'File Not Found: ' + responseFile + '.',
             error: {status: 404}
         };
+        res.status(404);
         res.render('error', error);
         return false;
     }

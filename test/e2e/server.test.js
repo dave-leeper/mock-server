@@ -10,7 +10,7 @@ let config = {
     "mocks": [
         {
             "path": "/json",
-            "response": "./test/test-data.json",
+            "response": "./test/data/test-data.json",
             "responseType": "JSON",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
@@ -23,7 +23,7 @@ let config = {
         },
         {
             "path": "/text",
-            "response": "./views/index.hbs",
+            "response": "./src/views/index.hbs",
             "responseType": "TEXT",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
@@ -41,7 +41,7 @@ let config = {
         },
         {
             "path": "/json-string-array",
-            "response": ["./test/test-data.json", "./test/test-data2.json"],
+            "response": ["./test/data/test-data.json", "./test/test-data2.json"],
             "responseType": "JSON",
             "headers": [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]
         },
@@ -123,36 +123,21 @@ let config = {
         }
     ]
 };
+let server = new Server();
+let port = '1337';
 
-describe( 'As a developer, I need a server that sets up mock util, endpoints, database connections, and can be started and stopped in memory.', function()
-{
-    before(() => {
+describe( 'As a developer, I need a mock server.', function() {
+    before(( ) => {
     });
-    beforeEach(() => {
+    beforeEach(( ) => {
         Registry.unregisterAll();
     });
-    afterEach(() => {
+    afterEach(( ) => {
     });
     after(() => {
         Registry.unregisterAll();
     });
-    it ( 'should be be able to start and stop from within javascript', ( done ) => {
-        let port = '1337';
-        let server = new Server();
-
-        server.init(port, config, () => {
-            server.stop(() => {
-                expect(1).to.be.equal(1);
-                done();
-            });
-        });
-
-    });
-
-    it ( 'should create an express object, a server object, and a databaseConnectorManager object and store the configure.', ( done ) => {
-        let port = '1337';
-        let server = new Server();
-
+    it ( 'should allow the server to be started, creating a proper environment, and stopped.', ( done ) => {
         server.init(port, config, () => {
             let databaseConnectionManager = Registry.get('DatabaseConnectorManager');
             let serverStartTime = Registry.get('ServerStartTime');
@@ -176,110 +161,90 @@ describe( 'As a developer, I need a server that sets up mock util, endpoints, da
     });
 });
 
-describe( 'As a developer, I need need to run mock services.', function()
-{
-    it ( 'should write json files as a mock service', ( done ) => {
-        let port = 1337;
-        let server = new Server();
-        let jsonResponse = '{"name":"My Server","version":"1.0"}';
-        let serverInitCallback = () => {
-            request('http://localhost:' + port + "/json", { json: true }, (err, res, body) => {
-                expect(JSON.stringify(body)).to.be.equal(jsonResponse);
-                server.stop(() => { done(); });
-            });
-        };
-        server.init( port, config, serverInitCallback );
+describe( 'As a developer, I need need to run mock services.', function() {
+    before(() => {
+    });
+    beforeEach(( done ) => {
+        Registry.unregisterAll();
+        server.init(port, config, () => {
+            done();
+        });
+    });
+    afterEach(( done ) => {
+        server.stop(() => {
+            done();
+        });
+    });
+    after(() => {
+        Registry.unregisterAll();
     });
 
-    it ( 'should return not found if the json file for a mock service does not exist', ( done ) => {
-        let port = 1337;
-        let server = new Server();
-        let serverInitCallback = () => {
-            request('http://localhost:' + port + "/json-junk", { json: true }, (err, res, body) => {
-                console.log(body);
-                console.log(body.length);
-                expect(body.length).to.be.equal(261);
-                server.stop(() => { done(); });
-            });
-        };
-        server.init( port, config, serverInitCallback );
+    it ( 'should write json files as a mock service', ( done ) => {
+        let jsonResponse = '{"name":"My Server","version":"1.0"}';
+        request('http://localhost:' + port + "/json", { json: true }, (err, res, body) => {
+            expect(JSON.stringify(body)).to.be.equal(jsonResponse);
+            done();
+        });
+    });
+
+    it ( 'should return 404 (not found) if the json file for a mock service does not exist', ( done ) => {
+        request('http://localhost:' + port + "/json-junk", { json: true }, (err, res, body) => {
+            expect(res.statusCode).to.be.equal(404);
+            done();
+        });
     });
 
     it ( 'should write text files as a mock service', ( done ) => {
-        let port = 1337;
-        let server = new Server();
-        let serverInitCallback = () => {
-            request('http://localhost:' + port + "/text", { json: true }, (err, res, body) => {
-                expect(body.length).to.be.equal(260);
-                server.stop(() => { done(); });
-            });
-        };
-        server.init( port, config, serverInitCallback );
+        request('http://localhost:' + port + "/text", { json: true }, (err, res, body) => {
+            expect(body.indexOf('Welcome')).to.not.be.equal(-1);
+            expect(res.statusCode).to.be.equal(200);
+            done();
+        });
     });
 
     it ( 'should return not found if the text file for a mock service does not exist', ( done ) => {
-        let port = 1337;
-        let server = new Server();
-        let serverInitCallback = () => {
-            request('http://localhost:' + port + "/text-junk", { json: true }, (err, res, body) => {
-                expect(body.length).to.be.equal(246);
-                server.stop(() => { done(); });
-            });
-        };
-        server.init( port, config, serverInitCallback );
+        request('http://localhost:' + port + "/text-junk", { json: true }, (err, res, body) => {
+            expect(res.statusCode).to.be.equal(404);
+            done();
+        });
     });
 
     it ( 'should loop through an array of JSON files', ( done ) => {
-        let port = 1337;
-        let server = new Server();
         let jsonResponse = "{\"name\":\"My Server\",\"version\":\"1.0\"}";
         let jsonResponse2 = "{\"path\":\"/ping\",\"response\":{\"name\":\"My Server\",\"version\":\"1.0\"},\"responseType\":\"JSON\",\"headers\":[{\"header\":\"MY_HEADER\",\"value\":\"MY_HEADER_VALUE\"}]}";
-        let serverInitCallback = () => {
+        request('http://localhost:' + port + "/json-string-array", { json: true }, (err, res, body) => {
+            expect(JSON.stringify(body)).to.be.equal(jsonResponse);
             request('http://localhost:' + port + "/json-string-array", { json: true }, (err, res, body) => {
-                expect(JSON.stringify(body)).to.be.equal(jsonResponse);
+                expect(JSON.stringify(body).length).to.be.equal(147);
                 request('http://localhost:' + port + "/json-string-array", { json: true }, (err, res, body) => {
-                    expect(JSON.stringify(body).length).to.be.equal(147);
-                    request('http://localhost:' + port + "/json-string-array", { json: true }, (err, res, body) => {
-                        expect(JSON.stringify(body)).to.be.equal(jsonResponse);
-                        server.stop(() => { done(); });
-                    });
+                    expect(JSON.stringify(body)).to.be.equal(jsonResponse2);
+                    done();
                 });
             });
-        };
-        server.init( port, config, serverInitCallback );
+        });
     });
 
     it ( 'should handle JSON objects as response values for JSON', ( done ) => {
-        let port = 1337;
-        let server = new Server();
         let jsonResponse = {"title": "Index"};
-        let serverInitCallback = () => {
-            request('http://localhost:' + port + "/json-object", { json: true }, (err, res, body) => {
-                expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
-                server.stop(() => { done(); });
-            });
-        };
-        server.init( port, config, serverInitCallback );
+        request('http://localhost:' + port + "/json-object", { json: true }, (err, res, body) => {
+            expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
+            done();
+        });
     });
 
     it ( 'should loop through an array of JSON object responses for JSON', ( done ) => {
-        let port = 1337;
-        let server = new Server();
         let jsonResponse = {"title": "Index"};
         let jsonResponse2 = {"title": "Not Found"};
-        let serverInitCallback = () => {
+        request('http://localhost:' + port + "/json-object-array", { json: true }, (err, res, body) => {
+            expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
             request('http://localhost:' + port + "/json-object-array", { json: true }, (err, res, body) => {
-                expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
+                expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse2));
                 request('http://localhost:' + port + "/json-object-array", { json: true }, (err, res, body) => {
-                    expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse2));
-                    request('http://localhost:' + port + "/json-object-array", { json: true }, (err, res, body) => {
-                        expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
-                        server.stop(() => { done(); });
-                    });
+                    expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
+                    done();
                 });
             });
-        };
-        server.init( port, config, serverInitCallback );
+        });
     });
 
     it ( 'should loop through an array of text files', ( done ) => {
@@ -287,121 +252,87 @@ describe( 'As a developer, I need need to run mock services.', function()
         let server = new Server();
         let textResponse = "\"<h1>{{title}}</h1>\\n<p>Welcome to {{title}}</p>\\n\"";
         let textResponse2 = "<h1>{{title}}</h1>\n<h2>{{message}}</h2>\n<h2>{{error.status}}</h2>\n<pre>{{error.stack}}</pre>";
-        let serverInitCallback = () => {
+        request('http://localhost:' + port + "/text-string-array", { json: true }, (err, res, body) => {
+            expect(JSON.stringify(body).length).to.be.equal(55);
             request('http://localhost:' + port + "/text-string-array", { json: true }, (err, res, body) => {
-                expect(JSON.stringify(body).length).to.be.equal(55);
+                expect(body.length).to.be.equal(95);
                 request('http://localhost:' + port + "/text-string-array", { json: true }, (err, res, body) => {
-                    expect(body.length).to.be.equal(95);
-                    request('http://localhost:' + port + "/text-string-array", { json: true }, (err, res, body) => {
-                        console.log(JSON.stringify(body).length)
-                        expect(JSON.stringify(body).length).to.be.equal(55);
-                        server.stop(() => { done(); });
-                    });
+                    console.log(JSON.stringify(body).length)
+                    expect(JSON.stringify(body).length).to.be.equal(55);
+                    done();
                 });
             });
-        };
-        server.init( port, config, serverInitCallback );
+        });
     });
 
     it ( 'should handle JSON objects as response values for text', ( done ) => {
-        let port = 1337;
-        let server = new Server();
         let jsonResponse = {"title": "Index"};
-        let serverInitCallback = () => {
-            request('http://localhost:' + port + "/text-object", { json: true }, (err, res, body) => {
-                expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
-                request('http://localhost:' + port + "/text-object2", { json: true }, (err, res, body) => {
-                    expect(body).to.be.equal("Index");
-                    server.stop(() => { done(); });
-                });
+        request('http://localhost:' + port + "/text-object", { json: true }, (err, res, body) => {
+            expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
+            request('http://localhost:' + port + "/text-object2", { json: true }, (err, res, body) => {
+                expect(body).to.be.equal("Index");
+                done();
             });
-        };
-        server.init( port, config, serverInitCallback );
+        });
     });
 
     it ( 'should loop through an array of JSON object responses for text', ( done ) => {
-        let port = 1337;
-        let server = new Server();
         let jsonResponse = {"title": "Index"};
         let jsonResponse2 = {"title": "Not Found"};
-        let serverInitCallback = () => {
+        request('http://localhost:' + port + "/text-object-array", { json: true }, (err, res, body) => {
+            expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
             request('http://localhost:' + port + "/text-object-array", { json: true }, (err, res, body) => {
-                expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
+                expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse2));
                 request('http://localhost:' + port + "/text-object-array", { json: true }, (err, res, body) => {
-                    expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse2));
-                    request('http://localhost:' + port + "/text-object-array", { json: true }, (err, res, body) => {
-                        expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
-                        server.stop(() => { done(); });
-                    });
+                    expect(JSON.stringify(body)).to.be.equal(JSON.stringify(jsonResponse));
+                    done();
                 });
             });
-        };
-        server.init( port, config, serverInitCallback );
+        });
     });
 
     it ( 'should loop through an array of JSON object responses for text, sending only the text field value', ( done ) => {
-        let port = 1337;
-        let server = new Server();
         let jsonResponse = "Index";
         let jsonResponse2 = "Not Found";
-        let serverInitCallback = () => {
+        request('http://localhost:' + port + "/text-object-array2", { json: true }, (err, res, body) => {
+            expect(body).to.be.equal(jsonResponse);
             request('http://localhost:' + port + "/text-object-array2", { json: true }, (err, res, body) => {
-                expect(body).to.be.equal(jsonResponse);
+                expect(body).to.be.equal(jsonResponse2);
                 request('http://localhost:' + port + "/text-object-array2", { json: true }, (err, res, body) => {
-                    expect(body).to.be.equal(jsonResponse2);
-                    request('http://localhost:' + port + "/text-object-array2", { json: true }, (err, res, body) => {
-                        expect(body).to.be.equal(jsonResponse);
-                        server.stop(() => { done(); });
-                    });
+                    expect(body).to.be.equal(jsonResponse);
+                    done();
                 });
             });
-        };
-        server.init( port, config, serverInitCallback );
+        });
     });
 
     it ( 'should send headers for mocks that are configured for them.', ( done ) => {
-        let port = 1337;
-        let server = new Server();
-        let serverInitCallback = () => {
-            request('http://localhost:' + port + "/json", { json: true }, (err, res, body) => {
-                expect(res).to.not.be.null;
-                expect(res.headers).to.not.be.null;
-                expect(res.headers.MY_HEADER).to.not.be.null;
-                expect(res.headers.MY_HEADER).to.not.be.equal("MY_HEADER_VALUE");
-                server.stop(() => { done(); });
-            });
-        };
-        server.init( port, config, serverInitCallback );
+        request('http://localhost:' + port + "/json", { json: true }, (err, res, body) => {
+            expect(res).to.not.be.null;
+            expect(res.headers).to.not.be.null;
+            expect(res.headers.MY_HEADER).to.not.be.null;
+            expect(res.headers.MY_HEADER).to.not.be.equal("MY_HEADER_VALUE");
+            done();
+        });
     });
 
     it ( 'should send headers for endpoints that are configured for them.', ( done ) => {
-        let port = 1337;
-        let server = new Server();
-        let serverInitCallback = () => {
-            request('http://localhost:' + port + "/endpoints", { json: true }, (err, res, body) => {
-                expect(res).to.not.be.null;
-                expect(res.headers).to.not.be.null;
-                expect(res.headers.MY_HEADER).to.not.be.null;
-                expect(res.headers.MY_HEADER).to.not.be.equal("MY_HEADER_VALUE");
-                server.stop(() => { done(); });
-            });
-        };
-        server.init( port, config, serverInitCallback );
+        request('http://localhost:' + port + "/endpoints", { json: true }, (err, res, body) => {
+            expect(res).to.not.be.null;
+            expect(res.headers).to.not.be.null;
+            expect(res.headers.MY_HEADER).to.not.be.null;
+            expect(res.headers.MY_HEADER).to.not.be.equal("MY_HEADER_VALUE");
+            done();
+        });
     });
 
     it ( 'should send headers for database connections that are configured for them.', ( done ) => {
-        let port = 1337;
-        let server = new Server();
-        let serverInitCallback = () => {
-            request('http://localhost:' + port + "/database/connection/elasticsearch/ping", { json: true }, (err, res, body) => {
-                expect(res).to.not.be.null;
-                expect(res.headers).to.not.be.null;
-                expect(res.headers.MY_HEADER).to.not.be.null;
-                expect(res.headers.MY_HEADER).to.not.be.equal("MY_HEADER_VALUE");
-                server.stop(() => { done(); });
-            });
-        };
-        server.init( port, config, serverInitCallback );
+        request('http://localhost:' + port + "/database/connection/elasticsearch/ping", { json: true }, (err, res, body) => {
+            expect(res).to.not.be.null;
+            expect(res.headers).to.not.be.null;
+            expect(res.headers.MY_HEADER).to.be.equal("MY_HEADER_VALUE");
+            done();
+        });
     });
 });
 

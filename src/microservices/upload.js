@@ -24,7 +24,7 @@ class Upload {
                         });
                         return;
                     }
-                    fstream = fs.createWriteStream(Upload.FILE_PATH + filename);
+                    fstream = fs.createWriteStream(FILE_PATH + filename);
                     file.pipe(fstream);
                     fstream.on('close', function () {
                         inResolve && inResolve({

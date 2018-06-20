@@ -5,7 +5,8 @@ let Log = require ( '../util/log.js' );
 
 class RouteBuilderMicroservices extends RouteBuilderBase {
     connect(router, config) {
-        if (!config.microservices) return;
+        if (!router || !router.get || !router.put || !router.post || !router.patch || !router.delete || !router.options) return false;
+        if (!config || !config.microservices) return false;
         for (let loop2 = 0; loop2 < config.microservices.length; loop2++) {
             let microservice = config.microservices[loop2];
             let verb = ((microservice.verb) ? microservice.verb.toUpperCase() : "GET" );
@@ -78,11 +79,12 @@ class RouteBuilderMicroservices extends RouteBuilderBase {
             } else if ("PATCH" === verb) {
                 router.patch(microservice.path, handler);
             } else if ("DELETE" === verb) {
-                router.del(microservice.path, handler);
+                router.delete(microservice.path, handler);
             } else if ("OPTIONS" === verb) {
                 router.options(microservice.path, handler);
             }
         }
+        return true;
     }
 }
 
