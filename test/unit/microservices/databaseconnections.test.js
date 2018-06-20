@@ -1,6 +1,7 @@
 //@formatter:off
 'use strict';
 let Log = require('../../../src/util/log' );
+let Registry = require('../../../src/util/registry' );
 
 
 let chai = require( 'chai' ),
@@ -14,6 +15,7 @@ let config = {
             "databaseConnector": "elasticsearch.js",
             "generateConnectionAPI": true,
             "generateIndexAPI": true,
+            "generateDataAPI": true,
             "config": {
                 "host": "localhost:9200",
                 "log": "trace"
@@ -23,19 +25,37 @@ let config = {
 };
 
 describe( 'As a developer, I need need to obtain a list of database connections that are available.', function() {
+    before(() => {
+    });
+    beforeEach(() => {
+        Registry.unregisterAll();
+    });
+    afterEach(() => {
+    });
+    after(() => {
+        Registry.unregisterAll();
+    });
     it ( 'should return a list of database connections available.', ( done) => {
         let databaseConnectionsMicroservice = new DatabaseConnectionsMicroservice();
         let expectedResponse = Log.stringify([{
-            name:"elasticsearch",
-            description:"Elasticsearch service.",
-            path:[
-                "/elasticsearch/connection/connect",
-                "/elasticsearch/connection/ping",
-                "/elasticsearch/connection/disconnect"
+            name: 'elasticsearch',
+            description: 'Elasticsearch service.',
+            path: [
+                '/elasticsearch/connection/connect',
+                '/elasticsearch/connection/ping',
+                '/elasticsearch/connection/disconnect',
+                '/elasticsearch/index/:index/exists',
+                '/elasticsearch/index',
+                '/elasticsearch/index/:index',
+                '/elasticsearch/index/mapping',
+                '/elasticsearch/data',
+                '/elasticsearch/data/update',
+                '/elasticsearch/data/:index/:type/:id',
+                '/elasticsearch/data/:index/:type/:id'
             ]
         }]);
-        let params = { serverConfig: config };
-        databaseConnectionsMicroservice.do(params).then((response) => {
+        Registry.register(config, 'ServerConfig');
+        databaseConnectionsMicroservice.do({}).then((response) => {
             expect(response.send).to.be.equal(expectedResponse);
             expect(response.status).to.be.equal(200);
             done();

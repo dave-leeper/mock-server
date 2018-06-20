@@ -34,6 +34,7 @@ describe( 'As a developer, I need an API for database connections', function( ) 
     afterEach(() => {
     });
     after(() => {
+        Registry.unregisterAll();
     });
     it ( 'should build a handler for requests to connect/ping/disconnect to/from the database', ( done ) => {
         let port = 1337 ;

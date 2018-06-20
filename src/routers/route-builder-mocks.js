@@ -4,36 +4,36 @@ let RouteBuilderBase = require ( './route-builder-base.js' );
 let Files = require ( '../util/files.js' );
 let Log = require ( '../util/log.js' );
 
-
 class RouteBuilderMocks extends RouteBuilderBase {
     connect(router, config) {
-        if (!config.mocks) return;
+        if (!router || !router.get || !router.put || !router.post || !router.patch || !router.delete || !router.options) return false;
+        if (!config || !config.mocks) return false;
         for (let loop1 = 0; loop1 < config.mocks.length; loop1++) {
             let mock = config.mocks[loop1];
-            let verb = ((mock.verb) ? mock.verb.toUpperCase() : "GET");
-            let responseType = ((mock.responseType) ? mock.responseType.toString().toUpperCase() : "");
+            let verb = ((mock.verb)? mock.verb.toUpperCase() : 'GET');
+            let responseType = ((mock.responseType)? mock.responseType.toString().toUpperCase() : '');
             let handler;
 
-            if ("JSON" === responseType) {
+            if ('JSON' === responseType) {
                 if (typeof mock.response === 'string') {
                     handler = this.___buildJSONFileHandlerFromString(mock);
                 } else if ('[object Array]' === Object.prototype.toString.call(mock.response)) {
                     if ('string' === typeof mock.response[0]) {
                         handler = this.___buildJSONFileHandlerFromArrayOfStrings(mock);
                     } else if ('object' === typeof mock.response[0]) {
-                        handler = this.___buildJSONFileHandlerFromArrayOfObjects(mock);
+                        handler = this.___buildJSONHandlerFromArrayOfObjects(mock);
                     }
                 } else if ((mock.response) && ('object' === typeof mock.response)) {
-                    handler = this.___buildJSONFileHandlerFromObject(mock);
+                    handler = this.___buildJSONHandlerFromObject(mock);
                 }
-            } else if ("HBS" === responseType) {
+            } else if ('HBS' === responseType) {
                 if (typeof mock.response === 'string') {
 
                     handler = this.___buildHandlebarsFileHandlerFromString(mock);
                 } else if ('[object Array]' === Object.prototype.toString.call(mock.response)) {
                     handler = this.___buildHandlebarsFileHandlerFromArrayOfStrings(mock);
                 }
-            } else if ("BLOB" === responseType) {
+            } else if ('BLOB' === responseType) {
                 if (typeof mock.response === 'string') {
                     handler = this.___buildBLOBFileHandlerFromString(mock);
                 } else if ('[object Array]' === Object.prototype.toString.call(mock.response)) {
@@ -46,32 +46,33 @@ class RouteBuilderMocks extends RouteBuilderBase {
                     if ('string' === typeof mock.response[0]) {
                         handler = this.___buildTextFileHandlerFromArrayOfStrings(mock);
                     } else if ('object' === typeof mock.response[0]) {
-                        handler = this.___buildTextFileHandlerFromArrayOfObjects(mock);
+                        handler = this.___buildTextHandlerFromArrayOfObjects(mock);
                     }
                 } else if ((mock.response) && ('object' === typeof mock.response)) {
-                    handler = this.___buildTextFileHandlerFromObject(mock);
+                    handler = this.___buildTextHandlerFromObject(mock);
                 }
             }
             if (!handler) {
                 if (Log.will(Log.ERROR)) {
-                    Log.error("Handler not defined for mock " + mock.path + ".");
+                    Log.error('Handler not defined for mock ' + mock.path + '.');
                     continue;
                 }
             }
-            if ("GET" === verb) {
+            if ('GET' === verb) {
                 router.get(mock.path, handler);
-            } else if ("PUT" === verb) {
+            } else if ('PUT' === verb) {
                 router.put(mock.path, handler);
-            } else if ("POST" === verb) {
+            } else if ('POST' === verb) {
                 router.post(mock.path, handler);
-            } else if ("PATCH" === verb) {
+            } else if ('PATCH' === verb) {
                 router.patch(mock.path, handler);
-            } else if ("DELETE" === verb) {
+            } else if ('DELETE' === verb) {
                 router.delete(mock.path, handler);
-            } else if ("OPTIONS" === verb) {
+            } else if ('OPTIONS' === verb) {
                 router.options(mock.path, handler);
             }
         }
+        return true;
     }
 
     ___buildJSONFileHandlerFromString(mock) {
@@ -79,16 +80,8 @@ class RouteBuilderMocks extends RouteBuilderBase {
             RouteBuilderMocks.___logMockRequest(mock, req);
             this.addHeaders(mock, res);
             this.addCookies(mock, res);
-            let responseFile = RouteBuilderMocks.___replaceResponseParams(mock.response, req);
-            if (!Files.existsSync(responseFile)) {
-                const error = {
-                    title: responseFile,
-                    message: "File Not Found: " + responseFile + ".",
-                    error: {status: 404}
-                };
-                res.render("error", error);
-                return;
-            }
+            let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response, req);
+            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
 
             let jsonResponseFileContents = Files.readFileSync(responseFile);
             JSON.parse(jsonResponseFileContents); // Parse JSON to make sure it's valid.
@@ -102,7 +95,9 @@ class RouteBuilderMocks extends RouteBuilderBase {
             RouteBuilderMocks.___logMockRequest(mock, req);
             this.addHeaders(mock, res);
             this.addCookies(mock, res);
-            let responseFile = RouteBuilderMocks.___replaceResponseParams(mock.response, req);
+            let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response, req);
+            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
+
             res.render(responseFile, mock.hbsData);
         };
     }
@@ -112,19 +107,10 @@ class RouteBuilderMocks extends RouteBuilderBase {
             RouteBuilderMocks.___logMockRequest(mock, req);
             this.addHeaders(mock, res);
             this.addCookies(mock, res);
-            let responseFile = RouteBuilderMocks.___replaceResponseParams(mock.response, req);
-            if (!Files.existsSync(responseFile)) {
-                const error = {
-                    title: responseFile,
-                    message: "File Not Found.",
-                    error: {status: 404}
-                };
-                res.render("error", error);
-                return;
-            }
+            let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response, req);
+            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
 
             let textResponseFileContents = Files.readFileSync(responseFile, mock.encoding);
-
             res.send(textResponseFileContents);
         };
     }
@@ -134,19 +120,10 @@ class RouteBuilderMocks extends RouteBuilderBase {
             RouteBuilderMocks.___logMockRequest(mock, req);
             this.addHeaders(mock, res);
             this.addCookies(mock, res);
-            let responseFile = RouteBuilderMocks.___replaceResponseParams(mock.response, req);
+            let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response, req);
             Log.trace('Sending file: ' + responseFile + '.');
-            if (!Files.existsSync(responseFile)) {
-                const error = {
-                    title: responseFile,
-                    message: "File Not Found.",
-                    error: {status: 404}
-                };
-                res.render("error", error);
-                return;
-            }
+            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
 
-            Files.readBLOBFileSync(responseFile);
             res.sendFile(responseFile);
         };
     }
@@ -155,23 +132,14 @@ class RouteBuilderMocks extends RouteBuilderBase {
         return (req, res) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             let index = RouteBuilderMocks.___getIndex(mock);
-            let responseFile = RouteBuilderMocks.___replaceResponseParams(mock.response[index], req);
+            let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response[index], req);
 
             this.addHeaders(mock, res);
             this.addCookies(mock, res);
-            if (!Files.existsSync(responseFile)) {
-                const error = {
-                    title: responseFile,
-                    message: "File Not Found.",
-                    error: {status: 404}
-                };
-                res.render("error", error);
-                return;
-            }
+            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
 
             let jsonResponseFileContents = Files.readFileSync(responseFile, mock.encoding);
             JSON.parse(jsonResponseFileContents); // Check for valid JSON
-
             res.send(jsonResponseFileContents);
             RouteBuilderMocks.___incrementIndex(mock, index);
         };
@@ -181,10 +149,11 @@ class RouteBuilderMocks extends RouteBuilderBase {
         return (req, res) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             let index = RouteBuilderMocks.___getIndex(mock);
-            let responseFile = RouteBuilderMocks.___replaceResponseParams(mock.response[index], req);
-
+            let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response[index], req);
             this.addHeaders(mock, res);
             this.addCookies(mock, res);
+            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
+
             res.render(responseFile, mock.hbsData[index]);
             RouteBuilderMocks.___incrementIndex(mock, index);
         };
@@ -194,19 +163,10 @@ class RouteBuilderMocks extends RouteBuilderBase {
         return (req, res) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             let index = RouteBuilderMocks.___getIndex(mock);
-            let responseFile = RouteBuilderMocks.___replaceResponseParams(mock.response[index], req);
-
+            let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response[index], req);
             this.addHeaders(mock, res);
             this.addCookies(mock, res);
-            if (!Files.existsSync(responseFile)) {
-                const error = {
-                    title: responseFile,
-                    message: "File Not Found.",
-                    error: {status: 404}
-                };
-                res.render("error", error);
-                return;
-            }
+            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
 
             let textResponseFileContents = Files.readFileSync(responseFile, mock.encoding);
 
@@ -219,33 +179,17 @@ class RouteBuilderMocks extends RouteBuilderBase {
         return (req, res) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             let index = RouteBuilderMocks.___getIndex(mock);
-            let responseFile = RouteBuilderMocks.___replaceResponseParams(mock.response[index], req);
-
+            let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response[index], req);
             this.addHeaders(mock, res);
             this.addCookies(mock, res);
-            if (!Files.existsSync(responseFile)) {
-                const error = {
-                    title: responseFile,
-                    message: "File Not Found.",
-                    error: {status: 404}
-                };
-                res.render("error", error);
-                return;
-            }
+            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
 
-            let bufferResponseFileContents = Files.readBLOBFileSync(responseFile);
-
-            res.writeHead(200, {
-                'Content-Type': ((mock.mimeType) ? mock.mimeType : this.___guessBLOBMIMEType(responseFile)),
-                'Content-disposition': 'attachment;filename=' + responseFile,
-                'Content-Length': bufferResponseFileContents.length
-            });
-            res.end(new Buffer(bufferResponseFileContents, 'binary'));
+            res.sendFile(responseFile);
             RouteBuilderMocks.___incrementIndex(mock, index);
         };
     }
 
-    ___buildJSONFileHandlerFromObject(mock) {
+    ___buildJSONHandlerFromObject(mock) {
         return (req, res) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             this.addHeaders(mock, res);
@@ -257,7 +201,7 @@ class RouteBuilderMocks extends RouteBuilderBase {
         };
     }
 
-    ___buildTextFileHandlerFromObject(mock) {
+    ___buildTextHandlerFromObject(mock) {
         return (req, res) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             this.addHeaders(mock, res);
@@ -269,7 +213,7 @@ class RouteBuilderMocks extends RouteBuilderBase {
         };
     }
 
-    ___buildJSONFileHandlerFromArrayOfObjects(mock) {
+    ___buildJSONHandlerFromArrayOfObjects(mock) {
         return (req, res) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             let index = RouteBuilderMocks.___getIndex(mock);
@@ -284,7 +228,7 @@ class RouteBuilderMocks extends RouteBuilderBase {
         };
     }
 
-    ___buildTextFileHandlerFromArrayOfObjects(mock) {
+    ___buildTextHandlerFromArrayOfObjects(mock) {
         return (req, res) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             let index = RouteBuilderMocks.___getIndex(mock);
@@ -311,15 +255,14 @@ class RouteBuilderMocks extends RouteBuilderBase {
         return mock.indexes[mock.path].___index;
     };
 
-    static ___incrementIndex(mock, index) {
+    static ___incrementIndex(mock) {
+        let index = RouteBuilderMocks.___getIndex(mock);
         index++;
-        if (mock.response.length <= index) {
-            index = 0;
-        }
+        if (mock.response.length <= index) index = 0; // loop back to start
         mock.indexes[mock.path].___index = index;
     }
 
-    static ___replaceResponseParams(responseValue, httpRequestObject) {
+    static ___replaceResponseParamsWithRequestValues(responseValue, httpRequestObject) {
         let paramIndex = responseValue.indexOf(':');
         let finalResponse = responseValue;
         if (-1 !== paramIndex) {
@@ -338,16 +281,19 @@ class RouteBuilderMocks extends RouteBuilderBase {
         return finalResponse;
     }
 
-    static ___guessBLOBMIMEType(fileName) {
-        if (fileName.endsWith('.jpg')) return 'image/jpeg';
-        if (fileName.endsWith('.jpeg')) return 'image/jpeg';
-        if (fileName.endsWith('.gif')) return 'image/gif';
-        if (fileName.endsWith('.gif')) return 'image/png';
-        return 'application/octet-stream';
-    };
-
     static ___logMockRequest(mock, req) {
         Log.trace('Received request for mock service at ' + ((mock.verb) ? mock.verb : 'GET') + ' ' + mock.path);
+    }
+
+    static ___fileExists(responseFile, res) {
+        if (Files.existsSync(responseFile)) return true;
+        const error = {
+            title: responseFile,
+            message: 'File Not Found: ' + responseFile + '.',
+            error: {status: 404}
+        };
+        res.render('error', error);
+        return false;
     }
 }
 

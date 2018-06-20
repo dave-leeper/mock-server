@@ -1,6 +1,7 @@
 //@formatter:off
 'use strict';
 let Log = require('../../../src/util/log' );
+let Registry = require('../../../src/util/registry' );
 
 let chai = require( 'chai' ),
     expect = chai.expect,
@@ -42,6 +43,16 @@ let config = {
 };
 
 describe( 'As a developer, I need need to obtain a list of mocks that are available.', function() {
+    before(() => {
+    });
+    beforeEach(() => {
+        Registry.unregisterAll();
+    });
+    afterEach(() => {
+    });
+    after(() => {
+        Registry.unregisterAll();
+    });
     it ( 'should return a list of mock util available.', ( done ) => {
         let mocksMicroservice = new MocksMicroservice();
         let expectedResponse = Log.stringify([{
@@ -69,8 +80,8 @@ describe( 'As a developer, I need need to obtain a list of mocks that are availa
             response:"./JUNK.tex",
             responseType:"TEXT"
         }]);
-        let params = { serverConfig: config };
-        mocksMicroservice.do(params).then((response) => {
+        Registry.register(config, 'ServerConfig');
+        mocksMicroservice.do({}).then((response) => {
             expect(response.send).to.be.equal(expectedResponse);
             expect(response.status).to.be.equal(200);
             done();

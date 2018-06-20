@@ -6,12 +6,12 @@ class Microservices {
         return new Promise (( inResolve, inReject ) => {
             let serverConfig = Registry.get('ServerConfig');
             if ((!serverConfig) || (!serverConfig.microservices)) {
-                let error = 'Error looking up endpoionts.';
+                let error = 'Error looking up endpoints.';
                 inReject && inReject({status: 500, send: error });
                 return;
             }
             if (0 === serverConfig.microservices.length) {
-                inResolve && inResolve({status: 200, send: 'There are no endpoionts.'});
+                inResolve && inResolve({status: 200, send: 'There are no endpoints.'});
                 return;
             }
             let result = [];

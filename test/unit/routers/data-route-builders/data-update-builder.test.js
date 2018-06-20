@@ -3,9 +3,9 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    MockRequest = require('../../../mock-request.js'),
-    MockResponse = require('../../../mock-response.js'),
-    MockRouteBuilderBase = require('../../../mock-route-builder-base.js'),
+    MockRequest = require('../../../mocks/mock-request.js'),
+    MockResponse = require('../../../mocks/mock-response.js'),
+    MockRouteBuilderBase = require('../../../mocks/mock-route-builder-base.js'),
     DataUpdateBuilder = require('../../../../src/routers/data-route-builders/data-update-builder.js'),
     DatabaseConnectorManager = require('../../../../src/database/database-connection-manager.js'),
     Registry = require('../../../../src/util/registry.js');
@@ -37,6 +37,7 @@ describe( 'As a developer, I need an API for updating data in the database', fun
     afterEach(() => {
     });
     after(() => {
+        Registry.unregisterAll();
     });
     it ( 'should not build a handler using bad parameters', ( ) => {
         let mockRouteBuilderBase = new MockRouteBuilderBase();
