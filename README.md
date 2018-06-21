@@ -187,16 +187,12 @@ Microservices are stateless and have no lifecycle. A microservice object
 The params object passed into the microservice has the following members:
 ```
 {
-    server:         Object.     The server object.
-    serverConfig:   Object.     The server configuration (JSON).
     serviceInfo:    Object.     Information about this service (JSON).
     body:           Object.     The body of the request that invoked this microservice.
     params:         Array.      The params of the request that invoked this microservice.
     files:          Array.      The files of the request that invoked this microservice.
     headers:        Array.      The headers of the request that invoked this microservice.
     cookies:        Array.      The cookies of the request that invoked this microservice.
-    pipe            Function.   Used to upload a file from the client.
-    busboy          Object.     Used to upload a file from the client.
 }
 ```
 ### Microservice Result Object

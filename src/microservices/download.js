@@ -6,7 +6,7 @@ const FILE_PATH = path.resolve('./public/files');
 class Download {
     do(params) {
         return new Promise (( inResolve, inReject ) => {
-            const fileName = ((params.params.name) ? params.params.name : "filename");
+            const fileName = (((params) && (params.params) &&(params.params.name)) ? params.params.name : "filename");
             const filePath = path.join(FILE_PATH, fileName);
             if (!files.existsSync(filePath)) {
                 let error = 'File (' + fileName + ') not found.';

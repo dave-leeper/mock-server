@@ -5,7 +5,7 @@ const FILE_PATH = path.resolve('./public/files');
 class Upload {
     do(params) {
         return new Promise (( inResolve, inReject ) => {
-            const fileName = ((params.params.name)? params.params.name : "filename");
+            const fileName = (((params) && (params.params) &&(params.params.name)) ? params.params.name : "filename");
             const fullFileName = path.join(FILE_PATH, fileName);
             if ( files.existsSync( fullFileName ) ) {
                 const error = {
