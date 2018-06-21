@@ -7,7 +7,6 @@ const path = require('path');
 const favicon = require('serve-favicon');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const busboy = require('connect-busboy')
 const fileUpload = require('express-fileupload');
 const passport = require('passport');
 const Router = require('./src/routers/route-builder');
@@ -93,7 +92,6 @@ class Server {
         this.express.use(bodyParser.urlencoded({extended: false}));
         this.express.use(cookieParser());
         this.express.use(express.static(path.join(__dirname, 'public')));
-        this.express.use(busboy());
         this.express.use(fileUpload());
         this.express.use(passport.initialize());
         this.express.use(passport.session());

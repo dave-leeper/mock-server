@@ -1,37 +1,41 @@
 let path = require('path');
-let fs = require('fs-extra');
 let files = require ( '../util/files.js' );
 
+const FILE_PATH = path.resolve('./public/files');
 class Upload {
     do(params) {
         return new Promise (( inResolve, inReject ) => {
-            const FILE_PATH = path.join(__dirname , "/../files/");
             const fileName = ((params.params.name)? params.params.name : "filename");
+            const fullFileName = path.join(FILE_PATH, fileName);
+            if ( files.existsSync( fullFileName ) ) {
+                const error = {
+                    title: fileName,
+                    message: "Conflict: File Already Exists.",
+                    error: { status: 409 }
+                };
+                inReject && inReject ({
+                    status: 409,
+                    viewName: 'error',
+                    viewObject: error,
+                });
+                return;
+            }
             try {
-                let fstream;
-                params.pipe(params.busboy);
-                params.busboy.on('file', function (fieldname, file, filename) {
-                    if ( files.existsSync( path.join(Upload.FILE_PATH, fileName) ) ) {
-                        const error = {
-                            title: fileName,
-                            message: "Conflict: File Already Exists.",
-                            error: { status: 409 }
-                        };
+                let uploadedFile = params.files['filename'];
+                uploadedFile.mv(fullFileName, (err) => {
+                    if (err) {
+                        const error = { message: "Error uploading file.", error: { status: 500, stack: err.stack} };
                         inReject && inReject ({
-                            status: 409,
+                            status: 500,
                             viewName: 'error',
                             viewObject: error,
                         });
                         return;
                     }
-                    fstream = fs.createWriteStream(FILE_PATH + filename);
-                    file.pipe(fstream);
-                    fstream.on('close', function () {
-                        inResolve && inResolve({
-                            status: 200,
-                            viewName: 'message',
-                            viewObject: {title: fileName, message: "Upload complete.", status: 200},
-                        });
+                    inResolve && inResolve({
+                        status: 200,
+                        viewName: 'message',
+                        viewObject: {title: fileName, message: "Upload complete.", status: 200},
                     });
                 });
             } catch (err) {

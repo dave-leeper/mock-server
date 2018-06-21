@@ -1,13 +1,15 @@
 let Log = require('../util/log' );
+let path = require('path');
+let files = require ( '../util/files.js' );
 
+const FILE_PATH = path.resolve('./public/files');
 class Download {
     do(params) {
         return new Promise (( inResolve, inReject ) => {
-            const FILE_PATH = path.join(__dirname , "/../files/");
             const fileName = ((params.params.name) ? params.params.name : "filename");
             const filePath = path.join(FILE_PATH, fileName);
             if (!files.existsSync(filePath)) {
-                let error = 'File (' + filePath + ') Not Found.';
+                let error = 'File (' + fileName + ') not found.';
                 inReject && inReject({
                     status: 404,
                     send: error,
@@ -18,6 +20,7 @@ class Download {
                         error: {status: 404}
                     },
                 });
+                return;
             }
             inResolve && inResolve({status: 200, fileDownloadPath: filePath});
         });

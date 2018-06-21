@@ -50,7 +50,8 @@ class RouteBuilderMicroservices extends RouteBuilderBase {
                                 if (Array.isArray(error.send)) res.send(error.send.map(x => x));
                                 else res.send(error.send);
                             }
-                        } else if (error.fileDownloadPath) {
+                        }
+                        if (error.fileDownloadPath) {
                             res.download(error.fileDownloadPath);
                         } else if (error.viewName) {
                             res.render( error.viewName, error.viewObject );
