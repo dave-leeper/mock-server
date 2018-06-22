@@ -260,6 +260,37 @@ An optional array of cookies that should be included in the response.
     }]
 ```
 
+## Endpoints
+Endpoints are traditional route handlers that accept an HTTP request and Response
+object and a next function. The lifetime of an endpoint object matches the lifetime
+of the server it's running in. TO give you an idea of how to write one, a sample
+end point is provided below.
+```
+let Registry = require('../util/registry');
+let ServiceBase = require ( '../util/service-base.js' );
+
+class Stop extends ServiceBase {
+    Stop(configInfo) {
+        this.configInfo = configInfo;
+    }
+    do (req, res, next) {
+        this.addHeaders(this.configInfo, res);
+        this.addCookies(this.configInfo, res);
+        let server = Registry.get('Server');
+        if (!server || !server.stop) {
+            let jsonResponse = JSON.stringify({status: 'Error stopping server'});
+            res.status(500);
+            res.send(jsonResponse);
+            next();
+        }
+        let jsonResponse = JSON.stringify({status: 'Stopping server'});
+        res.status(200);
+        res.send(jsonResponse);
+        server.stop();
+    }
+}
+``` 
+
 ## DatabaseConnections
 Database connections are used to work with databases. All database
 connections listed in the server config file will be automatically
@@ -366,13 +397,18 @@ object indicating the mapping information. Example:
 ```
 
 #### Data API
-* **POST database-connection-name/data/:index/:type/:id**<br/>
+* **POST database-connection-name/data**<br/>
 Inserts the data in the body of the request into the database. Example:
 ```
 {
-  "title": "my title",
-  "content": "my content",
-  "suggest": "my suggest"
+    body:{
+        title: "my title",
+        content: "my content",
+        suggest: "my suggest"
+    },
+    id: 1,
+    type: "document",
+    index: "test"
 }
 ```
 
@@ -413,4 +449,32 @@ and content equals "my content".
 Gets all data of type my-type from index test where title = "my title".
 Only five records are returned, starting from the 50th record of the results.
 
+* **POST database-connection-name/data/update**<br/>
+Updates the data using the body of the request. Example:
+```
+    body:{
+        doc: {
+            title: "my updated title",
+            content: "my updated content",
+            suggest: "my updated suggest"
+        }
+    },
+    id: 1,
+    type: "document",
+    index: "test"
+```
+
+* **DELETE database-connection-name/data/:index/:type/:id**<br/>
+Deletes a record from the database. Example:
+* **DELETE database-connection-name/data/test/my-type/1**
+
+## Registry
+The registry stores name/value pairs taht are available to the entire program.
+By default, the following values are stored in the Registry:
+
+* ServerStartTime - The time the server was started as a javascript Date object.
+* Server - The Server object. Of interest are its stop() method and its express
+(often referred to as app) and server members.
+* Port - The port the server is running on.
+* ServerConfig - The JSON document that was used to configure the server.
 

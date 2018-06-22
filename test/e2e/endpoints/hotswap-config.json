@@ -1,0 +1,10 @@
+{
+  "mocks": [
+    {
+      "path": "/ping",
+      "response": {"name":"My Server","version":"1.0"},
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    }
+  ]
+}

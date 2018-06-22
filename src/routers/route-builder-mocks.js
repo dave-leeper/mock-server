@@ -1,10 +1,11 @@
 'use strict';
 
-let RouteBuilderBase = require ( './route-builder-base.js' );
+let ServiceBase = require ( '../util/service-base.js' );
 let Files = require ( '../util/files.js' );
 let Log = require ( '../util/log.js' );
+let path = require('path');
 
-class RouteBuilderMocks extends RouteBuilderBase {
+class RouteBuilderMocks extends ServiceBase {
     connect(router, config) {
         if (!router || !router.get || !router.put || !router.post || !router.patch || !router.delete || !router.options) return false;
         if (!config || !config.mocks) return false;
@@ -96,6 +97,7 @@ class RouteBuilderMocks extends RouteBuilderBase {
             this.addHeaders(mock, res);
             this.addCookies(mock, res);
             let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response, req);
+            responseFile = path.join(path.resolve('./src/views'), responseFile);
             if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
 
             res.render(responseFile, mock.hbsData);

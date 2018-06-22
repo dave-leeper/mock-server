@@ -1,9 +1,9 @@
 'use strict';
 
-let RouteBuilderBase = require ( './route-builder-base.js' );
+let ServiceBase = require ( '../util/service-base.js' );
 let Log = require ( '../util/log.js' );
 
-class RouteBuilderMicroservices extends RouteBuilderBase {
+class RouteBuilderMicroservices extends ServiceBase {
     connect(router, config) {
         if (!router || !router.get || !router.put || !router.post || !router.patch || !router.delete || !router.options) return false;
         if (!config || !config.microservices) return false;
@@ -11,9 +11,9 @@ class RouteBuilderMicroservices extends RouteBuilderBase {
             let microservice = config.microservices[loop2];
             let verb = ((microservice.verb) ? microservice.verb.toUpperCase() : "GET" );
             let microservicePath = "../microservices/" + microservice.serviceFile;
-            let microserviceClass = require( microservicePath );
-            let micro = new microserviceClass();
             let handler = (req, res, next) => {
+                let microserviceClass = require( microservicePath );
+                let micro = new microserviceClass();
                 this.addHeaders(microservice, res);
                 this.addCookies(microservice, res);
 

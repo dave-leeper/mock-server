@@ -10,7 +10,7 @@ MockRequest.prototype.reset = function ( path ) {
     this.path = path;
     this.params = {};
     this.query = {};
-    this.files = {fileUploaded:{data: JSON.stringify({ name: 'name' })}};;
+    this.files = {filename:{data: JSON.stringify({ name: 'name' })}};;
 };
 
 module.exports = MockRequest;

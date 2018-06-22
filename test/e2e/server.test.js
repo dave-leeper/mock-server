@@ -145,7 +145,6 @@ describe( 'As a developer, I need a mock server.', function() {
             let databaseConnectionManager = Registry.get('DatabaseConnectorManager');
             let serverStartTime = Registry.get('ServerStartTime');
             let server2 = Registry.get('Server');
-            let routerStack = Registry.get('RouterStack');
             expect(databaseConnectionManager).to.not.be.null;
             expect(databaseConnectionManager.databaseConnectors).to.not.be.null;
             expect(databaseConnectionManager.databaseConnectors.length).to.be.equal(1);
@@ -154,7 +153,6 @@ describe( 'As a developer, I need a mock server.', function() {
             expect(serverStartTime instanceof Date).to.be.equal(true);
             expect(server2).to.not.be.null;
             expect(server2).to.be.equal(server);
-            expect(routerStack).to.not.be.null;
             expect(server.server).to.not.be.null;
             expect(server.express).to.not.be.null;
             server.stop(() => {

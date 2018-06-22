@@ -2,6 +2,7 @@
 
 let RouteBuilderMocks = require ( './route-builder-mocks.js' );
 let RouteBuilderMicroservices = require ( './route-builder-microservices.js' );
+let RouteBuilderEndpoints = require ( './route-builder-endpoints.js' );
 let RouteBuilderDatabase = require ( './route-builder-database.js' );
 let Log = require ( '../util/log.js' );
 
@@ -29,6 +30,9 @@ class RouteBuilder {
 
         let routeBuilderMicroservices = new RouteBuilderMicroservices();
         routeBuilderMicroservices.connect(router, config);
+
+        let routeBuilderEndpoints = new RouteBuilderEndpoints();
+        routeBuilderEndpoints.connect(router, config);
 
         let routeBuilderDatabase = new RouteBuilderDatabase();
         routeBuilderDatabase.connect(router, config, databaseConnectionCallback);

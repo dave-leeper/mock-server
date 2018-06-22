@@ -138,7 +138,7 @@ describe( 'As a developer, I need an API to create database indexes', function()
         expect(mockRouteBuilderBase.cookies[0].name).to.be.equal('MY_COOKIE1');
         expect(mockRouteBuilderBase.cookies[0].value).to.be.equal('MY_COOKIE_VALUE1');
         mockRouteBuilderBase.reset();
-        req.files = {fileUploaded:{}};
+        req.files = {filename:{}};
         indexCreateBuilder( req, res );
         expect(mockRouteBuilderBase.err).to.not.be.null;
         expect(mockRouteBuilderBase.err.message).to.be.equal('Error, no file was uploaded.');
@@ -156,7 +156,7 @@ describe( 'As a developer, I need an API to create database indexes', function()
         expect(mockRouteBuilderBase.cookies[0].name).to.be.equal('MY_COOKIE1');
         expect(mockRouteBuilderBase.cookies[0].value).to.be.equal('MY_COOKIE_VALUE1');
         mockRouteBuilderBase.reset();
-        req.files = {fileUploaded:{data: JSON.stringify({ name: 'name' })}};
+        req.files = {filename:{data: JSON.stringify({ name: 'name' })}};
         indexCreateBuilder( req, res );
         expect(mockRouteBuilderBase.err).to.be.null;
         expect(mockRouteBuilderBase.headers).to.not.be.null;
@@ -183,7 +183,7 @@ describe( 'As a developer, I need an API to create database indexes', function()
         let indexCreateBuilder = IndexCreateBuilder(mockRouteBuilderBase, config.databaseConnections[0]);
         let req = new MockRequest();
         let res = new MockResponse();
-        req.files = {fileUploaded:{data: JSON.stringify({ name: 'name' })}};
+        req.files = {filename:{data: JSON.stringify({ name: 'name' })}};
         indexCreateBuilder( req, res );
         expect(mockRouteBuilderBase.err).to.be.null;
         expect(mockRouteBuilderBase.headers).to.not.be.null;

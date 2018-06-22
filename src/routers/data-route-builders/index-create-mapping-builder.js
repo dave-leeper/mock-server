@@ -9,7 +9,7 @@ function IndexCreateMappingBuilder( builder, databaseConnectionInfo )
         if (!databaseConnection) return;
         if (!ValidationHelper.validateUploadFile(builder, req, res)) return;
 
-        let mappingData = JSON.parse(req.files.fileUploaded.data.toString());
+        let mappingData = JSON.parse(req.files.filename.data.toString());
         databaseConnection.createIndexMapping( mappingData ).then(() => {
             const success = {status: "success", operation: "Create index mapping " + mappingData.index + "/" + mappingData.type + "."};
             res.status(200);

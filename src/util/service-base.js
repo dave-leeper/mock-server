@@ -1,8 +1,8 @@
 'use strict';
 
-let Log = require ( '../util/log.js' );
+let Log = require ( './log.js' );
 
-class RouteBuilderBase {
+class ServiceBase {
 
     defaultResponse(req, res) {
         let originalURL = ((req && req.originalUrl) ? req.originalUrl : undefined);
@@ -49,4 +49,4 @@ class RouteBuilderBase {
     }
 }
 
-module.exports = RouteBuilderBase;
+module.exports = ServiceBase;

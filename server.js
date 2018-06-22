@@ -64,6 +64,10 @@ class Server {
                     if (!mergedConfig.microservices) mergedConfig.microservices = [];
                     mergedConfig.microservices = mergedConfig.microservices.concat(config.microservices);
                 }
+                if (config.endpoints) {
+                    if (!mergedConfig.endpoints) mergedConfig.endpoints = [];
+                    mergedConfig.endpoints = mergedConfig.endpoints.concat(config.endpoints);
+                }
                 if (config.databaseConnections) {
                     if (!mergedConfig.databaseConnections) mergedConfig.databaseConnections = [];
                     mergedConfig.databaseConnections = mergedConfig.databaseConnections.concat(config.databaseConnections);
@@ -77,7 +81,7 @@ class Server {
         this.express = express();
 
         // Logger setup
-        if (serverConfig.logging) Log.configure(serverConfig.logging);
+        // if (serverConfig.logging) Log.configure(serverConfig.logging);
         Log.trace(Log.stringify(serverConfig));
 
         // Override port
@@ -98,10 +102,6 @@ class Server {
 
         // app.use('/', index);
         this.express.use('/', Router.connect(router, serverConfig));
-        Registry.register(new Date(), 'ServerStartTime');
-        Registry.register(this, 'Server');
-        Registry.register(serverConfig, 'ServerConfig');
-        Registry.register(router.stack, 'RouterStack');
 
         // catch 404 and forward to error handler
         this.express.use(function (req, res, next) {
@@ -128,19 +128,25 @@ class Server {
         this.server.on('error', this.onError);
         this.server.on('error', this.onError);
 
+        Registry.register(new Date(), 'ServerStartTime');
+        Registry.register(this, 'Server');
+        Registry.register(locals.port, 'Port');
+        Registry.register(serverConfig, 'ServerConfig');
         Log.info( I18n.format( I18n.get( Strings.LISTENING_ON_PORT ), normalizedPort ));
         return this;
     }
 
     stop(callback) {
         try {
-            if (this.express.locals.___extra.databaseConnectionManager) {
-                this.express.locals.___extra.databaseConnectionManager.disconnect();
+            let databaseConnectorManager = Registry.get('DatabaseConnectorManager');
+            if (databaseConnectorManager) {
+                databaseConnectorManager.disconnect();
             }
         } catch (err) {
             Log.error("Error shutting down database connections. Error: " + Log.stringify(err));
         }
         this.server.close(callback);
+        this.express._router = undefined;
     }
 
     /**

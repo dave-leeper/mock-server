@@ -65,8 +65,8 @@ ValidationHelper.validateParams = function(builder, req, res) {
 
 ValidationHelper.validateUploadFile = function(builder, req, res) {
     if ((!req.files)
-        || (!req.files.fileUploaded)
-        || (!req.files.fileUploaded.data)) {
+        || (!req.files.filename)
+        || (!req.files.filename.data)) {
         const error = { message: "Error, no file was uploaded.", error: { status: 400 }};
         builder.sendErrorResponse(error, res);
         return false;

@@ -160,7 +160,7 @@
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "fileUploaded",
+							"key": "filename",
 							"description": "",
 							"type": "file",
 							"src": "sample-elasticsearch-schema.json"
@@ -277,7 +277,7 @@
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "fileUploaded",
+							"key": "filename",
 							"description": "",
 							"type": "file",
 							"src": "sample-elasticsearch-schema.json"

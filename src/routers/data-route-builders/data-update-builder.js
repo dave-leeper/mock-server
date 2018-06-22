@@ -9,7 +9,7 @@ function DataUpdateBuilder( builder, databaseConnectionInfo )
         if (!databaseConnection) return;
         if (!ValidationHelper.validateUploadFile(builder, req, res)) return;
 
-        let updateDoc = JSON.parse(req.files.fileUploaded.data.toString());
+        let updateDoc = JSON.parse(req.files.filename.data.toString());
         let data = { index: updateDoc.index, type: updateDoc.type, id: updateDoc.id, body: { doc: updateDoc.data }};
         databaseConnection.update(data).then(( response ) => {
             const success = {status: "success", operation: "Update data for " + updateDoc.index};

@@ -1,12 +1,12 @@
 'use strict';
 
-let RouteBuilderBase = require ( './route-builder-base.js' );
+let ServiceBase = require ( '../util/service-base.js' );
 let DatabaseConnectorManager = require ( '../database/database-connection-manager' );
 let Registry = require ( '../util/registry.js' );
 let Log = require ( '../util/log.js' );
 let path = require('path');
 
-class RouteBuilderDatabase extends RouteBuilderBase {
+class RouteBuilderDatabase extends ServiceBase {
     /**
      * @param router - Express router. This method will add routers to it.
      * @param config - The configure file for the server.
