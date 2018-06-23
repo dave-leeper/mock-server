@@ -13,6 +13,7 @@ class RouteBuilderMocks extends ServiceBase {
             let mock = config.mocks[loop1];
             let verb = ((mock.verb)? mock.verb.toUpperCase() : 'GET');
             let responseType = ((mock.responseType)? mock.responseType.toString().toUpperCase() : '');
+            let handlers = [];
             let handler;
 
             if ('JSON' === responseType) {
@@ -59,18 +60,19 @@ class RouteBuilderMocks extends ServiceBase {
                     continue;
                 }
             }
+            handlers.push(handler);
             if ('GET' === verb) {
-                router.get(mock.path, handler);
+                router.get(mock.path, handlers);
             } else if ('PUT' === verb) {
-                router.put(mock.path, handler);
+                router.put(mock.path, handlers);
             } else if ('POST' === verb) {
-                router.post(mock.path, handler);
+                router.post(mock.path, handlers);
             } else if ('PATCH' === verb) {
-                router.patch(mock.path, handler);
+                router.patch(mock.path, handlers);
             } else if ('DELETE' === verb) {
-                router.delete(mock.path, handler);
+                router.delete(mock.path, handlers);
             } else if ('OPTIONS' === verb) {
-                router.options(mock.path, handler);
+                router.options(mock.path, handlers);
             }
         }
         return true;

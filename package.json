@@ -15,6 +15,7 @@
     "elasticsearch": "14.2.2",
     "express": "4.15.5",
     "express-fileupload": "^0.3.0",
+    "express-session": "^1.15.6",
     "fs-extra": "4.0.2",
     "hbs": "4.0.1",
     "log4js": "^2.5.3",
@@ -28,7 +29,8 @@
     "process": "0.11.10",
     "request": "2.81.0",
     "serve-favicon": "2.4.5",
-    "stringify-object": "^3.2.2"
+    "stringify-object": "^3.2.2",
+    "uuid": "^3.2.1"
   },
   "devDependencies": {
     "chai": "4.1.2",

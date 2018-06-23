@@ -14,6 +14,7 @@ class RouteBuilderEndpoints extends ServiceBase {
             let endpointPath = path.resolve('./src/endpoints', endpoint.serviceFile);
             let endpointClass = require( endpointPath );
             let end = new endpointClass(endpoint);
+            let handlers = [];
 
             if (!end.do) {
                 if (Log.will(Log.ERROR)) {
@@ -21,18 +22,19 @@ class RouteBuilderEndpoints extends ServiceBase {
                     continue;
                 }
             }
+            handlers.push(end.do);
             if ("GET" === verb) {
-                router.get(endpoint.path, end.do);
+                router.get(endpoint.path, handlers);
             } else if ("PUT" === verb) {
-                router.put(endpoint.path, end.do);
+                router.put(endpoint.path, handlers);
             } else if ("POST" === verb) {
-                router.post(endpoint.path, end.do);
+                router.post(endpoint.path, handlers);
             } else if ("PATCH" === verb) {
-                router.patch(endpoint.path, end.do);
+                router.patch(endpoint.path, handlers);
             } else if ("DELETE" === verb) {
-                router.delete(endpoint.path, end.do);
+                router.delete(endpoint.path, handlers);
             } else if ("OPTIONS" === verb) {
-                router.options(endpoint.path, end.do);
+                router.options(endpoint.path, handlers);
             }
         }
         return true;

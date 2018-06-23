@@ -37,30 +37,36 @@ class RouteBuilderDatabase extends ServiceBase {
         let disconnectPath = paths[2];
         let handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'connection-connect-builder.js');
         let handlerBuilder = require(handlerBuilderPath);
+        let handlers = [];
         let handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
             if (Log.will(Log.ERROR)) Log.error('Connect handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
-        router.get(connectPath, handler);
+        handlers.push(handler);
+        router.get(connectPath, handlers);
 
         handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'connection-ping-builder.js');
         handlerBuilder = require(handlerBuilderPath);
+        handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
             if (Log.will(Log.ERROR)) Log.error('Ping handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
-        router.get(pingPath, handler);
+        handlers.push(handler);
+        router.get(pingPath, handlers);
 
         handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'connection-disconnect-builder.js');
         handlerBuilder = require(handlerBuilderPath);
+        handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
             if (Log.will(Log.ERROR))Log.error('Disconnect handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
-        router.get(disconnectPath, handler);
+        handlers.push(handler);
+        router.get(disconnectPath, handlers);
     }
 
     static buildConnectionAPIPaths(name) {
@@ -82,39 +88,47 @@ class RouteBuilderDatabase extends ServiceBase {
         let createMappingPath = paths[3];
         let handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'index-exists-builder.js');
         let handlerBuilder = require(handlerBuilderPath);
+        let handlers = [];
         let handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
             if (Log.will(Log.ERROR)) Log.error('Index exists handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
-        router.get(existsPath, handler);
+        handlers.push(handler);
+        router.get(existsPath, handlers);
 
         handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'index-create-builder.js');
         handlerBuilder = require(handlerBuilderPath);
+        handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
             if (Log.will(Log.ERROR)) Log.error('Create index handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
-        router.post(createPath, handler);
+        handlers.push(handler);
+        router.post(createPath, handlers);
 
         handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'index-drop-builder.js');
         handlerBuilder = require(handlerBuilderPath);
+        handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
             if (Log.will(Log.ERROR)) Log.error('Drop index handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
-        router.delete(dropPath, handler);
+        handlers.push(handler);
+        router.delete(dropPath, handlers);
 
         handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'index-create-mapping-builder.js');
         handlerBuilder = require(handlerBuilderPath);
+        handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
             if (Log.will(Log.ERROR)) Log.error('Create index mapping handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
-        router.post(createMappingPath, handler);
+        handlers.push(handler);
+        router.post(createMappingPath, handlers);
     }
 
     static buildIndexAPIPaths(name) {
@@ -137,39 +151,47 @@ class RouteBuilderDatabase extends ServiceBase {
         let queryPath = paths[3];
         let handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'data-insert-builder.js');
         let handlerBuilder = require(handlerBuilderPath);
+        let handlers = [];
         let handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
             if (Log.will(Log.ERROR)) Log.error('Data insert handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
-        router.post(insertPath, handler);
+        handlers.push(handler);
+        router.post(insertPath, handlers);
 
         handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'data-update-builder.js');
         handlerBuilder = require(handlerBuilderPath);
+        handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
             if (Log.will(Log.ERROR)) Log.error('Data update handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
-        router.post(updatePath, handler);
+        handlers.push(handler);
+        router.post(updatePath, handlers);
 
         handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'data-delete-builder.js');
         handlerBuilder = require(handlerBuilderPath);
+        handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
             if (Log.will(Log.ERROR)) Log.error('Data delete handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
-        router.delete(deletePath, handler);
+        handlers.push(handler);
+        router.delete(deletePath, handlers);
 
         handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'data-query-builder.js');
         handlerBuilder = require(handlerBuilderPath);
+        handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
             if (Log.will(Log.ERROR)) Log.error('Data query handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
-        router.get(queryPath, handler);
+        handlers.push(handler);
+        router.get(queryPath, handlers);
     }
 
     static buildDataAPIPaths(name) {

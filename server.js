@@ -6,6 +6,7 @@ const router = express.Router();
 const path = require('path');
 const favicon = require('serve-favicon');
 const cookieParser = require('cookie-parser');
+const session = require("express-session");
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const passport = require('passport');
@@ -98,6 +99,7 @@ class Server {
 
         this.express.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
         this.express.use(bodyParser.json());
+        this.express.use(session({ secret: "cats", resave: true, saveUninitialized: true }));
         this.express.use(bodyParser.urlencoded({extended: false}));
         this.express.use(cookieParser());
         this.express.use(express.static(path.join(__dirname, 'public')));
