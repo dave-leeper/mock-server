@@ -505,7 +505,7 @@ By default, the following values are stored in the Registry:
 * Port - The port the server is running on.
 * ServerConfig - The JSON document that was used to configure the server.
 * ServerStartTime - The time the server was started as a javascript Date object.
-* DatabaseConnectorManager - The DatabaseConnectionManager used by the server.
+* DatabaseConnectionManager - The DatabaseConnectionManager used by the server.
 * Passport - The Passport object used by the server.
 * Headers - Authentication headers added to all responses of an authenticated user.
 * Cookies - Authentication cookies added to all responses of an authenticated user.

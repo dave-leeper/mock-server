@@ -2,7 +2,8 @@ let Registry = require('../util/registry');
 let ServiceBase = require ( '../util/service-base.js' );
 
 class Stop extends ServiceBase {
-    Stop(configInfo) {
+    constructor(configInfo) {
+        super();
         this.configInfo = configInfo;
     }
     do (req, res, next) {
@@ -13,7 +14,8 @@ class Stop extends ServiceBase {
             let jsonResponse = JSON.stringify({status: 'Error stopping server'});
             res.status(500);
             res.send(jsonResponse);
-            next();
+            next && next();
+            return;
         }
         let jsonResponse = JSON.stringify({status: 'Stopping server'});
         res.status(200);
