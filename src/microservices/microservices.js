@@ -11,7 +11,7 @@ class Microservices {
                 return;
             }
             if (0 === serverConfig.microservices.length) {
-                inResolve && inResolve({status: 200, send: 'There are no endpoints.'});
+                inResolve && inResolve({status: 200, send: 'There are no microservices.'});
                 return;
             }
             let result = [];

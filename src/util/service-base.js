@@ -15,7 +15,7 @@ class ServiceBase {
         res.render('error', error);
     };
 
-    addHeaders(configRecord, res) {
+    addHeaders(configRecord, req, res) {
         if ((!configRecord.headers) || (!configRecord.headers.length)) return;
         for (let loop = 0; loop < configRecord.headers.length; loop++) {
             let header = configRecord.headers[loop];
@@ -24,7 +24,7 @@ class ServiceBase {
         Log.all('Added headers: ' + Log.stringify(configRecord.headers));
     }
 
-    addCookies(configRecord, res) {
+    addCookies(configRecord, req, res) {
         if ((!configRecord.cookies) || (!configRecord.cookies.length)) return;
         for (let loop = 0; loop < configRecord.cookies.length; loop++) {
             let cookie = {name: configRecord.cookies[loop].name, value: configRecord.cookies[loop].value};
@@ -32,7 +32,6 @@ class ServiceBase {
             if (configRecord.cookies[loop].expires) {
                 let offset = parseInt(configRecord.cookies[loop].expires);
                 let expireTime = new Date(Number(new Date()) + offset);
-                ;
                 age = {expires: expireTime};
             } else if (configRecord.cookies[loop].maxAge) {
                 age = {maxAge: parseInt(configRecord.cookies[loop].maxAge)};

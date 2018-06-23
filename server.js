@@ -79,9 +79,14 @@ class Server {
         if ("string" === typeof config) serverConfig = mergeConfigs(loadConfigs(getConfigFileNames(config)));
 
         this.express = express();
+        Registry.register(new Date(), 'ServerStartTime');
+        Registry.register(this, 'Server');
+        Registry.register(serverConfig, 'ServerConfig');
+        Registry.register({ users: { }}, 'Headers');
+        Registry.register({ users: { }}, 'Cookies');
 
         // Logger setup
-        // if (serverConfig.logging) Log.configure(serverConfig.logging);
+        if (serverConfig.logging) Log.configure(serverConfig.logging);
         Log.trace(Log.stringify(serverConfig));
 
         // Override port
@@ -99,6 +104,9 @@ class Server {
         this.express.use(fileUpload());
         this.express.use(passport.initialize());
         this.express.use(passport.session());
+        passport.serializeUser(function(user, done) { done(null, user); });
+        passport.deserializeUser(function(user, done) { done(null, user); });
+        Registry.register(passport, 'Passport');
 
         // app.use('/', index);
         this.express.use('/', Router.connect(router, serverConfig));
@@ -123,15 +131,12 @@ class Server {
 
         const normalizedPort = this.normalizePort(locals.port);
         this.express.set('port', normalizedPort);
+        Registry.register(locals.port, 'Port');
 
         this.server = this.express.listen(normalizedPort, null, null, callback);
         this.server.on('error', this.onError);
         this.server.on('error', this.onError);
 
-        Registry.register(new Date(), 'ServerStartTime');
-        Registry.register(this, 'Server');
-        Registry.register(locals.port, 'Port');
-        Registry.register(serverConfig, 'ServerConfig');
         Log.info( I18n.format( I18n.get( Strings.LISTENING_ON_PORT ), normalizedPort ));
         return this;
     }

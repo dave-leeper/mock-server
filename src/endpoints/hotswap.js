@@ -6,8 +6,8 @@ class Hotswap extends ServiceBase {
         this.configInfo = configInfo;
     }
     do (req, res, next) {
-        this.addHeaders(this.configInfo, res);
-        this.addCookies(this.configInfo, res);
+        this.addHeaders(this.configInfo, req, res);
+        this.addCookies(this.configInfo, req, res);
         let server = Registry.get('Server');
         let port = Registry.get('Port');
         let newConfig = req.files['filename'];

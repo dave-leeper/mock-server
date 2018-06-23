@@ -4,7 +4,7 @@ let ValidationHelper = require('./validation-helper.js');
 function ConnectionPingBuilder ( builder, databaseConnectionInfo ) {
     if (!ValidationHelper.validateBuilder(builder) || !ValidationHelper.validateDatabaseConnectionInfo(databaseConnectionInfo)) return;
     return (req, res) => {
-        let databaseConnection = ValidationHelper.validateDatabaseConnection( builder, res, databaseConnectionInfo );
+        let databaseConnection = ValidationHelper.validateDatabaseConnection(builder, req, res, databaseConnectionInfo);
         if (!databaseConnection) return;
         databaseConnection.ping(databaseConnectionInfo).then((result) => {
             res.status(200);

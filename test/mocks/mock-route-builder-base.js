@@ -17,12 +17,12 @@ class MockRouteBuilderBase {
         this.req = req;
         this.res = res;
     };
-    addHeaders(configRecord, res) {
+    addHeaders(configRecord, req, res) {
         this.configRecord = configRecord;
         if (configRecord.headers && configRecord.headers.length) this.headers = this.headers.concat(configRecord.headers);
         this.res = res;
     }
-    addCookies(configRecord, res) {
+    addCookies(configRecord, req, res) {
         this.configRecord = configRecord;
         if (configRecord.cookies && configRecord.cookies.length) this.cookies = this.cookies.concat(configRecord.cookies);
         this.res = res;

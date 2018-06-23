@@ -2,6 +2,7 @@
 
 let ServiceBase = require ( '../util/service-base.js' );
 let Log = require ( '../util/log.js' );
+let path = require('path');
 
 class RouteBuilderEndpoints extends ServiceBase {
     connect(router, config) {
@@ -10,7 +11,7 @@ class RouteBuilderEndpoints extends ServiceBase {
         for (let loop2 = 0; loop2 < config.endpoints.length; loop2++) {
             let endpoint = config.endpoints[loop2];
             let verb = ((endpoint.verb) ? endpoint.verb.toUpperCase() : "GET" );
-            let endpointPath = "../endpoints/" + endpoint.serviceFile;
+            let endpointPath = path.resolve('./src/endpoints', endpoint.serviceFile);
             let endpointClass = require( endpointPath );
             let end = new endpointClass(endpoint);
 

@@ -1,5 +1,14 @@
 {
   "accounts": [
-    { "username": "local", "password": "password"}
+    {
+      "username": "username",
+      "password": "password",
+      "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" }],
+      "cookies": [
+        { "name": "MY_COOKIE1", "value": "MY_COOKIE_VALUE1" },
+        { "name": "MY_COOKIE2", "value": "MY_COOKIE_VALUE2", "expires": 9999 },
+        { "name": "MY_COOKIE3", "value": "MY_COOKIE_VALUE3", "maxAge" : 9999 }
+      ]
+    }
   ]
 }

@@ -5,7 +5,7 @@ function DataQueryBuilder( builder, databaseConnectionInfo )
 {
     if (!ValidationHelper.validateBuilder(builder) || !ValidationHelper.validateDatabaseConnectionInfo(databaseConnectionInfo)) return;
     return (req, res) => {
-        let databaseConnection = ValidationHelper.validateDatabaseConnection( builder, res, databaseConnectionInfo );
+        let databaseConnection = ValidationHelper.validateDatabaseConnection(builder, req, res, databaseConnectionInfo);
         if (!databaseConnection) return;
         if (!ValidationHelper.validateParams(builder, req, res)) return;
         let index = req.params.index;

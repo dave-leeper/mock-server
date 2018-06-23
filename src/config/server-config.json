@@ -144,9 +144,24 @@
       "responseType": "HBS",
       "hbsData": {"title": "Upload hotswap config", "action": "/hotswap", "verb": "POST"},
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/login",
+      "response": "login.hbs",
+      "responseType": "HBS",
+      "hbsData": {"title": "Login", "action": "/authenticate_user", "verb": "POST"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     }
   ],
   "microservices": [
+    {
+      "verb": "POST",
+      "path": "/authenticate_user",
+      "name": "Authenticate User",
+      "description": "Authenticates a user.",
+      "serviceFile": "authenticate-user.js",
+      "authentication": "local"
+    },
     {
       "path": "/mocks",
       "name": "Mock Services List",

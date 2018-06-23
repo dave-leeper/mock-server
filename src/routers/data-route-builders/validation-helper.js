@@ -10,10 +10,10 @@ ValidationHelper.validateBuilder = function(builder) {
     return (!!builder.sendErrorResponse);
 };
 
-ValidationHelper.validateDatabaseConnection = function(builder, res, databaseConnectionInfo){
+ValidationHelper.validateDatabaseConnection = function (builder, req, res, databaseConnectionInfo){
     if (!builder || !res || !databaseConnectionInfo) return null;
-    builder.addHeaders(databaseConnectionInfo, res);
-    builder.addCookies(databaseConnectionInfo, res);
+    builder.addHeaders(databaseConnectionInfo, req, res);
+    builder.addCookies(databaseConnectionInfo, req, res);
     let databaseConnectionName = databaseConnectionInfo.name;
     let databaseConnectionManager = Registry.get('DatabaseConnectorManager');
     if (!databaseConnectionManager) {

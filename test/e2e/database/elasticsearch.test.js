@@ -188,7 +188,7 @@ describe( 'As a developer, I need to perform CRUD operations on the database.', 
     });
     afterEach(( done ) => {
         elasticSearch.indexExists( schema.index ).then(( exits ) => {
-            if (!exits) done();
+            if (!exits) return done();
             else elasticSearch.dropIndex( schema.index ).then(() => {
                 done();
             });

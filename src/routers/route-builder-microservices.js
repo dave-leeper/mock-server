@@ -1,7 +1,11 @@
 'use strict';
 
 let ServiceBase = require ( '../util/service-base.js' );
+let Registry = require ( '../util/registry.js' );
+let Strings = require ( '../util/strings.js' );
+let I18n = require ( '../util/i18n.js' );
 let Log = require ( '../util/log.js' );
+let path = require('path');
 
 class RouteBuilderMicroservices extends ServiceBase {
     connect(router, config) {
@@ -10,12 +14,13 @@ class RouteBuilderMicroservices extends ServiceBase {
         for (let loop2 = 0; loop2 < config.microservices.length; loop2++) {
             let microservice = config.microservices[loop2];
             let verb = ((microservice.verb) ? microservice.verb.toUpperCase() : "GET" );
-            let microservicePath = "../microservices/" + microservice.serviceFile;
+            let microservicePath = path.resolve('./src/microservices', microservice.serviceFile);
+            let handlers = [];
             let handler = (req, res, next) => {
                 let microserviceClass = require( microservicePath );
                 let micro = new microserviceClass();
-                this.addHeaders(microservice, res);
-                this.addCookies(microservice, res);
+                this.addHeaders(microservice, req, res);
+                this.addCookies(microservice, req, res);
 
                 try {
                     let params = {
@@ -71,18 +76,32 @@ class RouteBuilderMicroservices extends ServiceBase {
                     continue;
                 }
             }
+
+            if (microservice.authentication) {
+                let passport = Registry.get('Passport');
+                let authenticationStrategy = config.authenticationStrategies[microservice.authentication];
+                if (!passport || !authenticationStrategy) {
+                    Log.error( I18n.get( Strings.AUTHENTICATION_NOT_CONFIGURED ));
+                    continue;
+                }
+                let strategyHandler;
+                if (!authenticationStrategy.config) strategyHandler = passport.authenticate( authenticationStrategy.name );
+                else strategyHandler = passport.authenticate( authenticationStrategy.name, authenticationStrategy.config )
+                handlers.push(strategyHandler);
+            }
+            handlers.push(handler);
             if ("GET" === verb) {
-                router.get(microservice.path, handler);
+                router.get(microservice.path, handlers);
             } else if ("PUT" === verb) {
-                router.put(microservice.path, handler);
+                router.put(microservice.path, handlers);
             } else if ("POST" === verb) {
-                router.post(microservice.path, handler);
+                router.post(microservice.path, handlers);
             } else if ("PATCH" === verb) {
-                router.patch(microservice.path, handler);
+                router.patch(microservice.path, handlers);
             } else if ("DELETE" === verb) {
-                router.delete(microservice.path, handler);
+                router.delete(microservice.path, handlers);
             } else if ("OPTIONS" === verb) {
-                router.options(microservice.path, handler);
+                router.options(microservice.path, handlers);
             }
         }
         return true;

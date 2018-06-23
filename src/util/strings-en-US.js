@@ -1,5 +1,6 @@
 const strings = [
-    'Login not configured.',
+    'Authentication not configured.',
+    'Login required.',
     'Incorrect username.',
     'Incorrect password.',
     'Login successful.',

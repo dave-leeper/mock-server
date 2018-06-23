@@ -4,10 +4,13 @@ let RouteBuilderMocks = require ( './route-builder-mocks.js' );
 let RouteBuilderMicroservices = require ( './route-builder-microservices.js' );
 let RouteBuilderEndpoints = require ( './route-builder-endpoints.js' );
 let RouteBuilderDatabase = require ( './route-builder-database.js' );
+let Registry = require ( '../util/registry.js' );
+let Strings = require ( '../util/strings.js' );
+let I18n = require ( '../util/i18n.js' );
 let Log = require ( '../util/log.js' );
+let path = require('path');
 
 class RouteBuilder {
-
     /**
      * @param router - Express router. This method will add routers to it.
      * @param config - The configure file for the server.
@@ -17,11 +20,24 @@ class RouteBuilder {
      */
     static connect(router, config, databaseConnectionCallback) {
         if ((!config) || (!router)) return router;
-
+        let operation = 'RouterBuilder.connect';
         if (config.authentication) {
+            let passport = Registry.get('Passport');
+            if (!passport) {
+                const err = { operation: operation, statusType: 'error', status: 501, message: I18n.get( Strings.AUTHENTICATION_NOT_CONFIGURED )};
+                Log.error(Log.stringify(err));
+                return router;
+            }
+            config.authenticationStrategies = {};
             for (let loop = 0; loop < config.authentication.length; loop++) {
                 let authentication = config.authentication[loop];
-                authentication.strategy = require('../authentication/' + authentication.strategyFile);
+                let strategyFile = path.resolve('./src/authentication', authentication.strategyFile)
+                authentication.strategy = new (require(strategyFile))();
+                passport.use(authentication.strategy.getStrategy());
+                config.authenticationStrategies[authentication.name] = {};
+                config.authenticationStrategies[authentication.name]. name = authentication.name;
+                config.authenticationStrategies[authentication.name]. strategy = authentication.strategy;
+                config.authenticationStrategies[authentication.name]. config = authentication.config;
             }
         }
 

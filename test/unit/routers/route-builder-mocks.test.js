@@ -164,8 +164,8 @@ let expectRender = (mockResponse, responseFile) => {
         error: {status: 404}
     };
     expect(mockResponse.renderString).to.be.equal('error');
-    expect(mockResponse.renderObject.title).to.be.equal(expectedError.title);
-    expect(mockResponse.renderObject.message).to.be.equal(expectedError.message);
+    expect(mockResponse.renderObject.title.endsWith(responseFile)).to.be.equal(true);
+    expect(mockResponse.renderObject.message.endsWith(responseFile + '.')).to.be.equal(true);
     expect(mockResponse.renderObject.error.status).to.be.equal(expectedError.error.status);
 };
 let expectHeadersAndCookies = (mockResponse) => {
@@ -306,7 +306,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
     it ( 'should build handlers that processes a handlebars file', ( ) => {
         let mock = {
             path: '/hbs',
-            response: './src/views/index.hbs',
+            response: 'index.hbs',
             responseType: 'HBS',
             hbsData: { 'title': 'Index' },
             headers: [{ header: 'Access-Control-Allow-Origin', value: '*' }],
@@ -318,7 +318,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         let handler = routeBuilderMocks.___buildHandlebarsFileHandlerFromString( mock );
         expect(handler).to.not.be.null;
         handler(mockRequest, mockResponse);
-        expect(mockResponse.renderString).to.be.equal('./src/views/index.hbs');
+        expect(mockResponse.renderString.endsWith('index.hbs')).to.be.equal(true);
         expect(mockResponse.renderObject.title).to.be.equal('Index');
         expectHeadersAndCookies(mockResponse);
         mock = {
@@ -337,7 +337,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expectHeadersAndCookies(mockResponse);
         mock = {
             path: '/hbs/:replace_me',
-            response: './src/views/:replace_me',
+            response: ':replace_me',
             responseType: 'HBS',
             hbsData: { 'title': 'Index' },
             headers: [{ header: 'Access-Control-Allow-Origin', value: '*' }],
@@ -348,7 +348,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         mockRequest.params.replace_me = 'index.hbs';
         handler = routeBuilderMocks.___buildHandlebarsFileHandlerFromString( mock );
         handler(mockRequest, mockResponse);
-        expect(mockResponse.renderString).to.be.equal('./src/views/index.hbs');
+        expect(mockResponse.renderString.endsWith('index.hbs')).to.be.equal(true);
         expect(mockResponse.renderObject.title).to.be.equal('Index');
         expectHeadersAndCookies(mockResponse);
         mockRequest.reset();
@@ -356,7 +356,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         mockRequest.query.replace_me = 'index.hbs';
         handler = routeBuilderMocks.___buildHandlebarsFileHandlerFromString( mock );
         handler(mockRequest, mockResponse);
-        expect(mockResponse.renderString).to.be.equal('./src/views/index.hbs');
+        expect(mockResponse.renderString.endsWith('index.hbs')).to.be.equal(true);
         expect(mockResponse.renderObject.title).to.be.equal('Index');
         expectHeadersAndCookies(mockResponse);
     });
