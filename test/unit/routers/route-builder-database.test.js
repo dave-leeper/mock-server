@@ -154,7 +154,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
     it ( 'should be build connection routes based on config information', ( ) => {
         let routeBuilderDatabase = new RouteBuilderDatabase();
         let mockExpressRouter = new MockExpressRouter();
-        routeBuilderDatabase.buildConnectionAPI( mockExpressRouter, configInfo );
+        routeBuilderDatabase.buildConnectionAPI( mockExpressRouter, config, configInfo );
         expect(mockExpressRouter.gets.length).to.be.equal(3);
         expect(mockExpressRouter.option.length).to.be.equal(0);
         expect(mockExpressRouter.posts.length).to.be.equal(0);
@@ -171,7 +171,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
     it ( 'should be build index routes based on config information', ( ) => {
         let routeBuilderDatabase = new RouteBuilderDatabase();
         let mockExpressRouter = new MockExpressRouter();
-        routeBuilderDatabase.buildIndexAPI( mockExpressRouter, configInfo );
+        routeBuilderDatabase.buildIndexAPI( mockExpressRouter, config, configInfo );
         expect(mockExpressRouter.gets.length).to.be.equal(1);
         expect(mockExpressRouter.option.length).to.be.equal(0);
         expect(mockExpressRouter.posts.length).to.be.equal(2);
@@ -190,7 +190,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
     it ( 'should be build data routes based on config information', ( ) => {
         let routeBuilderDatabase = new RouteBuilderDatabase();
         let mockExpressRouter = new MockExpressRouter();
-        routeBuilderDatabase.buildDataAPI( mockExpressRouter, configInfo );
+        routeBuilderDatabase.buildDataAPI( mockExpressRouter, config, configInfo );
         expect(mockExpressRouter.gets.length).to.be.equal(1);
         expect(mockExpressRouter.option.length).to.be.equal(0);
         expect(mockExpressRouter.posts.length).to.be.equal(2);

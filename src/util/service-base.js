@@ -1,6 +1,8 @@
 'use strict';
 
 const Registry = require ( './registry.js' );
+const Strings = require ( './strings.js' );
+const I18n = require ( './i18n.js' );
 const Log = require ( './log.js' );
 const uuidv4 = require('uuid/v4');
 
@@ -79,6 +81,20 @@ class ServiceBase {
     sendErrorResponse(error, res, status) {
         res.status(((status) ? status : 500));
         res.render("error", error);
+    }
+
+    authentication(authenticationStrategies, authenticationName) {
+        if (!authenticationStrategies || !authenticationName) return;
+        let passport = Registry.get('Passport');
+        let authenticationStrategy = authenticationStrategies[authenticationName];
+        if (!passport || !authenticationStrategy) {
+            Log.error( I18n.get( Strings.AUTHENTICATION_NOT_CONFIGURED ));
+            return null;
+        }
+        let strategyHandler;
+        if (!authenticationStrategy.config) strategyHandler = passport.authenticate( authenticationStrategy.name );
+        else strategyHandler = passport.authenticate( authenticationStrategy.name, authenticationStrategy.config )
+        return strategyHandler;
     }
 }
 

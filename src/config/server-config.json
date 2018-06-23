@@ -171,8 +171,14 @@
     {
       "path": "/microservices",
       "name": "Microservices List",
-      "description": "Provides a list of services registered with this server.",
+      "description": "Provides a list of microservices registered with this server.",
       "serviceFile": "microservices.js"
+    },
+    {
+      "path": "/endpoints",
+      "name": "Endpoints List",
+      "description": "Provides a list of endpoints registered with this server.",
+      "serviceFile": "endpoints.js"
     },
     {
       "path": "/databaseconnections",
@@ -218,13 +224,6 @@
       "name": "Stop",
       "description": "Stops the server.",
       "serviceFile": "stop.js"
-    },
-    {
-      "verb": "POST",
-      "path": "/hotswap",
-      "name": "Hotswap",
-      "description": "Hotswaps the server using a new config that is uploaded with the request",
-      "serviceFile": "hotswap.js"
     }
   ],
   "databaseConnections" : [

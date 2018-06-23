@@ -22,6 +22,8 @@ class RouteBuilderEndpoints extends ServiceBase {
                     continue;
                 }
             }
+            let authentication = this.authentication(config.authenticationStrategies, endpoint.authentication);
+            if (authentication) handlers.push(authentication);
             handlers.push(end.do);
             if ("GET" === verb) {
                 router.get(endpoint.path, handlers);

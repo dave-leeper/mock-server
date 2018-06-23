@@ -1,9 +1,6 @@
 'use strict';
 
 let ServiceBase = require ( '../util/service-base.js' );
-let Registry = require ( '../util/registry.js' );
-let Strings = require ( '../util/strings.js' );
-let I18n = require ( '../util/i18n.js' );
 let Log = require ( '../util/log.js' );
 let path = require('path');
 
@@ -77,18 +74,8 @@ class RouteBuilderMicroservices extends ServiceBase {
                 }
             }
 
-            if (microservice.authentication) {
-                let passport = Registry.get('Passport');
-                let authenticationStrategy = config.authenticationStrategies[microservice.authentication];
-                if (!passport || !authenticationStrategy) {
-                    Log.error( I18n.get( Strings.AUTHENTICATION_NOT_CONFIGURED ));
-                    continue;
-                }
-                let strategyHandler;
-                if (!authenticationStrategy.config) strategyHandler = passport.authenticate( authenticationStrategy.name );
-                else strategyHandler = passport.authenticate( authenticationStrategy.name, authenticationStrategy.config )
-                handlers.push(strategyHandler);
-            }
+            let authentication = this.authentication(config.authenticationStrategies, microservice.authentication);
+            if (authentication) handlers.push(authentication);
             handlers.push(handler);
             if ("GET" === verb) {
                 router.get(microservice.path, handlers);
