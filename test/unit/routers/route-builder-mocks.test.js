@@ -2,11 +2,16 @@
 'use strict';
 
 let chai = require( 'chai' ),
-    expect = chai.expect,
-    MockRequest = require('../../mocks/mock-request.js'),
-    MockResponse = require('../../mocks/mock-response.js'),
-    MockExpressRouter = require('../../mocks/mock-express-router.js'),
-    RouteBuilderMocks = require('../../../src/routers/route-builder-mocks.js');
+    expect = chai.expect;
+
+const Registry = require('../../../src/util/registry.js');
+const MockRequest = require('../../mocks/mock-request.js');
+const MockResponse = require('../../mocks/mock-response.js');
+const MockExpressRouter = require('../../mocks/mock-express-router.js');
+const RouteBuilder = require('../../../src/routers/route-builder.js');
+const RouteBuilderMocks = require('../../../src/routers/route-builder-mocks.js');
+const passport = require('passport');
+
 let config = {
     "mocks": [
         {
@@ -820,5 +825,38 @@ describe( 'As a developer, I need an API for creating database connections', fun
         handler(mockRequest, mockResponse);
         expect(mockResponse.sendString).to.be.equal(JSON.stringify(mock.response[1]));
         expectHeadersAndCookies(mockResponse);
+    });
+    it ( 'should support authentication', ( ) => {
+        let config = {
+            authentication: [
+                {
+                    name: "local",
+                    strategyFile: "local-strategy.js",
+                    config: { "successRedirect": "/ping", "failureRedirect": "/login"}
+                }
+            ],
+            mocks: [
+                {
+                    path: '/text',
+                    response: [{ text: 'Text' }, { message: 'Text' }],
+                    responseType: 'TEXT',
+                    headers: [{ header: 'Access-Control-Allow-Origin', value: '*' }],
+                    cookies: [{ name : 'MY_COOKIE', value: 'MY_COOKIE_VALUE' }],
+                    authentication: "local"
+                }
+            ]
+        };
+        Registry.register(passport, 'Passport');
+        RouteBuilder.buildAuthenticationStrategies(config);
+
+        let routeBuilderMocks = new RouteBuilderMocks();
+        let mockExpressRouter = new MockExpressRouter();
+        let result = routeBuilderMocks.connect( mockExpressRouter, config );
+        expect(result).to.be.equal(true);
+        expect(mockExpressRouter.gets.length).to.be.equal(1);
+        expect(containsPath(mockExpressRouter.gets, '/text')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.gets, '/text')).to.be.equal(true);
+        expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
+        expect(mockExpressRouter.gets[0].handler.length).to.be.equal(2);
     });
 });

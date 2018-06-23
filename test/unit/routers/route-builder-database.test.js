@@ -2,9 +2,14 @@
 'use strict';
 
 let chai = require( 'chai' ),
-    expect = chai.expect,
-    MockExpressRouter = require('../../mocks/mock-express-router.js'),
-    RouteBuilderDatabase = require('../../../src/routers/route-builder-database.js');
+    expect = chai.expect;
+
+const Registry = require('../../../src/util/registry.js');
+const MockExpressRouter = require('../../mocks/mock-express-router.js');
+const RouteBuilder = require('../../../src/routers/route-builder.js');
+const RouteBuilderDatabase = require('../../../src/routers/route-builder-database.js');
+const passport = require('passport');
+
 let config = {
     "databaseConnections" : [
         {
@@ -297,5 +302,88 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(hasHandler(mockExpressRouter.posts, '/elasticsearch/data/update')).to.be.equal(true);
         expect(hasHandler(mockExpressRouter.deletes, '/elasticsearch/data/:index/:type/:id')).to.be.equal(true);
         expect(hasHandler(mockExpressRouter.gets, '/elasticsearch/data/:index/:type/:id')).to.be.equal(true);
+    });
+    it ( 'should support authentication', ( ) => {
+        let config = {
+            authentication: [
+                {
+                    name: "local",
+                    strategyFile: "local-strategy.js",
+                    config: { "successRedirect": "/ping", "failureRedirect": "/login"}
+                }
+            ],
+            databaseConnections : [
+                {
+                    name: "elasticsearch",
+                    description: "Elasticsearch service.",
+                    databaseConnector: "elasticsearch.js",
+                    generateConnectionAPI: true,
+                    generateIndexAPI: true,
+                    generateDataAPI: true,
+                    config: {
+                        host: "localhost:9200",
+                        log: "trace"
+                    },
+                    authentication: "local"
+                }
+            ]
+        };
+        Registry.register(passport, 'Passport');
+        RouteBuilder.buildAuthenticationStrategies(config);
+
+        let routeBuilderDatabase = new RouteBuilderDatabase();
+        let mockExpressRouter = new MockExpressRouter();
+        let result = routeBuilderDatabase.connect( mockExpressRouter, config );
+        expect(result).to.be.equal(true);
+        expect(mockExpressRouter.gets.length).to.be.equal(5);
+        expect(mockExpressRouter.option.length).to.be.equal(0);
+        expect(mockExpressRouter.posts.length).to.be.equal(4);
+        expect(mockExpressRouter.puts.length).to.be.equal(0);
+        expect(mockExpressRouter.patches.length).to.be.equal(0);
+        expect(mockExpressRouter.deletes.length).to.be.equal(2);
+        expect(containsPath(mockExpressRouter.gets, '/elasticsearch/connection/connect')).to.be.equal(true);
+        expect(containsPath(mockExpressRouter.gets, '/elasticsearch/connection/ping')).to.be.equal(true);
+        expect(containsPath(mockExpressRouter.gets, '/elasticsearch/connection/disconnect')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.gets, '/elasticsearch/connection/connect')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.gets, '/elasticsearch/connection/ping')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.gets, '/elasticsearch/connection/disconnect')).to.be.equal(true);
+        expect(containsPath(mockExpressRouter.gets, '/elasticsearch/index/:index/exists')).to.be.equal(true);
+        expect(containsPath(mockExpressRouter.posts, '/elasticsearch/index')).to.be.equal(true);
+        expect(containsPath(mockExpressRouter.deletes, '/elasticsearch/index/:index')).to.be.equal(true);
+        expect(containsPath(mockExpressRouter.posts, '/elasticsearch/index/mapping')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.gets, '/elasticsearch/index/:index/exists')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.posts, '/elasticsearch/index')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.deletes, '/elasticsearch/index/:index')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.posts, '/elasticsearch/index/mapping')).to.be.equal(true);
+        expect(containsPath(mockExpressRouter.posts, '/elasticsearch/data')).to.be.equal(true);
+        expect(containsPath(mockExpressRouter.posts, '/elasticsearch/data/update')).to.be.equal(true);
+        expect(containsPath(mockExpressRouter.deletes, '/elasticsearch/data/:index/:type/:id')).to.be.equal(true);
+        expect(containsPath(mockExpressRouter.gets, '/elasticsearch/data/:index/:type/:id')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.posts, '/elasticsearch/data')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.posts, '/elasticsearch/data/update')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.deletes, '/elasticsearch/data/:index/:type/:id')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.gets, '/elasticsearch/data/:index/:type/:id')).to.be.equal(true);
+        expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
+        expect(mockExpressRouter.gets[0].handler.length).to.be.equal(2);
+        expect(Array.isArray(mockExpressRouter.gets[1].handler)).to.be.equal(true);
+        expect(mockExpressRouter.gets[1].handler.length).to.be.equal(2);
+        expect(Array.isArray(mockExpressRouter.gets[2].handler)).to.be.equal(true);
+        expect(mockExpressRouter.gets[2].handler.length).to.be.equal(2);
+        expect(Array.isArray(mockExpressRouter.gets[3].handler)).to.be.equal(true);
+        expect(mockExpressRouter.gets[3].handler.length).to.be.equal(2);
+        expect(Array.isArray(mockExpressRouter.gets[4].handler)).to.be.equal(true);
+        expect(mockExpressRouter.gets[4].handler.length).to.be.equal(2);
+        expect(Array.isArray(mockExpressRouter.posts[0].handler)).to.be.equal(true);
+        expect(mockExpressRouter.posts[0].handler.length).to.be.equal(2);
+        expect(Array.isArray(mockExpressRouter.posts[1].handler)).to.be.equal(true);
+        expect(mockExpressRouter.posts[1].handler.length).to.be.equal(2);
+        expect(Array.isArray(mockExpressRouter.posts[2].handler)).to.be.equal(true);
+        expect(mockExpressRouter.posts[2].handler.length).to.be.equal(2);
+        expect(Array.isArray(mockExpressRouter.posts[3].handler)).to.be.equal(true);
+        expect(mockExpressRouter.posts[3].handler.length).to.be.equal(2);
+        expect(Array.isArray(mockExpressRouter.deletes[0].handler)).to.be.equal(true);
+        expect(mockExpressRouter.deletes[0].handler.length).to.be.equal(2);
+        expect(Array.isArray(mockExpressRouter.deletes[1].handler)).to.be.equal(true);
+        expect(mockExpressRouter.deletes[1].handler.length).to.be.equal(2);
     });
 });

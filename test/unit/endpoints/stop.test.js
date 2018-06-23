@@ -18,7 +18,7 @@ describe( 'As a developer, I need need to stop the server with an API call', fun
     });
     after(() => {
     });
-    it ( 'should fail gracefully when there is no server in the registry', ( done) => {
+    it ( 'should fail gracefully when there is no server in the registry', ( ) => {
         let configInfo = {};
         let stop = new Stop(configInfo);
         let mockRequest = new MockRequest();
@@ -28,16 +28,18 @@ describe( 'As a developer, I need need to stop the server with an API call', fun
         expect( mockResponse.sendStatus ).to.be.equal( 500 );
         expect( mockResponse.sendString ).to.be.equal( JSON.stringify({status: 'Error stopping server'}) );
     });
-    it ( 'should stop the server', ( done) => {
+    it ( 'should stop the server', ( ) => {
         let configInfo = {};
         let stop = new Stop(configInfo);
         let mockRequest = new MockRequest();
         let mockResponse = new MockResponse();
+        let called = false;
         let next = () => {};
-        Registry.register({ stop: ( ) => { }}, 'Server');
+        Registry.register({ stop: ( ) => { called = true; }}, 'Server');
         stop.do(mockRequest, mockResponse, next)
         expect( mockResponse.sendStatus ).to.be.equal( 200 );
         expect( mockResponse.sendString ).to.be.equal( JSON.stringify({status: 'Stopping server'}) );
+        expect( called ).to.be.equal( true );
     });
 });
 

@@ -1,26 +1,29 @@
-const LocalStrategy = require('passport-local').Strategy;
-const accounts = require('./authentication').accounts;
+const PassportLocalStrategy = require('passport-local').Strategy;
 const Registry = require('../util/registry' );
 const Strings = require('../util/strings' );
 const I18n = require('../util/i18n' );
 const Log = require('../util/log' );
+const accounts = require('./authentication').accounts;
 
-class LocalAuthenticationStrategy {
+class LocalStrategy {
+    constructor() {
+        this.accounts = accounts;
+    }
     getStrategy() {
-        return new LocalStrategy((username, password, done) => {
+        return new PassportLocalStrategy((username, password, done) => {
             let operation = 'login';
-            if (!accounts) {
+            if (!username || !password || !done) {
+                const err = { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.LOGIN_REQUIRED )};
+                Log.error(Log.stringify(err));
+                return done && done(err);
+            }
+            if (!this.accounts) {
                 const err = { operation: operation, statusType: 'error', status: 501, message: I18n.get( Strings.AUTHENTICATION_NOT_CONFIGURED )};
                 Log.error(Log.stringify(err));
                 return done(err);
             }
-            if (!username || !password) {
-                const err = { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.LOGIN_REQUIRED )};
-                Log.error(Log.stringify(err));
-                return done(err);
-            }
-            for (let loop = 0; loop < accounts.length; loop++) {
-                let account = accounts[loop];
+            for (let loop = 0; loop < this.accounts.length; loop++) {
+                let account = this.accounts[loop];
                 if (account.username !== username) continue;
                 if (account.password !== password) {
                     return done( null, false, { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.INCORRECT_PASSWORD )});
@@ -45,4 +48,4 @@ class LocalAuthenticationStrategy {
     }
 }
 
-module.exports = LocalAuthenticationStrategy;
+module.exports = LocalStrategy;
