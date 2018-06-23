@@ -263,7 +263,7 @@ An optional array of cookies that should be included in the response.
 ## Endpoints
 Endpoints are traditional route handlers that accept an HTTP request and Response
 object and a next function. The lifetime of an endpoint object matches the lifetime
-of the server it's running in. TO give you an idea of how to write one, a sample
+of the server it's running in. To give you an idea of how to write one, a sample
 end point is provided below.
 ```
 let Registry = require('../util/registry');
@@ -290,6 +290,34 @@ class Stop extends ServiceBase {
     }
 }
 ``` 
+### Config Fields
+* **verb**<br/>
+Example: "POST"<br/>
+The HTTP verb. Optional. Defaults to GET.
+* **path**<br/>
+Example: "/stop"<br/>
+The URL path that invokes the endpoint.
+* **name**<br/>
+Example: "Stop"<br/>
+The human-readable name of the endpoint.
+* **description**<br/>
+Example: "Stops the server."<br/>
+A short human-readable description of the endpoint.<br/>
+* **serviceFile**<br/>
+Example: "stop.js"<br/>
+The name of the javascript file containing the
+endpoint. These names are relative to the endpoints directory.
+* **headers**<br/>
+Example: [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]<br/>
+An optional array of headers that should be included in the response.
+
+* **cookies**<br/>
+Example: [ 
+    { "name": "MY_COOKIE1", "value": "MY_COOKIE_VALUE1" },  
+    { "name": "MY_COOKIE2", "value": "MY_COOKIE_VALUE2", "expires": 9999 },  
+    { "name": "MY_COOKIE3", "value": "MY_COOKIE_VALUE3", "maxAge" : 9999 }
+    ]<br/>
+An optional array of cookies that should be included in the response.
 
 ## DatabaseConnections
 Database connections are used to work with databases. All database
@@ -469,12 +497,17 @@ Deletes a record from the database. Example:
 * **DELETE database-connection-name/data/test/my-type/1**
 
 ## Registry
-The registry stores name/value pairs taht are available to the entire program.
+The registry stores name/value pairs that are available to the entire program.
 By default, the following values are stored in the Registry:
 
-* ServerStartTime - The time the server was started as a javascript Date object.
 * Server - The Server object. Of interest are its stop() method and its express
 (often referred to as app) and server members.
 * Port - The port the server is running on.
 * ServerConfig - The JSON document that was used to configure the server.
+* ServerStartTime - The time the server was started as a javascript Date object.
+* DatabaseConnectorManager - The DatabaseConnectionManager used by the server.
+* Passport - The Passport object used by the server.
+* Headers - Authentication headers added to all responses of an authenticated user.
+* Cookies - Authentication cookies added to all responses of an authenticated user.
+
 
