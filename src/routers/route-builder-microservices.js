@@ -76,6 +76,8 @@ class RouteBuilderMicroservices extends ServiceBase {
 
             let authentication = this.authentication(config.authenticationStrategies, microservice.authentication);
             if (authentication) handlers.push(authentication);
+            let authorization = this.authorization(config.authenticationStrategies, microservice.authorization);
+            if (authorization) handlers.push(authorization);
             handlers.push(handler);
             if ("GET" === verb) {
                 router.get(microservice.path, handlers);

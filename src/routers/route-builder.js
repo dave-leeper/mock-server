@@ -51,11 +51,12 @@ class RouteBuilder {
             const authentication = config.authentication[loop];
             const strategyFile = path.resolve('./src/authentication', authentication.strategyFile)
             authentication.strategy = new (require(strategyFile))( );
-            passport.use(authentication.strategy.getStrategy());
+            passport.use(authentication.strategy.getAuthentication());
             config.authenticationStrategies[authentication.name] = {};
             config.authenticationStrategies[authentication.name]. name = authentication.name;
             config.authenticationStrategies[authentication.name]. strategy = authentication.strategy;
             config.authenticationStrategies[authentication.name]. config = authentication.config;
+            config.authenticationStrategies[authentication.name]. groups = authentication.groups;
         }
         return true;
     }

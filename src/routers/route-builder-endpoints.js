@@ -24,6 +24,8 @@ class RouteBuilderEndpoints extends ServiceBase {
             }
             let authentication = this.authentication(config.authenticationStrategies, endpoint.authentication);
             if (authentication) handlers.push(authentication);
+            let authorization = this.authorization(config.authenticationStrategies, endpoint.authorization);
+            if (authorization) handlers.push(authorization);
             handlers.push(end.do);
             if ("GET" === verb) {
                 router.get(endpoint.path, handlers);

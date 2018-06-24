@@ -62,6 +62,8 @@ class RouteBuilderMocks extends ServiceBase {
             }
             let authentication = this.authentication(config.authenticationStrategies, mock.authentication);
             if (authentication) handlers.push(authentication);
+            let authorization = this.authorization(config.authenticationStrategies, mock.authorization);
+            if (authorization) handlers.push(authorization);
             handlers.push(handler);
             if ('GET' === verb) {
                 router.get(mock.path, handlers);

@@ -84,7 +84,7 @@ class ServiceBase {
     }
 
     authentication(authenticationStrategies, authenticationName) {
-        if (!authenticationStrategies || !authenticationName) return;
+        if (!authenticationStrategies || !authenticationName) return null;
         let passport = Registry.get('Passport');
         let authenticationStrategy = authenticationStrategies[authenticationName];
         if (!passport || !authenticationStrategy) {
@@ -95,6 +95,16 @@ class ServiceBase {
         if (!authenticationStrategy.config) strategyHandler = passport.authenticate( authenticationStrategy.name );
         else strategyHandler = passport.authenticate( authenticationStrategy.name, authenticationStrategy.config )
         return strategyHandler;
+    }
+
+    authorization(authorizationStrategies, authorizationInfo) {
+        if (!authorizationStrategies || !authorizationInfo || !authorizationInfo.strategy) return null;
+        let authorizationStrategy = authorizationStrategies[authorizationInfo.strategy];
+        if (!authorizationStrategy) {
+            Log.error( I18n.get( Strings.AUTHORIZATION_NOT_CONFIGURED ));
+            return null;
+        }
+        return authorizationStrategy.strategy.getAuthorization();
     }
 }
 

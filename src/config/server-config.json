@@ -237,7 +237,8 @@
       "config": {
         "host": "localhost:9200",
         "log": "trace"
-      }
+      },
+      "authorization": { "strategy": "local", "groups": [ "admin" ] }
     }
   ]
 }
