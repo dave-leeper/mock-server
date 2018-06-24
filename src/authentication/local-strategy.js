@@ -85,6 +85,7 @@ class LocalStrategy {
             let map = ( configInfo ) => {
                 if (!configInfo.authorization) return null;
                 if (configInfo.path !== url) return null;
+                if (!verb) return null;
                 if ((configInfo.verb) && (configInfo.verb.toUpperCase() !== verb.toUpperCase())) return null;
                 if ((!configInfo.verb) && ('GET' !== verb.toUpperCase())) return null;
                 return configInfo.authorization;

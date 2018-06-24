@@ -23,10 +23,20 @@ MockResponse.prototype.render = function ( render, object ) {
     this.renderObject = object;
 };
 MockResponse.prototype.header = function ( name, value ) {
-    this.headers.push({header: name, value: value});
+    if (value) {
+        this.headers.push({header: name, value: value});
+        return;
+    }
+    for (let loop = 0; loop < this.headers.length; loop++) { if (this.headers[loop].header === name) return this.headers[loop].value; }
+    return undefined;
 };
 MockResponse.prototype.cookie = function ( name, value ) {
-    this.cookies.push({name: name, value: value});
+    if (value) {
+        this.cookies.push({name: name, value: value});
+        return;
+    }
+    for (let loop = 0; loop < this.cookies.length; loop++) { if (this.cookies[loop].name === name) return this.cookies[loop].value; }
+    return undefined;
 };
 MockResponse.prototype.status = function ( status ) {
     this.sendStatus = status;

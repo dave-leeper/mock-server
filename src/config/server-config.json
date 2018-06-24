@@ -26,7 +26,7 @@
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ],
       "authentication": "local",
       "authorization": "local",
-      "accounting": "standard"
+      "logging": "all"
     },
     {
       "path": "/json-string-array",
