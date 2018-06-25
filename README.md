@@ -87,8 +87,18 @@ A JSON object that should be sent to the
 Handlebars template (used only for HBS type files). If an array is used
 in the response field, and array of equal size should also be used in
 the hbsData field.
-* **mimeType**<br/>
-Example: {"title": "Index"}<br/>
+* **authentication**<br/>
+Example: "local"<br/>
+Sets the authentication strategy used by this route. Optional. Usually only
+one route, the one that processes logins, will need authentication.
+* **authorization**<br/>
+Example: "{ "strategy": "local", "groups": [ "admin" ] }"<br/>
+Sets the authorization strategy used by this route and lists the groups that
+can use the route. Optional. If no authorization is given, anyone can access the route.
+* **logging**<br/>
+Example: "all"<br/>
+Sets the logging level to be used by this route. Optional. If not present, the logging
+level for the server is used.
 
 ### Examples
 * A mock service at GET /ping. It returns a JSON object and sets a header
@@ -245,6 +255,18 @@ Example: [
     { "name": "MY_COOKIE3", "value": "MY_COOKIE_VALUE3", "maxAge" : 9999 }
     ]<br/>
 An optional array of cookies that should be included in the response.
+* **authentication**<br/>
+Example: "local"<br/>
+Sets the authentication strategy used by this route. Optional. Usually only
+one route, the one that processes logins, will need authentication.
+* **authorization**<br/>
+Example: "{ "strategy": "local", "groups": [ "admin" ] }"<br/>
+Sets the authorization strategy used by this route and lists the groups that
+can use the route. Optional. If no authorization is given, anyone can access the route.
+* **logging**<br/>
+Example: "all"<br/>
+Sets the logging level to be used by this route. Optional. If not present, the logging
+level for the server is used.
 
 ### Examples
  * A microservice service at GET /download/:name that downloads the file
@@ -358,6 +380,18 @@ Example: true<br/>
 A boolean value indicating if index REST APIs should be generated for
 the connection. Optional. Defaults to false. These APIs are described in
 the API section, below.
+* **authentication**<br/>
+Example: "local"<br/>
+Sets the authentication strategy used by this route. Optional. Usually only
+one route, the one that processes logins, will need authentication.
+* **authorization**<br/>
+Example: "{ "strategy": "local", "groups": [ "admin" ] }"<br/>
+Sets the authorization strategy used by this route and lists the groups that
+can use the route. Optional. If no authorization is given, anyone can access the route.
+* **logging**<br/>
+Example: "all"<br/>
+Sets the logging level to be used by this route. Optional. If not present, the logging
+level for the server is used.
 ### Examples
  * A simple config for Elasticsearch.
 ```

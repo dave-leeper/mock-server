@@ -25,7 +25,6 @@
       "responseType": "JSON",
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ],
       "authentication": "local",
-      "authorization": "local",
       "logging": "all"
     },
     {
