@@ -2,6 +2,7 @@
 'use strict';
 let chai = require( 'chai' ),
     expect = chai.expect;
+
 let LocalStrategy = require('../../../src/authentication/local-strategy.js');
 let MockRequest = require('../../mocks/mock-request' );
 let MockResponse = require('../../mocks/mock-response' );

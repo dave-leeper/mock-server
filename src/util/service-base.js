@@ -7,8 +7,7 @@ const Log = require ( './log.js' );
 const uuidv4 = require('uuid/v4');
 
 class ServiceBase {
-
-    defaultResponse(req, res) {
+    notFoundResponse(req, res) {
         let originalURL = ((req && req.originalUrl) ? req.originalUrl : undefined);
         const error = {
             title: "Not Found",
@@ -16,16 +15,16 @@ class ServiceBase {
             error: {status: 404},
             requestURL: originalURL
         };
-        res.render('error', error);
+        res && res.render('error', error);
     };
 
-    addHeaders(configRecord, req, res) {
-        if ((configRecord.headers) && (configRecord.headers.length)) {
-            for (let loop = 0; loop < configRecord.headers.length; loop++) {
-                let header = configRecord.headers[loop];
+    addHeaders(configInfo, req, res) {
+        if ((configInfo) && (configInfo.headers) && (configInfo.headers.length)) {
+            for (let loop = 0; loop < configInfo.headers.length; loop++) {
+                let header = configInfo.headers[loop];
                 res.header(header.header, header.value);
             }
-            Log.all('Added headers: ' + Log.stringify(configRecord.headers));
+            Log.all('Added headers: ' + Log.stringify(configInfo.headers));
         }
         if (!req || !req.user || !req.user.username) return;
         let headers = Registry.get('Headers');
@@ -41,19 +40,22 @@ class ServiceBase {
     }
 
     addCookies(configRecord, req, res) {
-        if ((configRecord.cookies) && (configRecord.cookies.length)) {
+        let createCookie = (cookieInfo) => {
+            let cookie = {name: cookieInfo.name, value: cookieInfo.value};
+            let age = null;
+            if (cookieInfo.expires) {
+                let offset = parseInt(cookieInfo.expires);
+                let expireTime = new Date(Number(new Date()) + offset);
+                age = {expires: expireTime};
+            } else if (cookieInfo.maxAge) {
+                age = {maxAge: parseInt(cookieInfo.maxAge)};
+            }
+            if (!age) res.cookie(cookie.name, cookie.value);
+            else res.cookie(cookie.name, cookie.value, age);
+        };
+        if ((configRecord) && (configRecord.cookies) && (configRecord.cookies.length)) {
             for (let loop = 0; loop < configRecord.cookies.length; loop++) {
-                let cookie = {name: configRecord.cookies[loop].name, value: configRecord.cookies[loop].value};
-                let age = null;
-                if (configRecord.cookies[loop].expires) {
-                    let offset = parseInt(configRecord.cookies[loop].expires);
-                    let expireTime = new Date(Number(new Date()) + offset);
-                    age = {expires: expireTime};
-                } else if (configRecord.cookies[loop].maxAge) {
-                    age = {maxAge: parseInt(configRecord.cookies[loop].maxAge)};
-                }
-                if (!age) res.cookie(cookie.name, cookie.value);
-                else res.cookie(cookie.name, cookie.value, age);
+                createCookie(configRecord.cookies[loop]);
             }
             Log.all('Added cookies: ' + Log.stringify(configRecord.cookies));
         }
@@ -63,24 +65,14 @@ class ServiceBase {
         let userCookies = cookies.users[req.user.username];
         if (!userCookies) return;
         for (let loop = 0; loop < userCookies.length; loop++) {
-            let cookie = userCookies[loop];
-            let age = null;
-            if (cookie.expires) {
-                let offset = parseInt(cookie.expires);
-                let expireTime = new Date(Number(new Date()) + offset);
-                age = {expires: expireTime};
-            } else if (cookie.maxAge) {
-                age = {maxAge: parseInt(cookie.maxAge)};
-            }
-            if (!age) res.cookie(cookie.name, cookie.value);
-            else res.cookie(cookie.name, cookie.value, age);
+            createCookie(userCookies[loop]);
         }
         Log.all('Added cookies for user: ' + req.user.username);
     }
 
     sendErrorResponse(error, res, status) {
-        res.status(((status) ? status : 500));
-        res.render("error", error);
+        res && res.status(((status) ? status : 500));
+        res && res.render("error", error);
     }
 
     authentication(authenticationStrategies, authenticationName) {

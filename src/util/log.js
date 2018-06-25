@@ -22,7 +22,7 @@ class Log {
     static get ERROR() { return log4js.levels.ERROR; }
     static get FATAL() { return log4js.levels.FATAL; }
     static get OFF() { return log4js.levels.OFF; }
-    static set level( inLogLevel ) { log4js.getLogger().setLevel(inLogLevel); }
+    static set level( inLogLevel ) { log4js.getLogger().level = inLogLevel; }
     static get level( ) { return log4js.getLogger().level; }
     static getLevelFromString ( inLogLevel ) {
         if (!inLogLevel) return Log.OFF;

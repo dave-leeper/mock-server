@@ -4,6 +4,7 @@ const Strings = require('../util/strings' );
 const I18n = require('../util/i18n' );
 const Log = require('../util/log' );
 const accounts = require('./authentication').accounts;
+const reduce = require('../util/algorithm').oneTruthyReduce;
 
 class LocalStrategy {
     constructor() {
@@ -67,10 +68,6 @@ class LocalStrategy {
                 return;
             }
 
-            let reduce = (accumulator, currentValue) => {
-                if (accumulator) return accumulator;
-                return currentValue;
-            };
             let username = req.user.username;
             let account = this.accounts.map(account => (account.username === username? account : null )).reduce(reduce);
             if (!account) {

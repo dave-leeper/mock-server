@@ -7,6 +7,7 @@ Strings.INCORRECT_USER_NAME = 4;
 Strings.INCORRECT_PASSWORD = 5;
 Strings.LOGIN_SUCCESSFUL = 6;
 Strings.LISTENING_ON_PORT = 7;
+Strings.COUNT = 8;
 
 module.exports = Strings;
 

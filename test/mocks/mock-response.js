@@ -30,9 +30,10 @@ MockResponse.prototype.header = function ( name, value ) {
     for (let loop = 0; loop < this.headers.length; loop++) { if (this.headers[loop].header === name) return this.headers[loop].value; }
     return undefined;
 };
-MockResponse.prototype.cookie = function ( name, value ) {
+MockResponse.prototype.cookie = function ( name, value, age ) {
     if (value) {
-        this.cookies.push({name: name, value: value});
+        if (age) this.cookies.push({ name: name, value: value, age: age });
+        else this.cookies.push({ name: name, value: value });
         return;
     }
     for (let loop = 0; loop < this.cookies.length; loop++) { if (this.cookies[loop].name === name) return this.cookies[loop].value; }
