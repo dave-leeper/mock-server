@@ -72,7 +72,7 @@ class ServiceBase {
 
     sendErrorResponse(error, res, status) {
         res && res.status(((status) ? status : 500));
-        res && res.render("error", error);
+        res && res.render('error', error);
     }
 
     authentication(authenticationStrategies, authenticationName) {
@@ -92,7 +92,7 @@ class ServiceBase {
     authorization(authorizationStrategies, authorizationInfo) {
         if (!authorizationStrategies || !authorizationInfo || !authorizationInfo.strategy) return null;
         let authorizationStrategy = authorizationStrategies[authorizationInfo.strategy];
-        if (!authorizationStrategy) {
+        if (!authorizationStrategy || !authorizationStrategy.strategy || !authorizationStrategy.strategy.getAuthorization) {
             Log.error( I18n.get( Strings.AUTHORIZATION_NOT_CONFIGURED ));
             return null;
         }

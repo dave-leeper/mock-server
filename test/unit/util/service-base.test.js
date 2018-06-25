@@ -3,9 +3,11 @@
 let chai = require( 'chai' ),
     expect = chai.expect;
 let ServiceBase = require('../../../src/util/service-base' );
+let RouteBuilder = require('../../../src/routers/route-builder' );
 let Registry = require('../../../src/util/registry' );
 let MockRequest = require('../../mocks/mock-request.js');
 let MockResponse = require('../../mocks/mock-response.js');
+let passport = require('passport');
 
 describe( 'As a developer, I need to perform common operations on requests and responses', function() {
     before(() => {
@@ -228,6 +230,97 @@ describe( 'As a developer, I need to perform common operations on requests and r
         expect(mockResponse.cookies[5].name).to.be.equal('MY_COOKIE6');
         expect(mockResponse.cookies[5].value).to.be.equal('MY_COOKIE_VALUE6');
         expect(mockResponse.cookies[5].age.maxAge).to.be.equal(9999);
+    });
+    it ( 'should gracefully handle bad parameters when sending an error', (  ) => {
+        let serviceBase = new ServiceBase();
+        serviceBase.sendErrorResponse(null, null, null);
+        expect(true).to.be.equal(true);
+        let mockResponse = new MockResponse();
+        serviceBase.sendErrorResponse(null, mockResponse, null);
+        expect(mockResponse.sendStatus).to.be.equal(500);
+        expect(mockResponse.renderString).to.be.equal('error');
+        expect(mockResponse.renderObject).to.be.null;
+        serviceBase.sendErrorResponse(null, mockResponse, 401);
+        expect(mockResponse.sendStatus).to.be.equal(401);
+        expect(mockResponse.renderString).to.be.equal('error');
+        expect(mockResponse.renderObject).to.be.null;
+        let errObj = { stuff: 'stuff' };
+        serviceBase.sendErrorResponse(errObj, mockResponse, null);
+        expect(mockResponse.sendStatus).to.be.equal(500);
+        expect(mockResponse.renderString).to.be.equal('error');
+        expect(mockResponse.renderObject).to.be.equal(errObj);
+    });
+    it ( 'should send an error', (  ) => {
+        let serviceBase = new ServiceBase();
+        let mockResponse = new MockResponse();
+        let errObj = { stuff: 'stuff' };
+        serviceBase.sendErrorResponse(errObj, mockResponse, 401);
+        expect(mockResponse.sendStatus).to.be.equal(401);
+        expect(mockResponse.renderString).to.be.equal('error');
+        expect(mockResponse.renderObject).to.be.equal(errObj);
+    });
+    it ( 'should gracefully handle bad parameters when getting an authentication strategy handler', (  ) => {
+        let serviceBase = new ServiceBase();
+        let handler = serviceBase.authentication(null, null);
+        expect(handler).to.be.equal(null);
+        handler = serviceBase.authentication('stuff', null);
+        expect(handler).to.be.equal(null);
+        handler = serviceBase.authentication(null, 'stuff');
+        expect(handler).to.be.equal(null);
+        let authentication = {
+            authentication: [
+                {
+                    name: 'local',
+                    strategyFile: 'local-strategy.js',
+                    config: { successRedirect: '/ping', failureRedirect: '/login'}
+                }
+            ]
+        };
+        Registry.register(passport, 'Passport');
+        let result = RouteBuilder.buildAuthenticationStrategies(authentication);
+        expect(result).to.be.equal(true);
+        Registry.unregisterAll();
+        handler = serviceBase.authentication(authentication.authenticationStrategies, 'local');
+        expect(handler).to.be.equal(null);
+    });
+    it ( 'should build an authentication strategy handler', (  ) => {
+        let serviceBase = new ServiceBase();
+        let authentication = {
+            authentication: [
+                {
+                    name: 'local',
+                    strategyFile: 'local-strategy.js',
+                    config: { successRedirect: '/ping', failureRedirect: '/login'}
+                }
+            ]
+        };
+        Registry.register(passport, 'Passport');
+        let result = RouteBuilder.buildAuthenticationStrategies(authentication);
+        expect(result).to.be.equal(true);
+        let handler = serviceBase.authentication(authentication.authenticationStrategies, 'local');
+        expect(handler).not.to.be.null;
+    });
+    it ( 'should gracefully handle bad parameters when getting an authorization strategy handler', (  ) => {
+        let serviceBase = new ServiceBase();
+        let handler = serviceBase.authorization(null, null);
+        expect(handler).to.be.equal(null);
+        handler = serviceBase.authorization({}, null);
+        expect(handler).to.be.equal(null);
+        handler = serviceBase.authorization(null, 'yada');
+        expect(handler).to.be.equal(null);
+        handler = serviceBase.authorization(null, { strategy: 'yada' });
+        expect(handler).to.be.equal(null);
+        handler = serviceBase.authorization({}, { strategy: 'yada' });
+        expect(handler).to.be.equal(null);
+        handler = serviceBase.authorization({ yada: 'yada' }, { strategy: 'yada' });
+        expect(handler).to.be.equal(null);
+        handler = serviceBase.authorization({ yada: { strategy: 'yada' }}, { strategy: 'yada' });
+        expect(handler).to.be.equal(null);
+    });
+    it ( 'should build an authorization strategy handler', (  ) => {
+        let serviceBase = new ServiceBase();
+        let handler = serviceBase.authorization({ yada: { strategy: { getAuthorization: () => { return 'super yada' }}}}, { strategy: 'yada' });
+        expect(handler).to.be.equal('super yada');
     });
 });
 
