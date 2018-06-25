@@ -230,7 +230,7 @@
       "path": "/hotswap",
       "name": "Hot swap",
       "description": "Hot swaps the server configuration.",
-      "serviceFile": "hotswap.js"
+      "serviceFile": "hot-swap.js"
     }
   ],
   "databaseConnections" : [

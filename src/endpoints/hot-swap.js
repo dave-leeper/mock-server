@@ -20,10 +20,11 @@ class HotSwap extends ServiceBase {
             next && next();
             return;
         }
-        let jsonResponse = JSON.stringify({status: 'Hot-swapping server'});
+        let jsonResponse = JSON.stringify({status: 'Hot-swapping server...'});
         res.status(200);
         res.send(jsonResponse);
-        let router = server.createRouter(JSON.parse(config));
+        let parsedConfig = JSON.parse(config);
+        let router = server.createRouter(parsedConfig);
         server.useRouter(router)
     }
 }
