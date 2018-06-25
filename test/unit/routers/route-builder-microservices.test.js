@@ -145,7 +145,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(containsPath(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
         expect(hasHandler(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
         expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
-        expect(mockExpressRouter.gets[0].handler.length).to.be.equal(2);
+        expect(mockExpressRouter.gets[0].handler.length).to.be.equal(3);
     });
     it ( 'should support authorization', ( ) => {
         let config = {
@@ -177,6 +177,28 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(containsPath(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
         expect(hasHandler(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
         expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
-        expect(mockExpressRouter.gets[0].handler.length).to.be.equal(2);
+        expect(mockExpressRouter.gets[0].handler.length).to.be.equal(3);
+    });
+    it ( 'should support logging', ( ) => {
+        let config = {
+            microservices: [
+                {
+                    path: "/get_microservice",
+                    name: "A microservice",
+                    description: "A microservice used for testing",
+                    serviceFile: "mocks.js",
+                    logging:  'ALL'
+                },
+            ]
+        };
+        let routeBuilderMicroservices = new RouteBuilderMicroservices();
+        let mockExpressRouter = new MockExpressRouter();
+        let result = routeBuilderMicroservices.connect( mockExpressRouter, config );
+        expect(result).to.be.equal(true);
+        expect(mockExpressRouter.gets.length).to.be.equal(1);
+        expect(containsPath(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
+        expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
+        expect(mockExpressRouter.gets[0].handler.length).to.be.equal(4);
     });
 });

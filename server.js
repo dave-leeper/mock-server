@@ -150,6 +150,7 @@ class Server {
             Log.error("Error shutting down database connections. Error: " + Log.stringify(err));
         }
         this.server.close(callback);
+        this.router = null;
     }
     createRouter(serverConfig) {
         let router = express.Router();

@@ -7,6 +7,9 @@ const Log = require ( './log.js' );
 const uuidv4 = require('uuid/v4');
 
 class ServiceBase {
+    constructor() {
+        this.storedLoggingLevel = [];
+    }
     notFoundResponse(req, res) {
         let originalURL = ((req && req.originalUrl) ? req.originalUrl : undefined);
         const error = {
@@ -39,7 +42,7 @@ class ServiceBase {
         Log.all('Added headers for user: ' + req.user.username);
     }
 
-    addCookies(configRecord, req, res) {
+    addCookies(configInfo, req, res) {
         let createCookie = (cookieInfo) => {
             let cookie = {name: cookieInfo.name, value: cookieInfo.value};
             let age = null;
@@ -53,11 +56,11 @@ class ServiceBase {
             if (!age) res.cookie(cookie.name, cookie.value);
             else res.cookie(cookie.name, cookie.value, age);
         };
-        if ((configRecord) && (configRecord.cookies) && (configRecord.cookies.length)) {
-            for (let loop = 0; loop < configRecord.cookies.length; loop++) {
-                createCookie(configRecord.cookies[loop]);
+        if ((configInfo) && (configInfo.cookies) && (configInfo.cookies.length)) {
+            for (let loop = 0; loop < configInfo.cookies.length; loop++) {
+                createCookie(configInfo.cookies[loop]);
             }
-            Log.all('Added cookies: ' + Log.stringify(configRecord.cookies));
+            Log.all('Added cookies: ' + Log.stringify(configInfo.cookies));
         }
         if (!req || !req.user || !req.user.username) return;
         let cookies = Registry.get('Cookies');
@@ -97,6 +100,19 @@ class ServiceBase {
             return null;
         }
         return authorizationStrategy.strategy.getAuthorization();
+    }
+    loggingBegin(configInfo) {
+        if (!configInfo || !configInfo.logging) return null;
+        return (req, res, next) => {
+            this.storedLoggingLevel.unshift(Log.level);
+            Log.level = Log.getLevelFromString(configInfo.logging);
+        };
+    }
+    loggingEnd(configInfo) {
+        if (!configInfo || !configInfo.logging) return null;
+        return (req, res, next) => {
+            Log.level = this.storedLoggingLevel.shift();
+        };
     }
 }
 

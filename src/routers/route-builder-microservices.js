@@ -42,6 +42,7 @@ class RouteBuilderMicroservices extends ServiceBase {
                         } else if (data.viewName) {
                             res.render( data.viewName, data.viewObject );
                         }
+                        next && next();
                     }, ( error ) => {
                         Log.trace(microservice.name + ' executed with error(s).');
                         res.status(error.status);
@@ -58,12 +59,14 @@ class RouteBuilderMicroservices extends ServiceBase {
                         } else if (error.viewName) {
                             res.render( error.viewName, error.viewObject );
                         }
+                        next && next();
                     });
                 } catch (err) {
                     let error = 'Error executing microservice ' + microservice.name + '.';
                     Log.error(error + ' Error: ' + Log.stringify(err));
                     res.status(500);
                     res.render("error", { message: error, error: { status: 500, stack: err.stack }});
+                    next && next();
                 }
             };
 
@@ -74,11 +77,16 @@ class RouteBuilderMicroservices extends ServiceBase {
                 }
             }
 
+            let loggingBegin = this.loggingBegin(microservice);
+            if (loggingBegin) handlers.push(loggingBegin);
             let authentication = this.authentication(config.authenticationStrategies, microservice.authentication);
             if (authentication) handlers.push(authentication);
             let authorization = this.authorization(config.authenticationStrategies, microservice.authorization);
             if (authorization) handlers.push(authorization);
             handlers.push(handler);
+            let loggingEnd = this.loggingEnd(microservice);
+            if (loggingEnd) handlers.push(loggingEnd);
+            handlers.push((req, res) => {});
             if ("GET" === verb) {
                 router.get(microservice.path, handlers);
             } else if ("PUT" === verb) {

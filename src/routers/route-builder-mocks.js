@@ -60,11 +60,16 @@ class RouteBuilderMocks extends ServiceBase {
                     continue;
                 }
             }
+            let loggingBegin = this.loggingBegin(mock);
+            if (loggingBegin) handlers.push(loggingBegin);
             let authentication = this.authentication(config.authenticationStrategies, mock.authentication);
             if (authentication) handlers.push(authentication);
             let authorization = this.authorization(config.authenticationStrategies, mock.authorization);
             if (authorization) handlers.push(authorization);
             handlers.push(handler);
+            let loggingEnd = this.loggingEnd(mock);
+            if (loggingEnd) handlers.push(loggingEnd);
+            handlers.push((req, res) => {});
             if ('GET' === verb) {
                 router.get(mock.path, handlers);
             } else if ('PUT' === verb) {
@@ -83,7 +88,7 @@ class RouteBuilderMocks extends ServiceBase {
     }
 
     ___buildJSONFileHandlerFromString(mock) {
-        return (req, res) => {
+        return (req, res, next) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             this.addHeaders(mock, req, res);
             this.addCookies(mock, req, res);
@@ -94,111 +99,119 @@ class RouteBuilderMocks extends ServiceBase {
             JSON.parse(jsonResponseFileContents); // Parse JSON to make sure it's valid.
 
             res.send(jsonResponseFileContents);
+            next && next();
         };
     }
 
     ___buildHandlebarsFileHandlerFromString(mock) {
-        return (req, res) => {
+        return (req, res, next) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             this.addHeaders(mock, req, res);
             this.addCookies(mock, req, res);
             let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response, req);
             responseFile = path.resolve('./src/views', responseFile);
-            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
+            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return next && next();
 
             res.render(responseFile, mock.hbsData);
+            next && next();
         };
     }
 
     ___buildTextFileHandlerFromString(mock) {
-        return (req, res) => {
+        return (req, res, next) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             this.addHeaders(mock, req, res);
             this.addCookies(mock, req, res);
             let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response, req);
-            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
+            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return next && next();
 
             let textResponseFileContents = Files.readFileSync(responseFile, mock.encoding);
             res.send(textResponseFileContents);
+            next && next();
         };
     }
 
     ___buildBLOBFileHandlerFromString(mock) {
-        return (req, res) => {
+        return (req, res, next) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             this.addHeaders(mock, req, res);
             this.addCookies(mock, req, res);
             let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response, req);
             Log.trace('Sending file: ' + responseFile + '.');
-            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
+            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return next && next();
 
             res.sendFile(responseFile);
+            next && next();
         };
     }
 
     ___buildJSONFileHandlerFromArrayOfStrings(mock) {
-        return (req, res) => {
+        return (req, res, next) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             let index = RouteBuilderMocks.___getIndex(mock);
             let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response[index], req);
 
             this.addHeaders(mock, req, res);
             this.addCookies(mock, req, res);
-            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
+            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return next && next();
 
             let jsonResponseFileContents = Files.readFileSync(responseFile, mock.encoding);
             JSON.parse(jsonResponseFileContents); // Check for valid JSON
             res.send(jsonResponseFileContents);
             RouteBuilderMocks.___incrementIndex(mock, index);
+            next && next();
         };
     }
 
     ___buildHandlebarsFileHandlerFromArrayOfStrings(mock) {
-        return (req, res) => {
+        return (req, res, next) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             let index = RouteBuilderMocks.___getIndex(mock);
             let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response[index], req);
             this.addHeaders(mock, req, res);
             this.addCookies(mock, req, res);
-            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
+            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return next && next();
 
             res.render(responseFile, mock.hbsData[index]);
             RouteBuilderMocks.___incrementIndex(mock, index);
+            next && next();
         };
     }
 
     ___buildTextFileHandlerFromArrayOfStrings(mock) {
-        return (req, res) => {
+        return (req, res, next) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             let index = RouteBuilderMocks.___getIndex(mock);
             let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response[index], req);
             this.addHeaders(mock, req, res);
             this.addCookies(mock, req, res);
-            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
+            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return next && next();
 
             let textResponseFileContents = Files.readFileSync(responseFile, mock.encoding);
 
             res.send(textResponseFileContents);
             RouteBuilderMocks.___incrementIndex(mock, index);
+            next && next();
         };
     }
 
     ___buildBLOBFileHandlerFromArrayOfStrings(mock) {
-        return (req, res) => {
+        return (req, res, next) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             let index = RouteBuilderMocks.___getIndex(mock);
             let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response[index], req);
             this.addHeaders(mock, req, res);
             this.addCookies(mock, req, res);
-            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
+            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return next && next();
 
             res.sendFile(responseFile);
             RouteBuilderMocks.___incrementIndex(mock, index);
+            next && next();
         };
     }
 
     ___buildJSONHandlerFromObject(mock) {
-        return (req, res) => {
+        return (req, res, next) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             this.addHeaders(mock, req, res);
             this.addCookies(mock, req, res);
@@ -206,11 +219,12 @@ class RouteBuilderMocks extends ServiceBase {
             let jsonResponse = JSON.stringify(mock.response);
             JSON.parse(jsonResponse);   // Check for valid JSON
             res.send(jsonResponse);
+            next && next();
         };
     }
 
     ___buildTextHandlerFromObject(mock) {
-        return (req, res) => {
+        return (req, res, next) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             this.addHeaders(mock, req, res);
             this.addCookies(mock, req, res);
@@ -218,11 +232,12 @@ class RouteBuilderMocks extends ServiceBase {
             let textResponse = ((mock.response.text) ? mock.response.text : JSON.stringify(mock.response));
 
             res.send(textResponse);
+            next && next();
         };
     }
 
     ___buildJSONHandlerFromArrayOfObjects(mock) {
-        return (req, res) => {
+        return (req, res, next) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             let index = RouteBuilderMocks.___getIndex(mock);
 
@@ -233,11 +248,12 @@ class RouteBuilderMocks extends ServiceBase {
             JSON.parse(jsonResponse);   // Check for valid JSON
             res.send(jsonResponse);
             RouteBuilderMocks.___incrementIndex(mock, index);
+            next && next();
         };
     }
 
     ___buildTextHandlerFromArrayOfObjects(mock) {
-        return (req, res) => {
+        return (req, res, next) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             let index = RouteBuilderMocks.___getIndex(mock);
 
@@ -248,6 +264,7 @@ class RouteBuilderMocks extends ServiceBase {
 
             res.send(textResponse);
             RouteBuilderMocks.___incrementIndex(mock, index);
+            next && next();
         };
     }
 

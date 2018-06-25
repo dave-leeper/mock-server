@@ -40,14 +40,19 @@ class RouteBuilderDatabase extends ServiceBase {
         let handlers = [];
         let authentication = this.authentication(config.authenticationStrategies, databaseConnectionInfo.authentication);
         let authorization = this.authorization(config.authenticationStrategies, databaseConnectionInfo.authorization);
+        let loggingBegin = this.loggingBegin(databaseConnectionInfo);
+        let loggingEnd = this.loggingEnd(databaseConnectionInfo);
         let handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
             if (Log.will(Log.ERROR)) Log.error('Connect handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
+        if (loggingBegin) handlers.push(loggingBegin);
         if (authentication) handlers.push(authentication);
         if (authorization) handlers.push(authorization);
         handlers.push(handler);
+        if (loggingEnd) handlers.push(loggingEnd);
+        handlers.push((req, res) => {});
         router.get(connectPath, handlers);
 
         handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'connection-ping-builder.js');
@@ -58,9 +63,12 @@ class RouteBuilderDatabase extends ServiceBase {
             if (Log.will(Log.ERROR)) Log.error('Ping handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
+        if (loggingBegin) handlers.push(loggingBegin);
         if (authentication) handlers.push(authentication);
         if (authorization) handlers.push(authorization);
         handlers.push(handler);
+        if (loggingEnd) handlers.push(loggingEnd);
+        handlers.push((req, res) => {});
         router.get(pingPath, handlers);
 
         handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'connection-disconnect-builder.js');
@@ -71,9 +79,12 @@ class RouteBuilderDatabase extends ServiceBase {
             if (Log.will(Log.ERROR))Log.error('Disconnect handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
+        if (loggingBegin) handlers.push(loggingBegin);
         if (authentication) handlers.push(authentication);
         if (authorization) handlers.push(authorization);
         handlers.push(handler);
+        if (loggingEnd) handlers.push(loggingEnd);
+        handlers.push((req, res) => {});
         router.get(disconnectPath, handlers);
     }
 
@@ -99,14 +110,19 @@ class RouteBuilderDatabase extends ServiceBase {
         let handlers = [];
         let authentication = this.authentication(config.authenticationStrategies, databaseConnectionInfo.authentication);
         let authorization = this.authorization(config.authenticationStrategies, databaseConnectionInfo.authorization);
+        let loggingBegin = this.loggingBegin(databaseConnectionInfo);
+        let loggingEnd = this.loggingEnd(databaseConnectionInfo);
         let handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
             if (Log.will(Log.ERROR)) Log.error('Index exists handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
+        if (loggingBegin) handlers.push(loggingBegin);
         if (authentication) handlers.push(authentication);
         if (authorization) handlers.push(authorization);
         handlers.push(handler);
+        if (loggingEnd) handlers.push(loggingEnd);
+        handlers.push((req, res) => {});
         router.get(existsPath, handlers);
 
         handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'index-create-builder.js');
@@ -117,9 +133,12 @@ class RouteBuilderDatabase extends ServiceBase {
             if (Log.will(Log.ERROR)) Log.error('Create index handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
+        if (loggingBegin) handlers.push(loggingBegin);
         if (authentication) handlers.push(authentication);
         if (authorization) handlers.push(authorization);
         handlers.push(handler);
+        if (loggingEnd) handlers.push(loggingEnd);
+        handlers.push((req, res) => {});
         router.post(createPath, handlers);
 
         handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'index-drop-builder.js');
@@ -130,9 +149,12 @@ class RouteBuilderDatabase extends ServiceBase {
             if (Log.will(Log.ERROR)) Log.error('Drop index handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
+        if (loggingBegin) handlers.push(loggingBegin);
         if (authentication) handlers.push(authentication);
         if (authorization) handlers.push(authorization);
         handlers.push(handler);
+        if (loggingEnd) handlers.push(loggingEnd);
+        handlers.push((req, res) => {});
         router.delete(dropPath, handlers);
 
         handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'index-create-mapping-builder.js');
@@ -143,9 +165,12 @@ class RouteBuilderDatabase extends ServiceBase {
             if (Log.will(Log.ERROR)) Log.error('Create index mapping handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
+        if (loggingBegin) handlers.push(loggingBegin);
         if (authentication) handlers.push(authentication);
         if (authorization) handlers.push(authorization);
         handlers.push(handler);
+        if (loggingEnd) handlers.push(loggingEnd);
+        handlers.push((req, res) => {});
         router.post(createMappingPath, handlers);
     }
 
@@ -172,14 +197,19 @@ class RouteBuilderDatabase extends ServiceBase {
         let handlers = [];
         let authentication = this.authentication(config.authenticationStrategies, databaseConnectionInfo.authentication);
         let authorization = this.authorization(config.authenticationStrategies, databaseConnectionInfo.authorization);
+        let loggingBegin = this.loggingBegin(databaseConnectionInfo);
+        let loggingEnd = this.loggingEnd(databaseConnectionInfo);
         let handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
             if (Log.will(Log.ERROR)) Log.error('Data insert handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
+        if (loggingBegin) handlers.push(loggingBegin);
         if (authentication) handlers.push(authentication);
         if (authorization) handlers.push(authorization);
         handlers.push(handler);
+        if (loggingEnd) handlers.push(loggingEnd);
+        handlers.push((req, res) => {});
         router.post(insertPath, handlers);
 
         handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'data-update-builder.js');
@@ -190,9 +220,12 @@ class RouteBuilderDatabase extends ServiceBase {
             if (Log.will(Log.ERROR)) Log.error('Data update handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
+        if (loggingBegin) handlers.push(loggingBegin);
         if (authentication) handlers.push(authentication);
         if (authorization) handlers.push(authorization);
         handlers.push(handler);
+        if (loggingEnd) handlers.push(loggingEnd);
+        handlers.push((req, res) => {});
         router.post(updatePath, handlers);
 
         handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'data-delete-builder.js');
@@ -203,9 +236,12 @@ class RouteBuilderDatabase extends ServiceBase {
             if (Log.will(Log.ERROR)) Log.error('Data delete handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
+        if (loggingBegin) handlers.push(loggingBegin);
         if (authentication) handlers.push(authentication);
         if (authorization) handlers.push(authorization);
         handlers.push(handler);
+        if (loggingEnd) handlers.push(loggingEnd);
+        handlers.push((req, res) => {});
         router.delete(deletePath, handlers);
 
         handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'data-query-builder.js');
@@ -216,9 +252,12 @@ class RouteBuilderDatabase extends ServiceBase {
             if (Log.will(Log.ERROR)) Log.error('Data query handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
+        if (loggingBegin) handlers.push(loggingBegin);
         if (authentication) handlers.push(authentication);
         if (authorization) handlers.push(authorization);
         handlers.push(handler);
+        if (loggingEnd) handlers.push(loggingEnd);
+        handlers.push((req, res) => {});
         router.get(queryPath, handlers);
     }
 

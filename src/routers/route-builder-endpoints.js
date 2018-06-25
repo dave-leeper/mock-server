@@ -22,11 +22,16 @@ class RouteBuilderEndpoints extends ServiceBase {
                     continue;
                 }
             }
+            let loggingBegin = this.loggingBegin(endpoint);
+            if (loggingBegin) handlers.push(loggingBegin);
             let authentication = this.authentication(config.authenticationStrategies, endpoint.authentication);
             if (authentication) handlers.push(authentication);
             let authorization = this.authorization(config.authenticationStrategies, endpoint.authorization);
             if (authorization) handlers.push(authorization);
             handlers.push(end.do);
+            let loggingEnd = this.loggingEnd(endpoint);
+            if (loggingEnd) handlers.push(loggingEnd);
+            handlers.push((req, res) => {});
             if ("GET" === verb) {
                 router.get(endpoint.path, handlers);
             } else if ("PUT" === verb) {

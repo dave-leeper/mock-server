@@ -857,7 +857,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(containsPath(mockExpressRouter.gets, '/text')).to.be.equal(true);
         expect(hasHandler(mockExpressRouter.gets, '/text')).to.be.equal(true);
         expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
-        expect(mockExpressRouter.gets[0].handler.length).to.be.equal(2);
+        expect(mockExpressRouter.gets[0].handler.length).to.be.equal(3);
     });
     it ( 'should support authorization', ( ) => {
         let config = {
@@ -890,6 +890,29 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(containsPath(mockExpressRouter.gets, '/text')).to.be.equal(true);
         expect(hasHandler(mockExpressRouter.gets, '/text')).to.be.equal(true);
         expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
-        expect(mockExpressRouter.gets[0].handler.length).to.be.equal(2);
+        expect(mockExpressRouter.gets[0].handler.length).to.be.equal(3);
+    });
+    it ( 'should support log levels', ( ) => {
+        let config = {
+            mocks: [
+                {
+                    path: '/text',
+                    response: [{ text: 'Text' }, { message: 'Text' }],
+                    responseType: 'TEXT',
+                    headers: [{ header: 'Access-Control-Allow-Origin', value: '*' }],
+                    cookies: [{ name : 'MY_COOKIE', value: 'MY_COOKIE_VALUE' }],
+                    logging:  'ALL'
+                }
+            ]
+        };
+        let routeBuilderMocks = new RouteBuilderMocks();
+        let mockExpressRouter = new MockExpressRouter();
+        let result = routeBuilderMocks.connect( mockExpressRouter, config );
+        expect(result).to.be.equal(true);
+        expect(mockExpressRouter.gets.length).to.be.equal(1);
+        expect(containsPath(mockExpressRouter.gets, '/text')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.gets, '/text')).to.be.equal(true);
+        expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
+        expect(mockExpressRouter.gets[0].handler.length).to.be.equal(4);
     });
 });
