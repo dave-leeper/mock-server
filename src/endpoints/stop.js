@@ -11,13 +11,13 @@ class Stop extends ServiceBase {
         this.addCookies(this.configInfo, req, res);
         let server = Registry.get('Server');
         if (!server || !server.stop) {
-            let jsonResponse = JSON.stringify({status: 'Error stopping server'});
+            let jsonResponse = JSON.stringify({status: 'Error stopping server.'});
             res.status(500);
             res.send(jsonResponse);
             next && next();
             return;
         }
-        let jsonResponse = JSON.stringify({status: 'Stopping server'});
+        let jsonResponse = JSON.stringify({status: 'Stopping server...'});
         res.status(200);
         res.send(jsonResponse);
         server.stop();

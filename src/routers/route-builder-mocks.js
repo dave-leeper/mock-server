@@ -93,7 +93,7 @@ class RouteBuilderMocks extends ServiceBase {
             this.addHeaders(mock, req, res);
             this.addCookies(mock, req, res);
             let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response, req);
-            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return;
+            if (!RouteBuilderMocks.___fileExists( responseFile, res )) return next && next();
 
             let jsonResponseFileContents = Files.readFileSync(responseFile);
             JSON.parse(jsonResponseFileContents); // Parse JSON to make sure it's valid.

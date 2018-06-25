@@ -28,7 +28,7 @@ class RouteBuilderEndpoints extends ServiceBase {
             if (authentication) handlers.push(authentication);
             let authorization = this.authorization(config.authenticationStrategies, endpoint.authorization);
             if (authorization) handlers.push(authorization);
-            handlers.push(end.do);
+            handlers.push((req, res, next) => { end.do(req, res, next); });
             let loggingEnd = this.loggingEnd(endpoint);
             if (loggingEnd) handlers.push(loggingEnd);
             handlers.push((req, res) => {});
