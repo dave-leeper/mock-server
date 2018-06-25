@@ -859,4 +859,37 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
         expect(mockExpressRouter.gets[0].handler.length).to.be.equal(2);
     });
+    it ( 'should support authorization', ( ) => {
+        let config = {
+            authentication: [
+                {
+                    name: "local",
+                    strategyFile: "local-strategy.js",
+                    config: { "successRedirect": "/ping", "failureRedirect": "/login"}
+                }
+            ],
+            mocks: [
+                {
+                    path: '/text',
+                    response: [{ text: 'Text' }, { message: 'Text' }],
+                    responseType: 'TEXT',
+                    headers: [{ header: 'Access-Control-Allow-Origin', value: '*' }],
+                    cookies: [{ name : 'MY_COOKIE', value: 'MY_COOKIE_VALUE' }],
+                    authorization:  { strategy: "local", groups: [ "admin" ] }
+                }
+            ]
+        };
+        Registry.register(passport, 'Passport');
+        RouteBuilder.buildAuthenticationStrategies(config);
+
+        let routeBuilderMocks = new RouteBuilderMocks();
+        let mockExpressRouter = new MockExpressRouter();
+        let result = routeBuilderMocks.connect( mockExpressRouter, config );
+        expect(result).to.be.equal(true);
+        expect(mockExpressRouter.gets.length).to.be.equal(1);
+        expect(containsPath(mockExpressRouter.gets, '/text')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.gets, '/text')).to.be.equal(true);
+        expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
+        expect(mockExpressRouter.gets[0].handler.length).to.be.equal(2);
+    });
 });

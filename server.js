@@ -2,7 +2,6 @@
 
 const express = require('express');
 const http = require('http');
-const router = express.Router();
 const path = require('path');
 const favicon = require('serve-favicon');
 const cookieParser = require('cookie-parser');
@@ -10,7 +9,7 @@ const session = require("express-session");
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const passport = require('passport');
-const Router = require('./src/routers/route-builder');
+const RouteBuilder = require('./src/routers/route-builder');
 const Strings = require('./src/util/strings' );
 const I18n = require('./src/util/i18n' );
 const Log = require('./src/util/log');
@@ -24,8 +23,8 @@ class Server {
     constructor() {
         this.express = null;
         this.server = null;
+        this.router = null;
     }
-
     init(port, config, callback) {
         let locals = {
             port: port
@@ -106,12 +105,11 @@ class Server {
         this.express.use(fileUpload());
         this.express.use(passport.initialize());
         this.express.use(passport.session());
-        passport.serializeUser(function(user, done) { done(null, user); });
-        passport.deserializeUser(function(user, done) { done(null, user); });
+        passport.serializeUser((user, done) => { done(null, user); });
+        passport.deserializeUser((user, done) => { done(null, user); });
         Registry.register(passport, 'Passport');
 
-        // app.use('/', index);
-        this.express.use('/', Router.connect(router, serverConfig));
+        this.useRouter(this.createRouter(serverConfig));
 
         // catch 404 and forward to error handler
         this.express.use(function (req, res, next) {
@@ -142,7 +140,6 @@ class Server {
         Log.info( I18n.format( I18n.get( Strings.LISTENING_ON_PORT ), normalizedPort ));
         return this;
     }
-
     stop(callback) {
         try {
             let databaseConnectorManager = Registry.get('DatabaseConnectorManager');
@@ -153,9 +150,19 @@ class Server {
             Log.error("Error shutting down database connections. Error: " + Log.stringify(err));
         }
         this.server.close(callback);
-        this.express._router = undefined;
     }
-
+    createRouter(serverConfig) {
+        let router = express.Router();
+        return RouteBuilder.connect(router, serverConfig);
+    }
+    useRouter(router) {
+        if (!this.router) {
+            this.express.use('/', (req, res, next) => {
+                this.router(req, res, next)
+            });
+        }
+        this.router = router;
+    }
     /**
      * Normalize a port into a number, string, or false.
      * @param val {Object} The port number or pipe.
