@@ -14,21 +14,31 @@ function Mongodb ( name ) {
 }
 
 /**
- * @param name - name of the connection.
+ * @param config - database config.
  * @constructor
  */
 Mongodb.prototype.connect = function (config ) {
     let self = this;
     return new Promise (( inResolve, inReject ) => {
         try {
-            this.client = new mongodb.MongoClient;
+            let client = mongodb.MongoClient;;
             this.config = config;
-            this.client.connect(config.url, (err, db) => {
-                self.db = db;
-                if (err)
-                    inReject && inReject({ status: false, error: 'Error while connecting.' });
-                else
-                    inResolve && inResolve( this.client );
+            if (!config || !config.url || !config.db) {
+                inReject && inReject({status: false, error: 'Error while connecting.'});
+                return;
+            }
+            client.connect(config.url, { useNewUrlParser: true }, (err, client) => {
+                if (err) {
+                    inReject && inReject({status: false, error: 'Error while connecting.'});
+                    return;
+                }
+                self.client = client;
+                self.db = client.db(config.db);
+                if (!self.db) {
+                    inReject && inReject({status: false, error: 'Error while connecting.'});
+                    return;
+                }
+                inResolve && inResolve( this.client );
             });
         } catch (err) {
             inReject && inReject({ status: false, error: 'Error while connecting.' });
@@ -38,7 +48,11 @@ Mongodb.prototype.connect = function (config ) {
 
 Mongodb.prototype.ping = function (  ) {
     return new Promise (( inResolve, inReject ) => {
-        let admin = new mongodb.Admin();
+        if (!this.client || !this.db) {
+            inResolve && inResolve( false );
+            return;
+        }
+        const admin = this.db.admin();
         admin.ping(null, ( error, result ) => {
             if (error) {
                 inResolve && inResolve( false );
@@ -56,9 +70,10 @@ Mongodb.prototype.disconnect = function ( ) {
         } else {
             try {
                 this.client.close();
+                this.client = null;
                 inResolve && inResolve(true);
             } catch (err) {
-                inReject && inReject ( { status: false, error: 'Error while disconnecting.' } );
+                inReject && inReject ( { status: false, error: 'Error while disconnecting. ' + JSON.stringify(err)} );
             }
         }
     });

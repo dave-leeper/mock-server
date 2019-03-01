@@ -66,7 +66,7 @@ describe( 'As a developer, I need to connect, ping, and disconnect to/from elast
     });
     after(() => {
     });
-    it ( 'should be able to connect, ping, and disconnect the connection', ( done ) => {
+    it ( 'should be able to connect, ping, and disconnect the elasticsearch connection', ( done ) => {
         elasticSearch.connect( configInfo.config ).then(() => {
             elasticSearch.ping().then(( pingResult ) => {
                 expect( pingResult ).to.be.equal( true );
@@ -104,7 +104,7 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
         });
     });
 
-    it ( 'should not create indexes (tables) with invalid mappings.', ( done ) => {
+    it ( 'should not create indexes (tables) with invalid elasticsearch mappings.', ( done ) => {
         const invalidSchema = {index:"test",type:"",body:{properties:{"title": { "type": "string" }}}};
         elasticSearch.createIndex( invalidSchema ).then(( createResult ) => {
             expect( createResult.status ).to.be.equal( true );
@@ -118,7 +118,7 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
         });
     });
 
-    it ( 'should create indexes (tables) with valid mappings.', ( done ) => {
+    it ( 'should create indexes (tables) with valid elasticsearch mappings.', ( done ) => {
         elasticSearch.createIndex( schema ).then(( createResult ) => {
             expect( createResult.status ).to.be.equal( true );
             elasticSearch.createIndexMapping( schema ).then(( createResult ) => {
@@ -126,20 +126,22 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
                 done();
             }, ( error ) => {
                 expect( false ).to.be.equal( true );
+                done();
             });
         }, ( error ) => {
             expect( false ).to.be.equal( true );
+            done();
         });
     });
 
-    it ( 'should be able to to tell when an index does not exist.', ( done ) => {
+    it ( 'should be able to to tell when an index does not exist in elasticsearch.', ( done ) => {
         elasticSearch.indexExists( 'JUNK' ).then(( existsResult ) => {
             expect( existsResult ).to.be.equal( false );
             done();
         });
     });
 
-    it ( 'should not delete indexes that do not exist.', ( done ) => {
+    it ( 'should not delete indexes that do not existin elasticsearch.', ( done ) => {
         elasticSearch.dropIndex( 'JUNK' ).then(( dropResult ) => {
             expect( true ).to.be.equal( false );
         }, ( error ) => {
@@ -148,7 +150,7 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
         });
     });
 
-    it ( 'should be able to create an index', ( done ) => {
+    it ( 'should be able to create an indexin elasticsearch', ( done ) => {
         elasticSearch.createIndex( schema ).then(( createResult ) => {
             expect( createResult.status ).to.be.equal( true );
             elasticSearch.indexExists( schema.index ).then((existsResult2 ) => {
@@ -158,7 +160,7 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
         });
     });
 
-    it ( 'should not create indexes that already exist.', ( done ) => {
+    it ( 'should not create indexes that already exist in elasticsearch.', ( done ) => {
         elasticSearch.createIndex( schema ).then(( createResult ) => {
             expect( createResult.status ).to.be.equal( true );
             elasticSearch.createIndex( schema ).then(( createResult2 ) => {
@@ -169,7 +171,7 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
         });
     }).timeout(5000);
 });
-describe( 'As a developer, I need to perform CRUD operations on the database.', function() {
+describe( 'As a developer, I need to perform CRUD operations on the elasticsearch database.', function() {
     before(( done ) => {
         elasticSearch.connect(configInfo.config).then(() => {
             done();
@@ -199,7 +201,7 @@ describe( 'As a developer, I need to perform CRUD operations on the database.', 
             done();
         });
     });
-    it ( 'should be able to insert records into the database.', ( done ) => {
+    it ( 'should be able to insert records into the elasticsearch database.', ( done ) => {
         elasticSearch.insert( data ).then(( result ) => {
             // expect( result.result ).to.be.equal( 'created' );
             done();
@@ -207,7 +209,7 @@ describe( 'As a developer, I need to perform CRUD operations on the database.', 
             expect( true ).to.be.equal( false );
         });
     });
-    it ( 'should be able to query records in the database.', ( done ) => {
+    it ( 'should be able to query records in the elasticsearch database.', ( done ) => {
         // TODO: Works when run stand-alone in debugger. Fails when run as a group of tests.
         // elasticSearch.insert( data ).then(( result ) => {
         //     elasticSearch.read( query ).then(( result ) => {
@@ -228,7 +230,7 @@ describe( 'As a developer, I need to perform CRUD operations on the database.', 
         // });
     });
 
-    it ( 'should be able to update records in the database.', ( done ) => {
+    it ( 'should be able to update records in the elasticsearch database.', ( done ) => {
         elasticSearch.insert( data ).then(( result ) => {
             elasticSearch.update( updateData ).then(( result ) => {
                 expect( result.result ).to.be.equal( 'updated' );
@@ -240,7 +242,7 @@ describe( 'As a developer, I need to perform CRUD operations on the database.', 
             expect( true ).to.be.equal( false );
         });
     });
-    it ( 'should be able to delete records in the database.', ( done ) => {
+    it ( 'should be able to delete records in the elasticsearch database.', ( done ) => {
         elasticSearch.insert( data ).then(( result ) => {
             elasticSearch.delete( data ).then(( result ) => {
                 expect( result.result ).to.be.equal( 'deleted' );
