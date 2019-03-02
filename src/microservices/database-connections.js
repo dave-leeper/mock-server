@@ -20,14 +20,14 @@ class DatabaseConnections {
             for (let loop = 0; loop < databaseConnections.length; loop++) {
                 let databaseConnection = databaseConnections[loop];
                 let paths = [];
-                if (databaseConnection.generateConnectionAPI) {
-                    paths = paths.concat(RouteBuilderDatabase.buildConnectionAPIPaths(databaseConnection.name));
+                if (databaseConnection.generateElasticsearchConnectionAPI) {
+                    paths = paths.concat(RouteBuilderDatabase.buildElasticsearchConnectionAPIPaths(databaseConnection.name));
                 }
-                if (databaseConnection.generateIndexAPI) {
-                    paths = paths.concat(RouteBuilderDatabase.buildIndexAPIPaths(databaseConnection.name));
+                if (databaseConnection.generateElasticsearchIndexAPI) {
+                    paths = paths.concat(RouteBuilderDatabase.buildElasticsearchIndexAPIPaths(databaseConnection.name));
                 }
-                if (databaseConnection.generateDataAPI) {
-                    paths = paths.concat(RouteBuilderDatabase.buildDataAPIPaths(databaseConnection.name));
+                if (databaseConnection.generateElasticsearchDataAPI) {
+                    paths = paths.concat(RouteBuilderDatabase.buildElasticsearchDataAPIPaths(databaseConnection.name));
                 }
                 result.push({
                     "name": databaseConnection.name,

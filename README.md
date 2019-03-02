@@ -370,12 +370,12 @@ contains any information needed to configure the connection. It is up to
 the database connector class to interpret this data. This field is
 ignored when the connector is set up to use a backend database server
 using the backendURL parameter.
-* **generateConnectionAPI**<br/>
+* **generateElasticsearchConnectionAPI**<br/>
 Example: true<br/>
 A boolean value indicating if connection REST APIs should be generated
 for the connection. Optional. Defaults to false. These APIs are
 described in the API section, below.
-* **generateIndexAPI**<br/>
+* **generateElasticsearchIndexAPI**<br/>
 Example: true<br/>
 A boolean value indicating if index REST APIs should be generated for
 the connection. Optional. Defaults to false. These APIs are described in
@@ -396,13 +396,13 @@ level for the server is used.
  * A simple config for Elasticsearch.
 ```
   "databaseConnections" : [
-    {<br/>
+    {
       "name": "elasticsearch",
       "description": "Elasticsearch service.",
       "databaseConnector": "elasticsearch-database-connector.js",
-      "generateConnectionAPI": true,
-      "generateIndexAPI": true,
-      "generateDataAPI": true,
+      "generateElasticsearchConnectionAPI": true,
+      "generateElasticsearchIndexAPI": true,
+      "generateElasticsearchDataAPI": true,
       "config": {
         "host": "localhost:9200",
         "log": "trace"

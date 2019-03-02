@@ -1,7 +1,7 @@
 'use strict';
-let ValidationHelper = require('./validation-helper.js');
+let ValidationHelper = require('../validation-helper.js');
 
-function DataInsertBuilder( builder, databaseConnectionInfo )
+function IndexCreateBuilder( builder, databaseConnectionInfo )
 {
     if (!ValidationHelper.validateBuilder(builder) || !ValidationHelper.validateDatabaseConnectionInfo(databaseConnectionInfo)) return;
     return (req, res, next) => {
@@ -9,19 +9,18 @@ function DataInsertBuilder( builder, databaseConnectionInfo )
         if (!databaseConnection) return next && next();
         if (!ValidationHelper.validateUploadFile(builder, req, res)) return next && next();
 
-        let newData = JSON.parse(req.files.filename.data.toString());
-        let data = { index: newData.index, type: newData.type, id: newData.id, body: newData.data };
-        databaseConnection.insert(data).then(( response ) => {
-            const success = {status: "success", operation: "Insert data to " + newData.index + "/" + newData.type + "."};
-            res.status(201);
+        let indexData = JSON.parse(req.files.filename.data.toString());
+        databaseConnection.createIndex( indexData ).then(() => {
+            const success = {status: "success", operation: "Create index " + indexData.index};
+            res.status(200);
             res.send(JSON.stringify(success));
             next && next();
         }).catch(( err ) => {
-            const error = { message: "Error inserting record. " + err, error: { status: 500 }};
+            const error = { message: "Error creating index. " + err.error, error: { status: 500 }};
             builder.sendErrorResponse(error, res);
             next && next();
         });
     };
 }
 
-module.exports = DataInsertBuilder;
+module.exports = IndexCreateBuilder;

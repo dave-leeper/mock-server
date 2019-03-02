@@ -3,21 +3,21 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    MockRequest = require('../../../mocks/mock-request.js'),
-    MockResponse = require('../../../mocks/mock-response.js'),
-    MockRouteBuilderBase = require('../../../mocks/mock-route-builder-base.js'),
-    ConnectionDisconnectBuilder = require('../../../../src/routers/data-route-builders/connection-disconnect-builder.js'),
-    DatabaseConnectorManager = require('../../../../src/database/database-connection-manager.js'),
-    Registry = require('../../../../src/util/registry.js');
+    MockRequest = require('../../../../mocks/mock-request.js'),
+    MockResponse = require('../../../../mocks/mock-response.js'),
+    MockRouteBuilderBase = require('../../../../mocks/mock-route-builder-base.js'),
+    ConnectionDisconnectBuilder = require('../../../../../src/routers/data-route-builders/elasticsearch/connection-disconnect-builder.js'),
+    DatabaseConnectorManager = require('../../../../../src/database/database-connection-manager.js'),
+    Registry = require('../../../../../src/util/registry.js');
 let config = {
     "databaseConnections" : [
         {
             "name": "elasticsearch",
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
-            "generateConnectionAPI": true,
-            "generateIndexAPI": true,
-            "generateDataAPI": true,
+            "generateElasticsearchConnectionAPI": true,
+            "generateElasticsearchIndexAPI": true,
+            "generateElasticsearchDataAPI": true,
             "config": {
                 "host": "localhost:9200",
                 "log": "trace"

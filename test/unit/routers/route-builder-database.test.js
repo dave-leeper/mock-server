@@ -30,7 +30,7 @@ let config2 = {
             "name": "elasticsearch",
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
-            "generateConnectionAPI": true,
+            "generateElasticsearchConnectionAPI": true,
             "config": {
                 "host": "localhost:9200",
                 "log": "trace"
@@ -45,7 +45,7 @@ let config3 = {
             "name": "elasticsearch",
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
-            "generateIndexAPI": true,
+            "generateElasticsearchIndexAPI": true,
             "config": {
                 "host": "localhost:9200",
                 "log": "trace"
@@ -60,7 +60,7 @@ let config4 = {
             "name": "elasticsearch",
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
-            "generateDataAPI": true,
+            "generateElasticsearchDataAPI": true,
             "config": {
                 "host": "localhost:9200",
                 "log": "trace"
@@ -75,9 +75,9 @@ let config5 = {
             "name": "elasticsearch",
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
-            "generateConnectionAPI": true,
-            "generateIndexAPI": true,
-            "generateDataAPI": true,
+            "generateElasticsearchConnectionAPI": true,
+            "generateElasticsearchIndexAPI": true,
+            "generateElasticsearchDataAPI": true,
             "config": {
                 "host": "localhost:9200",
                 "log": "trace"
@@ -131,7 +131,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(result).to.be.equal(false);
     });
     it ( 'should build connection API paths from a name', ( ) => {
-        let paths = RouteBuilderDatabase.buildConnectionAPIPaths('test');
+        let paths = RouteBuilderDatabase.buildElasticsearchConnectionAPIPaths('test');
         expect(Array.isArray(paths)).to.be.equal(true);
         expect(paths.length).to.be.equal(3);
         expect(paths[0]).to.be.equal('/test/connection/connect');
@@ -139,7 +139,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(paths[2]).to.be.equal('/test/connection/disconnect');
     });
     it ( 'should build index API paths from a name', ( ) => {
-        let paths = RouteBuilderDatabase.buildIndexAPIPaths('test');
+        let paths = RouteBuilderDatabase.buildElasticsearchIndexAPIPaths('test');
         expect(Array.isArray(paths)).to.be.equal(true);
         expect(paths.length).to.be.equal(4);
         expect(paths[0]).to.be.equal('/test/index/:index/exists');
@@ -148,7 +148,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(paths[3]).to.be.equal('/test/index/mapping');
     });
     it ( 'should build data API paths from a name', ( ) => {
-        let paths = RouteBuilderDatabase.buildDataAPIPaths('test');
+        let paths = RouteBuilderDatabase.buildElasticsearchDataAPIPaths('test');
         expect(Array.isArray(paths)).to.be.equal(true);
         expect(paths.length).to.be.equal(4);
         expect(paths[0]).to.be.equal('/test/data');
@@ -159,7 +159,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
     it ( 'should be build connection routes based on config information', ( ) => {
         let routeBuilderDatabase = new RouteBuilderDatabase();
         let mockExpressRouter = new MockExpressRouter();
-        routeBuilderDatabase.buildConnectionAPI( mockExpressRouter, config, configInfo );
+        routeBuilderDatabase.buildElasticsearchConnectionAPI( mockExpressRouter, config, configInfo );
         expect(mockExpressRouter.gets.length).to.be.equal(3);
         expect(mockExpressRouter.option.length).to.be.equal(0);
         expect(mockExpressRouter.posts.length).to.be.equal(0);
@@ -176,7 +176,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
     it ( 'should be build index routes based on config information', ( ) => {
         let routeBuilderDatabase = new RouteBuilderDatabase();
         let mockExpressRouter = new MockExpressRouter();
-        routeBuilderDatabase.buildIndexAPI( mockExpressRouter, config, configInfo );
+        routeBuilderDatabase.buildElasticsearchIndexAPI( mockExpressRouter, config, configInfo );
         expect(mockExpressRouter.gets.length).to.be.equal(1);
         expect(mockExpressRouter.option.length).to.be.equal(0);
         expect(mockExpressRouter.posts.length).to.be.equal(2);
@@ -195,7 +195,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
     it ( 'should be build data routes based on config information', ( ) => {
         let routeBuilderDatabase = new RouteBuilderDatabase();
         let mockExpressRouter = new MockExpressRouter();
-        routeBuilderDatabase.buildDataAPI( mockExpressRouter, config, configInfo );
+        routeBuilderDatabase.buildElasticsearchDataAPI( mockExpressRouter, config, configInfo );
         expect(mockExpressRouter.gets.length).to.be.equal(1);
         expect(mockExpressRouter.option.length).to.be.equal(0);
         expect(mockExpressRouter.posts.length).to.be.equal(2);
@@ -317,9 +317,9 @@ describe( 'As a developer, I need an API for creating database connections', fun
                     name: "elasticsearch",
                     description: "Elasticsearch service.",
                     databaseConnector: "elasticsearch.js",
-                    generateConnectionAPI: true,
-                    generateIndexAPI: true,
-                    generateDataAPI: true,
+                    generateElasticsearchConnectionAPI: true,
+                    generateElasticsearchIndexAPI: true,
+                    generateElasticsearchDataAPI: true,
                     config: {
                         host: "localhost:9200",
                         log: "trace"
@@ -400,9 +400,9 @@ describe( 'As a developer, I need an API for creating database connections', fun
                     name: "elasticsearch",
                     description: "Elasticsearch service.",
                     databaseConnector: "elasticsearch.js",
-                    generateConnectionAPI: true,
-                    generateIndexAPI: true,
-                    generateDataAPI: true,
+                    generateElasticsearchConnectionAPI: true,
+                    generateElasticsearchIndexAPI: true,
+                    generateElasticsearchDataAPI: true,
                     config: {
                         host: "localhost:9200",
                         log: "trace"
@@ -476,9 +476,9 @@ describe( 'As a developer, I need an API for creating database connections', fun
                     name: "elasticsearch",
                     description: "Elasticsearch service.",
                     databaseConnector: "elasticsearch.js",
-                    generateConnectionAPI: true,
-                    generateIndexAPI: true,
-                    generateDataAPI: true,
+                    generateElasticsearchConnectionAPI: true,
+                    generateElasticsearchIndexAPI: true,
+                    generateElasticsearchDataAPI: true,
                     config: {
                         host: "localhost:9200",
                         log: "trace"

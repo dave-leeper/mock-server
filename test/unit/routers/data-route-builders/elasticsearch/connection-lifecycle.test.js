@@ -3,18 +3,18 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    Server = require('../../../../server.js'),
+    Server = require('../../../../../server.js'),
     request = require('request'),
-    Registry = require('../../../../src/util/registry.js');
+    Registry = require('../../../../../src/util/registry.js');
 let config = {
     "databaseConnections" : [
         {
             "name": "elasticsearch",
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
-            "generateConnectionAPI": true,
-            "generateIndexAPI": true,
-            "generateDataAPI": true,
+            "generateElasticsearchConnectionAPI": true,
+            "generateElasticsearchIndexAPI": true,
+            "generateElasticsearchDataAPI": true,
             "config": {
                 "host": "localhost:9200",
                 "log": "trace"

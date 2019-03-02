@@ -22,20 +22,20 @@ class RouteBuilderDatabase extends ServiceBase {
 
         for (let loop3 = 0; loop3 < config.databaseConnections.length; loop3++) {
             let databaseConnectionInfo = config.databaseConnections[loop3];
-            if (databaseConnectionInfo.generateConnectionAPI) this.buildConnectionAPI( router, config, databaseConnectionInfo);
-            if (databaseConnectionInfo.generateIndexAPI) this.buildIndexAPI( router, config, databaseConnectionInfo);
-            if (databaseConnectionInfo.generateDataAPI) this.buildDataAPI( router, config, databaseConnectionInfo);
+            if (databaseConnectionInfo.generateElasticsearchConnectionAPI) this.buildElasticsearchConnectionAPI( router, config, databaseConnectionInfo);
+            if (databaseConnectionInfo.generateElasticsearchIndexAPI) this.buildElasticsearchIndexAPI( router, config, databaseConnectionInfo);
+            if (databaseConnectionInfo.generateElasticsearchDataAPI) this.buildElasticsearchDataAPI( router, config, databaseConnectionInfo);
         }
         databaseConnectionCallback && databaseConnectionCallback(databaseConnectionPromises);
         return true;
     }
 
-    buildConnectionAPI(router, config, databaseConnectionInfo) {
-        let paths = RouteBuilderDatabase.buildConnectionAPIPaths(databaseConnectionInfo.name);
+    buildElasticsearchConnectionAPI(router, config, databaseConnectionInfo) {
+        let paths = RouteBuilderDatabase.buildElasticsearchConnectionAPIPaths(databaseConnectionInfo.name);
         let connectPath = paths[0];
         let pingPath = paths[1];
         let disconnectPath = paths[2];
-        let handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'connection-connect-builder.js');
+        let handlerBuilderPath = path.resolve('./src/routers/data-route-builders/elasticsearch/', 'connection-connect-builder.js');
         let handlerBuilder = require(handlerBuilderPath);
         let handlers = [];
         let authentication = this.authentication(config.authenticationStrategies, databaseConnectionInfo.authentication);
@@ -55,7 +55,7 @@ class RouteBuilderDatabase extends ServiceBase {
         handlers.push((req, res) => {});
         router.get(connectPath, handlers);
 
-        handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'connection-ping-builder.js');
+        handlerBuilderPath = path.resolve('./src/routers/data-route-builders/elasticsearch/', 'connection-ping-builder.js');
         handlerBuilder = require(handlerBuilderPath);
         handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
@@ -71,7 +71,7 @@ class RouteBuilderDatabase extends ServiceBase {
         handlers.push((req, res) => {});
         router.get(pingPath, handlers);
 
-        handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'connection-disconnect-builder.js');
+        handlerBuilderPath = path.resolve('./src/routers/data-route-builders/elasticsearch/', 'connection-disconnect-builder.js');
         handlerBuilder = require(handlerBuilderPath);
         handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
@@ -88,7 +88,7 @@ class RouteBuilderDatabase extends ServiceBase {
         router.get(disconnectPath, handlers);
     }
 
-    static buildConnectionAPIPaths(name) {
+    static buildElasticsearchConnectionAPIPaths(name) {
         let paths = [];
         if (!name) return paths;
         let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
@@ -99,13 +99,13 @@ class RouteBuilderDatabase extends ServiceBase {
         return paths;
     }
 
-    buildIndexAPI(router, config, databaseConnectionInfo) {
-        let paths = RouteBuilderDatabase.buildIndexAPIPaths(databaseConnectionInfo.name);
+    buildElasticsearchIndexAPI(router, config, databaseConnectionInfo) {
+        let paths = RouteBuilderDatabase.buildElasticsearchIndexAPIPaths(databaseConnectionInfo.name);
         let existsPath = paths[0];
         let createPath = paths[1];
         let dropPath = paths[2];
         let createMappingPath = paths[3];
-        let handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'index-exists-builder.js');
+        let handlerBuilderPath = path.resolve('./src/routers/data-route-builders/elasticsearch/', 'index-exists-builder.js');
         let handlerBuilder = require(handlerBuilderPath);
         let handlers = [];
         let authentication = this.authentication(config.authenticationStrategies, databaseConnectionInfo.authentication);
@@ -125,7 +125,7 @@ class RouteBuilderDatabase extends ServiceBase {
         handlers.push((req, res) => {});
         router.get(existsPath, handlers);
 
-        handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'index-create-builder.js');
+        handlerBuilderPath = path.resolve('./src/routers/data-route-builders/elasticsearch/', 'index-create-builder.js');
         handlerBuilder = require(handlerBuilderPath);
         handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
@@ -141,7 +141,7 @@ class RouteBuilderDatabase extends ServiceBase {
         handlers.push((req, res) => {});
         router.post(createPath, handlers);
 
-        handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'index-drop-builder.js');
+        handlerBuilderPath = path.resolve('./src/routers/data-route-builders/elasticsearch/', 'index-drop-builder.js');
         handlerBuilder = require(handlerBuilderPath);
         handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
@@ -157,7 +157,7 @@ class RouteBuilderDatabase extends ServiceBase {
         handlers.push((req, res) => {});
         router.delete(dropPath, handlers);
 
-        handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'index-create-mapping-builder.js');
+        handlerBuilderPath = path.resolve('./src/routers/data-route-builders/elasticsearch/', 'index-create-mapping-builder.js');
         handlerBuilder = require(handlerBuilderPath);
         handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
@@ -174,7 +174,7 @@ class RouteBuilderDatabase extends ServiceBase {
         router.post(createMappingPath, handlers);
     }
 
-    static buildIndexAPIPaths(name) {
+    static buildElasticsearchIndexAPIPaths(name) {
         let paths = [];
         if (!name) return paths;
         let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
@@ -186,13 +186,13 @@ class RouteBuilderDatabase extends ServiceBase {
         return paths;
     }
 
-    buildDataAPI(router, config, databaseConnectionInfo) {
-        let paths = RouteBuilderDatabase.buildDataAPIPaths(databaseConnectionInfo.name);
+    buildElasticsearchDataAPI(router, config, databaseConnectionInfo) {
+        let paths = RouteBuilderDatabase.buildElasticsearchDataAPIPaths(databaseConnectionInfo.name);
         let insertPath = paths[0];
         let updatePath = paths[1];
         let deletePath = paths[2];
         let queryPath = paths[3];
-        let handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'data-insert-builder.js');
+        let handlerBuilderPath = path.resolve('./src/routers/data-route-builders/elasticsearch/', 'data-insert-builder.js');
         let handlerBuilder = require(handlerBuilderPath);
         let handlers = [];
         let authentication = this.authentication(config.authenticationStrategies, databaseConnectionInfo.authentication);
@@ -212,7 +212,7 @@ class RouteBuilderDatabase extends ServiceBase {
         handlers.push((req, res) => {});
         router.post(insertPath, handlers);
 
-        handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'data-update-builder.js');
+        handlerBuilderPath = path.resolve('./src/routers/data-route-builders/elasticsearch/', 'data-update-builder.js');
         handlerBuilder = require(handlerBuilderPath);
         handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
@@ -228,7 +228,7 @@ class RouteBuilderDatabase extends ServiceBase {
         handlers.push((req, res) => {});
         router.post(updatePath, handlers);
 
-        handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'data-delete-builder.js');
+        handlerBuilderPath = path.resolve('./src/routers/data-route-builders/elasticsearch/', 'data-delete-builder.js');
         handlerBuilder = require(handlerBuilderPath);
         handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
@@ -244,7 +244,7 @@ class RouteBuilderDatabase extends ServiceBase {
         handlers.push((req, res) => {});
         router.delete(deletePath, handlers);
 
-        handlerBuilderPath = path.resolve('./src/routers/data-route-builders/', 'data-query-builder.js');
+        handlerBuilderPath = path.resolve('./src/routers/data-route-builders/elasticsearch/', 'data-query-builder.js');
         handlerBuilder = require(handlerBuilderPath);
         handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
@@ -261,7 +261,7 @@ class RouteBuilderDatabase extends ServiceBase {
         router.get(queryPath, handlers);
     }
 
-    static buildDataAPIPaths(name) {
+    static buildElasticsearchDataAPIPaths(name) {
         let paths = [];
         if (!name) return paths;
         let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();

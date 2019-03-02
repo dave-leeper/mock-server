@@ -3,21 +3,21 @@
 
 let chai = require( 'chai' ),
     expect = chai.expect,
-    MockRequest = require('../../../mocks/mock-request.js'),
-    MockResponse = require('../../../mocks/mock-response.js'),
-    MockRouteBuilderBase = require('../../../mocks/mock-route-builder-base.js'),
-    DataQueryBuilder = require('../../../../src/routers/data-route-builders/data-query-builder.js'),
-    DatabaseConnectorManager = require('../../../../src/database/database-connection-manager.js'),
-    Registry = require('../../../../src/util/registry.js');
+    MockRequest = require('../../../../mocks/mock-request.js'),
+    MockResponse = require('../../../../mocks/mock-response.js'),
+    MockRouteBuilderBase = require('../../../../mocks/mock-route-builder-base.js'),
+    IndexCreateBuilder = require('../../../../../src/routers/data-route-builders/elasticsearch/index-create-builder.js'),
+    DatabaseConnectorManager = require('../../../../../src/database/database-connection-manager.js'),
+    Registry = require('../../../../../src/util/registry.js');
 let config = {
     "databaseConnections" : [
         {
             "name": "elasticsearch",
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
-            "generateConnectionAPI": true,
-            "generateIndexAPI": true,
-            "generateDataAPI": true,
+            "generateElasticsearchConnectionAPI": true,
+            "generateElasticsearchIndexAPI": true,
+            "generateElasticsearchDataAPI": true,
             "config": {
                 "host": "localhost:9200",
                 "log": "trace"
@@ -28,7 +28,7 @@ let config = {
     ]
 };
 
-describe( 'As a developer, I need an API for querying data in the database', function() {
+describe( 'As a developer, I need an API to create database indexes', function() {
     before(() => {
     });
     beforeEach(() => {
@@ -41,26 +41,26 @@ describe( 'As a developer, I need an API for querying data in the database', fun
     });
     it ( 'should not build a handler using bad parameters', ( ) => {
         let mockRouteBuilderBase = new MockRouteBuilderBase();
-        let dataQueryBuilder = DataQueryBuilder(mockRouteBuilderBase, null );
-        expect(dataQueryBuilder).to.be.undefined;
-        dataQueryBuilder = DataQueryBuilder(null, config.databaseConnections[0] );
-        expect(dataQueryBuilder).to.be.undefined;
-        dataQueryBuilder = DataQueryBuilder(null, null );
-        expect(dataQueryBuilder).to.be.undefined;
-        dataQueryBuilder = DataQueryBuilder(mockRouteBuilderBase, {} );
-        expect(dataQueryBuilder).to.be.undefined;
-        dataQueryBuilder = DataQueryBuilder({}, config.databaseConnections[0] );
-        expect(dataQueryBuilder).to.be.undefined;
-        dataQueryBuilder = DataQueryBuilder({}, {} );
-        expect(dataQueryBuilder).to.be.undefined;
+        let indexCreateBuilder = IndexCreateBuilder(mockRouteBuilderBase, null );
+        expect(indexCreateBuilder).to.be.undefined;
+        indexCreateBuilder = IndexCreateBuilder(null, config.databaseConnections[0] );
+        expect(indexCreateBuilder).to.be.undefined;
+        indexCreateBuilder = IndexCreateBuilder(null, null );
+        expect(indexCreateBuilder).to.be.undefined;
+        indexCreateBuilder = IndexCreateBuilder(mockRouteBuilderBase, {} );
+        expect(indexCreateBuilder).to.be.undefined;
+        indexCreateBuilder = IndexCreateBuilder({}, config.databaseConnections[0] );
+        expect(indexCreateBuilder).to.be.undefined;
+        indexCreateBuilder = IndexCreateBuilder({}, {} );
+        expect(indexCreateBuilder).to.be.undefined;
     });
     it ( 'should gracefully handle an invalid environment', ( ) => {
         Registry.unregisterAll();
         let mockRouteBuilderBase = new MockRouteBuilderBase();
-        let dataQueryBuilder = DataQueryBuilder(mockRouteBuilderBase, config.databaseConnections[0] );
+        let indexCreateBuilder = IndexCreateBuilder(mockRouteBuilderBase, config.databaseConnections[0] );
         let req = new MockRequest();
         let res = new MockResponse();
-        dataQueryBuilder( req, res );
+        indexCreateBuilder( req, res );
         expect(mockRouteBuilderBase.err).to.not.be.null;
         expect(mockRouteBuilderBase.err.message).to.be.equal('No database connection manager.');
         expect(mockRouteBuilderBase.err.error).to.not.be.null;
@@ -78,8 +78,8 @@ describe( 'As a developer, I need an API for querying data in the database', fun
         expect(mockRouteBuilderBase.cookies[0].value).to.be.equal('MY_COOKIE_VALUE1');
         mockRouteBuilderBase.reset();
         Registry.register(new DatabaseConnectorManager(), 'DatabaseConnectorManager');
-        dataQueryBuilder = DataQueryBuilder(mockRouteBuilderBase, { name: 'JUNK' });
-        dataQueryBuilder( req, res );
+        indexCreateBuilder = IndexCreateBuilder(mockRouteBuilderBase, { name: 'JUNK' });
+        indexCreateBuilder( req, res );
         expect(mockRouteBuilderBase.err).to.not.be.null;
         expect(mockRouteBuilderBase.err.message).to.be.equal('Error connecting to database. No connection found for JUNK.');
         expect(mockRouteBuilderBase.err.error).to.not.be.null;
@@ -91,20 +91,21 @@ describe( 'As a developer, I need an API for querying data in the database', fun
         expect(Array.isArray(mockRouteBuilderBase.cookies)).to.be.equal(true);
         expect(mockRouteBuilderBase.cookies.length).to.be.equal(0);
     });
-    it ( 'should gracefully handle invalid request parameters', ( ) => {
+    it ( 'should gracefully handle invalid upload files', ( ) => {
         let databaseConnectorManager = new DatabaseConnectorManager();
         databaseConnectorManager.databaseConnectors.push({
             name: 'elasticsearch',
-            read: ()  => { return new Promise (( inResolve, inReject ) => { inResolve && inResolve( 1 );});}
+            createIndex: ()  => { return new Promise (( inResolve, inReject ) => { inResolve && inResolve( 1 );});}
         });
         Registry.register(databaseConnectorManager, 'DatabaseConnectorManager');
         let mockRouteBuilderBase = new MockRouteBuilderBase();
-        let dataQueryBuilder = DataQueryBuilder(mockRouteBuilderBase, config.databaseConnections[0]);
+        let indexCreateBuilder = IndexCreateBuilder(mockRouteBuilderBase, config.databaseConnections[0]);
         let req = new MockRequest();
         let res = new MockResponse();
-        dataQueryBuilder( req, res );
+        req.files = null;
+        indexCreateBuilder( req, res );
         expect(mockRouteBuilderBase.err).to.not.be.null;
-        expect(mockRouteBuilderBase.err.message).to.be.equal('Error, no index name provided.');
+        expect(mockRouteBuilderBase.err.message).to.be.equal('Error, no file was uploaded.');
         expect(mockRouteBuilderBase.err.error).to.not.be.null;
         expect(mockRouteBuilderBase.err.error.status).to.be.equal(400);
         expect(mockRouteBuilderBase.headers).to.not.be.null;
@@ -119,10 +120,10 @@ describe( 'As a developer, I need an API for querying data in the database', fun
         expect(mockRouteBuilderBase.cookies[0].name).to.be.equal('MY_COOKIE1');
         expect(mockRouteBuilderBase.cookies[0].value).to.be.equal('MY_COOKIE_VALUE1');
         mockRouteBuilderBase.reset();
-        req.params.index = 'index';
-        dataQueryBuilder( req, res );
+        req.files = {};
+        indexCreateBuilder( req, res );
         expect(mockRouteBuilderBase.err).to.not.be.null;
-        expect(mockRouteBuilderBase.err.message).to.be.equal('Error, no data type provided.');
+        expect(mockRouteBuilderBase.err.message).to.be.equal('Error, no file was uploaded.');
         expect(mockRouteBuilderBase.err.error).to.not.be.null;
         expect(mockRouteBuilderBase.err.error.status).to.be.equal(400);
         expect(mockRouteBuilderBase.headers).to.not.be.null;
@@ -137,10 +138,10 @@ describe( 'As a developer, I need an API for querying data in the database', fun
         expect(mockRouteBuilderBase.cookies[0].name).to.be.equal('MY_COOKIE1');
         expect(mockRouteBuilderBase.cookies[0].value).to.be.equal('MY_COOKIE_VALUE1');
         mockRouteBuilderBase.reset();
-        req.params.type = 'type';
-        dataQueryBuilder( req, res );
+        req.files = {filename:{}};
+        indexCreateBuilder( req, res );
         expect(mockRouteBuilderBase.err).to.not.be.null;
-        expect(mockRouteBuilderBase.err.message).to.be.equal('Error, no record id provided.');
+        expect(mockRouteBuilderBase.err.message).to.be.equal('Error, no file was uploaded.');
         expect(mockRouteBuilderBase.err.error).to.not.be.null;
         expect(mockRouteBuilderBase.err.error.status).to.be.equal(400);
         expect(mockRouteBuilderBase.headers).to.not.be.null;
@@ -155,8 +156,8 @@ describe( 'As a developer, I need an API for querying data in the database', fun
         expect(mockRouteBuilderBase.cookies[0].name).to.be.equal('MY_COOKIE1');
         expect(mockRouteBuilderBase.cookies[0].value).to.be.equal('MY_COOKIE_VALUE1');
         mockRouteBuilderBase.reset();
-        req.params.id = 'id';
-        dataQueryBuilder( req, res );
+        req.files = {filename:{data: JSON.stringify({ name: 'name' })}};
+        indexCreateBuilder( req, res );
         expect(mockRouteBuilderBase.err).to.be.null;
         expect(mockRouteBuilderBase.headers).to.not.be.null;
         expect(Array.isArray(mockRouteBuilderBase.headers)).to.be.equal(true);
@@ -175,17 +176,15 @@ describe( 'As a developer, I need an API for querying data in the database', fun
         let databaseConnectorManager = new DatabaseConnectorManager();
         databaseConnectorManager.databaseConnectors.push({
             name: 'elasticsearch',
-            read: ()  => { return new Promise (( inResolve, inReject ) => { inResolve && inResolve( 1 );});}
+            createIndex: ()  => { return new Promise (( inResolve, inReject ) => { inResolve && inResolve( 1 );});}
         });
         Registry.register(databaseConnectorManager, 'DatabaseConnectorManager');
         let mockRouteBuilderBase = new MockRouteBuilderBase();
-        let dataQueryBuilder = DataQueryBuilder(mockRouteBuilderBase, config.databaseConnections[0]);
+        let indexCreateBuilder = IndexCreateBuilder(mockRouteBuilderBase, config.databaseConnections[0]);
         let req = new MockRequest();
         let res = new MockResponse();
-        req.params.index = 'index';
-        req.params.type = 'type';
-        req.params.id = 'id';
-        dataQueryBuilder( req, res );
+        req.files = {filename:{data: JSON.stringify({ name: 'name' })}};
+        indexCreateBuilder( req, res );
         expect(mockRouteBuilderBase.err).to.be.null;
         expect(mockRouteBuilderBase.headers).to.not.be.null;
         expect(Array.isArray(mockRouteBuilderBase.headers)).to.be.equal(true);

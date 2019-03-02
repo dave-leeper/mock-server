@@ -1,5 +1,5 @@
 'use strict';
-let ValidationHelper = require('./validation-helper.js');
+let ValidationHelper = require('../validation-helper.js');
 
 function DataQueryBuilder( builder, databaseConnectionInfo )
 {
