@@ -1,5 +1,5 @@
 'use strict';
-let ValidationHelper = require('../validation-helper.js');
+let ValidationHelper = require('./validation-helper.js');
 
 function ConnectionDisconnectBuilder ( builder, databaseConnectionInfo ) {
     if (!ValidationHelper.validateBuilder(builder) || !ValidationHelper.validateDatabaseConnectionInfo(databaseConnectionInfo)) return;

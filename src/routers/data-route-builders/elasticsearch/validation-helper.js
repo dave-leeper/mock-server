@@ -1,5 +1,5 @@
 'use strict';
-let Registry = require ( '../../util/registry.js' );
+let Registry = require ( '../../../util/registry.js' );
 
 function ValidationHelper(){}
 
