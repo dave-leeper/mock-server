@@ -81,11 +81,15 @@ Mongodb.prototype.disconnect = function ( ) {
 
 Mongodb.prototype.collectionExists = function ( name ) {
     return new Promise (( inResolve, inReject ) => {
-        if (this.db.collection(name)) {
-            inResolve && inResolve( true );
-        } else {
-            inReject && inReject( { status: false, error: 'Error while checking collection.' } )
-        }
+        this.db.collections( null, (err, collections) => {
+            for (let loop = 0; loop < collections.length; loop++) {
+                if (collections[loop] && collections[loop].collectionName === name) {
+                    inResolve && inResolve(true);
+                    return;
+                }
+            }
+            inResolve && inResolve( false );
+        });
     });
 };
 
@@ -100,18 +104,18 @@ Mongodb.prototype.createCollection = function ( name ) {
             if (err)
                 inReject && inReject({ status: false, error: 'Error while creating collection.' });
             else
-                inResolve && inResolve( this.client );
+                inResolve && inResolve( { status: true } );
         });
     });
 };
 
 Mongodb.prototype.dropCollection = function ( name ) {
     return new Promise (( inResolve, inReject ) => {
-        this.db.collection(name).drop((err, delOK) => {
+        this.db.dropCollection(name, null, (err, delOK) => {
             if (err)
                 inReject && inReject({ status: false, error: 'Error while dropping collection.' });
             else
-                inResolve && inResolve( this.client );
+                inResolve && inResolve( { status: true } );
         });
     });
 };

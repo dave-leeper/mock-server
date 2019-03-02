@@ -6,13 +6,17 @@ const chai = require( 'chai' ),
     MongoDB = require('../../../src/database/mongodb.js'),
     Registry = require('../../../src/util/registry.js');
 const mongodb = new MongoDB();
+const testCollection = 'testCollection';
 let configInfo = {
     name: "mongodb",
     description: "MongoDB service.",
     databaseConnector: "mongodb.js",
     config: {
         url: 'mongodb://localhost:27017',
-        db: 'testdb'
+        db: 'testdb',
+        collections: {
+            testCollection: { w: 0 }
+        }
     }};
 let data = {
     title: "my title",
@@ -55,94 +59,79 @@ describe( 'As a developer, I need to connect, ping, and disconnect to/from mongo
     });
 });
 
-// describe( 'As a developer, I need to create, check for the existence of, and drop elasticsearch indexes.', function() {
-//     before(( done ) => {
-//         mongodb.connect(configInfo.config).then(() => {
-//             done();
-//         });
-//     });
-//     beforeEach(( done ) => {
-//         Registry.unregisterAll();
-//         mongodb.indexExists( schema.index ).then(( exits ) => {
-//             if (!exits) done();
-//             else mongodb.dropIndex( schema.index ).then(() => {
-//                 done();
-//             });
-//         });
-//     });
-//     afterEach(() => {
-//     });
-//     after(( done ) => {
-//         mongodb.disconnect().then(() => {
-//             done();
-//         });
-//     });
-//
-//     it ( 'should not create indexes (tables) with invalid mappings.', ( done ) => {
-//         const invalidSchema = {index:"test",type:"",body:{properties:{"title": { "type": "string" }}}};
-//         mongodb.createIndex( invalidSchema ).then(( createResult ) => {
-//             expect( createResult.status ).to.be.equal( true );
-//             mongodb.createIndexMapping( invalidSchema ).then(( createResult ) => {
-//                 expect( false ).to.be.equal( true );
-//             }, ( error ) => {
-//                 done();
-//             });
-//         }, ( error ) => {
-//             expect( false ).to.be.equal( true );
-//         });
-//     });
-//
-//     it ( 'should create indexes (tables) with valid mappings.', ( done ) => {
-//         mongodb.createIndex( schema ).then(( createResult ) => {
-//             expect( createResult.status ).to.be.equal( true );
-//             mongodb.createIndexMapping( schema ).then(( createResult ) => {
-//                 expect( createResult.status ).to.be.equal( true );
-//                 done();
-//             }, ( error ) => {
-//                 expect( false ).to.be.equal( true );
-//             });
-//         }, ( error ) => {
-//             expect( false ).to.be.equal( true );
-//         });
-//     });
-//
-//     it ( 'should be able to to tell when an index does not exist.', ( done ) => {
-//         mongodb.indexExists( 'JUNK' ).then(( existsResult ) => {
-//             expect( existsResult ).to.be.equal( false );
-//             done();
-//         });
-//     });
-//
-//     it ( 'should not delete indexes that do not exist.', ( done ) => {
-//         mongodb.dropIndex( 'JUNK' ).then(( dropResult ) => {
-//             expect( true ).to.be.equal( false );
-//         }, ( error ) => {
-//             expect( error.status ).to.be.equal( false );
-//             done();
-//         });
-//     });
-//
-//     it ( 'should be able to create an index', ( done ) => {
-//         mongodb.createIndex( schema ).then(( createResult ) => {
-//             expect( createResult.status ).to.be.equal( true );
-//             mongodb.indexExists( schema.index ).then((existsResult2 ) => {
-//                 expect( existsResult2 ).to.be.equal( true );
-//                 done();
-//             });
-//         });
-//     });
-//
-//     it ( 'should not create indexes that already exist.', ( done ) => {
-//         mongodb.createIndex( schema ).then(( createResult ) => {
-//             expect( createResult.status ).to.be.equal( true );
-//             mongodb.createIndex( schema ).then(( createResult2 ) => {
-//                 expect( true ).to.be.equal( false );
-//             }, ( error ) => {
-//                 done();
-//             });
-//         });
-//     }).timeout(5000);
+describe( 'As a developer, I need to create, check for the existence of, and drop mongodb collections.', function() {
+    before(( done ) => {
+        mongodb.connect(configInfo.config).then(() => {
+            done();
+        });
+    });
+    beforeEach(( done ) => {
+        Registry.unregisterAll();
+        mongodb.collectionExists( testCollection ).then(( exits ) => {
+            if (!exits) done();
+            else mongodb.dropCollection( testCollection ).then(() => {
+                done();
+            });
+        });
+    });
+    afterEach(() => {
+    });
+    after(( done ) => {
+        mongodb.disconnect().then(() => {
+            done();
+        });
+    });
+
+    it ( 'should create collections (tables).', ( done ) => {
+        mongodb.createCollection( testCollection ).then(( createResult ) => {
+            expect( createResult.status ).to.be.equal( true );
+            done();
+        }, ( error ) => {
+            expect( false ).to.be.equal( true );
+        });
+    });
+
+    it ( 'should be able to to tell when a collection exists.', ( done ) => {
+        mongodb.createCollection( testCollection ).then(( createResult ) => {
+            expect( createResult.status ).to.be.equal( true );
+            mongodb.collectionExists( testCollection ).then(( existsResult ) => {
+                expect( existsResult ).to.be.equal( true );
+                done();
+            });
+        }, ( error ) => {
+            expect( false ).to.be.equal( true );
+        });
+     });
+
+    it ( 'should be able to to tell when a collection does not exist.', ( done ) => {
+        mongodb.collectionExists( 'JUNK' ).then(( existsResult ) => {
+            expect( existsResult ).to.be.equal( false );
+            done();
+        });
+    });
+
+    it ( 'should drop collections.', ( done ) => {
+        mongodb.createCollection( testCollection ).then(( createResult ) => {
+            expect( createResult.status ).to.be.equal( true );
+            mongodb.dropCollection( testCollection ).then(( dropResult ) => {
+                expect( dropResult.status ).to.be.equal( true );
+                done();
+            }, ( error ) => {
+                expect( false ).to.be.equal( true );
+            });
+        });
+    });
+
+    it ( 'should not drop collections that dont exist.', ( done ) => {
+        mongodb.dropCollection( 'JUNK' ).then(( dropResult ) => {
+            expect( false ).to.be.equal( true );
+        }, ( error ) => {
+            expect( error.status ).to.be.equal( false );
+            done();
+        });
+    });
 // });
+
 // describe( 'As a developer, I need to perform CRUD operations on the database.', function() {
 //     before(( done ) => {
 //         mongodb.connect(configInfo.config).then(() => {
@@ -226,5 +215,5 @@ describe( 'As a developer, I need to connect, ping, and disconnect to/from mongo
 //             expect( true ).to.be.equal( false );
 //         });
 //     });
-// });
+});
 
