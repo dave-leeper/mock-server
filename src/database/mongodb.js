@@ -126,29 +126,33 @@ Mongodb.prototype.insert = function ( name, data ) {
             if (err)
                 inReject && inReject({ status: false, error: 'Error while inserting data.' });
             else
-                inResolve && inResolve( this.client );
+                inResolve && inResolve( { status: true } );
         });
     });
 };
 
 Mongodb.prototype.update = function ( name, query, data ) {
     return new Promise (( inResolve, inReject ) => {
-        this.db.collection(name).updateOne(query, data, (err, updOK) => {
+        let updateOptions = {
+            returnOriginal: false,
+            upsert: false
+        };
+        this.db.collection(name).findOneAndUpdate(query, { $set: data }, updateOptions, (err, updOK) => {
             if (err)
                 inReject && inReject({ status: false, error: 'Error while updating data.' });
             else
-                inResolve && inResolve( this.client );
+                inResolve && inResolve( { status: true } );
         });
     });
 };
 
 Mongodb.prototype.delete = function ( name, query ) {
     return new Promise (( inResolve, inReject ) => {
-        this.db.collection(name).deleteOne(query, (err, delOK) => {
+        this.db.collection(name).findOneAndDelete(query, (err, delOK) => {
             if (err)
                 inReject && inReject({ status: false, error: 'Error while deleting data.' });
             else
-                inResolve && inResolve( this.client );
+                inResolve && inResolve( { status: true } );
         });
     });
 };

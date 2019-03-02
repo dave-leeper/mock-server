@@ -130,90 +130,85 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
             done();
         });
     });
-// });
+});
 
-// describe( 'As a developer, I need to perform CRUD operations on the database.', function() {
-//     before(( done ) => {
-//         mongodb.connect(configInfo.config).then(() => {
-//             done();
-//         });
-//     });
-//     beforeEach(( done ) => {
-//         Registry.unregisterAll();
-//         mongodb.indexExists( schema.index ).then(( exits ) => {
-//             if (exits) return done();
-//             mongodb.createIndex( schema ).then(( ) => {
-//                 mongodb.createIndexMapping( schema ).then(( ) => {
-//                     done();
-//                 });
-//             });
-//         });
-//     });
-//     afterEach(( done ) => {
-//         mongodb.indexExists( schema.index ).then(( exits ) => {
-//             if (!exits) return done();
-//             else mongodb.dropIndex( schema.index ).then(() => {
-//                 done();
-//             });
-//         });
-//     });
-//     after(( done ) => {
-//         mongodb.disconnect().then(() => {
-//             done();
-//         });
-//     });
-//     it ( 'should be able to insert records into the database.', ( done ) => {
-//         mongodb.insert( data ).then(( result ) => {
-//             // expect( result.result ).to.be.equal( 'created' );
-//             done();
-//         }, ( error ) => {
-//             expect( true ).to.be.equal( false );
-//         });
-//     });
-//     it ( 'should be able to query records in the database.', ( done ) => {
-//         // TODO: Works when run stand-alone in debugger. Fails when run as a group of tests.
-//         // mongodb.insert( data ).then(( result ) => {
-//         //     mongodb.read( query ).then(( result ) => {
-//         //         expect( result.hits ).to.not.be.null;
-//         //         expect( Array.isArray(result.hits.hits) ).to.be.equal( true );
-//         //         expect( result.hits.hits.length ).to.be.equal( 1 );
-//         //         expect( result.hits.hits[0] ).to.not.be.null;
-//         //         expect( result.hits.hits[0]._source ).to.not.be.null;
-//         //         expect( result.hits.hits[0]._source.title ).to.be.equal('my title');
-//         //         expect( result.hits.hits[0]._source.content ).to.be.equal('my content');
-//         //         expect( result.hits.hits[0]._source.suggest ).to.be.equal('my suggest');
-//         done();
-//         //     }, ( error ) => {
-//         //         expect( true ).to.be.equal( false );
-//         //     });
-//         // }, ( error ) => {
-//         //     expect( true ).to.be.equal( false );
-//         // });
-//     });
-//
-//     it ( 'should be able to update records in the database.', ( done ) => {
-//         mongodb.insert( data ).then(( result ) => {
-//             mongodb.update( updateData ).then(( result ) => {
-//                 expect( result.result ).to.be.equal( 'updated' );
-//                 done();
-//             }, ( error ) => {
-//                 expect( true ).to.be.equal( false );
-//             });
-//         }, ( error ) => {
-//             expect( true ).to.be.equal( false );
-//         });
-//     });
-//     it ( 'should be able to delete records in the database.', ( done ) => {
-//         mongodb.insert( data ).then(( result ) => {
-//             mongodb.delete( data ).then(( result ) => {
-//                 expect( result.result ).to.be.equal( 'deleted' );
-//                 done();
-//             }, ( error ) => {
-//                 expect( true ).to.be.equal( false );
-//             });
-//         }, ( error ) => {
-//             expect( true ).to.be.equal( false );
-//         });
-//     });
+describe( 'As a developer, I need to perform CRUD operations on the mongodb database.', function() {
+    before(( done ) => {
+        mongodb.connect(configInfo.config).then(() => {
+            done();
+        });
+    });
+    beforeEach(( done ) => {
+        Registry.unregisterAll();
+        mongodb.collectionExists( testCollection ).then(( exits ) => {
+            if (exits) return done();
+            mongodb.createCollection( testCollection ).then(( ) => {
+                done();
+            });
+        });
+    });
+    afterEach(( done ) => {
+        mongodb.collectionExists( testCollection ).then(( exits ) => {
+            if (!exits) return done();
+            else mongodb.dropCollection( testCollection ).then(() => {
+                done();
+            });
+        });
+    });
+    after(( done ) => {
+        mongodb.disconnect().then(() => {
+            done();
+        });
+    });
+    it ( 'should be able to insert records into the database.', ( done ) => {
+        mongodb.insert( testCollection, data ).then(( result ) => {
+            expect( result.status ).to.be.equal( true );
+            done();
+        }, ( error ) => {
+            expect( true ).to.be.equal( false );
+        });
+    });
+    it ( 'should be able to query records in the database.', ( done ) => {
+        mongodb.insert( testCollection, data ).then(( result ) => {
+            mongodb.read( testCollection, query ).then(( result ) => {
+                expect( result ).to.not.be.null;
+                expect( Array.isArray(result) ).to.be.equal( true );
+                expect( result.length ).to.be.equal( 1 );
+                expect( result[0]._id ).to.not.be.null;
+                expect( result[0].title ).to.be.equal('my title');
+                expect( result[0].content ).to.be.equal('my content');
+                expect( result[0].suggest ).to.be.equal('my suggest');
+                done();
+            }, ( error ) => {
+                expect( true ).to.be.equal( false );
+            });
+        }, ( error ) => {
+            expect( true ).to.be.equal( false );
+        });
+    });
+    it ( 'should be able to update records in the database.', ( done ) => {
+        mongodb.insert( testCollection, data ).then(( result ) => {
+            mongodb.update( testCollection, query, updateData ).then(( result ) => {
+                expect( result.status ).to.be.equal( true );
+                done();
+            }, ( error ) => {
+                expect( true ).to.be.equal( false );
+            });
+        }, ( error ) => {
+            expect( true ).to.be.equal( false );
+        });
+    });
+    it ( 'should be able to delete records in the database.', ( done ) => {
+        mongodb.insert( testCollection, data ).then(( result ) => {
+            mongodb.delete( testCollection, data ).then(( result ) => {
+                expect( result.status ).to.be.equal( true );
+                done();
+            }, ( error ) => {
+                expect( true ).to.be.equal( false );
+            });
+        }, ( error ) => {
+            expect( true ).to.be.equal( false );
+        });
+    });
 });
 
