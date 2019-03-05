@@ -7,13 +7,14 @@ let chai = require( 'chai' ),
 const Registry = require('../../../src/util/registry.js');
 const MockExpressRouter = require('../../mocks/mock-express-router.js');
 const RouteBuilder = require('../../../src/routers/route-builder.js');
-const RouteBuilderDatabase = require('../../../src/routers/route-builder-database.js');
+const RouteBuilderDatabase = require('../../../src/routers/route-builder-elasticsearch-database.js');
 const passport = require('passport');
 
 let config = {
     "databaseConnections" : [
         {
             "name": "elasticsearch",
+            "type": "elasticsearch",
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
             "config": {
@@ -28,6 +29,7 @@ let config2 = {
     "databaseConnections" : [
         {
             "name": "elasticsearch",
+            "type": "elasticsearch",
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
             "generateElasticsearchConnectionAPI": true,
@@ -43,6 +45,7 @@ let config3 = {
     "databaseConnections" : [
         {
             "name": "elasticsearch",
+            "type": "elasticsearch",
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
             "generateElasticsearchIndexAPI": true,
@@ -58,6 +61,7 @@ let config4 = {
     "databaseConnections" : [
         {
             "name": "elasticsearch",
+            "type": "elasticsearch",
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
             "generateElasticsearchDataAPI": true,
@@ -73,6 +77,7 @@ let config5 = {
     "databaseConnections" : [
         {
             "name": "elasticsearch",
+            "type": "elasticsearch",
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
             "generateElasticsearchConnectionAPI": true,
@@ -88,6 +93,7 @@ let config5 = {
 };
 let configInfo = {
     name: "elasticsearch",
+    type: "elasticsearch",
     description: "Elasticsearch service.",
     databaseConnector: "elasticsearch.js",
     config: {
@@ -315,6 +321,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
             databaseConnections : [
                 {
                     name: "elasticsearch",
+                    type: "elasticsearch",
                     description: "Elasticsearch service.",
                     databaseConnector: "elasticsearch.js",
                     generateElasticsearchConnectionAPI: true,
@@ -398,6 +405,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
             databaseConnections : [
                 {
                     name: "elasticsearch",
+                    type: "elasticsearch",
                     description: "Elasticsearch service.",
                     databaseConnector: "elasticsearch.js",
                     generateElasticsearchConnectionAPI: true,
@@ -474,6 +482,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
             databaseConnections : [
                 {
                     name: "elasticsearch",
+                    type: "elasticsearch",
                     description: "Elasticsearch service.",
                     databaseConnector: "elasticsearch.js",
                     generateElasticsearchConnectionAPI: true,

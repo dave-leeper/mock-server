@@ -3,7 +3,7 @@
 const RouteBuilderMocks = require ( './route-builder-mocks.js' );
 const RouteBuilderMicroservices = require ( './route-builder-microservices.js' );
 const RouteBuilderEndpoints = require ( './route-builder-endpoints.js' );
-const RouteBuilderDatabase = require ( './route-builder-database.js' );
+const RouteBuilderDatabase = require ( './route-builder-elasticsearch-database.js' );
 const Registry = require ( '../util/registry.js' );
 const Strings = require ( '../util/strings.js' );
 const I18n = require ( '../util/i18n.js' );

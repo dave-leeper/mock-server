@@ -356,6 +356,9 @@ ping that connection.
 Example: "elasticsearch"<br/>
 The name given to a connection.A database can have multiple connections,
 each with a unique name.
+* **typr**<br/>
+Example: "elasticsearch"<br/>
+The type of database connection. Valid values are 'eleasticsearch' and 'mongo'.
 * **description"**<br/>
 Example: "Elasticsearch service."<br/>
 A short human-readable description of the database connection.
@@ -398,6 +401,7 @@ level for the server is used.
   "databaseConnections" : [
     {
       "name": "elasticsearch",
+      "type": "elasticsearch",
       "description": "Elasticsearch service.",
       "databaseConnector": "elasticsearch-database-connector.js",
       "generateElasticsearchConnectionAPI": true,

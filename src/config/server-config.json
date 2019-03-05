@@ -236,6 +236,7 @@
     {
       "name": "elasticsearch",
       "description": "Elasticsearch service.",
+      "type": "elasticsearch",
       "databaseConnector": "elasticsearch.js",
       "generateElasticsearchConnectionAPI": true,
       "generateElasticsearchIndexAPI": true,

@@ -1,6 +1,6 @@
 let Log = require('../util/log' );
 let Registry = require('../util/registry' );
-let RouteBuilderDatabase = require('../routers/route-builder-database' );
+let RouteBuilderDatabase = require('../routers/route-builder-elasticsearch-database' );
 
 class DatabaseConnections {
     do(params) {

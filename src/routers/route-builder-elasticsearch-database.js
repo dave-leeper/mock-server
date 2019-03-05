@@ -6,7 +6,7 @@ let Registry = require ( '../util/registry.js' );
 let Log = require ( '../util/log.js' );
 let path = require('path');
 
-class RouteBuilderDatabase extends ServiceBase {
+class RouteBuilderElasticsearchDatabase extends ServiceBase {
     /**
      * @param router - Express router. This method will add routers to it.
      * @param config - The configure file for the server.
@@ -22,6 +22,7 @@ class RouteBuilderDatabase extends ServiceBase {
 
         for (let loop3 = 0; loop3 < config.databaseConnections.length; loop3++) {
             let databaseConnectionInfo = config.databaseConnections[loop3];
+            if (!databaseConnectionInfo.type || 'elasticsearch' != databaseConnectionInfo.type.toLowerCase()) continue;
             if (databaseConnectionInfo.generateElasticsearchConnectionAPI) this.buildElasticsearchConnectionAPI( router, config, databaseConnectionInfo);
             if (databaseConnectionInfo.generateElasticsearchIndexAPI) this.buildElasticsearchIndexAPI( router, config, databaseConnectionInfo);
             if (databaseConnectionInfo.generateElasticsearchDataAPI) this.buildElasticsearchDataAPI( router, config, databaseConnectionInfo);
@@ -31,7 +32,7 @@ class RouteBuilderDatabase extends ServiceBase {
     }
 
     buildElasticsearchConnectionAPI(router, config, databaseConnectionInfo) {
-        let paths = RouteBuilderDatabase.buildElasticsearchConnectionAPIPaths(databaseConnectionInfo.name);
+        let paths = RouteBuilderElasticsearchDatabase.buildElasticsearchConnectionAPIPaths(databaseConnectionInfo.name);
         let connectPath = paths[0];
         let pingPath = paths[1];
         let disconnectPath = paths[2];
@@ -100,7 +101,7 @@ class RouteBuilderDatabase extends ServiceBase {
     }
 
     buildElasticsearchIndexAPI(router, config, databaseConnectionInfo) {
-        let paths = RouteBuilderDatabase.buildElasticsearchIndexAPIPaths(databaseConnectionInfo.name);
+        let paths = RouteBuilderElasticsearchDatabase.buildElasticsearchIndexAPIPaths(databaseConnectionInfo.name);
         let existsPath = paths[0];
         let createPath = paths[1];
         let dropPath = paths[2];
@@ -187,7 +188,7 @@ class RouteBuilderDatabase extends ServiceBase {
     }
 
     buildElasticsearchDataAPI(router, config, databaseConnectionInfo) {
-        let paths = RouteBuilderDatabase.buildElasticsearchDataAPIPaths(databaseConnectionInfo.name);
+        let paths = RouteBuilderElasticsearchDatabase.buildElasticsearchDataAPIPaths(databaseConnectionInfo.name);
         let insertPath = paths[0];
         let updatePath = paths[1];
         let deletePath = paths[2];
@@ -274,4 +275,4 @@ class RouteBuilderDatabase extends ServiceBase {
     }
 }
 
-module.exports = RouteBuilderDatabase;
+module.exports = RouteBuilderElasticsearchDatabase;
