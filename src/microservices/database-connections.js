@@ -1,6 +1,7 @@
 let Log = require('../util/log' );
 let Registry = require('../util/registry' );
-let RouteBuilderDatabase = require('../routers/route-builder-elasticsearch-database' );
+let RouteBuilderElasticsearchDatabase = require('../routers/route-builder-elasticsearch-database' );
+let RouteBuilderMongoDatabase = require('../routers/route-builder-mongo-database' );
 
 class DatabaseConnections {
     do(params) {
@@ -20,14 +21,31 @@ class DatabaseConnections {
             for (let loop = 0; loop < databaseConnections.length; loop++) {
                 let databaseConnection = databaseConnections[loop];
                 let paths = [];
-                if (databaseConnection.generateElasticsearchConnectionAPI) {
-                    paths = paths.concat(RouteBuilderDatabase.buildElasticsearchConnectionAPIPaths(databaseConnection.name));
+                if (!databaseConnection.type) {
+                    let error = 'Error parsing database config. No database type given.';
+                    inReject && inReject({status: 500, send: error });
+                    return;
                 }
-                if (databaseConnection.generateElasticsearchIndexAPI) {
-                    paths = paths.concat(RouteBuilderDatabase.buildElasticsearchIndexAPIPaths(databaseConnection.name));
-                }
-                if (databaseConnection.generateElasticsearchDataAPI) {
-                    paths = paths.concat(RouteBuilderDatabase.buildElasticsearchDataAPIPaths(databaseConnection.name));
+                if ('elasticsearch' === databaseConnection.type.toLowerCase()) {
+                    if (databaseConnection.generateElasticsearchConnectionAPI) {
+                        paths = paths.concat(RouteBuilderElasticsearchDatabase.buildElasticsearchConnectionAPIPaths(databaseConnection.name));
+                    }
+                    if (databaseConnection.generateElasticsearchIndexAPI) {
+                        paths = paths.concat(RouteBuilderElasticsearchDatabase.buildElasticsearchIndexAPIPaths(databaseConnection.name));
+                    }
+                    if (databaseConnection.generateElasticsearchDataAPI) {
+                        paths = paths.concat(RouteBuilderElasticsearchDatabase.buildElasticsearchDataAPIPaths(databaseConnection.name));
+                    }
+                } else if ('mongo' === databaseConnection.type.toLowerCase()) {
+                    if (databaseConnection.generateMongoConnectionAPI) {
+                        paths = paths.concat(RouteBuilderMongoDatabase.buildMongoConnectionAPIPaths(databaseConnection.name));
+                    }
+                    if (databaseConnection.generateMongoCollectionAPI) {
+                        paths = paths.concat(RouteBuilderMongoDatabase.buildMongoCollectionAPIPaths(databaseConnection.name));
+                    }
+                    if (databaseConnection.generateMongoDataAPI) {
+                        paths = paths.concat(RouteBuilderMongoDatabase.buildMongoDataAPIPaths(databaseConnection.name));
+                    }
                 }
                 result.push({
                     "name": databaseConnection.name,

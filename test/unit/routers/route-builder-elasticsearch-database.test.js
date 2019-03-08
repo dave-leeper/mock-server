@@ -7,7 +7,7 @@ let chai = require( 'chai' ),
 const Registry = require('../../../src/util/registry.js');
 const MockExpressRouter = require('../../mocks/mock-express-router.js');
 const RouteBuilder = require('../../../src/routers/route-builder.js');
-const RouteBuilderDatabase = require('../../../src/routers/route-builder-elasticsearch-database.js');
+const RouteBuilderElasticsearchDatabase = require('../../../src/routers/route-builder-elasticsearch-database.js');
 const passport = require('passport');
 
 let config = {
@@ -125,7 +125,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
     after(() => {
     });
     it ( 'should not build routes using bad parameters', ( ) => {
-        let routeBuilderDatabase = new RouteBuilderDatabase();
+        let routeBuilderDatabase = new RouteBuilderElasticsearchDatabase();
         let mockExpressRouter = new MockExpressRouter();
         let result = routeBuilderDatabase.connect( null, null );
         expect(result).to.be.equal(false);
@@ -137,7 +137,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(result).to.be.equal(false);
     });
     it ( 'should build connection API paths from a name', ( ) => {
-        let paths = RouteBuilderDatabase.buildElasticsearchConnectionAPIPaths('test');
+        let paths = RouteBuilderElasticsearchDatabase.buildElasticsearchConnectionAPIPaths('test');
         expect(Array.isArray(paths)).to.be.equal(true);
         expect(paths.length).to.be.equal(3);
         expect(paths[0]).to.be.equal('/test/connection/connect');
@@ -145,7 +145,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(paths[2]).to.be.equal('/test/connection/disconnect');
     });
     it ( 'should build index API paths from a name', ( ) => {
-        let paths = RouteBuilderDatabase.buildElasticsearchIndexAPIPaths('test');
+        let paths = RouteBuilderElasticsearchDatabase.buildElasticsearchIndexAPIPaths('test');
         expect(Array.isArray(paths)).to.be.equal(true);
         expect(paths.length).to.be.equal(4);
         expect(paths[0]).to.be.equal('/test/index/:index/exists');
@@ -154,7 +154,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(paths[3]).to.be.equal('/test/index/mapping');
     });
     it ( 'should build data API paths from a name', ( ) => {
-        let paths = RouteBuilderDatabase.buildElasticsearchDataAPIPaths('test');
+        let paths = RouteBuilderElasticsearchDatabase.buildElasticsearchDataAPIPaths('test');
         expect(Array.isArray(paths)).to.be.equal(true);
         expect(paths.length).to.be.equal(4);
         expect(paths[0]).to.be.equal('/test/data');
@@ -163,7 +163,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(paths[3]).to.be.equal('/test/data/:index/:type/:id');
     });
     it ( 'should be build connection routes based on config information', ( ) => {
-        let routeBuilderDatabase = new RouteBuilderDatabase();
+        let routeBuilderDatabase = new RouteBuilderElasticsearchDatabase();
         let mockExpressRouter = new MockExpressRouter();
         routeBuilderDatabase.buildElasticsearchConnectionAPI( mockExpressRouter, config, configInfo );
         expect(mockExpressRouter.gets.length).to.be.equal(3);
@@ -180,7 +180,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(hasHandler(mockExpressRouter.gets, '/elasticsearch/connection/disconnect')).to.be.equal(true);
     });
     it ( 'should be build index routes based on config information', ( ) => {
-        let routeBuilderDatabase = new RouteBuilderDatabase();
+        let routeBuilderDatabase = new RouteBuilderElasticsearchDatabase();
         let mockExpressRouter = new MockExpressRouter();
         routeBuilderDatabase.buildElasticsearchIndexAPI( mockExpressRouter, config, configInfo );
         expect(mockExpressRouter.gets.length).to.be.equal(1);
@@ -199,7 +199,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(hasHandler(mockExpressRouter.posts, '/elasticsearch/index/mapping')).to.be.equal(true);
     });
     it ( 'should be build data routes based on config information', ( ) => {
-        let routeBuilderDatabase = new RouteBuilderDatabase();
+        let routeBuilderDatabase = new RouteBuilderElasticsearchDatabase();
         let mockExpressRouter = new MockExpressRouter();
         routeBuilderDatabase.buildElasticsearchDataAPI( mockExpressRouter, config, configInfo );
         expect(mockExpressRouter.gets.length).to.be.equal(1);
@@ -218,7 +218,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(hasHandler(mockExpressRouter.gets, '/elasticsearch/data/:index/:type/:id')).to.be.equal(true);
     });
     it ( 'should build routes to handlers based on config information', ( ) => {
-        let routeBuilderMicroservices = new RouteBuilderDatabase();
+        let routeBuilderMicroservices = new RouteBuilderElasticsearchDatabase();
         let mockExpressRouter = new MockExpressRouter();
         let result = routeBuilderMicroservices.connect( mockExpressRouter, config );
         expect(result).to.be.equal(true);
@@ -338,7 +338,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         Registry.register(passport, 'Passport');
         RouteBuilder.buildAuthenticationStrategies(config);
 
-        let routeBuilderDatabase = new RouteBuilderDatabase();
+        let routeBuilderDatabase = new RouteBuilderElasticsearchDatabase();
         let mockExpressRouter = new MockExpressRouter();
         let result = routeBuilderDatabase.connect( mockExpressRouter, config );
         expect(result).to.be.equal(true);
@@ -422,7 +422,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         Registry.register(passport, 'Passport');
         RouteBuilder.buildAuthenticationStrategies(config);
 
-        let routeBuilderDatabase = new RouteBuilderDatabase();
+        let routeBuilderDatabase = new RouteBuilderElasticsearchDatabase();
         let mockExpressRouter = new MockExpressRouter();
         let result = routeBuilderDatabase.connect( mockExpressRouter, config );
         expect(result).to.be.equal(true);
@@ -496,7 +496,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
                 }
             ]
         };
-        let routeBuilderDatabase = new RouteBuilderDatabase();
+        let routeBuilderDatabase = new RouteBuilderElasticsearchDatabase();
         let mockExpressRouter = new MockExpressRouter();
         let result = routeBuilderDatabase.connect( mockExpressRouter, config );
         expect(result).to.be.equal(true);

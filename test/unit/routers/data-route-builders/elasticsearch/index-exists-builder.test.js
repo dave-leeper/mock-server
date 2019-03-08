@@ -1,14 +1,14 @@
 //@formatter:off
 'use strict';
 
-let chai = require( 'chai' ),
-    expect = chai.expect,
-    MockRequest = require('../../../../mocks/mock-request.js'),
-    MockResponse = require('../../../../mocks/mock-response.js'),
-    MockRouteBuilderBase = require('../../../../mocks/mock-route-builder-base.js'),
-    IndexExistsBuilder = require('../../../../../src/routers/data-route-builders/elasticsearch/index-exists-builder.js'),
-    DatabaseConnectorManager = require('../../../../../src/database/database-connection-manager.js'),
-    Registry = require('../../../../../src/util/registry.js');
+let chai = require( 'chai' );
+let expect = chai.expect;
+let MockRequest = require('../../../../mocks/mock-request.js');
+let MockResponse = require('../../../../mocks/mock-response.js');
+let MockRouteBuilderBase = require('../../../../mocks/mock-route-builder-base.js');
+let IndexExistsBuilder = require('../../../../../src/routers/data-route-builders/elasticsearch/index-exists-builder.js');
+let DatabaseConnectorManager = require('../../../../../src/database/database-connection-manager.js');
+let Registry = require('../../../../../src/util/registry.js');
 let config = {
     "databaseConnections" : [
         {
@@ -79,7 +79,7 @@ describe( 'As a developer, I need an API to check if an index exists', function(
         expect(mockRouteBuilderBase.cookies[0].value).to.be.equal('MY_COOKIE_VALUE1');
         mockRouteBuilderBase.reset();
         Registry.register(new DatabaseConnectorManager(), 'DatabaseConnectorManager');
-        indexExistsBuilder = IndexExistsBuilder(mockRouteBuilderBase, { name: 'JUNK' });
+        indexExistsBuilder = IndexExistsBuilder(mockRouteBuilderBase, { name: 'JUNK', type: 'JUNK' });
         indexExistsBuilder( req, res );
         expect(mockRouteBuilderBase.err).to.not.be.null;
         expect(mockRouteBuilderBase.err.message).to.be.equal('Error connecting to database. No connection found for JUNK.');

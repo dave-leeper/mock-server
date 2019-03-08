@@ -79,7 +79,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(mockRouteBuilderBase.cookies[0].value).to.be.equal('MY_COOKIE_VALUE1');
         mockRouteBuilderBase.reset();
         Registry.register(new DatabaseConnectorManager(), 'DatabaseConnectorManager');
-        connectionConnectBuilder = ConnectionConnectBuilder(mockRouteBuilderBase, { name: 'JUNK' });
+        connectionConnectBuilder = ConnectionConnectBuilder(mockRouteBuilderBase, { name: 'JUNK', type: 'JUNK' });
         connectionConnectBuilder( req, res );
         expect(mockRouteBuilderBase.err).to.not.be.null;
         expect(mockRouteBuilderBase.err.message).to.be.equal('Error connecting to database. No connection found for JUNK.');

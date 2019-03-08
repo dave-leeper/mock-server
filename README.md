@@ -373,14 +373,34 @@ contains any information needed to configure the connection. It is up to
 the database connector class to interpret this data. This field is
 ignored when the connector is set up to use a backend database server
 using the backendURL parameter.
-* **generateElasticsearchConnectionAPI**<br/>
+* **generateElasticsearchConnectionAPI (Elasticsearch only)**<br/>
 Example: true<br/>
 A boolean value indicating if connection REST APIs should be generated
 for the connection. Optional. Defaults to false. These APIs are
 described in the API section, below.
-* **generateElasticsearchIndexAPI**<br/>
+* **generateElasticsearchIndexAPI (Elasticsearch only)**<br/>
 Example: true<br/>
 A boolean value indicating if index REST APIs should be generated for
+the connection. Optional. Defaults to false. These APIs are described in
+the API section, below.
+* **generateElasticsearchDataAPI (Elasticsearch only)**<br/>
+Example: true<br/>
+A boolean value indicating if data REST APIs should be generated for
+the connection. Optional. Defaults to false. These APIs are described in
+the API section, below.
+* **generateMongoConnectionAPI (Mongo only)**<br/>
+Example: true<br/>
+A boolean value indicating if connection REST APIs should be generated
+for the connection. Optional. Defaults to false. These APIs are
+described in the API section, below.
+* **generateMongoCollectionAPI (Mongo only)**<br/>
+Example: true<br/>
+A boolean value indicating if collection REST APIs should be generated for
+the connection. Optional. Defaults to false. These APIs are described in
+the API section, below.
+* **generateMongoDataAPI (Mongo only)**<br/>
+Example: true<br/>
+A boolean value indicating if data REST APIs should be generated for
 the connection. Optional. Defaults to false. These APIs are described in
 the API section, below.
 * **authentication**<br/>

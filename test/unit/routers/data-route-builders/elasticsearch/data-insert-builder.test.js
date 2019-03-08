@@ -79,7 +79,7 @@ describe( 'As a developer, I need an API to insert data into the database', func
         expect(mockRouteBuilderBase.cookies[0].value).to.be.equal('MY_COOKIE_VALUE1');
         mockRouteBuilderBase.reset();
         Registry.register(new DatabaseConnectorManager(), 'DatabaseConnectorManager');
-        dataInsertBuilder = DataInsertBuilder(mockRouteBuilderBase, { name: 'JUNK' });
+        dataInsertBuilder = DataInsertBuilder(mockRouteBuilderBase, { name: 'JUNK', type: 'JUNK' });
         dataInsertBuilder( req, res );
         expect(mockRouteBuilderBase.err).to.not.be.null;
         expect(mockRouteBuilderBase.err.message).to.be.equal('Error connecting to database. No connection found for JUNK.');

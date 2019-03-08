@@ -11,6 +11,7 @@ let config = {
     "databaseConnections" : [
         {
             "name": "elasticsearch",
+            "type": "elasticsearch",
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
             "generateElasticsearchConnectionAPI": true,
