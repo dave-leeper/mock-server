@@ -356,7 +356,7 @@ ping that connection.
 Example: "elasticsearch"<br/>
 The name given to a connection.A database can have multiple connections,
 each with a unique name.
-* **typr**<br/>
+* **type**<br/>
 Example: "elasticsearch"<br/>
 The type of database connection. Valid values are 'eleasticsearch' and 'mongo'.
 * **description"**<br/>

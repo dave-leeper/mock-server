@@ -32,7 +32,7 @@ ValidationHelper.validateDatabaseConnection = function (builder, req, res, datab
 
 ValidationHelper.validateDatabaseConnectionInfo = function(databaseConnectionInfo) {
     if (!databaseConnectionInfo) return false;
-    return (!!databaseConnectionInfo.name);
+    return (!!databaseConnectionInfo.name && !!databaseConnectionInfo.type);
 };
 
 ValidationHelper.validateIndexParam = function(builder, req, res) {

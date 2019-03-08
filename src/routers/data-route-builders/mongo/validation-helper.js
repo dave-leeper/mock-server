@@ -32,12 +32,12 @@ ValidationHelper.validateDatabaseConnection = function (builder, req, res, datab
 
 ValidationHelper.validateDatabaseConnectionInfo = function(databaseConnectionInfo) {
     if (!databaseConnectionInfo) return false;
-    return (!!databaseConnectionInfo.name);
+    return (!!databaseConnectionInfo.name && !!databaseConnectionInfo.type);
 };
 
-ValidationHelper.validateIndexParam = function(builder, req, res) {
+ValidationHelper.validateCollectionParam = function(builder, req, res) {
     if (!req.params.index) {
-        const error = { message: "Error, no index name provided.", error: { status: 400 }};
+        const error = { message: "Error, no collection name provided.", error: { status: 400 }};
         builder.sendErrorResponse(error, res);
         return false;
     }
@@ -45,7 +45,7 @@ ValidationHelper.validateIndexParam = function(builder, req, res) {
 };
 
 ValidationHelper.validateParams = function(builder, req, res) {
-    if (!req.params.index) {
+    if (!req.params.collection) {
         const error = { message: "Error, no index name provided.", error: { status: 400 }};
         builder.sendErrorResponse(error, res);
         return false;
@@ -65,8 +65,8 @@ ValidationHelper.validateParams = function(builder, req, res) {
 
 ValidationHelper.validateUploadFile = function(builder, req, res) {
     if ((!req.files)
-        || (!req.files.filename)
-        || (!req.files.filename.data)) {
+    || (!req.files.filename)
+    || (!req.files.filename.data)) {
         const error = { message: "Error, no file was uploaded.", error: { status: 400 }};
         builder.sendErrorResponse(error, res);
         return false;

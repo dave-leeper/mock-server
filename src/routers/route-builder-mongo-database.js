@@ -5,9 +5,9 @@ let DatabaseConnectorManager = require ( '../database/database-connection-manage
 let Registry = require ( '../util/registry.js' );
 let Log = require ( '../util/log.js' );
 let path = require('path');
-const SOURCE_PATH = './src/routers/data-route-builders/elasticsearch/';
+const SOURCE_PATH = './src/routers/data-route-builders/mongo/';
 
-class RouteBuilderElasticsearchDatabase extends ServiceBase {
+class RouteBuilderMongoDatabase extends ServiceBase {
     /**
      * @param router - Express router. This method will add routers to it.
      * @param config - The configure file for the server.
@@ -23,17 +23,17 @@ class RouteBuilderElasticsearchDatabase extends ServiceBase {
 
         for (let loop3 = 0; loop3 < config.databaseConnections.length; loop3++) {
             let databaseConnectionInfo = config.databaseConnections[loop3];
-            if (!databaseConnectionInfo.type || 'elasticsearch' != databaseConnectionInfo.type.toLowerCase()) continue;
-            if (databaseConnectionInfo.generateElasticsearchConnectionAPI) this.buildElasticsearchConnectionAPI( router, config, databaseConnectionInfo);
-            if (databaseConnectionInfo.generateElasticsearchIndexAPI) this.buildElasticsearchIndexAPI( router, config, databaseConnectionInfo);
-            if (databaseConnectionInfo.generateElasticsearchDataAPI) this.buildElasticsearchDataAPI( router, config, databaseConnectionInfo);
+            if (!databaseConnectionInfo.type || 'mongo' != databaseConnectionInfo.type.toLowerCase()) continue;
+            if (databaseConnectionInfo.generateElasticsearchConnectionAPI) this.buildMongoConnectionAPI( router, config, databaseConnectionInfo);
+            if (databaseConnectionInfo.generateElasticsearchIndexAPI) this.buildMongoCollectionAPI( router, config, databaseConnectionInfo);
+            if (databaseConnectionInfo.generateElasticsearchDataAPI) this.buildMongoDataAPI( router, config, databaseConnectionInfo);
         }
         databaseConnectionCallback && databaseConnectionCallback(databaseConnectionPromises);
         return true;
     }
 
-    buildElasticsearchConnectionAPI(router, config, databaseConnectionInfo) {
-        let paths = RouteBuilderElasticsearchDatabase.buildElasticsearchConnectionAPIPaths(databaseConnectionInfo.name);
+    buildMongoConnectionAPI(router, config, databaseConnectionInfo) {
+        let paths = RouteBuilderMongoDatabase.buildMongoConnectionAPIPaths(databaseConnectionInfo.name);
         let connectPath = paths[0];
         let pingPath = paths[1];
         let disconnectPath = paths[2];
@@ -90,7 +90,7 @@ class RouteBuilderElasticsearchDatabase extends ServiceBase {
         router.get(disconnectPath, handlers);
     }
 
-    static buildElasticsearchConnectionAPIPaths(name) {
+    static buildMongoConnectionAPIPaths(name) {
         let paths = [];
         if (!name) return paths;
         let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
@@ -101,13 +101,13 @@ class RouteBuilderElasticsearchDatabase extends ServiceBase {
         return paths;
     }
 
-    buildElasticsearchIndexAPI(router, config, databaseConnectionInfo) {
-        let paths = RouteBuilderElasticsearchDatabase.buildElasticsearchIndexAPIPaths(databaseConnectionInfo.name);
+    buildMongoCollectionAPI(router, config, databaseConnectionInfo) {
+        let paths = RouteBuilderMongoDatabase.buildMongoCollectionAPIPaths(databaseConnectionInfo.name);
         let existsPath = paths[0];
         let createPath = paths[1];
         let dropPath = paths[2];
         let createMappingPath = paths[3];
-        let handlerBuilderPath = path.resolve(SOURCE_PATH, 'index-exists-builder.js');
+        let handlerBuilderPath = path.resolve(SOURCE_PATH, 'collection-exists-builder.js');
         let handlerBuilder = require(handlerBuilderPath);
         let handlers = [];
         let authentication = this.authentication(config.authenticationStrategies, databaseConnectionInfo.authentication);
@@ -116,7 +116,7 @@ class RouteBuilderElasticsearchDatabase extends ServiceBase {
         let loggingEnd = this.loggingEnd(databaseConnectionInfo);
         let handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
-            if (Log.will(Log.ERROR)) Log.error('Index exists handler not defined for database connection ' + databaseConnectionInfo.name + '.');
+            if (Log.will(Log.ERROR)) Log.error('Collection exists handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
         if (loggingBegin) handlers.push(loggingBegin);
@@ -127,12 +127,12 @@ class RouteBuilderElasticsearchDatabase extends ServiceBase {
         handlers.push((req, res) => {});
         router.get(existsPath, handlers);
 
-        handlerBuilderPath = path.resolve(SOURCE_PATH, 'index-create-builder.js');
+        handlerBuilderPath = path.resolve(SOURCE_PATH, 'collection-create-builder.js');
         handlerBuilder = require(handlerBuilderPath);
         handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
-            if (Log.will(Log.ERROR)) Log.error('Create index handler not defined for database connection ' + databaseConnectionInfo.name + '.');
+            if (Log.will(Log.ERROR)) Log.error('Create collection handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
         if (loggingBegin) handlers.push(loggingBegin);
@@ -143,12 +143,12 @@ class RouteBuilderElasticsearchDatabase extends ServiceBase {
         handlers.push((req, res) => {});
         router.post(createPath, handlers);
 
-        handlerBuilderPath = path.resolve(SOURCE_PATH, 'index-drop-builder.js');
+        handlerBuilderPath = path.resolve(SOURCE_PATH, 'collection-drop-builder.js');
         handlerBuilder = require(handlerBuilderPath);
         handlers = [];
         handler = handlerBuilder(this, databaseConnectionInfo);
         if (!handler) {
-            if (Log.will(Log.ERROR)) Log.error('Drop index handler not defined for database connection ' + databaseConnectionInfo.name + '.');
+            if (Log.will(Log.ERROR)) Log.error('Drop collection handler not defined for database connection ' + databaseConnectionInfo.name + '.');
             return;
         }
         if (loggingBegin) handlers.push(loggingBegin);
@@ -158,38 +158,21 @@ class RouteBuilderElasticsearchDatabase extends ServiceBase {
         if (loggingEnd) handlers.push(loggingEnd);
         handlers.push((req, res) => {});
         router.delete(dropPath, handlers);
-
-        handlerBuilderPath = path.resolve(SOURCE_PATH, 'index-create-mapping-builder.js');
-        handlerBuilder = require(handlerBuilderPath);
-        handlers = [];
-        handler = handlerBuilder(this, databaseConnectionInfo);
-        if (!handler) {
-            if (Log.will(Log.ERROR)) Log.error('Create index mapping handler not defined for database connection ' + databaseConnectionInfo.name + '.');
-            return;
-        }
-        if (loggingBegin) handlers.push(loggingBegin);
-        if (authentication) handlers.push(authentication);
-        if (authorization) handlers.push(authorization);
-        handlers.push(handler);
-        if (loggingEnd) handlers.push(loggingEnd);
-        handlers.push((req, res) => {});
-        router.post(createMappingPath, handlers);
     }
 
-    static buildElasticsearchIndexAPIPaths(name) {
+    static buildMongoCollectionAPIPaths(name) {
         let paths = [];
         if (!name) return paths;
         let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-        paths.push('/' + urlName + '/index/:index/exists'); // exists
-        paths.push('/' + urlName + '/index');               // create
-        paths.push('/' + urlName + '/index/:index');        // drop
-        paths.push('/' + urlName + '/index/mapping');       // create mapping
+        paths.push('/' + urlName + '/collection/:collection/exists'); // exists
+        paths.push('/' + urlName + '/collection');               // create
+        paths.push('/' + urlName + '/collection/:collection');   // drop
         return paths;
     }
 
-    buildElasticsearchDataAPI(router, config, databaseConnectionInfo) {
-        let paths = RouteBuilderElasticsearchDatabase.buildElasticsearchDataAPIPaths(databaseConnectionInfo.name);
+    buildMongoDataAPI(router, config, databaseConnectionInfo) {
+        let paths = RouteBuilderMongoDatabase.buildMongoDataAPIPaths(databaseConnectionInfo.name);
         let insertPath = paths[0];
         let updatePath = paths[1];
         let deletePath = paths[2];
@@ -263,17 +246,17 @@ class RouteBuilderElasticsearchDatabase extends ServiceBase {
         router.get(queryPath, handlers);
     }
 
-    static buildElasticsearchDataAPIPaths(name) {
+    static buildMongoDataAPIPaths(name) {
         let paths = [];
         if (!name) return paths;
         let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-        paths.push('/' + urlName + '/data');                    // insert
-        paths.push('/' + urlName + '/data/update');             // update
-        paths.push('/' + urlName + '/data/:index/:type/:id');   // delete
-        paths.push('/' + urlName + '/data/:index/:type/:id');   // query
+        paths.push('/' + urlName + '/data');                      // insert
+        paths.push('/' + urlName + '/data/update');               // update
+        paths.push('/' + urlName + '/data/:collection/:id');      // delete
+        paths.push('/' + urlName + '/data/:collection/:id');      // query
         return paths;
     }
 }
 
-module.exports = RouteBuilderElasticsearchDatabase;
+module.exports = RouteBuilderMongoDatabase;
