@@ -6,15 +6,15 @@ function CollectionDropBuilder (builder, databaseConnectionInfo ) {
     return (req, res, next) => {
         let databaseConnection = ValidationHelper.validateDatabaseConnection(builder, req, res, databaseConnectionInfo);
         if (!databaseConnection) return next && next();
-        if (!ValidationHelper.validateIndexParam(builder, req, databaseConnectionInfo)) return next && next();;
+        if (!ValidationHelper.validateCollectionParam(builder, req, databaseConnectionInfo)) return next && next();;
 
-        let indexName = req.params.index;
-        databaseConnection.dropIndex( indexName ).then(( dropResult ) => {
+        let collectionName = req.params.collection;
+        databaseConnection.dropCollection( collectionName ).then(( dropResult ) => {
             res.status(200);
-            res.send({ index: indexName, dropped: dropResult.acknowledged });
+            res.send({ collection: collectionName, dropped: dropResult.status });
             next && next();
         }).catch((err) => {
-            const error = { message: "Error dropping " + indexName + ".", error: { status: 500, stack: err.stack }};
+            const error = { message: "Error dropping " + collectionName + ".", error: { status: 500, stack: err.stack }};
             builder.sendErrorResponse(error, res);
             next && next();
         });

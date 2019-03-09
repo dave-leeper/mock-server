@@ -165,9 +165,9 @@ class RouteBuilderMongoDatabase extends ServiceBase {
         if (!name) return paths;
         let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-        paths.push('/' + urlName + '/collection/:collection/exists'); // exists
-        paths.push('/' + urlName + '/collection');               // create
-        paths.push('/' + urlName + '/collection/:collection');   // drop
+        paths.push('/' + urlName + '/collection/:collection/exists');   // exists
+        paths.push('/' + urlName + '/collection/:collection');          // create
+        paths.push('/' + urlName + '/collection/:collection');          // drop
         return paths;
     }
 

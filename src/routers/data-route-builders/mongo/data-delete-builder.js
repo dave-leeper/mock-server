@@ -10,17 +10,16 @@ function DataDeleteBuilder( builder, databaseConnectionInfo )
         if (!databaseConnection) return next && next();
         if (!ValidationHelper.validateParams(builder, req, res)) return next && next();
 
-        let index = req.params.index;
-        let type = req.params.type;
+        let collectionName = req.params.collection;
         let id = req.params.id;
-        let query = { index: index, type: type, id: id };
-        databaseConnection.delete( query ).then(( response ) => {
-            const success = {status: "success", operation: "Delete record from " + index};
+        let query = { id: id };
+        databaseConnection.delete( collectionName, query ).then(( response ) => {
+            const success = {status: "success", operation: "Delete record from " + collectionName};
             res.status(200);
             res.send(JSON.stringify(success));
             next && next();
         }).catch(( err ) => {
-            const error = { message: "Error deleting record (index: " + index + ", type: " + type + ", id: " + id + "). " + err.error, error: { status: 500 }};
+            const error = { message: "Error deleting record (collection: " + collectionName + ", id: " + id + "). " + err.error, error: { status: 500 }};
             builder.sendErrorResponse(error, res);
             next && next();
         });

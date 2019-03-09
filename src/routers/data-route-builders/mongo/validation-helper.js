@@ -36,7 +36,7 @@ ValidationHelper.validateDatabaseConnectionInfo = function(databaseConnectionInf
 };
 
 ValidationHelper.validateCollectionParam = function(builder, req, res) {
-    if (!req.params.index) {
+    if (!req.params.collection) {
         const error = { message: "Error, no collection name provided.", error: { status: 400 }};
         builder.sendErrorResponse(error, res);
         return false;
@@ -46,12 +46,7 @@ ValidationHelper.validateCollectionParam = function(builder, req, res) {
 
 ValidationHelper.validateParams = function(builder, req, res) {
     if (!req.params.collection) {
-        const error = { message: "Error, no index name provided.", error: { status: 400 }};
-        builder.sendErrorResponse(error, res);
-        return false;
-    }
-    if (!req.params.type) {
-        const error = { message: "Error, no data type provided.", error: { status: 400 }};
+        const error = { message: "Error, no collection name provided.", error: { status: 400 }};
         builder.sendErrorResponse(error, res);
         return false;
     }

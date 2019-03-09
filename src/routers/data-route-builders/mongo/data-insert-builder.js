@@ -9,10 +9,11 @@ function DataInsertBuilder( builder, databaseConnectionInfo )
         if (!databaseConnection) return next && next();
         if (!ValidationHelper.validateUploadFile(builder, req, res)) return next && next();
 
+        let collectionName = req.params.collection;
         let newData = JSON.parse(req.files.filename.data.toString());
-        let data = { index: newData.index, type: newData.type, id: newData.id, body: newData.data };
-        databaseConnection.insert(data).then(( response ) => {
-            const success = {status: "success", operation: "Insert data to " + newData.index + "/" + newData.type + "."};
+        let data = { id: newData.id, body: newData.data };
+        databaseConnection.insert(collectionName, data).then(( response ) => {
+            const success = {status: "success", operation: "Insert data to " + collectionName + "."};
             res.status(201);
             res.send(JSON.stringify(success));
             next && next();

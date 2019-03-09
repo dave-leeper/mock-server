@@ -7,11 +7,11 @@ function CollectionCreateBuilder( builder, databaseConnectionInfo )
     return (req, res, next) => {
         let databaseConnection = ValidationHelper.validateDatabaseConnection(builder, req, res, databaseConnectionInfo);
         if (!databaseConnection) return next && next();
-        if (!ValidationHelper.validateUploadFile(builder, req, res)) return next && next();
+        if (!ValidationHelper.validateCollectionParam(builder, req, databaseConnectionInfo)) return next && next();;
 
-        let collectionData = JSON.parse(req.files.filename.data.toString());
-        databaseConnection.createCollection( collectionData ).then(() => {
-            const success = {status: "success", operation: "Create index " + collectionData.collection};
+        let collectionName = req.params.collection;
+        databaseConnection.createCollection( collectionName ).then(() => {
+            const success = {status: "success", operation: "Create collection " + collectionName};
             res.status(200);
             res.send(JSON.stringify(success));
             next && next();
