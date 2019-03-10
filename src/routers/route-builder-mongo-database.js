@@ -24,9 +24,9 @@ class RouteBuilderMongoDatabase extends ServiceBase {
         for (let loop3 = 0; loop3 < config.databaseConnections.length; loop3++) {
             let databaseConnectionInfo = config.databaseConnections[loop3];
             if (!databaseConnectionInfo.type || 'mongo' != databaseConnectionInfo.type.toLowerCase()) continue;
-            if (databaseConnectionInfo.generateElasticsearchConnectionAPI) this.buildMongoConnectionAPI( router, config, databaseConnectionInfo);
-            if (databaseConnectionInfo.generateElasticsearchIndexAPI) this.buildMongoCollectionAPI( router, config, databaseConnectionInfo);
-            if (databaseConnectionInfo.generateElasticsearchDataAPI) this.buildMongoDataAPI( router, config, databaseConnectionInfo);
+            if (databaseConnectionInfo.generateMongoConnectionAPI) this.buildMongoConnectionAPI( router, config, databaseConnectionInfo);
+            if (databaseConnectionInfo.generateMongoCollectionAPI) this.buildMongoCollectionAPI( router, config, databaseConnectionInfo);
+            if (databaseConnectionInfo.generateMongoDataAPI) this.buildMongoDataAPI( router, config, databaseConnectionInfo);
         }
         databaseConnectionCallback && databaseConnectionCallback(databaseConnectionPromises);
         return true;

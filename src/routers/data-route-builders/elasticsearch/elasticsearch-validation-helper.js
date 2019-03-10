@@ -1,16 +1,16 @@
 'use strict';
 let Registry = require ( '../../../util/registry.js' );
 
-function ValidationHelper(){}
+function ElasticsearchValidationHelper(){}
 
-ValidationHelper.validateBuilder = function(builder) {
+ElasticsearchValidationHelper.validateBuilder = function(builder) {
     if (!builder) return false;
     if (!builder.addHeaders) return false;
     if (!builder.addCookies) return false;
     return (!!builder.sendErrorResponse);
 };
 
-ValidationHelper.validateDatabaseConnection = function (builder, req, res, databaseConnectionInfo){
+ElasticsearchValidationHelper.validateDatabaseConnection = function (builder, req, res, databaseConnectionInfo){
     if (!builder || !res || !databaseConnectionInfo) return null;
     builder.addHeaders(databaseConnectionInfo, req, res);
     builder.addCookies(databaseConnectionInfo, req, res);
@@ -30,12 +30,12 @@ ValidationHelper.validateDatabaseConnection = function (builder, req, res, datab
     return databaseConnection
 };
 
-ValidationHelper.validateDatabaseConnectionInfo = function(databaseConnectionInfo) {
+ElasticsearchValidationHelper.validateDatabaseConnectionInfo = function(databaseConnectionInfo) {
     if (!databaseConnectionInfo) return false;
     return (!!databaseConnectionInfo.name && !!databaseConnectionInfo.type);
 };
 
-ValidationHelper.validateIndexParam = function(builder, req, res) {
+ElasticsearchValidationHelper.validateIndexParam = function(builder, req, res) {
     if (!req.params.index) {
         const error = { message: "Error, no index name provided.", error: { status: 400 }};
         builder.sendErrorResponse(error, res);
@@ -44,7 +44,7 @@ ValidationHelper.validateIndexParam = function(builder, req, res) {
     return true;
 };
 
-ValidationHelper.validateParams = function(builder, req, res) {
+ElasticsearchValidationHelper.validateParams = function(builder, req, res) {
     if (!req.params.index) {
         const error = { message: "Error, no index name provided.", error: { status: 400 }};
         builder.sendErrorResponse(error, res);
@@ -63,7 +63,7 @@ ValidationHelper.validateParams = function(builder, req, res) {
     return true;
 };
 
-ValidationHelper.validateUploadFile = function(builder, req, res) {
+ElasticsearchValidationHelper.validateUploadFile = function(builder, req, res) {
     if ((!req.files)
         || (!req.files.filename)
         || (!req.files.filename.data)) {
@@ -74,4 +74,4 @@ ValidationHelper.validateUploadFile = function(builder, req, res) {
     return true;
 };
 
-module.exports = ValidationHelper;
+module.exports = ElasticsearchValidationHelper;

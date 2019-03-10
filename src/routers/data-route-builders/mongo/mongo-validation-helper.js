@@ -1,16 +1,16 @@
 'use strict';
 let Registry = require ( '../../../util/registry.js' );
 
-function ValidationHelper(){}
+function MongoValidationHelper(){}
 
-ValidationHelper.validateBuilder = function(builder) {
+MongoValidationHelper.validateBuilder = function(builder) {
     if (!builder) return false;
     if (!builder.addHeaders) return false;
     if (!builder.addCookies) return false;
     return (!!builder.sendErrorResponse);
 };
 
-ValidationHelper.validateDatabaseConnection = function (builder, req, res, databaseConnectionInfo){
+MongoValidationHelper.validateDatabaseConnection = function (builder, req, res, databaseConnectionInfo){
     if (!builder || !res || !databaseConnectionInfo) return null;
     builder.addHeaders(databaseConnectionInfo, req, res);
     builder.addCookies(databaseConnectionInfo, req, res);
@@ -30,12 +30,12 @@ ValidationHelper.validateDatabaseConnection = function (builder, req, res, datab
     return databaseConnection
 };
 
-ValidationHelper.validateDatabaseConnectionInfo = function(databaseConnectionInfo) {
+MongoValidationHelper.validateDatabaseConnectionInfo = function(databaseConnectionInfo) {
     if (!databaseConnectionInfo) return false;
     return (!!databaseConnectionInfo.name && !!databaseConnectionInfo.type);
 };
 
-ValidationHelper.validateCollectionParam = function(builder, req, res) {
+MongoValidationHelper.validateCollectionParam = function(builder, req, res) {
     if (!req.params.collection) {
         const error = { message: "Error, no collection name provided.", error: { status: 400 }};
         builder.sendErrorResponse(error, res);
@@ -44,7 +44,7 @@ ValidationHelper.validateCollectionParam = function(builder, req, res) {
     return true;
 };
 
-ValidationHelper.validateParams = function(builder, req, res) {
+MongoValidationHelper.validateParams = function(builder, req, res) {
     if (!req.params.collection) {
         const error = { message: "Error, no collection name provided.", error: { status: 400 }};
         builder.sendErrorResponse(error, res);
@@ -58,7 +58,7 @@ ValidationHelper.validateParams = function(builder, req, res) {
     return true;
 };
 
-ValidationHelper.validateUploadFile = function(builder, req, res) {
+MongoValidationHelper.validateUploadFile = function(builder, req, res) {
     if ((!req.files)
     || (!req.files.filename)
     || (!req.files.filename.data)) {
@@ -69,4 +69,4 @@ ValidationHelper.validateUploadFile = function(builder, req, res) {
     return true;
 };
 
-module.exports = ValidationHelper;
+module.exports = MongoValidationHelper;

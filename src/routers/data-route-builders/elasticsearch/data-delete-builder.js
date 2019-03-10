@@ -1,5 +1,5 @@
 'use strict';
-let ValidationHelper = require('./validation-helper.js');
+let ValidationHelper = require('./elasticsearch-validation-helper.js');
 
 function DataDeleteBuilder( builder, databaseConnectionInfo )
 {
