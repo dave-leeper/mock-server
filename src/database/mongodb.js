@@ -125,8 +125,9 @@ Mongodb.prototype.insert = function ( name, data ) {
         this.db.collection(name).insertOne(data, (err, insOK) => {
             if (err)
                 inReject && inReject({ status: false, error: 'Error while inserting data.' });
-            else
-                inResolve && inResolve( { status: true } );
+            else {
+                inResolve && inResolve( { status: true, returnValue: insOK } );
+            }
         });
     });
 };

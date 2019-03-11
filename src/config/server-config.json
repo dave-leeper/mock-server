@@ -235,8 +235,8 @@
   "databaseConnections" : [
     {
       "name": "elasticsearch",
-      "description": "Elasticsearch service.",
       "type": "elasticsearch",
+      "description": "Elasticsearch service.",
       "databaseConnector": "elasticsearch.js",
       "generateElasticsearchConnectionAPI": true,
       "generateElasticsearchIndexAPI": true,
@@ -246,6 +246,19 @@
         "log": "trace"
       },
       "authorization": { "strategy": "local", "groups": [ "admin" ] }
+    },
+    {
+      "name": "mongo",
+      "type": "mongo",
+      "description": "MongoDB service.",
+      "databaseConnector": "mongodb.js",
+      "config": {
+        "url": 'mongodb://localhost:27017',
+        "db": 'testdb',
+        "collections": {
+          "testCollection": { "w": 0 }
+        }
+      }
     }
   ]
 }

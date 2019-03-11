@@ -1,5 +1,6 @@
 'use strict';
 let ValidationHelper = require('./mongo-validation-helper.js');
+let QueryHelper = require('./mongo-query-helper.js');
 
 function DataQueryBuilder( builder, databaseConnectionInfo )
 {
@@ -10,8 +11,7 @@ function DataQueryBuilder( builder, databaseConnectionInfo )
         if (!ValidationHelper.validateParams(builder, req, res)) return next && next();
 
         let collectionName = req.params.collection;
-        let id = req.params.id.toLowerCase();
-        let query = { id: id };
+        let query = QueryHelper.getQuery(req);
 
         databaseConnection.read(collectionName, query).then(( response ) => {
             const success = { status: "success", data: formatQueryResults( response )};

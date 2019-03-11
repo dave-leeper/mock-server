@@ -1,5 +1,6 @@
 'use strict';
 let ValidationHelper = require('./mongo-validation-helper.js');
+let QueryHelper = require('./mongo-query-helper.js');
 
 function DataDeleteBuilder( builder, databaseConnectionInfo )
 {
@@ -11,8 +12,7 @@ function DataDeleteBuilder( builder, databaseConnectionInfo )
         if (!ValidationHelper.validateParams(builder, req, res)) return next && next();
 
         let collectionName = req.params.collection;
-        let id = req.params.id;
-        let query = { id: id };
+        let query = QueryHelper.getQuery(req);
         databaseConnection.delete( collectionName, query ).then(( response ) => {
             const success = {status: "success", operation: "Delete record from " + collectionName};
             res.status(200);

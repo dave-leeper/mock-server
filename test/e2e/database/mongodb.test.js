@@ -9,6 +9,7 @@ const mongodb = new MongoDB();
 const testCollection = 'testCollection';
 let configInfo = {
     name: "mongodb",
+    type: "mongo",
     description: "MongoDB service.",
     databaseConnector: "mongodb.js",
     config: {

@@ -1,5 +1,6 @@
 'use strict';
 let ValidationHelper = require('./mongo-validation-helper.js');
+let QueryHelper = require('./mongo-query-helper.js');
 
 function DataUpdateBuilder( builder, databaseConnectionInfo )
 {
@@ -11,8 +12,7 @@ function DataUpdateBuilder( builder, databaseConnectionInfo )
 
         let data = JSON.parse(req.files.filename.data.toString());
         let collectionName = req.params.collection;
-        let id = req.params.id;
-        let query = { id: id };
+        let query = QueryHelper.getQuery(req);
         databaseConnection.update(collectionName, query, data).then(( response ) => {
             const success = {status: "success", operation: "Update data for " + collectionName + ":" + id};
             res.status(200);

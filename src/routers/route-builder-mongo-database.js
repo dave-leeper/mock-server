@@ -251,10 +251,10 @@ class RouteBuilderMongoDatabase extends ServiceBase {
         if (!name) return paths;
         let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-        paths.push('/' + urlName + '/data');                      // insert
-        paths.push('/' + urlName + '/data/update');               // update
-        paths.push('/' + urlName + '/data/:collection/:id');      // delete
-        paths.push('/' + urlName + '/data/:collection/:id');      // query
+        paths.push('/' + urlName + '/data/:collection');   // insert
+        paths.push('/' + urlName + '/data/:collection');   // update
+        paths.push('/' + urlName + '/data/:collection');   // delete
+        paths.push('/' + urlName + '/data/:collection');   // query
         return paths;
     }
 }
