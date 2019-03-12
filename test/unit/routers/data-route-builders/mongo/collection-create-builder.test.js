@@ -23,7 +23,7 @@ let config = {
                 "url": 'mongodb://localhost:27017',
                 "db": 'testdb',
                 "collections": {
-                    "testCollection": { w: 0 }
+                    "testCollection": { "w": 0 }
                 }
             },
             "cookies": [{ "name": "MY_COOKIE1", "value": "MY_COOKIE_VALUE1" }],
