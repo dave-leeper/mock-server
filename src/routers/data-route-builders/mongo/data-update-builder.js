@@ -14,12 +14,12 @@ function DataUpdateBuilder( builder, databaseConnectionInfo )
         let collectionName = req.params.collection;
         let query = QueryHelper.getQuery(req);
         databaseConnection.update(collectionName, query, data).then(( response ) => {
-            const success = {status: "success", operation: "Update data for " + collectionName + ":" + id};
+            const success = {status: "success", operation: "Update data for " + collectionName + ":" + JSON.stringify(query)};
             res.status(200);
             res.send(JSON.stringify(success));
             next && next();
         }).catch(( err ) => {
-            const error = { message: "Error updating record (query: " + collectionName + ":" + query + "). " + JSON.stringify(err), error: { status: 500 }};
+            const error = { message: "Error updating record (query: " + collectionName + ":" +  JSON.stringify(query) + "). " + JSON.stringify(err), error: { status: 500 }};
             builder.sendErrorResponse(error, res);
             next && next();
         });

@@ -273,7 +273,7 @@ describe( 'As a developer, I need work with a Mongo database using a REST interf
     after(() => {
         Registry.unregisterAll();
     });
-    it ( 'should use url query parameters as mongo query parameters', ( done ) => {
+    it ( 'should insert into the database and use url query parameters as mongo query parameters', ( done ) => {
         let sourceFile = path.resolve('./test/data', 'mongo-insert.json');
         let formData = { filename: fs.createReadStream( sourceFile )};
         let url = 'http://localhost:' + port + '/mongo/data/test';
@@ -282,9 +282,61 @@ describe( 'As a developer, I need work with a Mongo database using a REST interf
             url += '?title=my+title&content=my+content';
             request(url, (err, httpResponse, body) => {
                 let bodyObj = JSON.parse(body);
-                console.log('XXXXXXXXXXXXXXXX body? ' + body);
-                if (err) expect(bodyObj.status).to.be.equal('success');
+                expect(bodyObj.status).to.be.equal('success');
+                expect(bodyObj.data.length).to.be.equal(1);
+                expect(bodyObj.data[0].title).to.be.equal('my title');
+                expect(bodyObj.data[0].content).to.be.equal('my content');
+                expect(bodyObj.data[0].suggest).to.be.equal('my suggest');
                 done();
+            });
+        });
+    });
+    it ( 'should update data in the database', ( done ) => {
+        let sourceFile = path.resolve('./test/data', 'mongo-insert.json');
+        let formData = { filename: fs.createReadStream( sourceFile )};
+        let sourceFile2 = path.resolve('./test/data', 'mongo-update.json');
+        let formData2 = { filename: fs.createReadStream( sourceFile2 )};
+        let url = 'http://localhost:' + port + '/mongo/data/test';
+        request.post({ url: url, formData: formData }, (err, httpResponse, body) => {
+            expect(body).to.be.equal('{"status":"success","operation":"Insert data to test."}');
+            url += '?title=my+title&content=my+content';
+            request.put({ url: url, formData: formData2 }, (err, httpResponse, body) => {
+                let bodyObj = JSON.parse(body);
+                expect(bodyObj.status).to.be.equal('success');
+                url = 'http://localhost:' + port + '/mongo/data/test';
+                url += '?title=my+title+updated&content=my+content+updated';
+                request(url, (err, httpResponse, body) => {
+                    bodyObj = JSON.parse(body);
+                    expect(bodyObj.status).to.be.equal('success');
+                    expect(bodyObj.data.length).to.be.equal(1);
+                    expect(bodyObj.data[0].title).to.be.equal('my title updated');
+                    expect(bodyObj.data[0].content).to.be.equal('my content updated');
+                    expect(bodyObj.data[0].suggest).to.be.equal('my suggest updated');
+                    done();
+                });
+            });
+        });
+    });
+    it ( 'should delete data in the database', ( done ) => {
+        let sourceFile = path.resolve('./test/data', 'mongo-insert.json');
+        let formData = { filename: fs.createReadStream( sourceFile )};
+        let sourceFile2 = path.resolve('./test/data', 'mongo-update.json');
+        let formData2 = { filename: fs.createReadStream( sourceFile2 )};
+        let url = 'http://localhost:' + port + '/mongo/data/test';
+        request.post({ url: url, formData: formData }, (err, httpResponse, body) => {
+            expect(body).to.be.equal('{"status":"success","operation":"Insert data to test."}');
+            url += '?title=my+title&content=my+content';
+            request.del({ url: url, formData: formData2 }, (err, httpResponse, body) => {
+                let bodyObj = JSON.parse(body);
+                expect(bodyObj.status).to.be.equal('success');
+                url = 'http://localhost:' + port + '/mongo/data/test';
+                url += '?title=my+title+updated&content=my+content+updated';
+                request(url, (err, httpResponse, body) => {
+                    bodyObj = JSON.parse(body);
+                    expect(bodyObj.status).to.be.equal('success');
+                    expect(bodyObj.data.length).to.be.equal(0);
+                    done();
+                });
             });
         });
     });
