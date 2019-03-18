@@ -130,6 +130,7 @@ Elasticsearch.prototype.createIndexMapping = function ( mapping ) {
 
 Elasticsearch.prototype.insert = function ( data ) {
     return new Promise (( inResolve, inReject ) => {
+        data.refresh = "wait_for";
         this.client.index( data, (error, response) => {
             if (error) {
                 inReject && inReject( { status: false, error: error } );
@@ -142,6 +143,7 @@ Elasticsearch.prototype.insert = function ( data ) {
 
 Elasticsearch.prototype.update = function ( data ) {
     return new Promise (( inResolve, inReject ) => {
+        data.refresh = "wait_for";
         this.client.update( data, (error, response) => {
             if (error) {
                 inReject && inReject( { status: false, error: error } );
@@ -154,6 +156,7 @@ Elasticsearch.prototype.update = function ( data ) {
 
 Elasticsearch.prototype.delete = function ( data ) {
     return new Promise (( inResolve, inReject ) => {
+        data.refresh = "wait_for";
         this.client.delete( data )
             .then(( success ) => { inResolve && inResolve( success ); })
             .catch((error) => { inReject && inReject( { status: false, error: error } ); });

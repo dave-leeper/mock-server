@@ -54,8 +54,12 @@ let updateData = {
 };
 let query = {
     index: 'test',
-        q: 'title:\'my title\''
-}
+    q: 'title:\'my title\''
+};
+let query2 = {
+    index: 'test',
+    q: 'title:\'my updated title\''
+};
 describe( 'As a developer, I need to connect, ping, and disconnect to/from elasticsearch.', function() {
     before(() => {
     });
@@ -141,7 +145,7 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
         });
     });
 
-    it ( 'should not delete indexes that do not existin elasticsearch.', ( done ) => {
+    it ( 'should not delete indexes that do not existing elasticsearch.', ( done ) => {
         elasticSearch.dropIndex( 'JUNK' ).then(( dropResult ) => {
             expect( true ).to.be.equal( false );
         }, ( error ) => {
@@ -203,38 +207,58 @@ describe( 'As a developer, I need to perform CRUD operations on the elasticsearc
     });
     it ( 'should be able to insert records into the elasticsearch database.', ( done ) => {
         elasticSearch.insert( data ).then(( result ) => {
-            // expect( result.result ).to.be.equal( 'created' );
+            expect( result._index ).to.be.equal( 'test' );
+            expect( result._type ).to.be.equal( 'document' );
+            expect( result._id ).to.be.equal( '1' );
+            expect( result._version ).to.be.equal( 1 );
+            expect( result.result ).to.be.equal( 'created' );
             done();
         }, ( error ) => {
             expect( true ).to.be.equal( false );
         });
     });
     it ( 'should be able to query records in the elasticsearch database.', ( done ) => {
-        // TODO: Works when run stand-alone in debugger. Fails when run as a group of tests.
-        // elasticSearch.insert( data ).then(( result ) => {
-        //     elasticSearch.read( query ).then(( result ) => {
-        //         expect( result.hits ).to.not.be.null;
-        //         expect( Array.isArray(result.hits.hits) ).to.be.equal( true );
-        //         expect( result.hits.hits.length ).to.be.equal( 1 );
-        //         expect( result.hits.hits[0] ).to.not.be.null;
-        //         expect( result.hits.hits[0]._source ).to.not.be.null;
-        //         expect( result.hits.hits[0]._source.title ).to.be.equal('my title');
-        //         expect( result.hits.hits[0]._source.content ).to.be.equal('my content');
-        //         expect( result.hits.hits[0]._source.suggest ).to.be.equal('my suggest');
+        elasticSearch.insert( data ).then(( result ) => {
+            expect( result._index ).to.be.equal( 'test' );
+            expect( result._type ).to.be.equal( 'document' );
+            expect( result._id ).to.be.equal( '1' );
+            expect( result._version ).to.be.equal( 1 );
+            expect( result.result ).to.be.equal( 'created' );
+            elasticSearch.read( query ).then(( result2 ) => {
+                expect( result2.hits ).to.not.be.null;
+                expect( Array.isArray(result2.hits.hits) ).to.be.equal( true );
+                expect( result2.hits.hits.length ).to.be.equal( 1 );
+                expect( result2.hits.hits[0] ).to.not.be.null;
+                expect( result2.hits.hits[0]._source ).to.not.be.null;
+                expect( result2.hits.hits[0]._source.title ).to.be.equal('my title');
+                expect( result2.hits.hits[0]._source.content ).to.be.equal('my content');
+                expect( result2.hits.hits[0]._source.suggest ).to.be.equal('my suggest');
                 done();
-        //     }, ( error ) => {
-        //         expect( true ).to.be.equal( false );
-        //     });
-        // }, ( error ) => {
-        //     expect( true ).to.be.equal( false );
-        // });
+            }, ( error ) => {
+                expect( true ).to.be.equal( false );
+            });
+        }, ( error ) => {
+            expect( true ).to.be.equal( false );
+        });
     });
 
     it ( 'should be able to update records in the elasticsearch database.', ( done ) => {
         elasticSearch.insert( data ).then(( result ) => {
-            elasticSearch.update( updateData ).then(( result ) => {
-                expect( result.result ).to.be.equal( 'updated' );
-                done();
+            elasticSearch.update( updateData ).then(( result2 ) => {
+                expect( result2.result ).to.be.equal( 'updated' );
+                elasticSearch.read( query2 ).then(( result3 ) => {
+                    expect( result3.hits ).to.not.be.null;
+                    expect( Array.isArray(result3.hits.hits) ).to.be.equal( true );
+                    expect( result3.hits.hits.length ).to.be.equal( 1 );
+                    expect( result3.hits.hits[0] ).to.not.be.null;
+                    expect( result3.hits.hits[0]._source ).to.not.be.null;
+                    expect( result3.hits.hits[0]._source.title ).to.be.equal('my updated title');
+                    expect( result3.hits.hits[0]._source.content ).to.be.equal('my updated content');
+                    expect( result3.hits.hits[0]._source.suggest ).to.be.equal('my updated suggest');
+                    done();
+                }, ( error ) => {
+                    expect( true ).to.be.equal( false );
+                });
             }, ( error ) => {
                 expect( true ).to.be.equal( false );
             });
@@ -244,9 +268,16 @@ describe( 'As a developer, I need to perform CRUD operations on the elasticsearc
     });
     it ( 'should be able to delete records in the elasticsearch database.', ( done ) => {
         elasticSearch.insert( data ).then(( result ) => {
-            elasticSearch.delete( data ).then(( result ) => {
-                expect( result.result ).to.be.equal( 'deleted' );
-                done();
+            elasticSearch.delete( data ).then(( result2 ) => {
+                expect( result2.result ).to.be.equal( 'deleted' );
+                elasticSearch.read( query ).then(( result3 ) => {
+                    expect( result3.hits ).to.not.be.null;
+                    expect( Array.isArray(result3.hits.hits) ).to.be.equal( true );
+                    expect( result3.hits.hits.length ).to.be.equal( 0 );
+                    done();
+                }, ( error ) => {
+                    expect( true ).to.be.equal( false );
+                });
             }, ( error ) => {
                 expect( true ).to.be.equal( false );
             });

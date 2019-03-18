@@ -593,14 +593,10 @@ Inserts the data in the body of the request into the database. Example:
 }
 ```
 
-* **GET database-connection-name/data/:collection**<br/>
+* **GET database-connection-name/data/:collection?_id=1**<br/>
 Selects data from the database. The url query parameters contain the query.
 
-##### Examples
-* **GET database-connection-name/data/test?_id=1**<br/>
-Gets the data from collection test with an _id value of 1.
-
-* **POST database-connection-name/data/:collection**<br/>
+* **PUT database-connection-name/data/:collection?_id=1**<br/>
 Updates the data using the body of the request. The url query parameters contain the query. Example:
 ```
 {
@@ -610,9 +606,8 @@ Updates the data using the body of the request. The url query parameters contain
 }
 ```
 
-* **DELETE database-connection-name/data/:collection**<br/>
-Deletes a record from the database.  The url query parameters contain the query. Example:
-* **DELETE database-connection-name/data/test/?_id=1**
+* **DELETE database-connection-name/data/:collection?_id=1**<br/>
+Deletes data. The url query parameters contain the query.
 
 ## Registry
 The registry stores name/value pairs that are available to the entire program.
