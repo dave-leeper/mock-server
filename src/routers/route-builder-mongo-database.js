@@ -95,9 +95,9 @@ class RouteBuilderMongoDatabase extends ServiceBase {
         if (!name) return paths;
         let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-        paths.push('/' + urlName + '/connection/connect');      // connect
-        paths.push('/' + urlName + '/connection/ping');         // ping
-        paths.push('/' + urlName + '/connection/disconnect');   // disconnect
+        paths.push('/' + urlName + '/connection/connect');      // connect (GET)
+        paths.push('/' + urlName + '/connection/ping');         // ping (GET)
+        paths.push('/' + urlName + '/connection/disconnect');   // disconnect (GET)
         return paths;
     }
 
@@ -106,7 +106,6 @@ class RouteBuilderMongoDatabase extends ServiceBase {
         let existsPath = paths[0];
         let createPath = paths[1];
         let dropPath = paths[2];
-        let createMappingPath = paths[3];
         let handlerBuilderPath = path.resolve(SOURCE_PATH, 'collection-exists-builder.js');
         let handlerBuilder = require(handlerBuilderPath);
         let handlers = [];
@@ -165,9 +164,9 @@ class RouteBuilderMongoDatabase extends ServiceBase {
         if (!name) return paths;
         let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-        paths.push('/' + urlName + '/collection/:collection/exists');   // exists
-        paths.push('/' + urlName + '/collection/:collection');          // create
-        paths.push('/' + urlName + '/collection/:collection');          // drop
+        paths.push('/' + urlName + '/collection/:collection/exists');   // exists (GET)
+        paths.push('/' + urlName + '/collection/:collection');          // create (POST)
+        paths.push('/' + urlName + '/collection/:collection');          // drop (DELETE)
         return paths;
     }
 
@@ -211,7 +210,7 @@ class RouteBuilderMongoDatabase extends ServiceBase {
         handlers.push(handler);
         if (loggingEnd) handlers.push(loggingEnd);
         handlers.push((req, res) => {});
-        router.post(updatePath, handlers);
+        router.put(updatePath, handlers);
 
         handlerBuilderPath = path.resolve(SOURCE_PATH, 'data-delete-builder.js');
         handlerBuilder = require(handlerBuilderPath);
@@ -251,10 +250,10 @@ class RouteBuilderMongoDatabase extends ServiceBase {
         if (!name) return paths;
         let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-        paths.push('/' + urlName + '/data/:collection');   // insert
-        paths.push('/' + urlName + '/data/:collection');   // update
-        paths.push('/' + urlName + '/data/:collection');   // delete
-        paths.push('/' + urlName + '/data/:collection');   // query
+        paths.push('/' + urlName + '/data/:collection');   // insert (POST)
+        paths.push('/' + urlName + '/data/:collection');   // update (PUT)
+        paths.push('/' + urlName + '/data/:collection');   // delete (DELETE)
+        paths.push('/' + urlName + '/data/:collection');   // query (GET)
         return paths;
     }
 }

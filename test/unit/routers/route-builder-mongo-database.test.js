@@ -220,8 +220,8 @@ describe( 'As a developer, I need an API for creating database connections', fun
         routeBuilderDatabase.buildMongoDataAPI( mockExpressRouter, config, configInfo );
         expect(mockExpressRouter.gets.length).to.be.equal(1);
         expect(mockExpressRouter.option.length).to.be.equal(0);
-        expect(mockExpressRouter.posts.length).to.be.equal(2);
-        expect(mockExpressRouter.puts.length).to.be.equal(0);
+        expect(mockExpressRouter.posts.length).to.be.equal(1);
+        expect(mockExpressRouter.puts.length).to.be.equal(1);
         expect(mockExpressRouter.patches.length).to.be.equal(0);
         expect(mockExpressRouter.deletes.length).to.be.equal(1);
         expect(containsPath(mockExpressRouter.posts, '/mongo/data/:collection')).to.be.equal(true);
@@ -240,8 +240,8 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(result).to.be.equal(true);
         expect(mockExpressRouter.gets.length).to.be.equal(1);
         expect(mockExpressRouter.option.length).to.be.equal(0);
-        expect(mockExpressRouter.posts.length).to.be.equal(2);
-        expect(mockExpressRouter.puts.length).to.be.equal(0);
+        expect(mockExpressRouter.posts.length).to.be.equal(1);
+        expect(mockExpressRouter.puts.length).to.be.equal(1);
         expect(mockExpressRouter.patches.length).to.be.equal(0);
         expect(mockExpressRouter.deletes.length).to.be.equal(1);
         mockExpressRouter.reset();
@@ -279,8 +279,8 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(result).to.be.equal(true);
         expect(mockExpressRouter.gets.length).to.be.equal(1);
         expect(mockExpressRouter.option.length).to.be.equal(0);
-        expect(mockExpressRouter.posts.length).to.be.equal(2);
-        expect(mockExpressRouter.puts.length).to.be.equal(0);
+        expect(mockExpressRouter.posts.length).to.be.equal(1);
+        expect(mockExpressRouter.puts.length).to.be.equal(1);
         expect(mockExpressRouter.patches.length).to.be.equal(0);
         expect(mockExpressRouter.deletes.length).to.be.equal(1);
         expect(containsPath(mockExpressRouter.posts, '/mongo/data/:collection')).to.be.equal(true);
@@ -296,8 +296,8 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(result).to.be.equal(true);
         expect(mockExpressRouter.gets.length).to.be.equal(5);
         expect(mockExpressRouter.option.length).to.be.equal(0);
-        expect(mockExpressRouter.posts.length).to.be.equal(3);
-        expect(mockExpressRouter.puts.length).to.be.equal(0);
+        expect(mockExpressRouter.posts.length).to.be.equal(2);
+        expect(mockExpressRouter.puts.length).to.be.equal(1);
         expect(mockExpressRouter.patches.length).to.be.equal(0);
         expect(mockExpressRouter.deletes.length).to.be.equal(2);
         expect(containsPath(mockExpressRouter.gets, '/mongo/connection/connect')).to.be.equal(true);
@@ -313,7 +313,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(hasHandler(mockExpressRouter.posts, '/mongo/collection/:collection')).to.be.equal(true);
         expect(hasHandler(mockExpressRouter.deletes, '/mongo/collection/:collection')).to.be.equal(true);
         expect(containsPath(mockExpressRouter.posts, '/mongo/data/:collection')).to.be.equal(true);
-        expect(containsPath(mockExpressRouter.posts, '/mongo/data/:collection')).to.be.equal(true);
+        expect(containsPath(mockExpressRouter.puts, '/mongo/data/:collection')).to.be.equal(true);
         expect(containsPath(mockExpressRouter.deletes, '/mongo/data/:collection')).to.be.equal(true);
         expect(containsPath(mockExpressRouter.gets, '/mongo/data/:collection')).to.be.equal(true);
         expect(hasHandler(mockExpressRouter.posts, '/mongo/data/:collection')).to.be.equal(true);
@@ -360,8 +360,8 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(result).to.be.equal(true);
         expect(mockExpressRouter.gets.length).to.be.equal(5);
         expect(mockExpressRouter.option.length).to.be.equal(0);
-        expect(mockExpressRouter.posts.length).to.be.equal(3);
-        expect(mockExpressRouter.puts.length).to.be.equal(0);
+        expect(mockExpressRouter.posts.length).to.be.equal(2);
+        expect(mockExpressRouter.puts.length).to.be.equal(1);
         expect(mockExpressRouter.patches.length).to.be.equal(0);
         expect(mockExpressRouter.deletes.length).to.be.equal(2);
         expect(containsPath(mockExpressRouter.gets, '/mongo/connection/connect')).to.be.equal(true);
@@ -381,7 +381,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(containsPath(mockExpressRouter.deletes, '/mongo/data/:collection')).to.be.equal(true);
         expect(containsPath(mockExpressRouter.gets, '/mongo/data/:collection')).to.be.equal(true);
         expect(hasHandler(mockExpressRouter.posts, '/mongo/data/:collection')).to.be.equal(true);
-        expect(hasHandler(mockExpressRouter.posts, '/mongo/data/:collection')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.puts, '/mongo/data/:collection')).to.be.equal(true);
         expect(hasHandler(mockExpressRouter.deletes, '/mongo/data/:collection')).to.be.equal(true);
         expect(hasHandler(mockExpressRouter.gets, '/mongo/data/:collection')).to.be.equal(true);
         expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
@@ -398,8 +398,8 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(mockExpressRouter.posts[0].handler.length).to.be.equal(3);
         expect(Array.isArray(mockExpressRouter.posts[1].handler)).to.be.equal(true);
         expect(mockExpressRouter.posts[1].handler.length).to.be.equal(3);
-        expect(Array.isArray(mockExpressRouter.posts[2].handler)).to.be.equal(true);
-        expect(mockExpressRouter.posts[2].handler.length).to.be.equal(3);
+        expect(Array.isArray(mockExpressRouter.puts[0].handler)).to.be.equal(true);
+        expect(mockExpressRouter.puts[0].handler.length).to.be.equal(3);
         expect(Array.isArray(mockExpressRouter.deletes[0].handler)).to.be.equal(true);
         expect(mockExpressRouter.deletes[0].handler.length).to.be.equal(3);
         expect(Array.isArray(mockExpressRouter.deletes[1].handler)).to.be.equal(true);
@@ -446,8 +446,8 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(result).to.be.equal(true);
         expect(mockExpressRouter.gets.length).to.be.equal(5);
         expect(mockExpressRouter.option.length).to.be.equal(0);
-        expect(mockExpressRouter.posts.length).to.be.equal(3);
-        expect(mockExpressRouter.puts.length).to.be.equal(0);
+        expect(mockExpressRouter.posts.length).to.be.equal(2);
+        expect(mockExpressRouter.puts.length).to.be.equal(1);
         expect(mockExpressRouter.patches.length).to.be.equal(0);
         expect(mockExpressRouter.deletes.length).to.be.equal(2);
         expect(containsPath(mockExpressRouter.gets, '/mongo/connection/connect')).to.be.equal(true);
@@ -467,7 +467,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(containsPath(mockExpressRouter.deletes, '/mongo/data/:collection')).to.be.equal(true);
         expect(containsPath(mockExpressRouter.gets, '/mongo/data/:collection')).to.be.equal(true);
         expect(hasHandler(mockExpressRouter.posts, '/mongo/data/:collection')).to.be.equal(true);
-        expect(hasHandler(mockExpressRouter.posts, '/mongo/data/:collection')).to.be.equal(true);
+        expect(hasHandler(mockExpressRouter.puts, '/mongo/data/:collection')).to.be.equal(true);
         expect(hasHandler(mockExpressRouter.deletes, '/mongo/data/:collection')).to.be.equal(true);
         expect(hasHandler(mockExpressRouter.gets, '/mongo/data/:collection')).to.be.equal(true);
         expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
@@ -484,8 +484,8 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(mockExpressRouter.posts[0].handler.length).to.be.equal(3);
         expect(Array.isArray(mockExpressRouter.posts[1].handler)).to.be.equal(true);
         expect(mockExpressRouter.posts[1].handler.length).to.be.equal(3);
-        expect(Array.isArray(mockExpressRouter.posts[2].handler)).to.be.equal(true);
-        expect(mockExpressRouter.posts[2].handler.length).to.be.equal(3);
+        expect(Array.isArray(mockExpressRouter.puts[0].handler)).to.be.equal(true);
+        expect(mockExpressRouter.puts[0].handler.length).to.be.equal(3);
         expect(Array.isArray(mockExpressRouter.deletes[0].handler)).to.be.equal(true);
         expect(mockExpressRouter.deletes[0].handler.length).to.be.equal(3);
         expect(Array.isArray(mockExpressRouter.deletes[1].handler)).to.be.equal(true);
@@ -522,8 +522,8 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(result).to.be.equal(true);
         expect(mockExpressRouter.gets.length).to.be.equal(5);
         expect(mockExpressRouter.option.length).to.be.equal(0);
-        expect(mockExpressRouter.posts.length).to.be.equal(3);
-        expect(mockExpressRouter.puts.length).to.be.equal(0);
+        expect(mockExpressRouter.posts.length).to.be.equal(2);
+        expect(mockExpressRouter.puts.length).to.be.equal(1);
         expect(mockExpressRouter.patches.length).to.be.equal(0);
         expect(mockExpressRouter.deletes.length).to.be.equal(2);
         expect(containsPath(mockExpressRouter.gets, '/mongo/connection/connect')).to.be.equal(true);
@@ -539,7 +539,7 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(hasHandler(mockExpressRouter.posts, '/mongo/collection/:collection')).to.be.equal(true);
         expect(hasHandler(mockExpressRouter.deletes, '/mongo/collection/:collection')).to.be.equal(true);
         expect(containsPath(mockExpressRouter.posts, '/mongo/data/:collection')).to.be.equal(true);
-        expect(containsPath(mockExpressRouter.posts, '/mongo/data/:collection')).to.be.equal(true);
+        expect(containsPath(mockExpressRouter.puts, '/mongo/data/:collection')).to.be.equal(true);
         expect(containsPath(mockExpressRouter.deletes, '/mongo/data/:collection')).to.be.equal(true);
         expect(containsPath(mockExpressRouter.gets, '/mongo/data/:collection')).to.be.equal(true);
         expect(hasHandler(mockExpressRouter.posts, '/mongo/data/:collection')).to.be.equal(true);
@@ -560,8 +560,8 @@ describe( 'As a developer, I need an API for creating database connections', fun
         expect(mockExpressRouter.posts[0].handler.length).to.be.equal(4);
         expect(Array.isArray(mockExpressRouter.posts[1].handler)).to.be.equal(true);
         expect(mockExpressRouter.posts[1].handler.length).to.be.equal(4);
-        expect(Array.isArray(mockExpressRouter.posts[2].handler)).to.be.equal(true);
-        expect(mockExpressRouter.posts[2].handler.length).to.be.equal(4);
+        expect(Array.isArray(mockExpressRouter.puts[0].handler)).to.be.equal(true);
+        expect(mockExpressRouter.puts[0].handler.length).to.be.equal(4);
         expect(Array.isArray(mockExpressRouter.deletes[0].handler)).to.be.equal(true);
         expect(mockExpressRouter.deletes[0].handler.length).to.be.equal(4);
         expect(Array.isArray(mockExpressRouter.deletes[1].handler)).to.be.equal(true);

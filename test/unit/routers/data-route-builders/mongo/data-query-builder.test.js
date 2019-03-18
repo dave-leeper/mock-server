@@ -125,10 +125,7 @@ describe( 'As a developer, I need an API for querying data in the Mongo database
         mockRouteBuilderBase.reset();
         req.params.collection = 'collection';
         dataQueryBuilder( req, res );
-        expect(mockRouteBuilderBase.err).to.not.be.null;
-        expect(mockRouteBuilderBase.err.message).to.be.equal('Error, no record id provided.');
-        expect(mockRouteBuilderBase.err.error).to.not.be.null;
-        expect(mockRouteBuilderBase.err.error.status).to.be.equal(400);
+        expect(mockRouteBuilderBase.err).to.be.null;
         expect(mockRouteBuilderBase.headers).to.not.be.null;
         expect(Array.isArray(mockRouteBuilderBase.headers)).to.be.equal(true);
         expect(mockRouteBuilderBase.headers.length).to.be.equal(1);

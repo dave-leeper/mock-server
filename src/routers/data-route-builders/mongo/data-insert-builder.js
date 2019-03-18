@@ -11,8 +11,7 @@ function DataInsertBuilder( builder, databaseConnectionInfo )
 
         let collectionName = req.params.collection;
         let newData = JSON.parse(req.files.filename.data.toString());
-        let data = { id: newData.id, body: newData.data };
-        databaseConnection.insert(collectionName, data).then(( response ) => {
+        databaseConnection.insert(collectionName, newData).then(( response ) => {
             const success = {status: "success", operation: "Insert data to " + collectionName + "."};
             res.status(201);
             res.send(JSON.stringify(success));

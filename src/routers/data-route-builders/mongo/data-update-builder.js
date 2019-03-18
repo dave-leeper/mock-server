@@ -19,7 +19,7 @@ function DataUpdateBuilder( builder, databaseConnectionInfo )
             res.send(JSON.stringify(success));
             next && next();
         }).catch(( err ) => {
-            const error = { message: "Error updating record (id: " + collectionName + ":" + id + "). " + JSON.stringify(err), error: { status: 500 }};
+            const error = { message: "Error updating record (query: " + collectionName + ":" + query + "). " + JSON.stringify(err), error: { status: 500 }};
             builder.sendErrorResponse(error, res);
             next && next();
         });

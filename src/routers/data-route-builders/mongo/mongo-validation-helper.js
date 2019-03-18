@@ -50,11 +50,11 @@ MongoValidationHelper.validateParams = function(builder, req, res) {
         builder.sendErrorResponse(error, res);
         return false;
     }
-    if (!req.params.id) {
-        const error = { message: "Error, no record id provided.", error: { status: 400 }};
-        builder.sendErrorResponse(error, res);
-        return false;
-    }
+    // if (!req.params.id) {
+    //     const error = { message: "Error, no record id provided.", error: { status: 400 }};
+    //     builder.sendErrorResponse(error, res);
+    //     return false;
+    // }
     return true;
 };
 

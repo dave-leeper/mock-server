@@ -1,12 +1,40 @@
 //@formatter:off
 'use strict';
 
+let fs = require("fs");
+let path = require("path");
 const chai = require( 'chai' ),
     expect = chai.expect,
+    request = require('request'),
     MongoDB = require('../../../src/database/mongodb.js'),
+    Server = require('../../../server.js'),
     Registry = require('../../../src/util/registry.js');
 const mongodb = new MongoDB();
 const testCollection = 'testCollection';
+let port = 1337;
+let server = new Server();
+let config = {
+    "databaseConnections" : [
+        {
+            "name": "mongo",
+            "type": "mongo",
+            "description": "Mongo service.",
+            "databaseConnector": "mongodb.js",
+            "generateMongoConnectionAPI": true,
+            "generateMongoCollectionAPI": true,
+            "generateMongoDataAPI": true,
+            "config": {
+                "url": 'mongodb://localhost:27017',
+                "db": 'testdb',
+                "collections": {
+                    "testCollection": { w: 0 }
+                }
+            },
+            "cookies": [{ "name": "MY_COOKIE1", "value": "MY_COOKIE_VALUE1" }],
+            "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+        }
+    ]
+};
 let configInfo = {
     name: "mongodb",
     type: "mongo",
@@ -213,3 +241,51 @@ describe( 'As a developer, I need to perform CRUD operations on the mongodb data
     });
 });
 
+
+describe( 'As a developer, I need work with a Mongo database using a REST interface', function() {
+    before(() => {
+    });
+    beforeEach((done) => {
+        Registry.unregisterAll();
+        server.init(port, config, () => {
+            let url = 'http://localhost:' + port + '/mongo/connection/connect';
+            request(url, (err, res, body) => {
+                url = 'http://localhost:' + port + '/mongo/collection/test/exists';
+                request(url, (err, res, body) => {
+                    let bodObj = JSON.parse(body);
+                    if (!bodObj.exists) return done();
+                    url = 'http://localhost:' + port + '/mongo/collection/test';
+                    request.del(url, (err, res, body) => {
+                        done();
+                    });
+                });
+            });
+        });
+    });
+    afterEach(( done ) => {
+        let url = 'http://localhost:' + port + '/mongo/collection/test';
+        request.del(url, (err, res, body) => {
+            server.stop(() => {
+                done();
+            });
+        });
+    });
+    after(() => {
+        Registry.unregisterAll();
+    });
+    it ( 'should use url query parameters as mongo query parameters', ( done ) => {
+        let sourceFile = path.resolve('./test/data', 'mongo-insert.json');
+        let formData = { filename: fs.createReadStream( sourceFile )};
+        let url = 'http://localhost:' + port + '/mongo/data/test';
+        request.post({ url: url, formData: formData }, (err, httpResponse, body) => {
+            expect(body).to.be.equal('{"status":"success","operation":"Insert data to test."}');
+            url += '?title=my+title&content=my+content';
+            request(url, (err, httpResponse, body) => {
+                let bodyObj = JSON.parse(body);
+                console.log('XXXXXXXXXXXXXXXX body? ' + body);
+                if (err) expect(bodyObj.status).to.be.equal('success');
+                done();
+            });
+        });
+    });
+});
