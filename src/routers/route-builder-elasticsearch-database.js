@@ -95,9 +95,9 @@ class RouteBuilderElasticsearchDatabase extends ServiceBase {
         if (!name) return paths;
         let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-        paths.push('/' + urlName + '/connection/connect');      // connect
-        paths.push('/' + urlName + '/connection/ping');         // ping
-        paths.push('/' + urlName + '/connection/disconnect');   // disconnect
+        paths.push('/' + urlName + '/connection/connect');      // connect (GET)
+        paths.push('/' + urlName + '/connection/ping');         // ping (GET)
+        paths.push('/' + urlName + '/connection/disconnect');   // disconnect (GET)
         return paths;
     }
 
@@ -181,10 +181,10 @@ class RouteBuilderElasticsearchDatabase extends ServiceBase {
         if (!name) return paths;
         let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-        paths.push('/' + urlName + '/index/:index/exists'); // exists
-        paths.push('/' + urlName + '/index');               // create
-        paths.push('/' + urlName + '/index/:index');        // drop
-        paths.push('/' + urlName + '/index/mapping');       // create mapping
+        paths.push('/' + urlName + '/index/:index/exists'); // exists (GET)
+        paths.push('/' + urlName + '/index');               // create (POST)
+        paths.push('/' + urlName + '/index/:index');        // drop (DELETE)
+        paths.push('/' + urlName + '/index/mapping');       // create mapping (POST)
         return paths;
     }
 
@@ -268,10 +268,10 @@ class RouteBuilderElasticsearchDatabase extends ServiceBase {
         if (!name) return paths;
         let urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
-        paths.push('/' + urlName + '/data');                    // insert
-        paths.push('/' + urlName + '/data/update');             // update
-        paths.push('/' + urlName + '/data/:index/:type/:id');   // delete
-        paths.push('/' + urlName + '/data/:index/:type/:id');   // query
+        paths.push('/' + urlName + '/data');                    // insert (POST)
+        paths.push('/' + urlName + '/data/update');             // update (POST)
+        paths.push('/' + urlName + '/data/:index/:type/:id');   // delete (DELETE)
+        paths.push('/' + urlName + '/data/:index/:type/:id');   // query (GET)
         return paths;
     }
 }

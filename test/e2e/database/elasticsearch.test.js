@@ -1,13 +1,37 @@
 //@formatter:off
 'use strict';
 
+let fs = require("fs");
+let path = require("path");
 const chai = require( 'chai' ),
     expect = chai.expect,
+    request = require('request'),
     ElasticSearch = require('../../../src/database/elasticsearch.js'),
+    Server = require('../../../server.js'),
     Registry = require('../../../src/util/registry.js');
 const elasticSearch = new ElasticSearch();
+let port = 1337;
+let server = new Server();
+let config = {
+    "databaseConnections" : [
+        {
+            "name": "elasticsearch",
+            "type": "elasticsearch",
+            "description": "Elasticsearch service.",
+            "databaseConnector": "elasticsearch.js",
+            "generateElasticsearchConnectionAPI": true,
+            "generateElasticsearchIndexAPI": true,
+            "generateElasticsearchDataAPI": true,
+            "config": {
+                "host": "127.0.0.1:9200",
+                "log": "trace"
+            }
+        }
+    ]
+};
 let configInfo = {
     name: "elasticsearch",
+    type: "elasticsearch",
     description: "Elasticsearch service.",
     databaseConnector: "elasticsearch.js",
     config: {
@@ -154,7 +178,7 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
         });
     });
 
-    it ( 'should be able to create an indexin elasticsearch', ( done ) => {
+    it ( 'should be able to create an index in elasticsearch', ( done ) => {
         elasticSearch.createIndex( schema ).then(( createResult ) => {
             expect( createResult.status ).to.be.equal( true );
             elasticSearch.indexExists( schema.index ).then((existsResult2 ) => {
@@ -287,3 +311,113 @@ describe( 'As a developer, I need to perform CRUD operations on the elasticsearc
     });
 });
 
+describe( 'As a developer, I need work with a Elasticsearch database using a REST interface', function() {
+    let schemaFile;
+    before(() => {
+        schemaFile = path.resolve('./test/data', 'elasticsearch-schema.json');
+    });
+    beforeEach((done) => {
+        let createIndexAndMapping = () => {
+            let url = 'http://localhost:' + port + '/elasticsearch/index';
+            let schemaData = { filename: fs.createReadStream( schemaFile )};
+            request.post({ url: url, formData: schemaData }, (err, httpResponse, body) => {
+                url = 'http://localhost:' + port + '/elasticsearch/index/mapping';
+                schemaData = { filename: fs.createReadStream( schemaFile )};
+                request.post({ url: url, formData: schemaData }, (err, httpResponse, body) => {
+                    return done();
+                });
+            });
+        };
+        Registry.unregisterAll();
+        server.init(port, config, () => {
+            let url = 'http://localhost:' + port + '/elasticsearch/connection/connect';
+            request(url, (err, res, body) => {
+                url = 'http://localhost:' + port + '/elasticsearch/index/test/exists';
+                request(url, (err, res, body) => {
+                    let bodObj = JSON.parse(body);
+                    if (!bodObj.exists) return createIndexAndMapping();
+                    url = 'http://localhost:' + port + '/elasticsearch/index/test';
+                    request.del(url, (err, res, body) => {
+                        return createIndexAndMapping();
+                    });
+                });
+            });
+        });
+    });
+    afterEach(( done ) => {
+        let url = 'http://localhost:' + port + '/elasticsearch/index/test';
+        request.del(url, (err, res, body) => {
+            server.stop(() => {
+                done();
+            });
+        });
+    });
+    after(() => {
+        Registry.unregisterAll();
+    });
+    it ( 'should insert into the database and use url query parameters as elasticsearch query parameters', ( done ) => {
+        let sourceFile = path.resolve('./test/data', 'elasticsearch-insert.json');
+        let formData = { filename: fs.createReadStream( sourceFile )};
+        let url = 'http://localhost:' + port + '/elasticsearch/data';
+        request.post({ url: url, formData: formData }, (err, httpResponse, body) => {
+            expect(body).to.be.equal('{"status":"success","operation":"Insert data to test/document."}');
+            url = 'http://localhost:' + port + '/elasticsearch/data/test/document/_all';
+            url += '?title=my+title&content=my+content';
+            request(url, (err, httpResponse, body) => {
+                let bodyObj = JSON.parse(body);
+                expect(bodyObj.status).to.be.equal('success');
+                expect(bodyObj.data.length).to.be.equal(1);
+                expect(bodyObj.data[0].title).to.be.equal('my title');
+                expect(bodyObj.data[0].content).to.be.equal('my content');
+                expect(bodyObj.data[0].suggest).to.be.equal('my suggest');
+                done();
+            });
+        });
+    });
+    it ( 'should update data in the database', ( done ) => {
+        let sourceFile = path.resolve('./test/data', 'elasticsearch-insert.json');
+        let formData = { filename: fs.createReadStream( sourceFile )};
+        let sourceFile2 = path.resolve('./test/data', 'elasticsearch-update.json');
+        let formData2 = { filename: fs.createReadStream( sourceFile2 )};
+        let url = 'http://localhost:' + port + '/elasticsearch/data';
+        request.post({ url: url, formData: formData }, (err, httpResponse, body) => {
+            expect(body).to.be.equal('{"status":"success","operation":"Insert data to test/document."}');
+            url = 'http://localhost:' + port + '/elasticsearch/data/update';
+            url += '?title=my+title&content=my+content';
+            request.post({ url: url, formData: formData2 }, (err, httpResponse, body) => {
+                let bodyObj = JSON.parse(body);
+                expect(bodyObj.status).to.be.equal('success');
+                url = 'http://localhost:' + port + '/elasticsearch/data/test/document/1';
+                request(url, (err, httpResponse, body) => {
+                    bodyObj = JSON.parse(body);
+                    expect(bodyObj.status).to.be.equal('success');
+                    expect(bodyObj.data.length).to.be.equal(1);
+                    expect(bodyObj.data[0].title).to.be.equal('my updated title');
+                    expect(bodyObj.data[0].content).to.be.equal('my updated content');
+                    expect(bodyObj.data[0].suggest).to.be.equal('my updated suggest');
+                    done();
+                });
+            });
+        });
+    });
+    it ( 'should delete data in the database', ( done ) => {
+        let sourceFile = path.resolve('./test/data', 'elasticsearch-insert.json');
+        let formData = { filename: fs.createReadStream( sourceFile )};
+        let url = 'http://localhost:' + port + '/elasticsearch/data';
+        request.post({ url: url, formData: formData }, (err, httpResponse, body) => {
+            expect(body).to.be.equal('{"status":"success","operation":"Insert data to test/document."}');
+            url = 'http://localhost:' + port + '/elasticsearch/data/test/document/1';
+            request.del({ url: url }, (err, httpResponse, body) => {
+                let bodyObj = JSON.parse(body);
+                expect(bodyObj.status).to.be.equal('success');
+                url = 'http://localhost:' + port + '/elasticsearch/data/test/document/1';
+                request(url, (err, httpResponse, body) => {
+                    bodyObj = JSON.parse(body);
+                    expect(bodyObj.status).to.be.equal('success');
+                    expect(bodyObj.data.length).to.be.equal(0);
+                    done();
+                });
+            });
+        });
+    });
+});

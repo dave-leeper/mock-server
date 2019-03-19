@@ -241,7 +241,6 @@ describe( 'As a developer, I need to perform CRUD operations on the mongodb data
     });
 });
 
-
 describe( 'As a developer, I need work with a Mongo database using a REST interface', function() {
     before(() => {
     });
@@ -320,17 +319,15 @@ describe( 'As a developer, I need work with a Mongo database using a REST interf
     it ( 'should delete data in the database', ( done ) => {
         let sourceFile = path.resolve('./test/data', 'mongo-insert.json');
         let formData = { filename: fs.createReadStream( sourceFile )};
-        let sourceFile2 = path.resolve('./test/data', 'mongo-update.json');
-        let formData2 = { filename: fs.createReadStream( sourceFile2 )};
         let url = 'http://localhost:' + port + '/mongo/data/test';
         request.post({ url: url, formData: formData }, (err, httpResponse, body) => {
             expect(body).to.be.equal('{"status":"success","operation":"Insert data to test."}');
             url += '?title=my+title&content=my+content';
-            request.del({ url: url, formData: formData2 }, (err, httpResponse, body) => {
+            request.del({ url: url }, (err, httpResponse, body) => {
                 let bodyObj = JSON.parse(body);
                 expect(bodyObj.status).to.be.equal('success');
                 url = 'http://localhost:' + port + '/mongo/data/test';
-                url += '?title=my+title+updated&content=my+content+updated';
+                url += '?title=my+title&content=my+content';
                 request(url, (err, httpResponse, body) => {
                     bodyObj = JSON.parse(body);
                     expect(bodyObj.status).to.be.equal('success');

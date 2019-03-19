@@ -65,8 +65,8 @@ ElasticsearchValidationHelper.validateParams = function(builder, req, res) {
 
 ElasticsearchValidationHelper.validateUploadFile = function(builder, req, res) {
     if ((!req.files)
-        || (!req.files.filename)
-        || (!req.files.filename.data)) {
+    || (!req.files.filename)
+    || (!req.files.filename.data)) {
         const error = { message: "Error, no file was uploaded.", error: { status: 400 }};
         builder.sendErrorResponse(error, res);
         return false;

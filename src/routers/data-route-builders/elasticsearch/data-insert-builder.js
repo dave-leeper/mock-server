@@ -17,7 +17,7 @@ function DataInsertBuilder( builder, databaseConnectionInfo )
             res.send(JSON.stringify(success));
             next && next();
         }).catch(( err ) => {
-            const error = { message: "Error inserting record. " + err, error: { status: 500 }};
+            const error = { message: "Error inserting record. " + JSON.stringify(err), error: { status: 500 }};
             builder.sendErrorResponse(error, res);
             next && next();
         });
