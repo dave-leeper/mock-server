@@ -34,7 +34,6 @@ describe( 'As a developer, I need to manage database connections.', function()
         let dbConnectionManager = new DatabaseConnectorManager();
 
         expect(dbConnectionManager).to.not.be.null;
-        console.log("=== Attempting to connect to ElasticSearch on localhost.");
         dbConnectionManager.connect(config).then ((error, param2) => {
             expect(dbConnectionManager.config).to.be.equal(config);
             expect(dbConnectionManager.databaseConnectors.length).to.be.equal(1);

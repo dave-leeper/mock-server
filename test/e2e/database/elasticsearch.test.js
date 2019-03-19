@@ -144,7 +144,7 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
         }, ( error ) => {
             expect( false ).to.be.equal( true );
         });
-    });
+    }).timeout(4000);
 
     it ( 'should create indexes (tables) with valid elasticsearch mappings.', ( done ) => {
         elasticSearch.createIndex( schema ).then(( createResult ) => {
@@ -289,7 +289,7 @@ describe( 'As a developer, I need to perform CRUD operations on the elasticsearc
         }, ( error ) => {
             expect( true ).to.be.equal( false );
         });
-    });
+    }).timeout(4000);
     it ( 'should be able to delete records in the elasticsearch database.', ( done ) => {
         elasticSearch.insert( data ).then(( result ) => {
             elasticSearch.delete( data ).then(( result2 ) => {
@@ -373,7 +373,7 @@ describe( 'As a developer, I need work with a Elasticsearch database using a RES
                 done();
             });
         });
-    });
+    }).timeout(4000);
     it ( 'should update data in the database', ( done ) => {
         let sourceFile = path.resolve('./test/data', 'elasticsearch-insert.json');
         let formData = { filename: fs.createReadStream( sourceFile )};

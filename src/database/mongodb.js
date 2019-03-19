@@ -1,6 +1,7 @@
 'use strict';
 
 const mongodb = require('mongodb');
+let log = require ( '../util/log.js' );
 
 /**
  * @param name - name of the connection.
@@ -24,24 +25,32 @@ Mongodb.prototype.connect = function (config ) {
             let client = mongodb.MongoClient;;
             this.config = config;
             if (!config || !config.url || !config.db) {
-                inReject && inReject({status: false, error: 'Error while connecting.'});
+                let error = {status: false, error: 'Error while connecting.'};
+                log.error(log.stringify(error));
+                inReject && inReject( error );
                 return;
             }
             client.connect(config.url, { useNewUrlParser: true }, (err, client) => {
                 if (err) {
-                    inReject && inReject({status: false, error: 'Error while connecting.'});
+                    let error = { status: false, error: 'Error while connecting.' }
+                    log.error(log.stringify(error));
+                    inReject && inReject(error);
                     return;
                 }
                 self.client = client;
                 self.db = client.db(config.db);
                 if (!self.db) {
-                    inReject && inReject({status: false, error: 'Error while connecting.'});
+                    let error = { status: false, error: 'Error while connecting.' }
+                    log.error(log.stringify(error));
+                    inReject && inReject(error);
                     return;
                 }
                 inResolve && inResolve( this.client );
             });
         } catch (err) {
-            inReject && inReject({ status: false, error: 'Error while connecting.' });
+            let error = { status: false, error: 'Error while connecting.' }
+            log.error(log.stringify(error));
+            inReject && inReject(error);
         }
     });
 };
@@ -66,14 +75,18 @@ Mongodb.prototype.ping = function (  ) {
 Mongodb.prototype.disconnect = function ( ) {
     return new Promise (( inResolve, inReject ) => {
         if (!this.client) {
-            inReject && inReject({ status: false, error: 'Null client.' });
+            let error = { status: false, error: 'Null client.' };
+            log.error(log.stringify(error));
+            inReject && inReject( error );
         } else {
             try {
                 this.client.close();
                 this.client = null;
                 inResolve && inResolve(true);
             } catch (err) {
-                inReject && inReject ( { status: false, error: 'Error while disconnecting. ' + JSON.stringify(err)} );
+                let error = { status: false, error: 'Error while disconnecting. ' + JSON.stringify(err)};
+                log.error(log.stringify(error));
+                inReject && inReject(error);
             }
         }
     });
@@ -101,8 +114,11 @@ Mongodb.prototype.createCollection = function ( name ) {
     return new Promise (( inResolve, inReject ) => {
         let config = (this.config && this.config.collections && this.config.collections[name])? this.config.collections[name] : null ;
         this.db.createCollection(name, config, (err, results) => {
-            if (err)
-                inReject && inReject({ status: false, error: 'Error while creating collection.' });
+            if (err) {
+                let error = {status: false, error: 'Error while creating collection.'};
+                log.error(log.stringify(error));
+                inReject && inReject( error );
+            }
             else
                 inResolve && inResolve( { status: true } );
         });
@@ -112,8 +128,11 @@ Mongodb.prototype.createCollection = function ( name ) {
 Mongodb.prototype.dropCollection = function ( name ) {
     return new Promise (( inResolve, inReject ) => {
         this.db.dropCollection(name, null, (err, delOK) => {
-            if (err)
-                inReject && inReject({ status: false, error: 'Error while dropping collection.' });
+            if (err) {
+                let error = {status: false, error: 'Error while dropping collection.'};
+                log.error(log.stringify(error));
+                inReject && inReject( error );
+            }
             else
                 inResolve && inResolve( { status: true } );
         });
@@ -123,8 +142,11 @@ Mongodb.prototype.dropCollection = function ( name ) {
 Mongodb.prototype.insert = function ( name, data ) {
     return new Promise (( inResolve, inReject ) => {
         this.db.collection(name).insertOne(data, (err, insOK) => {
-            if (err)
-                inReject && inReject({ status: false, error: 'Error while inserting data.' });
+            if (err) {
+                let error = {status: false, error: 'Error while inserting data.'};
+                log.error(log.stringify(error));
+                inReject && inReject( error );
+            }
             else {
                 inResolve && inResolve( { status: true, returnValue: insOK } );
             }
@@ -139,8 +161,11 @@ Mongodb.prototype.update = function ( name, query, data ) {
             upsert: false
         };
         this.db.collection(name).findOneAndUpdate(query, { $set: data }, updateOptions, (err, updOK) => {
-            if (err)
-                inReject && inReject({ status: false, error: 'Error while updating data.' });
+            if (err) {
+                let error = {status: false, error: 'Error while updating data.'};
+                log.error(log.stringify(error));
+                inReject && inReject( error );
+            }
             else
                 inResolve && inResolve( { status: true } );
         });
@@ -150,8 +175,11 @@ Mongodb.prototype.update = function ( name, query, data ) {
 Mongodb.prototype.delete = function ( name, query ) {
     return new Promise (( inResolve, inReject ) => {
         this.db.collection(name).findOneAndDelete(query, (err, delOK) => {
-            if (err)
-                inReject && inReject({ status: false, error: 'Error while deleting data.' });
+            if (err) {
+                let error = {status: false, error: 'Error while deleting data.'};
+                log.error(log.stringify(error));
+                inReject && inReject( error );
+            }
             else
                 inResolve && inResolve( { status: true } );
         });
@@ -161,8 +189,11 @@ Mongodb.prototype.delete = function ( name, query ) {
 Mongodb.prototype.read = function ( name, query ) {
     return new Promise (( inResolve, inReject ) => {
         this.db.collection(name).find(query).toArray((err, result) => {
-            if (err)
-                inReject && inReject({ status: false, error: 'Error while querying data.' });
+            if (err) {
+                let error = {status: false, error: 'Error while querying data.'};
+                log.error(log.stringify(error));
+                inReject && inReject( error );
+            }
             else
                 inResolve && inResolve( result );
         });

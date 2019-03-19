@@ -1,6 +1,7 @@
 'use strict';
 let ValidationHelper = require('./mongo-validation-helper.js');
 let QueryHelper = require('./mongo-query-helper.js');
+let log = require ( '../../../util/log.js' );
 
 function DataUpdateBuilder( builder, databaseConnectionInfo )
 {
@@ -20,6 +21,7 @@ function DataUpdateBuilder( builder, databaseConnectionInfo )
             next && next();
         }).catch(( err ) => {
             const error = { message: "Error updating record (query: " + collectionName + ":" +  JSON.stringify(query) + "). " + JSON.stringify(err), error: { status: 500 }};
+            log.error(log.stringify(error));
             builder.sendErrorResponse(error, res);
             next && next();
         });

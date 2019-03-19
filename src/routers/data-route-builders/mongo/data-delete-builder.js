@@ -1,6 +1,7 @@
 'use strict';
 let ValidationHelper = require('./mongo-validation-helper.js');
 let QueryHelper = require('./mongo-query-helper.js');
+let log = require ( '../../../util/log.js' );
 
 function DataDeleteBuilder( builder, databaseConnectionInfo )
 {
@@ -20,6 +21,7 @@ function DataDeleteBuilder( builder, databaseConnectionInfo )
             next && next();
         }).catch(( err ) => {
             const error = { message: "Error deleting record (collection: " + collectionName + ", id: " + id + "). " + err.error, error: { status: 500 }};
+            log.error(log.stringify(error));
             builder.sendErrorResponse(error, res);
             next && next();
         });

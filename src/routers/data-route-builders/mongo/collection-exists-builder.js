@@ -1,5 +1,6 @@
 'use strict';
 let ValidationHelper = require('./mongo-validation-helper.js');
+let log = require ( '../../../util/log.js' );
 
 function CollectionExistsBuilder (builder, databaseConnectionInfo ) {
     if (!ValidationHelper.validateBuilder(builder) || !ValidationHelper.validateDatabaseConnectionInfo(databaseConnectionInfo)) return;
@@ -15,6 +16,7 @@ function CollectionExistsBuilder (builder, databaseConnectionInfo ) {
             next && next();
         }).catch(( err ) => {
             const error = { message: "Error accessing " + collectionName + ".", error: { status: 500, stack: err.stack }};
+            log.error(log.stringify(error));
             builder.sendErrorResponse(error, res);
             next && next();
         });

@@ -1,5 +1,6 @@
 'use strict';
 let ValidationHelper = require('./elasticsearch-validation-helper.js');
+let log = require ( '../../../util/log.js' );
 
 function DataInsertBuilder( builder, databaseConnectionInfo )
 {
@@ -18,6 +19,7 @@ function DataInsertBuilder( builder, databaseConnectionInfo )
             next && next();
         }).catch(( err ) => {
             const error = { message: "Error inserting record. " + JSON.stringify(err), error: { status: 500 }};
+            log.error(log.stringify(error));
             builder.sendErrorResponse(error, res);
             next && next();
         });

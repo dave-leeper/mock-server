@@ -7,6 +7,7 @@ class Microservices {
             let serverConfig = Registry.get('ServerConfig');
             if ((!serverConfig) || (!serverConfig.microservices)) {
                 let error = 'Error looking up microservices.';
+                Log.error(Log.stringify(error));
                 inReject && inReject({status: 500, send: error });
                 return;
             }
