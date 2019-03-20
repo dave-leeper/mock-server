@@ -1,6 +1,6 @@
 'use strict';
 let ValidationHelper = require('./elasticsearch-validation-helper.js');
-let log = require ( '../../../util/log.js' );
+let Log = require ( '../../../util/log.js' );
 
 function IndexCreateBuilder( builder, databaseConnectionInfo )
 {
@@ -18,7 +18,7 @@ function IndexCreateBuilder( builder, databaseConnectionInfo )
             next && next();
         }).catch(( err ) => {
             const error = { message: "Error creating index. " + err.error, error: { status: 500 }};
-            log.error(log.stringify(error));
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
             builder.sendErrorResponse(error, res);
             next && next();
         });

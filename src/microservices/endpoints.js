@@ -7,7 +7,7 @@ class Endpoints {
             let serverConfig = Registry.get('ServerConfig');
             if ((!serverConfig) || (!serverConfig.endpoints)) {
                 let error = 'Error looking up endpoints.';
-                Log.error(Log.stringify(error));
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
                 inReject && inReject({status: 500, send: error });
                 return;
             }

@@ -10,7 +10,7 @@ class Download {
             const filePath = path.join(FILE_PATH, fileName);
             if (!files.existsSync(filePath)) {
                 let error = 'File (' + fileName + ') not found.';
-                Log.error(Log.stringify(error));
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
                 inReject && inReject({
                     status: 404,
                     send: error,

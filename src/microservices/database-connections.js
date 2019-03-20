@@ -9,7 +9,7 @@ class DatabaseConnections {
             let serverConfig = Registry.get('ServerConfig');
             if ((!serverConfig) || (!serverConfig.databaseConnections)) {
                 let error = 'Error looking up database connections.';
-                Log.error(Log.stringify(error));
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
                 inReject && inReject({status: 500, send: error });
                 return;
             }
@@ -24,7 +24,7 @@ class DatabaseConnections {
                 let paths = [];
                 if (!databaseConnection.type) {
                     let error = 'Error parsing database config. No database type given.';
-                    Log.error(Log.stringify(error));
+                    if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
                     inReject && inReject({status: 500, send: error });
                     return;
                 }

@@ -48,7 +48,7 @@ class RouteBuilderMicroservices extends ServiceBase {
                         res.status(error.status);
                         if (error.send) {
                             if (Array.isArray(error.send)) Log.error(error.send.map(x => x));
-                            else Log.error(error.send);
+                            else if (Log.will(Log.ERROR)) Log.error(error.send);
                             if (!error.fileDownloadPath && !error.viewName)  {
                                 if (Array.isArray(error.send)) res.send(error.send.map(x => x));
                                 else res.send(error.send);
@@ -63,7 +63,7 @@ class RouteBuilderMicroservices extends ServiceBase {
                     });
                 } catch (err) {
                     let error = 'Error executing microservice ' + microservice.name + '.';
-                    Log.error(error + ' Error: ' + Log.stringify(err));
+                    if (Log.will(Log.ERROR)) Log.error(error + ' Error: ' + Log.stringify(err));
                     res.status(500);
                     res.render("error", { message: error, error: { status: 500, stack: err.stack }});
                     next && next();

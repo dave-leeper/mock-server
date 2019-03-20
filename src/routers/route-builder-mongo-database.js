@@ -3,7 +3,6 @@
 let ServiceBase = require ( '../util/service-base.js' );
 let DatabaseConnectorManager = require ( '../database/database-connection-manager' );
 let Registry = require ( '../util/registry.js' );
-let Log = require ( '../util/log.js' );
 let path = require('path');
 const SOURCE_PATH = './src/routers/data-route-builders/mongo/';
 

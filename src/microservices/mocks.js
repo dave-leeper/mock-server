@@ -1,6 +1,5 @@
 let Log = require('../util/log' );
 let Registry = require('../util/registry' );
-let log = require ( '../util/log.js' );
 
 class Mocks {
     do(params) {
@@ -8,7 +7,7 @@ class Mocks {
             let serverConfig = Registry.get('ServerConfig');
             if ((!serverConfig) || (!serverConfig.mocks)) {
                 let error = {status: 500, send: 'Error looking up mocks.'};
-                log.error(log.stringify(error));
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
                 inReject && inReject( error );
                 return;
             }

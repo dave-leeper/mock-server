@@ -1,6 +1,6 @@
 'use strict';
 let ValidationHelper = require('./elasticsearch-validation-helper.js');
-let log = require ( '../../../util/log.js' );
+let Log = require ( '../../../util/log.js' );
 
 function DataUpdateBuilder( builder, databaseConnectionInfo )
 {
@@ -19,7 +19,7 @@ function DataUpdateBuilder( builder, databaseConnectionInfo )
             next && next();
         }).catch(( err ) => {
             const error = { message: "Error updating record (id: " + updateDoc.id + "). " + JSON.stringify(err), error: { status: 500 }};
-            log.error(log.stringify(error));
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
             builder.sendErrorResponse(error, res);
             next && next();
         });

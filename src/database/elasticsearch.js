@@ -1,7 +1,7 @@
 'use strict';
 
 const elasticsearch = require('elasticsearch');
-let log = require ( '../util/log.js' );
+let Log = require ( '../util/log.js' );
 
 /**
  * Database = N/A
@@ -27,7 +27,7 @@ Elasticsearch.prototype.connect = function (config ) {
             inResolve && inResolve( this.client );
         } catch (err) {
             let error = { status: false, error: 'Error while connecting.' }
-            log.error(log.stringify(error));
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
             inReject && inReject(error);
         }
     });
@@ -38,7 +38,7 @@ Elasticsearch.prototype.ping = function (  )
     return new Promise (( inResolve, inReject ) => {
         if (!this.client) {
             let error = { status: "Error", error: 'Null client.' };
-            log.error(log.stringify(error));
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
             inReject && inReject ( error );
         } else {
             this.client.ping({ requestTimeout: 30000 }, function( error ) {
@@ -56,7 +56,7 @@ Elasticsearch.prototype.disconnect = function ( ) {
     return new Promise (( inResolve, inReject ) => {
         if (!this.client) {
             let error = { status: false, error: 'Null client.' };
-            log.error(log.stringify(error));
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
             inReject && inReject( error );
         } else {
             try {
@@ -64,7 +64,7 @@ Elasticsearch.prototype.disconnect = function ( ) {
                 inResolve && inResolve(true);
             } catch (err) {
                 let error = { status: false, error: 'Error while disconnecting.' };
-                log.error(log.stringify(error));
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
                 inReject && inReject ( error );
             }
         }
@@ -77,7 +77,7 @@ Elasticsearch.prototype.indexExists = function ( name ) {
             inResolve && inResolve( exists );
         }, (err) => {
             let error = { status: false, error: 'Error while checking table.' };
-            log.error(log.stringify(error));
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
             inReject && inReject( error )
         });
     });
@@ -96,7 +96,7 @@ Elasticsearch.prototype.createIndex = function ( index ) {
             inResolve && inResolve({ status: true });
         }, ( err ) => {
             let error = { status: false, error: 'Could not create index.' };
-            log.error(log.stringify(error));
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
             inReject && inReject( error );
         });
     });
@@ -108,7 +108,7 @@ Elasticsearch.prototype.dropIndex = function ( name ) {
             inResolve && inResolve( success );
         }, ( err ) => {
             let error = { status: false, error: err };
-            log.error(log.stringify(error));
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
             inReject && inReject( error );
         });
     });
@@ -139,7 +139,7 @@ Elasticsearch.prototype.createIndexMapping = function ( mapping ) {
             inResolve && inResolve ({ status: true });
         }).catch((err) => {
             let error = { status: false, error: 'Could not create index mapping.' + err };
-            log.error(log.stringify(error));
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
             inReject && inReject( error );
         });
     });
@@ -151,7 +151,7 @@ Elasticsearch.prototype.insert = function ( data ) {
         this.client.index( data, (err, response) => {
             if (err) {
                 let error = { status: false, error: err };
-                log.error(log.stringify(error));
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
                 inReject && inReject( error );
                 return;
             }
@@ -166,7 +166,7 @@ Elasticsearch.prototype.update = function ( data ) {
         this.client.update( data, (err, response) => {
             if (err) {
                 let error = { status: false, error: err };
-                log.error(log.stringify(error));
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
                 inReject && inReject( error );
                 return;
             }
@@ -182,7 +182,7 @@ Elasticsearch.prototype.delete = function ( data ) {
             .then(( success ) => { inResolve && inResolve( success ); })
             .catch((err) => {
                 let error = { status: false, error: err };
-                log.error(log.stringify(error));
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
                 inReject && inReject( error );
             });
     });
@@ -193,7 +193,7 @@ Elasticsearch.prototype.read = function ( whereClause ) {
         this.client.search( whereClause,(err, response) => {
             if (err) {
                 let error = { status: false, error: err };
-                log.error(log.stringify(error));
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
                 inReject && inReject( error );
                 return;
             }

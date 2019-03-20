@@ -373,7 +373,7 @@ describe( 'As a developer, I need work with a Elasticsearch database using a RES
                 done();
             });
         });
-    }).timeout(4000);
+    }).timeout(6000);
     it ( 'should update data in the database', ( done ) => {
         let sourceFile = path.resolve('./test/data', 'elasticsearch-insert.json');
         let formData = { filename: fs.createReadStream( sourceFile )};

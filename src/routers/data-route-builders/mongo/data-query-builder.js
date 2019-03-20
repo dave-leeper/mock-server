@@ -1,7 +1,7 @@
 'use strict';
 let ValidationHelper = require('./mongo-validation-helper.js');
 let QueryHelper = require('./mongo-query-helper.js');
-let log = require ( '../../../util/log.js' );
+let Log = require ( '../../../util/log.js' );
 
 function DataQueryBuilder( builder, databaseConnectionInfo )
 {
@@ -21,7 +21,7 @@ function DataQueryBuilder( builder, databaseConnectionInfo )
             next && next();
         }).catch(( err ) => {
             const error = { message: "Error querying database. " + JSON.stringify(err), error: { status: 500 }};
-            log.error(log.stringify(error));
+            if (Log.will(Log.ERROR)) log.error(log.stringify(error));
             builder.sendErrorResponse(error, res);
             next && next();
         });

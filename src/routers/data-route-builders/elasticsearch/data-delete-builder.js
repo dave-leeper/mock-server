@@ -1,6 +1,6 @@
 'use strict';
 let ValidationHelper = require('./elasticsearch-validation-helper.js');
-let log = require ( '../../../util/log.js' );
+let Log = require ( '../../../util/log.js' );
 
 function DataDeleteBuilder( builder, databaseConnectionInfo )
 {
@@ -22,7 +22,7 @@ function DataDeleteBuilder( builder, databaseConnectionInfo )
             next && next();
         }).catch(( err ) => {
             const error = { message: "Error deleting record (index: " + index + ", type: " + type + ", id: " + id + "). " + err.error, error: { status: 500 }};
-            log.error(log.stringify(error));
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
             builder.sendErrorResponse(error, res);
             next && next();
         });

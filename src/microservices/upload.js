@@ -1,6 +1,6 @@
 let path = require('path');
 let files = require ( '../util/files.js' );
-let log = require ( '../util/log.js' );
+let Log = require ( '../util/log.js' );
 
 const FILE_PATH = path.resolve('./public/files');
 class Upload {
@@ -14,7 +14,7 @@ class Upload {
                     message: "Conflict: File Already Exists.",
                     error: { status: 409 }
                 };
-                log.error(log.stringify(error));
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
                 inReject && inReject ({
                     status: 409,
                     viewName: 'error',
@@ -27,7 +27,7 @@ class Upload {
                 uploadedFile.mv(fullFileName, (err) => {
                     if (err) {
                         const error = { message: "Error uploading file.", error: { status: 500, stack: err.stack} };
-                        log.error(log.stringify(error));
+                        if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
                         inReject && inReject ({
                             status: 500,
                             viewName: 'error',
@@ -43,7 +43,7 @@ class Upload {
                 });
             } catch (err) {
                 const error = { message: "Error uploading file.", error: { status: 500, stack: err.stack} };
-                log.error(log.stringify(error));
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
                 inReject && inReject ({
                     status: 500,
                     viewName: 'error',

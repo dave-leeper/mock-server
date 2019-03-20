@@ -46,8 +46,8 @@ class RouteBuilder {
         const operation = 'RouterBuilder.buildAuthenticationStrategies';
         const passport = Registry.get('Passport');
         if (!passport) {
-            const err = { operation: operation, statusType: 'error', status: 501, message: I18n.get( Strings.AUTHENTICATION_NOT_CONFIGURED )};
-            Log.error(Log.stringify(err));
+            const err = { operation: operation, statusType: 'error', status: 501, message: I18n.get( Strings.ERROR_MESSAGE_AUTHENTICATION_NOT_CONFIGURED )};
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
             return false;
         }
         config.authenticationStrategies = {};

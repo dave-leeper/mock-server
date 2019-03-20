@@ -83,7 +83,7 @@ class ServiceBase {
         let passport = Registry.get('Passport');
         let authenticationStrategy = authenticationStrategies[authenticationName];
         if (!passport || !authenticationStrategy) {
-            Log.error( I18n.get( Strings.AUTHENTICATION_NOT_CONFIGURED ));
+            if (Log.will(Log.ERROR)) Log.error( I18n.get( Strings.ERROR_MESSAGE_AUTHENTICATION_NOT_CONFIGURED ));
             return null;
         }
         let strategyHandler;
@@ -96,7 +96,7 @@ class ServiceBase {
         if (!authorizationStrategies || !authorizationInfo || !authorizationInfo.strategy) return null;
         let authorizationStrategy = authorizationStrategies[authorizationInfo.strategy];
         if (!authorizationStrategy || !authorizationStrategy.strategy || !authorizationStrategy.strategy.getAuthorization) {
-            Log.error( I18n.get( Strings.AUTHORIZATION_NOT_CONFIGURED ));
+            if (Log.will(Log.ERROR)) Log.error( I18n.get( Strings.ERROR_MESSAGE_AUTHORIZATION_NOT_CONFIGURED ));
             return null;
         }
         return authorizationStrategy.strategy.getAuthorization();
