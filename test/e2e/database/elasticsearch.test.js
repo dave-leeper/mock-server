@@ -1,13 +1,37 @@
 //@formatter:off
 'use strict';
 
+let fs = require("fs");
+let path = require("path");
 const chai = require( 'chai' ),
     expect = chai.expect,
+    request = require('request'),
     ElasticSearch = require('../../../src/database/elasticsearch.js'),
+    Server = require('../../../server.js'),
     Registry = require('../../../src/util/registry.js');
 const elasticSearch = new ElasticSearch();
+let port = 1337;
+let server = new Server();
+let config = {
+    "databaseConnections" : [
+        {
+            "name": "elasticsearch",
+            "type": "elasticsearch",
+            "description": "Elasticsearch service.",
+            "databaseConnector": "elasticsearch.js",
+            "generateElasticsearchConnectionAPI": true,
+            "generateElasticsearchIndexAPI": true,
+            "generateElasticsearchDataAPI": true,
+            "config": {
+                "host": "127.0.0.1:9200",
+                "log": "trace"
+            }
+        }
+    ]
+};
 let configInfo = {
     name: "elasticsearch",
+    type: "elasticsearch",
     description: "Elasticsearch service.",
     databaseConnector: "elasticsearch.js",
     config: {
@@ -54,8 +78,12 @@ let updateData = {
 };
 let query = {
     index: 'test',
-        q: 'title:\'my title\''
-}
+    q: 'title:\'my title\''
+};
+let query2 = {
+    index: 'test',
+    q: 'title:\'my updated title\''
+};
 describe( 'As a developer, I need to connect, ping, and disconnect to/from elasticsearch.', function() {
     before(() => {
     });
@@ -66,7 +94,7 @@ describe( 'As a developer, I need to connect, ping, and disconnect to/from elast
     });
     after(() => {
     });
-    it ( 'should be able to connect, ping, and disconnect the connection', ( done ) => {
+    it ( 'should be able to connect, ping, and disconnect the elasticsearch connection', ( done ) => {
         elasticSearch.connect( configInfo.config ).then(() => {
             elasticSearch.ping().then(( pingResult ) => {
                 expect( pingResult ).to.be.equal( true );
@@ -104,7 +132,7 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
         });
     });
 
-    it ( 'should not create indexes (tables) with invalid mappings.', ( done ) => {
+    it ( 'should not create indexes (tables) with invalid elasticsearch mappings.', ( done ) => {
         const invalidSchema = {index:"test",type:"",body:{properties:{"title": { "type": "string" }}}};
         elasticSearch.createIndex( invalidSchema ).then(( createResult ) => {
             expect( createResult.status ).to.be.equal( true );
@@ -116,9 +144,9 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
         }, ( error ) => {
             expect( false ).to.be.equal( true );
         });
-    });
+    }).timeout(4000);
 
-    it ( 'should create indexes (tables) with valid mappings.', ( done ) => {
+    it ( 'should create indexes (tables) with valid elasticsearch mappings.', ( done ) => {
         elasticSearch.createIndex( schema ).then(( createResult ) => {
             expect( createResult.status ).to.be.equal( true );
             elasticSearch.createIndexMapping( schema ).then(( createResult ) => {
@@ -126,20 +154,22 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
                 done();
             }, ( error ) => {
                 expect( false ).to.be.equal( true );
+                done();
             });
         }, ( error ) => {
             expect( false ).to.be.equal( true );
+            done();
         });
     });
 
-    it ( 'should be able to to tell when an index does not exist.', ( done ) => {
+    it ( 'should be able to to tell when an index does not exist in elasticsearch.', ( done ) => {
         elasticSearch.indexExists( 'JUNK' ).then(( existsResult ) => {
             expect( existsResult ).to.be.equal( false );
             done();
         });
     });
 
-    it ( 'should not delete indexes that do not exist.', ( done ) => {
+    it ( 'should not delete indexes that do not existing elasticsearch.', ( done ) => {
         elasticSearch.dropIndex( 'JUNK' ).then(( dropResult ) => {
             expect( true ).to.be.equal( false );
         }, ( error ) => {
@@ -148,7 +178,7 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
         });
     });
 
-    it ( 'should be able to create an index', ( done ) => {
+    it ( 'should be able to create an index in elasticsearch', ( done ) => {
         elasticSearch.createIndex( schema ).then(( createResult ) => {
             expect( createResult.status ).to.be.equal( true );
             elasticSearch.indexExists( schema.index ).then((existsResult2 ) => {
@@ -158,7 +188,7 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
         });
     });
 
-    it ( 'should not create indexes that already exist.', ( done ) => {
+    it ( 'should not create indexes that already exist in elasticsearch.', ( done ) => {
         elasticSearch.createIndex( schema ).then(( createResult ) => {
             expect( createResult.status ).to.be.equal( true );
             elasticSearch.createIndex( schema ).then(( createResult2 ) => {
@@ -169,7 +199,7 @@ describe( 'As a developer, I need to create, check for the existence of, and dro
         });
     }).timeout(5000);
 });
-describe( 'As a developer, I need to perform CRUD operations on the database.', function() {
+describe( 'As a developer, I need to perform CRUD operations on the elasticsearch database.', function() {
     before(( done ) => {
         elasticSearch.connect(configInfo.config).then(() => {
             done();
@@ -199,39 +229,34 @@ describe( 'As a developer, I need to perform CRUD operations on the database.', 
             done();
         });
     });
-    it ( 'should be able to insert records into the database.', ( done ) => {
+    it ( 'should be able to insert records into the elasticsearch database.', ( done ) => {
         elasticSearch.insert( data ).then(( result ) => {
-            // expect( result.result ).to.be.equal( 'created' );
+            expect( result._index ).to.be.equal( 'test' );
+            expect( result._type ).to.be.equal( 'document' );
+            expect( result._id ).to.be.equal( '1' );
+            expect( result._version ).to.be.equal( 1 );
+            expect( result.result ).to.be.equal( 'created' );
             done();
         }, ( error ) => {
             expect( true ).to.be.equal( false );
         });
     });
-    it ( 'should be able to query records in the database.', ( done ) => {
-        // TODO: Works when run stand-alone in debugger. Fails when run as a group of tests.
-        // elasticSearch.insert( data ).then(( result ) => {
-        //     elasticSearch.read( query ).then(( result ) => {
-        //         expect( result.hits ).to.not.be.null;
-        //         expect( Array.isArray(result.hits.hits) ).to.be.equal( true );
-        //         expect( result.hits.hits.length ).to.be.equal( 1 );
-        //         expect( result.hits.hits[0] ).to.not.be.null;
-        //         expect( result.hits.hits[0]._source ).to.not.be.null;
-        //         expect( result.hits.hits[0]._source.title ).to.be.equal('my title');
-        //         expect( result.hits.hits[0]._source.content ).to.be.equal('my content');
-        //         expect( result.hits.hits[0]._source.suggest ).to.be.equal('my suggest');
-                done();
-        //     }, ( error ) => {
-        //         expect( true ).to.be.equal( false );
-        //     });
-        // }, ( error ) => {
-        //     expect( true ).to.be.equal( false );
-        // });
-    });
-
-    it ( 'should be able to update records in the database.', ( done ) => {
+    it ( 'should be able to query records in the elasticsearch database.', ( done ) => {
         elasticSearch.insert( data ).then(( result ) => {
-            elasticSearch.update( updateData ).then(( result ) => {
-                expect( result.result ).to.be.equal( 'updated' );
+            expect( result._index ).to.be.equal( 'test' );
+            expect( result._type ).to.be.equal( 'document' );
+            expect( result._id ).to.be.equal( '1' );
+            expect( result._version ).to.be.equal( 1 );
+            expect( result.result ).to.be.equal( 'created' );
+            elasticSearch.read( query ).then(( result2 ) => {
+                expect( result2.hits ).to.not.be.null;
+                expect( Array.isArray(result2.hits.hits) ).to.be.equal( true );
+                expect( result2.hits.hits.length ).to.be.equal( 1 );
+                expect( result2.hits.hits[0] ).to.not.be.null;
+                expect( result2.hits.hits[0]._source ).to.not.be.null;
+                expect( result2.hits.hits[0]._source.title ).to.be.equal('my title');
+                expect( result2.hits.hits[0]._source.content ).to.be.equal('my content');
+                expect( result2.hits.hits[0]._source.suggest ).to.be.equal('my suggest');
                 done();
             }, ( error ) => {
                 expect( true ).to.be.equal( false );
@@ -240,11 +265,43 @@ describe( 'As a developer, I need to perform CRUD operations on the database.', 
             expect( true ).to.be.equal( false );
         });
     });
-    it ( 'should be able to delete records in the database.', ( done ) => {
+
+    it ( 'should be able to update records in the elasticsearch database.', ( done ) => {
         elasticSearch.insert( data ).then(( result ) => {
-            elasticSearch.delete( data ).then(( result ) => {
-                expect( result.result ).to.be.equal( 'deleted' );
-                done();
+            elasticSearch.update( updateData ).then(( result2 ) => {
+                expect( result2.result ).to.be.equal( 'updated' );
+                elasticSearch.read( query2 ).then(( result3 ) => {
+                    expect( result3.hits ).to.not.be.null;
+                    expect( Array.isArray(result3.hits.hits) ).to.be.equal( true );
+                    expect( result3.hits.hits.length ).to.be.equal( 1 );
+                    expect( result3.hits.hits[0] ).to.not.be.null;
+                    expect( result3.hits.hits[0]._source ).to.not.be.null;
+                    expect( result3.hits.hits[0]._source.title ).to.be.equal('my updated title');
+                    expect( result3.hits.hits[0]._source.content ).to.be.equal('my updated content');
+                    expect( result3.hits.hits[0]._source.suggest ).to.be.equal('my updated suggest');
+                    done();
+                }, ( error ) => {
+                    expect( true ).to.be.equal( false );
+                });
+            }, ( error ) => {
+                expect( true ).to.be.equal( false );
+            });
+        }, ( error ) => {
+            expect( true ).to.be.equal( false );
+        });
+    }).timeout(4000);
+    it ( 'should be able to delete records in the elasticsearch database.', ( done ) => {
+        elasticSearch.insert( data ).then(( result ) => {
+            elasticSearch.delete( data ).then(( result2 ) => {
+                expect( result2.result ).to.be.equal( 'deleted' );
+                elasticSearch.read( query ).then(( result3 ) => {
+                    expect( result3.hits ).to.not.be.null;
+                    expect( Array.isArray(result3.hits.hits) ).to.be.equal( true );
+                    expect( result3.hits.hits.length ).to.be.equal( 0 );
+                    done();
+                }, ( error ) => {
+                    expect( true ).to.be.equal( false );
+                });
             }, ( error ) => {
                 expect( true ).to.be.equal( false );
             });
@@ -254,3 +311,113 @@ describe( 'As a developer, I need to perform CRUD operations on the database.', 
     });
 });
 
+describe( 'As a developer, I need work with a Elasticsearch database using a REST interface', function() {
+    let schemaFile;
+    before(() => {
+        schemaFile = path.resolve('./test/data', 'elasticsearch-schema.json');
+    });
+    beforeEach((done) => {
+        let createIndexAndMapping = () => {
+            let url = 'http://localhost:' + port + '/elasticsearch/index';
+            let schemaData = { filename: fs.createReadStream( schemaFile )};
+            request.post({ url: url, formData: schemaData }, (err, httpResponse, body) => {
+                url = 'http://localhost:' + port + '/elasticsearch/index/mapping';
+                schemaData = { filename: fs.createReadStream( schemaFile )};
+                request.post({ url: url, formData: schemaData }, (err, httpResponse, body) => {
+                    return done();
+                });
+            });
+        };
+        Registry.unregisterAll();
+        server.init(port, config, () => {
+            let url = 'http://localhost:' + port + '/elasticsearch/connection/connect';
+            request(url, (err, res, body) => {
+                url = 'http://localhost:' + port + '/elasticsearch/index/test/exists';
+                request(url, (err, res, body) => {
+                    let bodObj = JSON.parse(body);
+                    if (!bodObj.exists) return createIndexAndMapping();
+                    url = 'http://localhost:' + port + '/elasticsearch/index/test';
+                    request.del(url, (err, res, body) => {
+                        return createIndexAndMapping();
+                    });
+                });
+            });
+        });
+    });
+    afterEach(( done ) => {
+        let url = 'http://localhost:' + port + '/elasticsearch/index/test';
+        request.del(url, (err, res, body) => {
+            server.stop(() => {
+                done();
+            });
+        });
+    });
+    after(() => {
+        Registry.unregisterAll();
+    });
+    it ( 'should insert into the database and use url query parameters as elasticsearch query parameters', ( done ) => {
+        let sourceFile = path.resolve('./test/data', 'elasticsearch-insert.json');
+        let formData = { filename: fs.createReadStream( sourceFile )};
+        let url = 'http://localhost:' + port + '/elasticsearch/data';
+        request.post({ url: url, formData: formData }, (err, httpResponse, body) => {
+            expect(body).to.be.equal('{"status":"success","operation":"Insert data to test/document."}');
+            url = 'http://localhost:' + port + '/elasticsearch/data/test/document/_all';
+            url += '?title=my+title&content=my+content';
+            request(url, (err, httpResponse, body) => {
+                let bodyObj = JSON.parse(body);
+                expect(bodyObj.status).to.be.equal('success');
+                expect(bodyObj.data.length).to.be.equal(1);
+                expect(bodyObj.data[0].title).to.be.equal('my title');
+                expect(bodyObj.data[0].content).to.be.equal('my content');
+                expect(bodyObj.data[0].suggest).to.be.equal('my suggest');
+                done();
+            });
+        });
+    }).timeout(6000);
+    it ( 'should update data in the database', ( done ) => {
+        let sourceFile = path.resolve('./test/data', 'elasticsearch-insert.json');
+        let formData = { filename: fs.createReadStream( sourceFile )};
+        let sourceFile2 = path.resolve('./test/data', 'elasticsearch-update.json');
+        let formData2 = { filename: fs.createReadStream( sourceFile2 )};
+        let url = 'http://localhost:' + port + '/elasticsearch/data';
+        request.post({ url: url, formData: formData }, (err, httpResponse, body) => {
+            expect(body).to.be.equal('{"status":"success","operation":"Insert data to test/document."}');
+            url = 'http://localhost:' + port + '/elasticsearch/data/update';
+            url += '?title=my+title&content=my+content';
+            request.post({ url: url, formData: formData2 }, (err, httpResponse, body) => {
+                let bodyObj = JSON.parse(body);
+                expect(bodyObj.status).to.be.equal('success');
+                url = 'http://localhost:' + port + '/elasticsearch/data/test/document/1';
+                request(url, (err, httpResponse, body) => {
+                    bodyObj = JSON.parse(body);
+                    expect(bodyObj.status).to.be.equal('success');
+                    expect(bodyObj.data.length).to.be.equal(1);
+                    expect(bodyObj.data[0].title).to.be.equal('my updated title');
+                    expect(bodyObj.data[0].content).to.be.equal('my updated content');
+                    expect(bodyObj.data[0].suggest).to.be.equal('my updated suggest');
+                    done();
+                });
+            });
+        });
+    });
+    it ( 'should delete data in the database', ( done ) => {
+        let sourceFile = path.resolve('./test/data', 'elasticsearch-insert.json');
+        let formData = { filename: fs.createReadStream( sourceFile )};
+        let url = 'http://localhost:' + port + '/elasticsearch/data';
+        request.post({ url: url, formData: formData }, (err, httpResponse, body) => {
+            expect(body).to.be.equal('{"status":"success","operation":"Insert data to test/document."}');
+            url = 'http://localhost:' + port + '/elasticsearch/data/test/document/1';
+            request.del({ url: url }, (err, httpResponse, body) => {
+                let bodyObj = JSON.parse(body);
+                expect(bodyObj.status).to.be.equal('success');
+                url = 'http://localhost:' + port + '/elasticsearch/data/test/document/1';
+                request(url, (err, httpResponse, body) => {
+                    bodyObj = JSON.parse(body);
+                    expect(bodyObj.status).to.be.equal('success');
+                    expect(bodyObj.data.length).to.be.equal(0);
+                    done();
+                });
+            });
+        });
+    });
+});

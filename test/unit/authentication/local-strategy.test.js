@@ -23,7 +23,7 @@ describe( 'As a developer, I need need to define a custom authentication/authori
     });
     it ( 'should fail gracefully when there is no server config in the registry', ( ) => {
         let operation = 'getAuthorization';
-        const err = Log.stringify({ operation: operation, statusType: 'error', status: 501, message: I18n.get( Strings.AUTHORIZATION_NOT_CONFIGURED )});
+        const err = Log.stringify({ operation: operation, statusType: 'error', status: 501, message: I18n.get( Strings.ERROR_MESSAGE_AUTHORIZATION_NOT_CONFIGURED )});
         let localStrategy = new LocalStrategy();
         let mockRequest = new MockRequest();
         let mockResponse = new MockResponse();
@@ -39,7 +39,7 @@ describe( 'As a developer, I need need to define a custom authentication/authori
     it ( 'should fail gracefully when there is no request or no request path', ( ) => {
         Registry.register( { stuff: 'stuff' }, 'ServerConfig' );
         let operation = 'getAuthorization';
-        const err = Log.stringify({ operation: operation, statusType: 'error', status: 501, message: I18n.get( Strings.AUTHORIZATION_NOT_CONFIGURED )});
+        const err = Log.stringify({ operation: operation, statusType: 'error', status: 501, message: I18n.get( Strings.ERROR_MESSAGE_AUTHORIZATION_NOT_CONFIGURED )});
         let localStrategy = new LocalStrategy();
         let mockRequest = new MockRequest();
         let mockResponse = new MockResponse();
@@ -58,7 +58,7 @@ describe( 'As a developer, I need need to define a custom authentication/authori
     it ( 'should fail gracefully when there is no request username', ( ) => {
         Registry.register( { stuff: 'stuff' }, 'ServerConfig' );
         let operation = 'getAuthorization';
-        const err = Log.stringify({ operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.LOGIN_REQUIRED )});
+        const err = Log.stringify({ operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.ERROR_MESSAGE_LOGIN_REQUIRED )});
         let localStrategy = new LocalStrategy();
         let mockRequest = new MockRequest();
         let mockResponse = new MockResponse();
@@ -79,7 +79,7 @@ describe( 'As a developer, I need need to define a custom authentication/authori
     it ( 'should fail gracefully when the request username has no account', ( ) => {
         Registry.register( { stuff: 'stuff' }, 'ServerConfig' );
         let operation = 'getAuthorization';
-        const err = Log.stringify({ operation: operation, statusType: 'error', status: 401, message: I18n.format( I18n.get( Strings.INCORRECT_USER_NAME ), 'JUNK' )});
+        const err = Log.stringify({ operation: operation, statusType: 'error', status: 401, message: I18n.format( I18n.get( Strings.ERROR_MESSAGE_INCORRECT_USER_NAME ), 'JUNK' )});
         let localStrategy = new LocalStrategy();
         let mockRequest = new MockRequest();
         let mockResponse = new MockResponse();
@@ -128,7 +128,7 @@ describe( 'As a developer, I need need to define a custom authentication/authori
         };
         Registry.register( config, 'ServerConfig' );
         let operation = 'getAuthorization';
-        const err = Log.stringify({ operation: operation, statusType: 'error', status: 403, message: I18n.get( Strings.UNAUTHORIZED )});
+        const err = Log.stringify({ operation: operation, statusType: 'error', status: 403, message: I18n.get( Strings.ERROR_MESSAGE_UNAUTHORIZED )});
         let localStrategy = new LocalStrategy();
         let mockRequest = new MockRequest();
         let mockResponse = new MockResponse();

@@ -6,7 +6,7 @@ class AuthenticateUser {
     do(params) {
         return new Promise (( inResolve, inReject ) => {
             let message = I18n.get( Strings.LOGIN_SUCCESSFUL );
-            Log.info(message + ': ' + params.params.username);
+            if (Log.will(Log.INFO)) Log.info(message + ': ' + params.params.username);
             inResolve && inResolve({ status: 200, send: message});
         });
     }

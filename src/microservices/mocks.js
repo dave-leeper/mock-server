@@ -6,7 +6,9 @@ class Mocks {
         return new Promise (( inResolve, inReject ) => {
             let serverConfig = Registry.get('ServerConfig');
             if ((!serverConfig) || (!serverConfig.mocks)) {
-                inReject && inReject({status: 500, send: 'Error looking up mocks.'});
+                let error = {status: 500, send: 'Error looking up mocks.'};
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
+                inReject && inReject( error );
                 return;
             }
             if (0 === serverConfig.mocks.length) {

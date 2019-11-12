@@ -1,6 +1,7 @@
 'use strict';
 
 const elasticsearch = require('elasticsearch');
+let Log = require ( '../util/log.js' );
 
 /**
  * Database = N/A
@@ -25,7 +26,9 @@ Elasticsearch.prototype.connect = function (config ) {
             this.config = config;
             inResolve && inResolve( this.client );
         } catch (err) {
-            inReject && inReject({ status: false, error: 'Error while connecting.' });
+            let error = { status: false, error: 'Error while connecting.' }
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
+            inReject && inReject(error);
         }
     });
 };
@@ -34,7 +37,9 @@ Elasticsearch.prototype.ping = function (  )
 {
     return new Promise (( inResolve, inReject ) => {
         if (!this.client) {
-            inReject && inReject ( { status: "Error", error: 'Null client.' } );
+            let error = { status: "Error", error: 'Null client.' };
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
+            inReject && inReject ( error );
         } else {
             this.client.ping({ requestTimeout: 30000 }, function( error ) {
                 if (error) {
@@ -50,13 +55,17 @@ Elasticsearch.prototype.ping = function (  )
 Elasticsearch.prototype.disconnect = function ( ) {
     return new Promise (( inResolve, inReject ) => {
         if (!this.client) {
-            inReject && inReject({ status: false, error: 'Null client.' });
+            let error = { status: false, error: 'Null client.' };
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
+            inReject && inReject( error );
         } else {
             try {
                 this.client.close();
                 inResolve && inResolve(true);
             } catch (err) {
-                inReject && inReject ( { status: false, error: 'Error while disconnecting.' } );
+                let error = { status: false, error: 'Error while disconnecting.' };
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
+                inReject && inReject ( error );
             }
         }
     });
@@ -66,8 +75,10 @@ Elasticsearch.prototype.indexExists = function ( name ) {
     return new Promise (( inResolve, inReject ) => {
         this.client.indices.exists({ index: name }).then(( exists ) => {
             inResolve && inResolve( exists );
-        }, (error) => {
-            inReject && inReject( { status: false, error: 'Error while checking table.' } )
+        }, (err) => {
+            let error = { status: false, error: 'Error while checking table.' };
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
+            inReject && inReject( error )
         });
     });
 };
@@ -83,8 +94,10 @@ Elasticsearch.prototype.createIndex = function ( index ) {
     return new Promise (( inResolve, inReject ) => {
         this.client.indices.create({ index: index.index }).then(() => {
             inResolve && inResolve({ status: true });
-        }, ( error ) => {
-            inReject && inReject({ status: false, error: 'Could not create index.' });
+        }, ( err ) => {
+            let error = { status: false, error: 'Could not create index.' };
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
+            inReject && inReject( error );
         });
     });
 };
@@ -93,8 +106,10 @@ Elasticsearch.prototype.dropIndex = function ( name ) {
     return new Promise (( inResolve, inReject ) => {
         this.client.indices.delete({ index: name }).then(( success ) => {
             inResolve && inResolve( success );
-        }, ( error ) => {
-            inReject && inReject({ status: false, error: error });
+        }, ( err ) => {
+            let error = { status: false, error: err };
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
+            inReject && inReject( error );
         });
     });
 };
@@ -123,16 +138,21 @@ Elasticsearch.prototype.createIndexMapping = function ( mapping ) {
         this.client.indices.putMapping( mapping ).then(() => {
             inResolve && inResolve ({ status: true });
         }).catch((err) => {
-            inReject && inReject({ status: false, error: 'Could not create index mapping.' + err });
+            let error = { status: false, error: 'Could not create index mapping.' + err };
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
+            inReject && inReject( error );
         });
     });
 };
 
 Elasticsearch.prototype.insert = function ( data ) {
     return new Promise (( inResolve, inReject ) => {
-        this.client.index( data, (error, response) => {
-            if (error) {
-                inReject && inReject( { status: false, error: error } );
+        data.refresh = "wait_for";
+        this.client.index( data, (err, response) => {
+            if (err) {
+                let error = { status: false, error: err };
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
+                inReject && inReject( error );
                 return;
             }
             inResolve && inResolve( response );
@@ -142,9 +162,12 @@ Elasticsearch.prototype.insert = function ( data ) {
 
 Elasticsearch.prototype.update = function ( data ) {
     return new Promise (( inResolve, inReject ) => {
-        this.client.update( data, (error, response) => {
-            if (error) {
-                inReject && inReject( { status: false, error: error } );
+        data.refresh = "wait_for";
+        this.client.update( data, (err, response) => {
+            if (err) {
+                let error = { status: false, error: err };
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
+                inReject && inReject( error );
                 return;
             }
             inResolve && inResolve( response );
@@ -154,17 +177,24 @@ Elasticsearch.prototype.update = function ( data ) {
 
 Elasticsearch.prototype.delete = function ( data ) {
     return new Promise (( inResolve, inReject ) => {
+        data.refresh = "wait_for";
         this.client.delete( data )
             .then(( success ) => { inResolve && inResolve( success ); })
-            .catch((error) => { inReject && inReject( { status: false, error: error } ); });
+            .catch((err) => {
+                let error = { status: false, error: err };
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
+                inReject && inReject( error );
+            });
     });
 };
 
 Elasticsearch.prototype.read = function ( whereClause ) {
     return new Promise (( inResolve, inReject ) => {
-        this.client.search( whereClause,(error, response) => {
-            if (error) {
-                inReject && inReject( { status: false, error: error } );
+        this.client.search( whereClause,(err, response) => {
+            if (err) {
+                let error = { status: false, error: err };
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
+                inReject && inReject( error );
                 return;
             }
             inResolve && inResolve( response );

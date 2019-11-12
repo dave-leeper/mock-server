@@ -3,7 +3,8 @@
 const RouteBuilderMocks = require ( './route-builder-mocks.js' );
 const RouteBuilderMicroservices = require ( './route-builder-microservices.js' );
 const RouteBuilderEndpoints = require ( './route-builder-endpoints.js' );
-const RouteBuilderDatabase = require ( './route-builder-database.js' );
+const RouteBuilderElasticsearchDatabase = require ( './route-builder-elasticsearch-database.js' );
+const RouteBuilderMongoDatabase = require ( './route-builder-mongo-database.js' );
 const Registry = require ( '../util/registry.js' );
 const Strings = require ( '../util/strings.js' );
 const I18n = require ( '../util/i18n.js' );
@@ -32,8 +33,11 @@ class RouteBuilder {
         const routeBuilderEndpoints = new RouteBuilderEndpoints();
         routeBuilderEndpoints.connect(router, config);
 
-        const routeBuilderDatabase = new RouteBuilderDatabase();
-        routeBuilderDatabase.connect(router, config, databaseConnectionCallback);
+        const routeBuilderElasticsearchDatabase = new RouteBuilderElasticsearchDatabase();
+        routeBuilderElasticsearchDatabase.connect(router, config, databaseConnectionCallback);
+
+        const routeBuilderMongoDatabase = new RouteBuilderMongoDatabase();
+        routeBuilderMongoDatabase.connect(router, config, databaseConnectionCallback);
 
         return router;
     }
@@ -42,14 +46,14 @@ class RouteBuilder {
         const operation = 'RouterBuilder.buildAuthenticationStrategies';
         const passport = Registry.get('Passport');
         if (!passport) {
-            const err = { operation: operation, statusType: 'error', status: 501, message: I18n.get( Strings.AUTHENTICATION_NOT_CONFIGURED )};
-            Log.error(Log.stringify(err));
+            const err = { operation: operation, statusType: 'error', status: 501, message: I18n.get( Strings.ERROR_MESSAGE_AUTHENTICATION_NOT_CONFIGURED )};
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
             return false;
         }
         config.authenticationStrategies = {};
         for (let loop = 0; loop < config.authentication.length; loop++) {
             const authentication = config.authentication[loop];
-            const strategyFile = path.resolve('./src/authentication', authentication.strategyFile)
+            const strategyFile = path.resolve('./src/authentication', authentication.strategyFile);
             authentication.strategy = new (require(strategyFile))( );
             passport.use(authentication.strategy.getAuthentication());
             config.authenticationStrategies[authentication.name] = {};

@@ -356,6 +356,9 @@ ping that connection.
 Example: "elasticsearch"<br/>
 The name given to a connection.A database can have multiple connections,
 each with a unique name.
+* **type**<br/>
+Example: "elasticsearch"<br/>
+The type of database connection. Valid values are 'eleasticsearch' and 'mongo'.
 * **description"**<br/>
 Example: "Elasticsearch service."<br/>
 A short human-readable description of the database connection.
@@ -370,14 +373,34 @@ contains any information needed to configure the connection. It is up to
 the database connector class to interpret this data. This field is
 ignored when the connector is set up to use a backend database server
 using the backendURL parameter.
-* **generateConnectionAPI**<br/>
+* **generateElasticsearchConnectionAPI (Elasticsearch only)**<br/>
 Example: true<br/>
 A boolean value indicating if connection REST APIs should be generated
 for the connection. Optional. Defaults to false. These APIs are
 described in the API section, below.
-* **generateIndexAPI**<br/>
+* **generateElasticsearchIndexAPI (Elasticsearch only)**<br/>
 Example: true<br/>
 A boolean value indicating if index REST APIs should be generated for
+the connection. Optional. Defaults to false. These APIs are described in
+the API section, below.
+* **generateElasticsearchDataAPI (Elasticsearch only)**<br/>
+Example: true<br/>
+A boolean value indicating if data REST APIs should be generated for
+the connection. Optional. Defaults to false. These APIs are described in
+the API section, below.
+* **generateMongoConnectionAPI (Mongo only)**<br/>
+Example: true<br/>
+A boolean value indicating if connection REST APIs should be generated
+for the connection. Optional. Defaults to false. These APIs are
+described in the API section, below.
+* **generateMongoCollectionAPI (Mongo only)**<br/>
+Example: true<br/>
+A boolean value indicating if collection REST APIs should be generated for
+the connection. Optional. Defaults to false. These APIs are described in
+the API section, below.
+* **generateMongoDataAPI (Mongo only)**<br/>
+Example: true<br/>
+A boolean value indicating if data REST APIs should be generated for
 the connection. Optional. Defaults to false. These APIs are described in
 the API section, below.
 * **authentication**<br/>
@@ -396,16 +419,37 @@ level for the server is used.
  * A simple config for Elasticsearch.
 ```
   "databaseConnections" : [
-    {<br/>
+    {
       "name": "elasticsearch",
+      "type": "elasticsearch",
       "description": "Elasticsearch service.",
-      "databaseConnector": "elasticsearch-database-connector.js",
-      "generateConnectionAPI": true,
-      "generateIndexAPI": true,
-      "generateDataAPI": true,
+      "databaseConnector": "elasticsearch.js",
+      "generateElasticsearchConnectionAPI": true,
+      "generateElasticsearchIndexAPI": true,
+      "generateElasticsearchDataAPI": true,
       "config": {
         "host": "localhost:9200",
         "log": "trace"
+      }
+    }]
+```
+ * A simple config for Mongo.
+```
+  "databaseConnections" : [
+    {
+      "name": "mongo",
+      "type": "mongo",
+      "description": "Mongo service.",
+      "databaseConnector": "elasticsearch.js",
+      "generateMongoConnectionAPI": true,
+      "generateMongoCollectionAPI": true,
+      "generateMongoDataAPI": true,
+      "config": {
+        "url": 'mongodb://localhost:27017',
+        "db": 'testdb',
+        "collections": {
+            "testCollection": { w: 0 }
+        }
       }
     }]
 ```
@@ -418,7 +462,7 @@ APIs.
 The intent of the APIs is to quickly and easily provide endpoints for
 basic database operations.
 
-#### Connection API
+#### Connection API (Elasticsearch and Mongo)
 * **GET database-connection-name/connection/connect**<br/>
 Connects to the database.
 * **GET database-connection-name/connection/disconnect**<br/>
@@ -426,7 +470,7 @@ Disconnects from the database.
 * **GET database-connection-name/connection/ping**<br/>
 Pings the database connection.
 
-#### Index API
+#### Index API (Elasticsearch)
 * **GET database-connection-name/index/:index/exists**<br/>
 Determines if the index named :index exists.
 * **POST database-connection-name/index**<br/>
@@ -458,7 +502,15 @@ object indicating the mapping information. Example:
 }
 ```
 
-#### Data API
+#### Collection API (Mongo)
+* **GET database-connection-name/collection/:collection/exists**<br/>
+Determines if the collection named :collection exists.
+* **POST database-connection-name/collection/:collection**<br/>
+Creates a collection named :collection. 
+* **DELETE database-connection-name/collection/:collection**<br/>
+Drops the index indicated by the :index parameter.
+
+#### Data API (Elasticsearch)
 * **POST database-connection-name/data**<br/>
 Inserts the data in the body of the request into the database. Example:
 ```
@@ -529,6 +581,33 @@ Updates the data using the body of the request. Example:
 * **DELETE database-connection-name/data/:index/:type/:id**<br/>
 Deletes a record from the database. Example:
 * **DELETE database-connection-name/data/test/my-type/1**
+
+#### Data API (Mongo)
+* **POST database-connection-name/data/:collection**<br/>
+Inserts the data in the body of the request into the database. Example:
+```
+{
+    title: "my title",
+    content: "my content",
+    suggest: "my suggest"
+}
+```
+
+* **GET database-connection-name/data/:collection?_id=1**<br/>
+Selects data from the database. The url query parameters contain the query.
+
+* **PUT database-connection-name/data/:collection?_id=1**<br/>
+Updates the data using the body of the request. The url query parameters contain the query. Example:
+```
+{
+    title: "my updated title",
+    content: "my updated content",
+    suggest: "my updated suggest"
+}
+```
+
+* **DELETE database-connection-name/data/:collection?_id=1**<br/>
+Deletes data. The url query parameters contain the query.
 
 ## Registry
 The registry stores name/value pairs that are available to the entire program.

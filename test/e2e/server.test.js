@@ -113,11 +113,12 @@ let config = {
     "databaseConnections" : [
         {
             "name": "elasticsearch",
+            "type": "elasticsearch",
             "description": "Elasticsearch service.",
             "databaseConnector": "elasticsearch.js",
-            "generateConnectionAPI": true,
-            "generateIndexAPI": true,
-            "generateDataAPI": true,
+            "generateElasticsearchConnectionAPI": true,
+            "generateElasticsearchIndexAPI": true,
+            "generateElasticsearchDataAPI": true,
             "config": {
                 "host": "localhost:9200",
                 "log": "trace"
@@ -258,7 +259,6 @@ describe( 'As a developer, I need need to run mock services.', function() {
             request('http://localhost:' + port + "/text-string-array", { json: true }, (err, res, body) => {
                 expect(body.length).to.be.equal(95);
                 request('http://localhost:' + port + "/text-string-array", { json: true }, (err, res, body) => {
-                    console.log(JSON.stringify(body).length)
                     expect(JSON.stringify(body).length).to.be.equal(55);
                     done();
                 });
