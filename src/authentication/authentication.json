@@ -16,6 +16,12 @@
       "password": "admin",
       "groups": [ "admin" ],
       "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" }]
+    },
+    {
+      "username": "dave",
+      "password": "dave",
+      "groups": [ "admin" ],
+      "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" }]
     }
   ]
 }
