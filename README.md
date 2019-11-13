@@ -623,4 +623,116 @@ By default, the following values are stored in the Registry:
 * Headers - Authentication headers added to all responses of an authenticated user.
 * Cookies - Authentication cookies added to all responses of an authenticated user.
 
+## Authentication
+Authentiation is the process of identifying who a user is. It is a distinct process 
+seperate from authoriation, which determines what a user is allowed to do.
+
+Passport is integrated into the server. A local strategy which uses a JSON file of 
+account information is configured out of the box. You are never required to use the 
+local strategy. 
+
+The local authentication strategy is not secure and is only intended to be used for testing purposes.
+
+Addition passport strategies, such as Facebook or Google login, can 
+be configured as needed.
+
+### Local Authentication (Not secure. Intended only for testing)
+The local authentication strategy that's built in to the server uses a JSON file
+located at src/authentication/authentication.json to store account informaton. A
+sample is shown below:
+
+```
+{
+  "accounts": [
+    {
+      "username": "username",
+      "password": "password",
+      "groups": [ "user" ],
+      "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" }],
+      "cookies": [
+        { "name": "MY_COOKIE1", "value": "MY_COOKIE_VALUE1" },
+        { "name": "MY_COOKIE2", "value": "MY_COOKIE_VALUE2", "expires": 9999 },
+        { "name": "MY_COOKIE3", "value": "MY_COOKIE_VALUE3", "maxAge" : 9999 }
+      ]
+    },
+    {
+      "username": "admin",
+      "password": "admin",
+      "groups": [ "admin" ],
+      "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" }]
+    },
+    {
+      "username": "dave",
+      "password": "dave",
+      "groups": [ "admin" ],
+      "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" }]
+    }
+  ]
+}
+```
+#### Fields
+* **username**<br/>
+Example: "admin"<br/>
+The user name for the account.
+* **password**<br/>
+Example: "passw0rd"<br/>
+The password for the account. Stored in clear text.
+* **groups**<br/>
+Example: "admin"<br/>
+A list of groups the user belongs to. Authoriation uses groups to determine what 
+actions a user is allowed to perform.
+* **headers**<br/>
+Example: "[{ "header": "Access-Control-Allow-Origin", "value": "*" }]"<br/>
+A list of headers that will be added to responses to the users requests.
+* **cookies**<br/>
+Example: "[{ "name": "MY_COOKIE1", "value": "MY_COOKIE_VALUE1" }]"<br/>
+A list of cookies that will be added to responses to the users requests.
+
+#### Login
+The serve comes configured with a simple login screen that can be used in conjuction with
+Authentican and Authorization. The screen can be accessed using the /login route from a
+browser.
+
+### Adding Authentication
+Authentication can be added to mocks, microservices, endpoints, and database connections
+using the server's config file. See the sections on mocks, microservices, endpoints, and
+databases for examples.
+
+If you do not configure authentication on a mock, microservice, endpoint, or database 
+in the server config file, the user will not have to authenticate to use that service.
+
+## Authorization
+Once a user has authenticated and their identity is known to the serve, that identity is
+used to determine what actions the user is authorized to perform.
+
+Authorization information can be added to mocks, microservices, endpoints, and database
+ connections  using the server's config file. An eample is shown below.
+ 
+ ```
+"databaseConnections" : [
+     {
+       "name": "elasticsearch",
+       "description": "Elasticsearch service.",
+       "databaseConnector": "elasticsearch.js",
+       "generateConnectionAPI": true,
+       "generateIndexAPI": true,
+       "generateDataAPI": true,
+       "config": {
+         "host": "localhost:9200",
+         "log": "trace"
+       },
+       "authorization": { "strategy": "local", "groups": [ "admin" ] }
+     }
+```
+
+If you do not configure authorization on a mock, microservice, endpoint, or database 
+in the server config file, the user will not have to check for authorization to use 
+that service.
+#### Fields
+* **strategy**<br/>
+Example: "local"<br/>
+The Passport strategy used to perform authorization.
+* **groups**<br/>
+Example: "admin"<br/>
+A list of groups allowed to perform the associated operation.
 
