@@ -121,7 +121,7 @@ class RouteBuilderMocks extends ServiceBase {
         return (req, res, next) => {
             RouteBuilderMocks.___logMockRequest(mock, req);
             this.addHeaders(mock, req, res);
-            this.addCookies(mock, req, res);
+            this.addCookies(mock, req, res);            
             let responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response, req);
             if (!RouteBuilderMocks.___fileExists( responseFile, res )) return next && next();
 
@@ -140,7 +140,7 @@ class RouteBuilderMocks extends ServiceBase {
             Log.trace('Sending file: ' + responseFile + '.');
             if (!RouteBuilderMocks.___fileExists( responseFile, res )) return next && next();
 
-            res.sendFile(responseFile);
+            res.sendFile(responseFile, { root: path.resolve(__dirname, '../..') });
             next && next();
         };
     }
@@ -288,20 +288,15 @@ class RouteBuilderMocks extends ServiceBase {
     }
 
     static ___replaceResponseParamsWithRequestValues(responseValue, httpRequestObject) {
-        let paramIndex = responseValue.indexOf(':');
         let finalResponse = responseValue;
-        if (-1 !== paramIndex) {
-            let param = responseValue.substr(paramIndex + 1);
-            if (httpRequestObject.params[param]) {
-                finalResponse = responseValue.substr(0, paramIndex) + httpRequestObject.params[param];
-            }
-        }
-        paramIndex = finalResponse.indexOf(':');
-        if (-1 !== paramIndex) {
+        let paramIndex = finalResponse.indexOf(':');
+        while (-1 !== paramIndex) {
             let param = finalResponse.substr(paramIndex + 1);
-            if (httpRequestObject.query[param]) {
-                finalResponse = finalResponse.substr(0, paramIndex) + httpRequestObject.query[param];
-            }
+            if ((-1 !== param.indexOf('/'))) param = param.substring(0, param.indexOf('/'));
+            let responseFront = finalResponse.substr(0, paramIndex);
+            let responseBack = finalResponse.substr(paramIndex + param.length + 1);
+            finalResponse = responseFront + httpRequestObject.params[param] + responseBack;
+            paramIndex = finalResponse.indexOf(':');
         }
         return finalResponse;
     }
