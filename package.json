@@ -37,7 +37,7 @@
     "extend": ">=3.0.2",
     "cryptiles": ">=4.1.2",
     "https-proxy-agent": ">=2.2.0",
-    "lodash": ">=4.17.11",
+    "lodash": ">=4.17.13",
     "deep-extend": ">=0.5.1"
   },
   "devDependencies": {
