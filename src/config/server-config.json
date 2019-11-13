@@ -14,6 +14,24 @@
   },
   "mocks": [
     {
+      "path": "/comics/:user",
+      "response": "./public/files/comics/users/:user/owned.json",
+      "responseType": "BLOB",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/comics/:name/:issue/:page",
+      "response": "./public/files/comics/:name/:issue/:page",
+      "responseType": "BLOB",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/comics/:name/:issue",
+      "response": "./public/files/comics/:name/:issue/manifest.json",
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
       "path": "/ping",
       "response": {"name":"My Server","version":"1.0"},
       "responseType": "JSON",
@@ -21,11 +39,9 @@
     },
     {
       "path": "/json",
-      "response": "./server-config.json",
+      "response": "./src/config/server-config.json",
       "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ],
-      "authentication": "local",
-      "logging": "all"
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/json-string-array",
@@ -235,30 +251,16 @@
   "databaseConnections" : [
     {
       "name": "elasticsearch",
-      "type": "elasticsearch",
       "description": "Elasticsearch service.",
       "databaseConnector": "elasticsearch.js",
-      "generateElasticsearchConnectionAPI": true,
-      "generateElasticsearchIndexAPI": true,
-      "generateElasticsearchDataAPI": true,
+      "generateConnectionAPI": true,
+      "generateIndexAPI": true,
+      "generateDataAPI": true,
       "config": {
         "host": "localhost:9200",
         "log": "trace"
       },
       "authorization": { "strategy": "local", "groups": [ "admin" ] }
-    },
-    {
-      "name": "mongo",
-      "type": "mongo",
-      "description": "MongoDB service.",
-      "databaseConnector": "mongodb.js",
-      "config": {
-        "url": 'mongodb://localhost:27017',
-        "db": 'testdb',
-        "collections": {
-          "testCollection": { "w": 0 }
-        }
-      }
     }
   ]
 }
