@@ -105,6 +105,7 @@ const strings = [
     'Login required.',
     'Incorrect username: {1}.',
     'Incorrect password.',
+    'Login Expired.',
     '{1}',
     'Conflict: File {1} Already Exists.'
 ];
