@@ -22,14 +22,35 @@ var server = new Server().init(port, serverConfig);
 ```
 # To Set The Port 
 The port used by the mock server defaults to 3000. You can override this by setting the
-MOCK_SEREVER_PORT environment variable to the desired port. When using the mock server as
+MOCK_SERVER_PORT environment variable to the desired port. When using the mock server as
 an in-memory server, just pass the desired port number.
+
+The port can also be set in the server's config file. Doing this will override the default port
+as well as the MOCK_SERVER_PORT environment variable. See the Config File section for more
+information.
 
 # Config File
 The config file is how you control the operation of the server. Config files are JSON files
 that you place in the /src/config directory. If there are multiple config files, mock-server
 will merge their values together into a single config structure. Only logging values are 
 not merged, the first logging config encountered is used, all others are ignored.
+
+## Port
+The port used by the mock server can be set in the config file. This overrides both the
+default port of 3000 and the port set in the MOCK_SERVER_PORT environment variable. An example 
+is shown below.
+
+```
+  "port": 1337,
+```
+
+## Login Expire Time
+By default, logins will expire after 5 minutes (300 seconds) of inactivity. This default can 
+be overriden by setting loginExpire to the desired number of seconds. An example is shown below.
+
+```
+  "loginExpire": 600,
+```
 
 ## Logging
 The mock server uses standard log4js logging. You configure logging
@@ -273,8 +294,7 @@ level for the server is used.
  :name from the files directory. The microservices/download.js file
  contains the code for the service.
 ```
-    "microservices": [
-    {
+    "microservices": [{
         "path": "/download/:name",
         "name": "File Download",
         "description": "Downloads a file from the files directory of the server. The :name Parameter is the file name.",
