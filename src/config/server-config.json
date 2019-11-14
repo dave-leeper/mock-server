@@ -12,6 +12,7 @@
       }
     }
   },
+  "loginExpire": 600,
   "mocks": [
     {
       "path": "/comics/:user",
