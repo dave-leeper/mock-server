@@ -6,6 +6,8 @@ const Log = require('../util/log' );
 const accounts = require('./authentication').accounts;
 const reduce = require('../util/algorithm').oneTruthyReduce;
 
+const DEFAULT_EXPIRE_TIME = 300;
+
 class LocalStrategy {
     constructor() {
         this.accounts = accounts;
@@ -16,18 +18,20 @@ class LocalStrategy {
             if (!username || !password || !done) {
                 const err = { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.ERROR_MESSAGE_LOGIN_REQUIRED )};
                 if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
-                return done && done(err);
+                return done && done( null, false, err );
             }
             if (!this.accounts) {
                 const err = { operation: operation, statusType: 'error', status: 501, message: I18n.get( Strings.ERROR_MESSAGE_AUTHENTICATION_NOT_CONFIGURED )};
                 if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
-                return done(err);
+                return done(null, false, err);
             }
             for (let loop = 0; loop < this.accounts.length; loop++) {
                 let account = this.accounts[loop];
                 if (account.username !== username) continue;
                 if (account.password !== password) {
-                    return done( null, false, { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.ERROR_MESSAGE_INCORRECT_PASSWORD )});
+                    const err = { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.ERROR_MESSAGE_INCORRECT_PASSWORD )};
+                    if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
+                    return done( null, false, err );
                 }
                 let headers = Registry.get('Headers');
                 if (!headers.users) headers.users = {};
@@ -42,9 +46,12 @@ class LocalStrategy {
                     if (!cookies.users[account.username]) cookies.users[account.username] = [];
                     cookies.users[account.username] = cookies.users[account.username].concat(account.cookies);
                 }
-                return done(null, { operation: operation, statusType: 'success', status: 200, username: account.username, message: I18n.get( Strings.LOGIN_SUCCESSFUL )});
+                account.lastAccessTime = new Date();
+                return done( null, { operation: operation, statusType: 'success', status: 200, username: account.username, message: I18n.get( Strings.LOGIN_SUCCESSFUL )} );
             }
-            return done( null, false, { operation: operation, statusType: 'error', status: 401, message: I18n.format( I18n.get( Strings.ERROR_MESSAGE_INCORRECT_USER_NAME ), username )});
+            const err = { operation: operation, statusType: 'error', status: 401, message: I18n.format( I18n.get( Strings.ERROR_MESSAGE_INCORRECT_USER_NAME ), username )};
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
+            return done( null, false, err );
         });
     }
     getAuthorization() {
@@ -116,8 +123,33 @@ class LocalStrategy {
                 res.send(Log.stringify(err))
                 return;
             }
+            if (hasExpired(account.lastAccessTime)) {
+                const err = { operation: operation, statusType: 'error', status: 403, message: I18n.get( Strings.ERROR_MESSAGE_LOGIN_EXPIRED )};
+                let headers = Registry.get('Headers');
+                if (headers && headers.users && headers.users[account.username]) this.arrayRemove(headers.users[account.username], "Authorization");
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
+                res.status(err.status);
+                res.send(Log.stringify(err))
+                return;
+            }
+            account.lastAccessTime = new Date();
             next && next();
         }
+    }
+    hasExpired(startDate) {
+        if (!startDate) return true;
+        let startTime = startDate.getTime();
+        if (!startTime) return true;
+        startTime /= 1000;
+        let currentTime = new startDate().getTime() / 1000;
+        let config = Registry.get('ServerConfig');
+        let expireTime = ((config && config.loginExpire)? config.loginExpire : DEFAULT_EXPIRE_TIME );
+        return currentTime - startTime >= expireTime ;
+    }
+    arrayRemove(arr, value) {
+        return arr.filter(function(ele){
+            return ele != value;
+        });
     }
 }
 
