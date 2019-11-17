@@ -640,6 +640,7 @@ By default, the following values are stored in the Registry:
 * ServerStartTime - The time the server was started as a javascript Date object.
 * DatabaseConnectionManager - The DatabaseConnectionManager used by the server.
 * Passport - The Passport object used by the server.
+* Accounts - The user account information used by the server.
 * Headers - Authentication headers added to all responses of an authenticated user.
 * Cookies - Authentication cookies added to all responses of an authenticated user.
 
