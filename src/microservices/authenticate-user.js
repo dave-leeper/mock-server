@@ -5,8 +5,8 @@ let Log = require('../util/log' );
 class AuthenticateUser {
     do(params) {
         return new Promise (( inResolve, inReject ) => {
-            let message = I18n.get( Strings.LOGIN_SUCCESSFUL );
-            if (Log.will(Log.INFO)) Log.info(message + ': ' + params.params.username);
+            let message = Strings.format(I18n.get( Strings.LOGIN_SUCCESSFUL ), params.params.username);
+            if (Log.will(Log.INFO)) Log.info(message);
             inResolve && inResolve({ status: 200, send: message});
         });
     }
