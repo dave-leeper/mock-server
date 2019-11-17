@@ -3,30 +3,30 @@ const Registry = require('../util/registry' );
 const Strings = require('../util/strings' );
 const I18n = require('../util/i18n' );
 const Log = require('../util/log' );
-const accounts = require('./authentication').accounts;
 const reduce = require('../util/algorithm').oneTruthyReduce;
 
 const DEFAULT_EXPIRE_TIME = 300;
+const WWW_AUTHENTICATE_HEADER = "Basic realm=\"User Visible Realm\", charset=\"UTF-8\"";
 
 class LocalStrategy {
     constructor() {
-        this.accounts = accounts;
     }
     getAuthentication() {
         return new PassportLocalStrategy((username, password, done) => {
             let operation = 'getAuthentication';
+            let accounts = Registry.get("Accounts");
             if (!username || !password || !done) {
                 const err = { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.ERROR_MESSAGE_LOGIN_REQUIRED )};
                 if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
                 return done && done( null, false, err );
             }
-            if (!this.accounts) {
+            if (!accounts) {
                 const err = { operation: operation, statusType: 'error', status: 501, message: I18n.get( Strings.ERROR_MESSAGE_AUTHENTICATION_NOT_CONFIGURED )};
                 if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
                 return done(null, false, err);
             }
-            for (let loop = 0; loop < this.accounts.length; loop++) {
-                let account = this.accounts[loop];
+            for (let loop = 0; loop < accounts.length; loop++) {
+                let account = accounts[loop];
                 if (account.username !== username) continue;
                 if (account.password !== password) {
                     const err = { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.ERROR_MESSAGE_INCORRECT_PASSWORD )};
@@ -58,30 +58,33 @@ class LocalStrategy {
         return (req, res, next) => {
             let operation = 'getAuthorization';
             let config = Registry.get('ServerConfig');
-            if ((!this.accounts)
+            let accounts = Registry.get("Accounts");
+            if ((!accounts)
             || (!req || !req.url)
             || (!config)) {
                 const err = { operation: operation, statusType: 'error', status: 501, message: I18n.get( Strings.ERROR_MESSAGE_AUTHORIZATION_NOT_CONFIGURED )};
                 if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
                 res.status(err.status);
-                res.send(Log.stringify(err))
+                res.send(Log.stringify(err));
                 return;
             }
             if (!req || !req.user || !req.user.username){
                 const err = { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.ERROR_MESSAGE_LOGIN_REQUIRED )};
                 if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
+                res.headers["WWW-Authenticate"] = WWW_AUTHENTICATE_HEADER;
                 res.status(err.status);
-                res.send(Log.stringify(err))
+                res.send(Log.stringify(err));
                 return;
             }
 
             let username = req.user.username;
-            let account = this.accounts.map(account => (account.username === username? account : null )).reduce(reduce);
+            let account = accounts.map(account => (account.username === username? account : null )).reduce(reduce);
             if (!account) {
                 const err = { operation: operation, statusType: 'error', status: 401, message: I18n.format( I18n.get( Strings.ERROR_MESSAGE_INCORRECT_USER_NAME ), username )};
                 if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
+                res.headers["WWW-Authenticate"] = WWW_AUTHENTICATE_HEADER;
                 res.status(err.status);
-                res.send(Log.stringify(err))
+                res.send(Log.stringify(err));
                 return;
             }
             let url = req.url;
@@ -120,16 +123,17 @@ class LocalStrategy {
                 const err = { operation: operation, statusType: 'error', status: 403, message: I18n.get( Strings.ERROR_MESSAGE_UNAUTHORIZED )};
                 if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
                 res.status(err.status);
-                res.send(Log.stringify(err))
+                res.send(Log.stringify(err));
                 return;
             }
-            if (hasExpired(account.lastAccessTime)) {
-                const err = { operation: operation, statusType: 'error', status: 403, message: I18n.get( Strings.ERROR_MESSAGE_LOGIN_EXPIRED )};
+            if (this.hasExpired(account.lastAccessTime)) {
+                const err = { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.ERROR_MESSAGE_LOGIN_EXPIRED )};
                 let headers = Registry.get('Headers');
                 if (headers && headers.users && headers.users[account.username]) this.arrayRemove(headers.users[account.username], "Authorization");
                 if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
+                res.headers["WWW-Authenticate"] = WWW_AUTHENTICATE_HEADER;
                 res.status(err.status);
-                res.send(Log.stringify(err))
+                res.send(Log.stringify(err));
                 return;
             }
             account.lastAccessTime = new Date();
@@ -141,7 +145,7 @@ class LocalStrategy {
         let startTime = startDate.getTime();
         if (!startTime) return true;
         startTime /= 1000;
-        let currentTime = new startDate().getTime() / 1000;
+        let currentTime = new Date().getTime() / 1000;
         let config = Registry.get('ServerConfig');
         let expireTime = ((config && config.loginExpire)? config.loginExpire : DEFAULT_EXPIRE_TIME );
         return currentTime - startTime >= expireTime ;
