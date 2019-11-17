@@ -69,7 +69,7 @@ let hasHandler = (array, path) => {
     return false;
 };
 
-describe( 'As a developer, I need an API for creating database connections', function() {
+describe( 'As a developer, I need to access microservic routes', function() {
     before(() => {
     });
     beforeEach(() => {
