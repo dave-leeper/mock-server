@@ -105,10 +105,33 @@ Strings.ERROR_MESSAGE_UNAUTHORIZED = 102;
 Strings.ERROR_MESSAGE_LOGIN_REQUIRED = 103;
 Strings.ERROR_MESSAGE_INCORRECT_USER_NAME = 104;
 Strings.ERROR_MESSAGE_INCORRECT_PASSWORD = 105;
-Strings.ERROR_MESSAGE_LOGIN_EXPIRED = 106;
-Strings.ERROR_MESSAGE_FILE_NAME = 107;
-Strings.ERROR_MESSAGE_FILE_ALREADY_EXISTS = 108;
-Strings.COUNT = 109;
+Strings.ERROR_MESSAGE_INCORRECT_GROUP = 106;
+Strings.ERROR_MESSAGE_LOGIN_EXPIRED = 107;
+Strings.ERROR_MESSAGE_FILE_NAME = 108;
+Strings.ERROR_MESSAGE_FILE_ALREADY_EXISTS = 109;
+Strings.ERROR_MESSAGE_ACCOUNT_ADDED = 110;
+Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED = 111;
+Strings.COUNT = 112;
 
+/**
+ * Formats a string in a manner similar to sprintf or Microsoft's String.Format() method.
+ *
+ * @example
+ * Strings.format('{0} is not {1}! {0} {2}', 'Sale', 'Sail');
+ * results in:
+ * Sale is not Sail! Sale {2}
+ * @param inFormat {String} The format string.
+ * @Param ... {String} ALL comma separated list of string parameters used to format the inFormat string.
+ * @returns {String} The formatted string.
+ */
+Strings.format = function( inFormat ) {
+    let aArgs = Array.prototype.slice.call ( arguments, 1 );
+    return inFormat.replace(
+        /{(\d+)}/g,
+        function ( inMatch, inNumber ) {
+            return typeof aArgs[ inNumber ] !== 'undefined' ? aArgs[ inNumber ] : inMatch;
+        }
+    );
+}
 module.exports = Strings;
 
