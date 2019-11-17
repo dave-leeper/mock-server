@@ -15,6 +15,8 @@ const I18n = require('./src/util/i18n' );
 const Log = require('./src/util/log');
 const Registry = require('./src/util/registry');
 const FileUtilities = require('./src/util/files.js');
+const accounts = require('./src/authentication/authentication').accounts;
+
 
 /**
  * @constructor
@@ -84,12 +86,13 @@ class Server {
         Registry.register(serverConfig, 'ServerConfig');
         Registry.register({ users: { }}, 'Headers');
         Registry.register({ users: { }}, 'Cookies');
+        Registry.register(accounts, 'Accounts');
 
         // Logger setup
         if (serverConfig.logging) Log.configure(serverConfig.logging);
         Log.trace(Log.stringify(serverConfig));
 
-        // Override port
+        // Override 
         if (serverConfig.port) locals.port = serverConfig.port;
 
         // view engine setup
