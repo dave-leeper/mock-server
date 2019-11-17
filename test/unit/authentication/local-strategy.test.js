@@ -57,6 +57,7 @@ describe( 'As a developer, I need need to define a custom authentication/authori
     });
     it ( 'should fail gracefully when there is no request username', ( ) => {
         Registry.register( { stuff: 'stuff' }, 'ServerConfig' );
+        Registry.register( [ 'stuff' ], 'Accounts' );
         let operation = 'getAuthorization';
         const err = Log.stringify({ operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.ERROR_MESSAGE_LOGIN_REQUIRED )});
         let localStrategy = new LocalStrategy();
@@ -78,6 +79,7 @@ describe( 'As a developer, I need need to define a custom authentication/authori
     });
     it ( 'should fail gracefully when the request username has no account', ( ) => {
         Registry.register( { stuff: 'stuff' }, 'ServerConfig' );
+        Registry.register( [ 'stuff' ], 'Accounts' );
         let operation = 'getAuthorization';
         const err = Log.stringify({ operation: operation, statusType: 'error', status: 401, message: I18n.format( I18n.get( Strings.ERROR_MESSAGE_INCORRECT_USER_NAME ), 'JUNK' )});
         let localStrategy = new LocalStrategy();
@@ -95,6 +97,12 @@ describe( 'As a developer, I need need to define a custom authentication/authori
     });
     it ( 'should succeed when there is config authorization info for a path', ( ) => {
         Registry.register( { stuff: 'stuff' }, 'ServerConfig' );
+        Registry.register( [ {
+            "username": "admin",
+            "password": "admin",
+            "groups": [ "admin" ],
+            "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" }]
+        } ], 'Accounts' );
         let localStrategy = new LocalStrategy();
         let mockRequest = new MockRequest();
         let mockResponse = new MockResponse();
@@ -127,6 +135,17 @@ describe( 'As a developer, I need need to define a custom authentication/authori
             ]
         };
         Registry.register( config, 'ServerConfig' );
+        Registry.register( [ {
+            "username": "username",
+            "password": "password",
+            "groups": [ "user" ],
+            "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" }],
+            "cookies": [
+                { "name": "MY_COOKIE1", "value": "MY_COOKIE_VALUE1" },
+                { "name": "MY_COOKIE2", "value": "MY_COOKIE_VALUE2", "expires": 9999 },
+                { "name": "MY_COOKIE3", "value": "MY_COOKIE_VALUE3", "maxAge" : 9999 }
+            ]
+        } ], 'Accounts' );
         let operation = 'getAuthorization';
         const err = Log.stringify({ operation: operation, statusType: 'error', status: 403, message: I18n.get( Strings.ERROR_MESSAGE_UNAUTHORIZED )});
         let localStrategy = new LocalStrategy();
@@ -163,6 +182,13 @@ describe( 'As a developer, I need need to define a custom authentication/authori
             ]
         };
         Registry.register( config, 'ServerConfig' );
+        Registry.register( [ {
+            "lastAccessTime": new Date(),
+            "username": "admin",
+            "password": "admin",
+            "groups": [ "admin" ],
+            "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" }]
+        } ], 'Accounts' );
         let localStrategy = new LocalStrategy();
         let mockRequest = new MockRequest();
         let mockResponse = new MockResponse();
