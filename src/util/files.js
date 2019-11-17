@@ -1,7 +1,9 @@
 'use strict';
 
-let fs = require("fs");
-let path = require("path");
+const fs = require("fs");
+const path = require("path");
+const lockFile = require('lockfile')
+const Log = require('./log' );
 
 class Files {
     /**
@@ -29,10 +31,9 @@ class Files {
      * Writes a file.
      * @param inFilepath {String} The path to the file.
      * @param inText {String} The file's text.
-     * @returns {String} The file's contents.
      */
     static writeFileSync(inFilepath, inText) {
-        return fs.writeFileSync(inFilepath, inText);
+        fs.writeFileSync(inFilepath, inText);
     }
 
     /**
@@ -71,5 +72,65 @@ class Files {
 
         return results;
     }
+
+    /**
+     * Locks a file and reads it, returning its data.
+     * @param inFilepath {String} The path to the file.
+     * @param inRetries {int} The number of times to retry if the file is already locked. Defaults to 5.
+     * @param inOnSuccess {Function} Callback to invoke after success. Will be passed the data that was read.
+     * @param inOnFail {Function} Optional callback to invoke after failure. The generated error will be passed to the callback.
+     * @see https://www.npmjs.com/package/lockfile
+     */
+    static readFileLock(inFilepath, inRetries, inOnSuccess, inOnFail) {
+        let options = { retries: ( inRetries? inRetries : 5 )};
+
+        lockFile.lock(inFilepath + ".lock", options, (err) => {
+            if (err) {
+                inOnFail && inOnFail(err);
+                return;
+            }
+    
+            let data = Files.readFileSync(inFilepath);
+    
+            lockFile.unlock(inFilepath + ".lock", (err) => {
+                if (err) {
+                    inOnFail && inOnFail(err);
+                    return;
+                }
+                inOnSuccess && inOnSuccess(data);
+            })
+        })
+    }
+
+    /**
+     * Locks a file and replaces it's contents with the provided string data.
+     * @param inFilepath {String} The path to the file.
+     * @param inText {String} The data to write to the file.
+     * @param inRetries {int} The number of times to retry if the file is already locked. Defaults to 5.
+     * @param inOnSuccess {Function} Optional callback to invoke after success.
+     * @param inOnFail {Function} Optional callback to invoke after failure. The generated error will be passed to the callback.
+     * @see https://www.npmjs.com/package/lockfile
+     */
+    static writeFileLock(inFilepath, inText, inRetries, inOnSuccess, inOnFail) {
+        let options = { retries: ( inRetries? inRetries : 5 )};
+
+        lockFile.lock(inFilepath + ".lock", options, (err) => {
+            if (err) {
+                inOnFail && inOnFail(err);
+                return;
+            }
+            
+            Files.writeFileSync(inFilepath, inText);
+            
+            lockFile.unlock(inFilepath + ".lock", (err) => {
+                if (err) {
+                    inOnFail && inOnFail(err);
+                    return;
+                }
+                inOnSuccess && inOnSuccess();
+            })
+        })
+    }
 }
+
 module.exports = Files;
