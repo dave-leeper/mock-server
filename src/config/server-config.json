@@ -165,14 +165,28 @@
       "path": "/login",
       "response": "login.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Login", "action": "/authenticate_user", "verb": "POST"},
+      "hbsData": {"title": "Login", "action": "/user/authenticate", "verb": "POST"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/user/add",
+      "response": "add-user.hbs",
+      "responseType": "HBS",
+      "hbsData": {"title": "Add User", "action": "/account/add", "verb": "POST"},
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     }
   ],
   "microservices": [
     {
       "verb": "POST",
-      "path": "/authenticate_user",
+      "path": "/account/add",
+      "name": "Add account",
+      "description": "Adds an account to the server account file.",
+      "serviceFile": "add-account.js"
+    },
+    {
+      "verb": "POST",
+      "path": "/user/authenticate",
       "name": "Authenticate User",
       "description": "Authenticates a user.",
       "serviceFile": "authenticate-user.js",
