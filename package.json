@@ -17,6 +17,7 @@
     "connect-busboy": "0.0.2",
     "cookie-parser": "1.4.3",
     "cryptiles": ">=4.1.2",
+    "crypto": "^1.0.1",
     "debug": "2.6.9",
     "deep-extend": ">=0.5.1",
     "elasticsearch": "^16.5.0",
