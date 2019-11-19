@@ -1,3 +1,4 @@
+let Encrypt = require('../util/encrypt' );
 let Files = require('../util/files' );
 let I18n = require('../util/i18n' );
 let Log = require('../util/log' );
@@ -82,7 +83,14 @@ class AddUser {
             else {
                 accounts =  [ newAccount ];
             }
-            Files.writeFileLock(path.resolve(body.destination), JSON.stringify( { "accounts": accounts }, null, 3 ), 5, successCallback, failCallback);
+            let crypto = Registry.get( "Crypto" );
+            Files.writeFileLock(
+                path.resolve(body.destination), 
+                JSON.stringify( { "accounts": Encrypt.encryptAccounts( accounts,  crypto.iv, crypto.key )}, null, 3 ), 
+                5, 
+                successCallback, 
+                failCallback
+            );
         });
     }
     makeCookie(name, value, expires, maxAge){
