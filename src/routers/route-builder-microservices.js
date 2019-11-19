@@ -44,7 +44,7 @@ class RouteBuilderMicroservices extends ServiceBase {
                         }
                         next && next();
                     }, ( error ) => {
-                        Log.trace(microservice.name + ' executed with error(s).');
+                        Log.trace(microservice.name + ' executed with error(s). ' + Log.stringify( error ));
                         res.status(error.status);
                         if (error.send) {
                             if (Array.isArray(error.send)) Log.error(error.send.map(x => x));
