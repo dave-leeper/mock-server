@@ -47,7 +47,42 @@
          "username": "test",
          "password": "test",
          "groups": [
-            "test"
+            "user",
+            "g2",
+            "g3"
+         ],
+         "headers": [
+            {
+               "header": "h1",
+               "value": "v1"
+            },
+            {
+               "header": "h2",
+               "value": "v2"
+            },
+            {
+               "header": "h3",
+               "value": "v3"
+            }
+         ],
+         "cookies": [
+            {
+               "name": "c1",
+               "value": "cv1",
+               "expires": "e1",
+               "maxAge": "m1"
+            },
+            {
+               "name": "c2",
+               "value": "cv2",
+               "expires": "e2",
+               "maxAge": "m2"
+            },
+            {
+               "name": "c3",
+               "expires": "e3",
+               "maxAge": "m3"
+            }
          ]
       }
    ]
