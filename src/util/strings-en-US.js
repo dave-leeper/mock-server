@@ -105,12 +105,13 @@ const strings = [
     'Login required.',
     'Incorrect username: {0}.',
     'Incorrect password.',
-    'Incorrect group: {0}.',
+    'At least one group is required.',
     'Login Expired.',
     '{1}',
     'Conflict: File {1} Already Exists.',
     'Account added successfully.',
-    'Add account failed. Error: {0}'
+    'Add account failed. Error: {0}',
+    'Add account is not properly configured. A destination is required.'
 ];
 
 module.exports = strings;
