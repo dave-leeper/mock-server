@@ -20,10 +20,10 @@ describe( 'As a developer, I need to encrypt data', function() {
         };
         Encrypt.key = crypto.key;
         Encrypt.iv = crypto.iv;
-        let encrypted = Encrypt.encrypt('Test Data');
-        expect(encrypted).not.to.be.equal('Test Data');
-        let decrypted = Encrypt.decrypt(encrypted);
-        expect(decrypted).to.be.equal('Test Data');
+        let encrypted = Encrypt.encrypt( 'Test Data', crypto.iv, crypto.key );
+        expect(encrypted).not.to.be.equal( 'Test Data' );
+        let decrypted = Encrypt.decrypt(encrypted, crypto.iv, crypto.key );
+        expect(decrypted).to.be.equal( 'Test Data' );
     });
 });
 
