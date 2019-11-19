@@ -16,7 +16,7 @@ const Log = require('./src/util/log');
 const Registry = require('./src/util/registry');
 const FileUtilities = require('./src/util/files.js');
 const Encrypt = require('./src/util/encrypt');
-const accounts = require('./src/authentication/authentication').accounts;
+let accounts = require('./src/authentication/authentication').accounts;
 
 /**
  * @constructor
@@ -78,7 +78,9 @@ class Server {
             return mergedConfig;
         };
         let serverConfig = config;
-        this.initCrypto();
+        let crypto = this.initCrypto();
+        console.log("ACCOUNTS: " + Log.stringify(accounts));
+        accounts = Encrypt.decryptAccounts( accounts, crypto.iv, crypto.key );
         if ("string" === typeof config) serverConfig = mergeConfigs(loadConfigs(getConfigFileNames(config)));
 
         this.express = express();
@@ -87,7 +89,8 @@ class Server {
         Registry.register(serverConfig, 'ServerConfig');
         Registry.register({ users: { }}, 'Headers');
         Registry.register({ users: { }}, 'Cookies');
-        Registry.register(accounts, 'Accounts');
+        
+        Registry.register( accounts, 'Accounts');
 
         // Logger setup
         if (serverConfig.logging) Log.configure(serverConfig.logging);
@@ -189,6 +192,7 @@ class Server {
             iv: Buffer.from([0xfb, 0x2e, 0x85, 0x78, 0x55, 0x1d, 0x91, 0xe8, 0x4d, 0xfd, 0x25, 0xe1, 0xb9, 0x81, 0x2d, 0xd5])
         };
         Registry.register(crypto, 'Crypto');
+        return crypto;
     }
 }
 
