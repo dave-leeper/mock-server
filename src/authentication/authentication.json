@@ -1,8 +1,36 @@
 {
    "accounts": [
       {
+         "username": "test2",
+         "password": "10f914cacbedd5e0da164b120f44e452",
+         "groups": [
+            "user"
+         ]
+      },
+      {
+         "username": "test",
+         "password": "850c2624a4c319f535315a5d20cb0972",
+         "groups": [
+            "user"
+         ]
+      },
+      {
+         "username": "dave",
+         "password": "83e0dcf2bd63f8a7f080aaffc823e35b",
+         "groups": [
+            "admin"
+         ]
+      },
+      {
+         "username": "admin",
+         "password": "2a7d9a2ece07736802dd18721d01d752",
+         "groups": [
+            "admin"
+         ]
+      },
+      {
          "username": "username",
-         "password": "password",
+         "password": "6ae535f16325d62349eeaa53d1c259f6",
          "groups": [
             "user"
          ],
@@ -26,62 +54,6 @@
                "name": "MY_COOKIE3",
                "value": "MY_COOKIE_VALUE3",
                "maxAge": 9999
-            }
-         ]
-      },
-      {
-         "username": "admin",
-         "password": "admin",
-         "groups": [
-            "admin"
-         ]
-      },
-      {
-         "username": "dave",
-         "password": "dave",
-         "groups": [
-            "admin"
-         ]
-      },
-      {
-         "username": "test",
-         "password": "test",
-         "groups": [
-            "user",
-            "g2",
-            "g3"
-         ],
-         "headers": [
-            {
-               "header": "h1",
-               "value": "v1"
-            },
-            {
-               "header": "h2",
-               "value": "v2"
-            },
-            {
-               "header": "h3",
-               "value": "v3"
-            }
-         ],
-         "cookies": [
-            {
-               "name": "c1",
-               "value": "cv1",
-               "expires": "e1",
-               "maxAge": "m1"
-            },
-            {
-               "name": "c2",
-               "value": "cv2",
-               "expires": "e2",
-               "maxAge": "m2"
-            },
-            {
-               "name": "c3",
-               "expires": "e3",
-               "maxAge": "m3"
             }
          ]
       }
