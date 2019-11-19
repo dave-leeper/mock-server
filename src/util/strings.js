@@ -111,7 +111,8 @@ Strings.ERROR_MESSAGE_FILE_NAME = 108;
 Strings.ERROR_MESSAGE_FILE_ALREADY_EXISTS = 109;
 Strings.ERROR_MESSAGE_ACCOUNT_ADDED = 110;
 Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED = 111;
-Strings.COUNT = 112;
+Strings.ERROR_MESSAGE_ACCOUNT_ADD_NOT_PROPERLY_CONFIGURED_DESTINATION_REQUIRED = 112;
+Strings.COUNT = 113;
 
 /**
  * Formats a string in a manner similar to sprintf or Microsoft's String.Format() method.
