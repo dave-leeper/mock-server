@@ -172,7 +172,7 @@
       "path": "/user/add",
       "response": "add-user.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Add User", "action": "/account/add", "verb": "POST"},
+      "hbsData": {"title": "Add User", "action": "/account/add", "verb": "POST", "destination": "./src/authentication/authentication.json"},
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     }
   ],
