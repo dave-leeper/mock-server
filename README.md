@@ -643,6 +643,7 @@ By default, the following values are stored in the Registry:
 * Accounts - The user account information used by the server.
 * Headers - Authentication headers added to all responses of an authenticated user.
 * Cookies - Authentication cookies added to all responses of an authenticated user.
+* Crypto - A JSON object containing the key and iv buffers to use with encryption.
 
 ## Authentication
 Authentiation is the process of identifying who a user is. It is a distinct process 
