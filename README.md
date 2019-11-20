@@ -647,58 +647,76 @@ By default, the following values are stored in the Registry:
 
 ## Authentication
 Authentiation is the process of identifying who a user is. It is a distinct process 
-seperate from authoriation, which determines what a user is allowed to do.
+that is related to, but seperate from, authoriation, which determines what a user is 
+allowed to do.
 
 Passport is integrated into the server. A local strategy which uses a JSON file of 
 account information is configured out of the box. You are never required to use the 
-local strategy. 
-
-The local authentication strategy is not secure and is only intended to be used for testing purposes.
-
-Addition passport strategies, such as Facebook or Google login, can 
+local strategy. Additional passport strategies, such as Facebook or Google login, can 
 be configured as needed.
 
-### Local Authentication (Not secure. Intended only for testing)
+### Local Authentication 
 The local authentication strategy that's built in to the server uses a JSON file
 located at src/authentication/authentication.json to store account informaton. A
-sample is shown below:
+sample is shown below (Notice that passwords are encrypted. This is done by the
+/usr/add route, discussed later):
 
 ```
 {
-  "accounts": [
-    {
-      "username": "username",
-      "password": "password",
-      "groups": [ "user" ],
-      "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" }],
-      "cookies": [
-        { "name": "MY_COOKIE1", "value": "MY_COOKIE_VALUE1" },
-        { "name": "MY_COOKIE2", "value": "MY_COOKIE_VALUE2", "expires": 9999 },
-        { "name": "MY_COOKIE3", "value": "MY_COOKIE_VALUE3", "maxAge" : 9999 }
-      ]
-    },
-    {
-      "username": "admin",
-      "password": "admin",
-      "groups": [ "admin" ],
-      "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" }]
-    },
-    {
-      "username": "dave",
-      "password": "dave",
-      "groups": [ "admin" ],
-      "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" }]
-    }
-  ]
+   "accounts": [
+      {
+         "username": "admin",
+         "password": "2a7d9a2ece07736802dd18721d01d752",
+         "groups": [
+            "admin"
+         ]
+      },
+      {
+         "username": "username",
+         "password": "6ae535f16325d62349eeaa53d1c259f6",
+         "groups": [
+            "user"
+         ],
+         "headers": [
+            {
+               "header": "Access-Control-Allow-Origin",
+               "value": "*"
+            }
+         ],
+         "cookies": [
+            {
+               "name": "MY_COOKIE1",
+               "value": "MY_COOKIE_VALUE1"
+            },
+            {
+               "name": "MY_COOKIE2",
+               "value": "MY_COOKIE_VALUE2",
+               "expires": 9999
+            },
+            {
+               "name": "MY_COOKIE3",
+               "value": "MY_COOKIE_VALUE3",
+               "maxAge": 9999
+            }
+         ]
+      }
+   ]
 }
 ```
+Successful authentication results in an Authorization header being sent to the client.
+This header must be included by the client in all requests sent to the server that 
+require an authorization check.
+ 
+The Authorization header expires after 5 minutes, at which point the client will need 
+to authenticate again.
+
 #### Fields
 * **username**<br/>
 Example: "admin"<br/>
 The user name for the account.
 * **password**<br/>
 Example: "passw0rd"<br/>
-The password for the account. Stored in clear text.
+The password for the account.
 * **groups**<br/>
 Example: "admin"<br/>
 A list of groups the user belongs to. Authoriation uses groups to determine what 
@@ -715,6 +733,14 @@ The serve comes configured with a simple login screen that can be used in conjuc
 Authentican and Authorization. The screen can be accessed using the /login route from a
 browser.
 
+### Add User
+The server comes configured with an add user screen that adds users to the system. A user
+must have a user name, a password, and belong to at least one group. Up to three groups
+can be specified. Up to three custom headers and cookies that are sent with each response to
+the user can also be specified.
+
+The screen can be accessed using the /user/add route from a browser.
+
 ### Adding Authentication
 Authentication can be added to mocks, microservices, endpoints, and database connections
 using the server's config file. See the sections on mocks, microservices, endpoints, and
@@ -728,7 +754,7 @@ Once a user has authenticated and their identity is known to the serve, that ide
 used to determine what actions the user is authorized to perform.
 
 Authorization information can be added to mocks, microservices, endpoints, and database
- connections  using the server's config file. An eample is shown below.
+ connections  using the server's config file. An example is shown below.
  
  ```
 "databaseConnections" : [
