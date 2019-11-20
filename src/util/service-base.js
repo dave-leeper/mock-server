@@ -4,7 +4,6 @@ const Registry = require ( './registry.js' );
 const Strings = require ( './strings.js' );
 const I18n = require ( './i18n.js' );
 const Log = require ( './log.js' );
-const uuidv4 = require('uuid/v4');
 
 class ServiceBase {
     constructor() {
@@ -36,7 +35,6 @@ class ServiceBase {
         if (!userHeaders) return;
         for (let loop = 0; loop < userHeaders.length; loop++) {
             let header = userHeaders[loop];
-            if ('Authorization' === header.header) header.value = 'MOCK-SERVER token="' + uuidv4() + '"';
             res.header(header.header, header.value);
         }
         Log.all('Added headers for user: ' + req.user.username);
