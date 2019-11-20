@@ -96,26 +96,31 @@ describe( 'As a developer, I need need to define a custom authentication/authori
         expect( called ).to.be.equal( false );
     });
     it ( 'should succeed when there is config authorization info for a path', ( ) => {
-        Registry.register( { stuff: 'stuff' }, 'ServerConfig' );
-        Registry.register( [ {
+        let now = new Date();
+        Registry.register({ stuff: 'stuff' }, 'ServerConfig' );
+        Registry.register([{
             "username": "admin",
             "password": "admin",
             "groups": [ "admin" ],
+            "token": "x",
+            "lastAccessTime": now,
             "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" }]
-        } ], 'Accounts' );
+        }], 'Accounts' );
         let localStrategy = new LocalStrategy();
         let mockRequest = new MockRequest();
+        mockRequest.url = '/path';
+        mockRequest.user = { username: 'admin' };
+        mockRequest.header('Request Method', 'GET');
+        mockRequest.header('Authorization', 'MOCK-SERVER token="x"');
         let mockResponse = new MockResponse();
         let called = false;
         let next = () => { called = true; };
         let handler = localStrategy.getAuthorization();
-        mockRequest.url = '/path';
-        mockRequest.user = { username: 'admin' };
-        mockRequest.header('Request Method', 'GET');
         handler(mockRequest, mockResponse, next);
         expect( called ).to.be.equal( true );
     });
     it ( 'should fail gracefully when the request username has no permissions', ( ) => {
+        let now = new Date();
         let config = {
             authentication: [
                 {
@@ -139,6 +144,8 @@ describe( 'As a developer, I need need to define a custom authentication/authori
             "username": "username",
             "password": "password",
             "groups": [ "user" ],
+            "token": "x",
+            "lastAccessTime": now,
             "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" }],
             "cookies": [
                 { "name": "MY_COOKIE1", "value": "MY_COOKIE_VALUE1" },
@@ -157,12 +164,14 @@ describe( 'As a developer, I need need to define a custom authentication/authori
         mockRequest.url = '/path';
         mockRequest.user = { username: 'username' };
         mockRequest.header('Request Method', 'GET');
+        mockRequest.header('Authorization', 'MOCK-SERVER token="x"');
         handler(mockRequest, mockResponse, next);
         expect( mockResponse.sendStatus ).to.be.equal( 403 );
         expect( mockResponse.sendString ).to.be.equal( err );
         expect( called ).to.be.equal( false );
     });
     it ( 'should succeed when the request username has permissions', ( ) => {
+        let now = new Date();
         let config = {
             authentication: [
                 {
@@ -187,17 +196,20 @@ describe( 'As a developer, I need need to define a custom authentication/authori
             "username": "admin",
             "password": "admin",
             "groups": [ "admin" ],
+            "token": "x",
+            "lastAccessTime": now,
             "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" }]
         } ], 'Accounts' );
-        let localStrategy = new LocalStrategy();
         let mockRequest = new MockRequest();
         let mockResponse = new MockResponse();
-        let called = false;
-        let next = () => { called = true; };
-        let handler = localStrategy.getAuthorization();
         mockRequest.url = '/path';
         mockRequest.user = { username: 'admin' };
         mockRequest.header('Request Method', 'GET');
+        mockRequest.header('Authorization', 'MOCK-SERVER token="x"');
+        let localStrategy = new LocalStrategy();
+        let called = false;
+        let next = () => { called = true; };
+        let handler = localStrategy.getAuthorization();
         handler(mockRequest, mockResponse, next);
         expect( called ).to.be.equal( true );
     });
