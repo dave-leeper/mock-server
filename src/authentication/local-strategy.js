@@ -4,10 +4,17 @@ const Strings = require('../util/strings' );
 const I18n = require('../util/i18n' );
 const Log = require('../util/log' );
 const reduce = require('../util/algorithm').oneTruthyReduce;
+const uuidv4 = require('uuid/v4');
 
 const DEFAULT_EXPIRE_TIME = 300;
-const WWW_AUTHENTICATE_HEADER = "Basic realm=\"User Visible Realm\", charset=\"UTF-8\"";
+const WWW_AUTHENTICATE_HEADER = "Mock-Server realm=\"User Visible Realm\", charset=\"UTF-8\"";
 
+/*
+ Successful authentication results in an Authorization header being sent to the client. This header must be included
+ by the client in all requests sent to the server that require an authorization check.
+ 
+ The Authorization header expires after 5 minutes, at which point the client will need to authenticate again.
+ */
 class LocalStrategy {
     constructor() {
     }
@@ -39,14 +46,16 @@ class LocalStrategy {
                 if (account.headers && 0 != account.headers.length) {
                     headers.users[account.username] = headers.users[account.username].concat(account.headers);
                 }
-                headers.users[account.username].push({ "header": "Authorization", "value": "?" });
+                let token = uuidv4();
+                headers.users[account.username].push({ "header": "Authorization", "value": 'MOCK-SERVER token="' + token + '"' });
                 if (account.cookies && 0 != account.cookies.length) {
                     let cookies = Registry.get('Cookies');
                     if (!cookies.users) cookies.users = {};
                     if (!cookies.users[account.username]) cookies.users[account.username] = [];
                     cookies.users[account.username] = cookies.users[account.username].concat(account.cookies);
                 }
-                account.lastAccessTime = new Date();
+                account.token = token;                  // <------------ Used by getAuthorization()
+                account.lastAccessTime = new Date();    // <------------ Used by getAuthorization()
                 return done( null, { operation: operation, statusType: 'success', status: 200, username: account.username, message: I18n.get( Strings.LOGIN_SUCCESSFUL )} );
             }
             const err = { operation: operation, statusType: 'error', status: 401, message: I18n.format( I18n.get( Strings.ERROR_MESSAGE_INCORRECT_USER_NAME ), username )};
@@ -79,10 +88,19 @@ class LocalStrategy {
 
             let username = req.user.username;
             let account = accounts.map(account => (account.username === username? account : null )).reduce(reduce);
-            if (!account) {
+            if (!account || !account.token) {
                 const err = { operation: operation, statusType: 'error', status: 401, message: I18n.format( I18n.get( Strings.ERROR_MESSAGE_INCORRECT_USER_NAME ), username )};
                 if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
                 res.headers["WWW-Authenticate"] = WWW_AUTHENTICATE_HEADER;
+                res.status(err.status);
+                res.send(Log.stringify(err));
+                return;
+            }
+            let authorizationHeader = req.headers["Authorization"];
+            const expectedToken = 'MOCK-SERVER token="' + account.token + '"';
+            if (!authorizationHeader || expectedToken !== authorizationHeader ) {
+                const err = { operation: operation, statusType: 'error', status: 403, message: I18n.get( Strings.ERROR_MESSAGE_UNAUTHORIZED )};
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
                 res.status(err.status);
                 res.send(Log.stringify(err));
                 return;
@@ -130,6 +148,7 @@ class LocalStrategy {
                 const err = { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.ERROR_MESSAGE_LOGIN_EXPIRED )};
                 let headers = Registry.get('Headers');
                 if (headers && headers.users && headers.users[account.username]) this.arrayRemove(headers.users[account.username], "Authorization");
+                account.token = null;
                 if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
                 res.headers["WWW-Authenticate"] = WWW_AUTHENTICATE_HEADER;
                 res.status(err.status);
