@@ -79,7 +79,6 @@ class Server {
         };
         let serverConfig = config;
         let crypto = this.initCrypto();
-        console.log("ACCOUNTS: " + Log.stringify(accounts));
         accounts = Encrypt.decryptAccounts( accounts, crypto.iv, crypto.key );
         if ("string" === typeof config) serverConfig = mergeConfigs(loadConfigs(getConfigFileNames(config)));
 
