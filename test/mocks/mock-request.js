@@ -11,16 +11,15 @@ MockRequest.prototype.reset = function ( path ) {
     this.params = {};
     this.query = {};
     this.files = {filename:{data: JSON.stringify({ name: 'name' })}};;
-    this.headers = [];
+    this.headers = {};
     this.cookies = [];
 };
 MockRequest.prototype.header = function ( name, value ) {
     if (value) {
-        this.headers.push({header: name, value: value});
+        this.headers[ name ] =  value;
         return;
     }
-    for (let loop = 0; loop < this.headers.length; loop++) { if (this.headers[loop].header === name) return this.headers[loop].value; }
-    return undefined;
+    return this.headers[name];
 };
 MockRequest.prototype.cookie = function ( name, value ) {
     if (value) {
