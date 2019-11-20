@@ -279,7 +279,7 @@ describe( 'As a developer, I need to perform common operations on requests and r
         Registry.register(passport, 'Passport');
         let result = RouteBuilder.buildAuthenticationStrategies(authentication);
         expect(result).to.be.equal(true);
-        Registry.unregisterAll();
+        Registry.unregisterAll();           // <--------------
         handler = serviceBase.authentication(authentication.authenticationStrategies, 'local');
         expect(handler).to.be.equal(null);
     });
