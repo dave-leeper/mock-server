@@ -754,7 +754,7 @@ Once a user has authenticated and their identity is known to the serve, that ide
 used to determine what actions the user is authorized to perform.
 
 Authorization information can be added to mocks, microservices, endpoints, and database
- connections  using the server's config file. An example is shown below.
+ connections using the server's config file. An example is shown below.
  
  ```
 "databaseConnections" : [
