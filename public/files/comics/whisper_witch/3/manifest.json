@@ -37,5 +37,18 @@
     "Page_02.jpg",
     "Page_03.jpg",
     "Page_04.jpg"
+  ],
+  "price": "0.99",
+  "descriptionTitle1": "Whisper Witch",
+  "description1": "Erin visits the immortals of the Otherworld. Includes 12 new Tarot cards and chapter 4 of Whisper Witch’s Preternatural Forces In The 21st Century.",
+  "descriptionTitle2": "Captain Æther",
+  "description2": "We’re introduced to Steam Train and Stella Obscura as Superbrain continues his plans to invade Earth and Captain Æther works to stop him!",
+  "descriptionTitle3": " ",
+  "description3": " ",
+  "seeAlso": [
+    { "id": "whisper_witch", "issue": 1 },
+    { "id": "whisper_witch", "issue": 2 },
+    { "id": "whisper_witch", "issue": 4 },
+    { "id": "legends_europe", "issue": 1 }
   ]
 }

@@ -34,8 +34,21 @@
   ],
   "cover": "Page_01.jpg",
   "preview": [
-    "Page_02.jpg",
     "Page_03.jpg",
-    "Page_04.jpg"
+    "Page_04.jpg",
+    "Page_21.jpg"
+  ],
+  "price": "0.99",
+  "descriptionTitle1": "Gold Venus",
+  "description1": "Gold Venus encounters General Sato for the first time and discovers his plan to crush American forces with superior Japanese technology.",
+  "descriptionTitle2": "Black Fury",
+  "description2": "Detective John Perry is unable to find the madman who killed his father and his partner. Perhaps transforming into the Black Fury to strike fear into the underworld will turn up a clue!",
+  "descriptionTitle3": " ",
+  "description3": " ",
+  "seeAlso": [
+    { "id": "gold_venus", "issue": 2 },
+    { "id": "gold_venus", "issue": 3 },
+    { "id": "gold_venus", "issue": 4 },
+    { "id": "legends_pacific", "issue": 1 }
   ]
 }

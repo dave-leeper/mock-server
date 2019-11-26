@@ -35,5 +35,16 @@
     "Page_02.jpg",
     "Page_03.jpg",
     "Page_04.jpg"
+  ],
+  "price": "0.99",
+  "descriptionTitle1": "Heroes of the Wild Frontier",
+  "description1": "To defeat a new foe, Captain Æther and his team must travel to the sun!",
+  "descriptionTitle2": "Straight Arrow",
+  "description2": "Straight Arrow battles Skin Walker!",
+  "seeAlso": [
+    { "id": "heroes_of_the_wild_frontier", "issue": 1 },
+    { "id": "heroes_of_the_wild_frontier", "issue": 2 },
+    { "id": "heroes_of_the_wild_frontier", "issue": 3 },
+    { "id": "whisper_witch", "issue": 1 }
   ]
 }

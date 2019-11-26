@@ -111,7 +111,15 @@ const strings = [
     'Conflict: File {1} Already Exists.',
     'Account added successfully.',
     'Add account failed. Error: {0}',
-    'Add account is not properly configured. A destination is required.'
+    'Add account is not properly configured. A destination is required.',
+    'Favorite added.',
+    'Add favorite failed. Error: {0}',
+    'Favorite deleted.',
+    'Delete favorite failed. Error: {0}',
+    'Cart item added.',
+    'Add to cart failed. Error: {0}',
+    'Cart item deleted.',
+    'Delete from cart failed. Error: {0}',
 ];
 
 module.exports = strings;

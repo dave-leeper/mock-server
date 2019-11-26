@@ -35,5 +35,18 @@
     "Page_02.jpg",
     "Page_03.jpg",
     "Page_04.jpg"
+  ],
+  "price": "0.99",
+  "descriptionTitle1": "Heroes of the Wild Frontier",
+  "description1": "The third new member of Captain Æther's team is set to arrive, but an unseen enemy sends his minions to stop it!",
+  "descriptionTitle2": "Steam Train and Stella Obscura",
+  "description2": "Steam Train, Stella Obscura, Dreamcatcher, Ghost Slinger, and Father Stewart are attacked as they return to Captain Æther!",
+  "descriptionTitle3": "Straight Arrow",
+  "description3": "Straight Arrow sets out to uncover who is stealing from the settlers, but the answer is worse than he ever imagined!",
+  "seeAlso": [
+    { "id": "heroes_of_the_wild_frontier", "issue": 1 },
+    { "id": "heroes_of_the_wild_frontier", "issue": 2 },
+    { "id": "heroes_of_the_wild_frontier", "issue": 4 },
+    { "id": "whisper_witch", "issue": 1 }
   ]
 }

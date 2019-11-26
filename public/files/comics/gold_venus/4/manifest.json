@@ -37,5 +37,18 @@
     "Page_02.jpg",
     "Page_03.jpg",
     "Page_04.jpg"
+  ],
+  "price": "0.99",
+  "descriptionTitle1": "Gold Venus",
+  "description1": "Old foes and new combine to give the Gold Venus more than she can handle alone! Guest-starring the Trick Arrow and Man O' Metal!",
+  "descriptionTitle2": "Black Fury",
+  "description2": "A vicious serial-killer reveals the truth about the war to the Black Fury!",
+  "descriptionTitle3": " ",
+  "description3": " ",
+  "seeAlso": [
+    { "id": "gold_venus", "issue": 1 },
+    { "id": "gold_venus", "issue": 2 },
+    { "id": "gold_venus", "issue": 3 },
+    { "id": "legends_pacific", "issue": 1 }
   ]
 }

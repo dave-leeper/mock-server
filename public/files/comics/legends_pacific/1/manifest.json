@@ -37,5 +37,18 @@
     "Page_02.jpg",
     "Page_03.jpg",
     "Page_04.jpg"
+  ],
+  "price": "0.99",
+  "descriptionTitle1": "The Legends Pacific",
+  "description1": "The Legends first adventure has them taking on, and falling victim to, the despot named the Claw! Includes origin stories for Trick Arrow and the Claw.",
+  "descriptionTitle2": "Wild Boy",
+  "description2": "Wild Boy battles an old friend turned enemy in order to save the life of a young girl about to be sacrificed to a volcano! But is it all just a dream?",
+  "descriptionTitle3": " ",
+  "description3": " ",
+  "seeAlso": [
+    { "id": "legends_pacific", "issue": 2 },
+    { "id": "legends_pacific", "issue": 3 },
+    { "id": "gold_venus", "issue": 1 },
+    { "id": "legends_europe", "issue": 1 }
   ]
 }

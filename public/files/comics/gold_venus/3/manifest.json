@@ -37,5 +37,18 @@
     "Page_02.jpg",
     "Page_03.jpg",
     "Page_04.jpg"
+  ],
+  "price": "0.99",
+  "descriptionTitle1": "Gold Venus",
+  "description1": "Gold Venus discovers a secrect Japanese base and when she investigates she is taken prisoner by an old foe! Guest-starring the Trick Arrow!",
+  "descriptionTitle2": "Black Fury",
+  "description2": "What price must be paid to gain immortality? How do you stop an immortal? The Black Fury is about to find out! Guest-starring the Trick Arrow!",
+  "descriptionTitle3": " ",
+  "description3": " ",
+  "seeAlso": [
+    { "id": "gold_venus", "issue": 1 },
+    { "id": "gold_venus", "issue": 2 },
+    { "id": "gold_venus", "issue": 4 },
+    { "id": "legends_pacific", "issue": 1 }
   ]
 }

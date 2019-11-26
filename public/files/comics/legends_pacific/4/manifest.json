@@ -37,5 +37,18 @@
     "Page_02.jpg",
     "Page_03.jpg",
     "Page_04.jpg"
+  ],
+  "price": "0.99",
+  "descriptionTitle1": "The Legends Pacific",
+  "description1": "The Legends battle Izanami in a zombie apocalypse! Includes origin stories for the Dreamtime and Gold Venus.",
+  "descriptionTitle2": "Wild Boy",
+  "description2": "Wild Boy battles Zabba the Witch Doctor!",
+  "descriptionTitle3": " ",
+  "description3": " ",
+  "seeAlso": [
+    { "id": "legends_pacific", "issue": 1 },
+    { "id": "legends_pacific", "issue": 2 },
+    { "id": "gold_venus", "issue": 1 },
+    { "id": "legends_europe", "issue": 1 }
   ]
 }

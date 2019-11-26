@@ -37,5 +37,18 @@
     "Page_02.jpg",
     "Page_03.jpg",
     "Page_04.jpg"
+  ],
+  "price": "0.99",
+  "descriptionTitle1": "The Legends Pacific",
+  "description1": "The Legends vs The Imperials! But a dark and sinister force threatens them both! Includes origin stories for Man O' Metal and Yin Yang.",
+  "descriptionTitle2": "Wild Boy",
+  "description2": "Wild Boy begins the search for Zabba the Witchdoctor by visiting his friends Aarg and the Ape-men. But the visit is cut short by the arrival of Dagger Tooth!",
+  "descriptionTitle3": " ",
+  "description3": " ",
+  "seeAlso": [
+    { "id": "legends_pacific", "issue": 1 },
+    { "id": "legends_pacific", "issue": 3 },
+    { "id": "gold_venus", "issue": 1 },
+    { "id": "legends_europe", "issue": 1 }
   ]
 }

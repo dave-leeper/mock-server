@@ -17,7 +17,7 @@
     {
       "path": "/comics/:user",
       "response": "./public/files/comics/users/:user/owned.json",
-      "responseType": "BLOB",
+      "responseType": "JSON",
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
@@ -29,6 +29,12 @@
     {
       "path": "/comics/:name/:issue",
       "response": "./public/files/comics/:name/:issue/manifest.json",
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/favorites/:user",
+      "response": "./public/files/comics/users/:user/favorites.json",
       "responseType": "JSON",
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
@@ -172,17 +178,73 @@
       "path": "/user/add",
       "response": "add-user.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Add User", "action": "/account/add", "verb": "POST", "destination": "./src/authentication/authentication.json"},
+      "hbsData": {"title": "Add User", "action": "/user/add/data", "verb": "POST", "destination": "./src/authentication/authentication.json"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/user/favorites/add",
+      "response": "favorite.hbs",
+      "responseType": "HBS",
+      "hbsData": {"title": "Add Favorite", "action": "/user/favorites/add/data", "verb": "POST"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/user/favorites/delete",
+      "response": "favorite.hbs",
+      "responseType": "HBS",
+      "hbsData": {"title": "Delete Favorite", "action": "/user/favorites/delete/data", "verb": "POST"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/user/cart/add",
+      "response": "favorite.hbs",
+      "responseType": "HBS",
+      "hbsData": {"title": "Add Favorite", "action": "/user/cart/add/data", "verb": "POST"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/user/cart/delete",
+      "response": "favorite.hbs",
+      "responseType": "HBS",
+        "hbsData": {"title": "Delete Favorite", "action": "/user/cart/delete/data", "verb": "POST"},
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     }
   ],
   "microservices": [
     {
       "verb": "POST",
-      "path": "/account/add",
+      "path": "/user/add/data",
       "name": "Add account",
       "description": "Adds an account to the server account file.",
       "serviceFile": "add-account.js"
+    },
+    {
+      "verb": "POST",
+      "path": "/user/favorites/add/data",
+      "name": "Add a user favorite",
+      "description": "Adds an item to the user favorite list.",
+      "serviceFile": "add-favorite.js"
+    },
+    {
+      "verb": "POST",
+      "path": "/user/favorites/delete/data",
+      "name": "Delete a user favorite",
+      "description": "Deletes an item to the user favorite list.",
+      "serviceFile": "delete-favorite.js"
+    },
+    {
+      "verb": "POST",
+      "path": "/user/cart/add/data",
+      "name": "Add an item to the user cart",
+      "description": "Adds an item to the user cart.",
+      "serviceFile": "add-to-cart.js"
+    },
+    {
+      "verb": "POST",
+      "path": "/user/cart/delete/data",
+      "name": "Delete an item from the user cart",
+      "description": "Deletes an item to the user cart.",
+      "serviceFile": "delete-from-cart.js"
     },
     {
       "verb": "POST",

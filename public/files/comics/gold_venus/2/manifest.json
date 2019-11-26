@@ -37,5 +37,18 @@
     "Page_02.jpg",
     "Page_03.jpg",
     "Page_04.jpg"
+  ],
+  "price": "0.99",
+  "descriptionTitle1": "Gold Venus",
+  "description1": "The mysterious Agent X has put a bounty on the head of the Gold Venus! Colonel Jameson insists his own men track down Agent X! Can Gold Venus save them in time?",
+  "descriptionTitle2": "Black Fury",
+  "description2": "The U.S. Government has taken notice of the Black Fury's activities and makes him an offer he can't refuse!",
+  "descriptionTitle3": " ",
+  "description3": " ",
+  "seeAlso": [
+    { "id": "gold_venus", "issue": 1 },
+    { "id": "gold_venus", "issue": 3 },
+    { "id": "gold_venus", "issue": 4 },
+    { "id": "legends_pacific", "issue": 1 }
   ]
 }

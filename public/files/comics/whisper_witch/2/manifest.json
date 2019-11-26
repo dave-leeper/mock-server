@@ -37,5 +37,18 @@
     "Page_02.jpg",
     "Page_03.jpg",
     "Page_04.jpg"
+  ],
+  "price": "0.99",
+  "descriptionTitle1": "Whisper Witch",
+  "description1": "Erin O’Hara is told she must learn a new perception of reality or be killed! Includes 12 new Tarot cards, 80 new I Ching symbols, and chapter 3 of Whisper Witch’s Preternatural Forces In The 21st Century.",
+  "descriptionTitle2": "Captain Æther",
+  "description2": "Captain Æther searches for new allies to aid him in the upcoming Earth invasion. His first stop is visiting Straight Arrow, who has his hands full with the threat of Chief Skullface!",
+  "descriptionTitle3": " ",
+  "description3": " ",
+  "seeAlso": [
+    { "id": "whisper_witch", "issue": 1 },
+    { "id": "whisper_witch", "issue": 3 },
+    { "id": "whisper_witch", "issue": 4 },
+    { "id": "legends_europe", "issue": 1 }
   ]
 }

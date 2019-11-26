@@ -7,9 +7,6 @@
   {"id": "legends_pacific", "issue": 2, "purchased": "2019-01-01"},
   {"id": "legends_pacific", "issue": 3, "purchased": "2019-01-01"},
   {"id": "legends_pacific", "issue": 4, "purchased": "2019-01-01"},
-  {"id": "noir", "issue": 1, "purchased": "2019-01-01"},
-  {"id": "noir", "issue": 2, "purchased": "2019-01-01"},
-  {"id": "noir", "issue": 3, "purchased": "2019-01-01"},
   {"id": "whisper_witch", "issue": 1, "purchased": "2019-06-21"},
   {"id": "whisper_witch", "issue": 2, "purchased": "2019-06-21"},
   {"id": "whisper_witch", "issue": 3, "purchased": "2019-06-21"},
@@ -21,11 +18,5 @@
   {"id": "heroes_of_the_wild_frontier", "issue": 1, "purchased": "2019-11-21"},
   {"id": "heroes_of_the_wild_frontier", "issue": 2, "purchased": "2019-11-21"},
   {"id": "heroes_of_the_wild_frontier", "issue": 3, "purchased": "2019-11-21"},
-  {"id": "heroes_of_the_wild_frontier", "issue": 4, "purchased": "2019-11-21"},
-  {"id": "hell_rider", "issue": 1, "purchased": "2019-11-21"},
-  {"id": "hell_rider", "issue": 2, "purchased": "2019-11-21"},
-  {"id": "hell_rider", "issue": 3, "purchased": "2019-11-21"},
-  {"id": "whisper_witch_the_defects_of_god", "issue": 1, "purchased": "2019-11-21"},
-  {"id": "whisper_witch_the_defects_of_god", "issue": 2, "purchased": "2019-11-21"},
-  {"id": "babe_1", "issue": 1, "purchased": "2019-11-21"}
+  {"id": "heroes_of_the_wild_frontier", "issue": 4, "purchased": "2019-11-21"}
 ]

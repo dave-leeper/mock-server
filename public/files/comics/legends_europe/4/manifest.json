@@ -37,5 +37,18 @@
     "Page_02.jpg",
     "Page_03.jpg",
     "Page_04.jpg"
+  ],
+  "price": "0.99",
+  "descriptionTitle1": "The Legends Europe",
+  "description1": "The Legends team up with Black Fury, Kid Fury, and Mr. Nobody to stop Dr. Death from aiding Hitler! They battle Phantom Witch, Blood Fang, Green Ghoul, Ripper, Marbella, and Countess Siroon. Includes the origin stories for Fireworks and Whisper Witch.",
+  "descriptionTitle2": "The Super Agents",
+  "description2": "The Super Agents ead to Moscow to put an end to Project Pavlov, battling the Commissars: Collective, the New Man, the New Woman, and the People's Hero!",
+  "descriptionTitle3": " ",
+  "description3": " ",
+  "seeAlso": [
+    { "id": "legends_europe", "issue": 1 },
+    { "id": "legends_europe", "issue": 2 },
+    { "id": "whisper_witch", "issue": 1 },
+    { "id": "legends_pacific", "issue": 1 }
   ]
 }

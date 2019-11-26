@@ -35,5 +35,18 @@
     "Page_02.jpg",
     "Page_03.jpg",
     "Page_04.jpg"
+  ],
+  "price": "0.99",
+  "descriptionTitle1": "Heroes of the Wild Frontier",
+  "description1": "As Captain Æther's new team members are gathered, Stealla Obscura and Steam Train share painful memoeries from their past!",
+  "descriptionTitle2": "The Ghost Slinger",
+  "description2": "The Ghost Slinger battles Drogo to save the lives of his father and a young girl!",
+  "descriptionTitle3": "Dreamcatcher",
+  "description3": "A mysterious figure sends shapeshifting aliens known as Imagions to defeat Dreamcatcher!",
+  "seeAlso": [
+    { "id": "heroes_of_the_wild_frontier", "issue": 1 },
+    { "id": "heroes_of_the_wild_frontier", "issue": 3 },
+    { "id": "heroes_of_the_wild_frontier", "issue": 4 },
+    { "id": "whisper_witch", "issue": 1 }
   ]
 }

@@ -37,5 +37,18 @@
     "Page_02.jpg",
     "Page_03.jpg",
     "Page_04.jpg"
+  ],
+  "price": "0.99",
+  "descriptionTitle1": "Whisper Witch",
+  "description1": "A mysterious comet stone leads Erin O'Hara to seek help from Isaac Newton. Includes 6 new Tarot cards and chapters 1 & 2 of Whisper Witch’s Preternatural Forces In The 21st Century.",
+  "descriptionTitle2": "Captain Æther",
+  "description2": "On September 16th, 1866, near Roswell, New Mexico a mysterious ship crashes to Earth. When scientist Gordon Dane investigates, he finds a dying alien named Knur! Knur warns of a coming invasion from Superbrain and grants Dane the powers needed to defend Earth!",
+  "descriptionTitle3": " ",
+  "description3": " ",
+  "seeAlso": [
+    { "id": "whisper_witch", "issue": 2 },
+    { "id": "whisper_witch", "issue": 3 },
+    { "id": "whisper_witch", "issue": 4 },
+    { "id": "legends_europe", "issue": 1 }
   ]
 }

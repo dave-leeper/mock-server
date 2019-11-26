@@ -37,5 +37,18 @@
     "Page_02.jpg",
     "Page_03.jpg",
     "Page_04.jpg"
+  ],
+  "price": "0.99",
+  "descriptionTitle1": "The Legends Europe",
+  "description1": "The Legends must decide if the Green Sorceress is a friend or foe in their battle against Captain Blitzkrieg. Includes the origin story for the Flag and the Captain Blitzkrieg.",
+  "descriptionTitle2": "The Super Agents",
+  "description2": "The Super Agents race to stop the IllumiNaughty from contaminating New York City’s water supply with LSD!",
+  "descriptionTitle3": " ",
+  "description3": " ",
+  "seeAlso": [
+    { "id": "legends_europe", "issue": 1 },
+    { "id": "legends_europe", "issue": 3 },
+    { "id": "whisper_witch", "issue": 1 },
+    { "id": "legends_pacific", "issue": 1 }
   ]
 }

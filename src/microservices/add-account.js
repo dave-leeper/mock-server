@@ -57,9 +57,12 @@ class AddUser {
                 if ( body.cookiename2 ) newAccount.cookies.push( this.makeCookie(body.cookiename2, body.cookievalue2, body.cookieepires2, body.cookiemaxage2 ));
                 if ( body.cookiename3 ) newAccount.cookies.push( this.makeCookie(body.cookiename3, body.cookievalue3, body.cookieepires3, body.cookiemaxage3 ));
             }
+            if (body.email) newAccount.email = body.email;
+            if (body.firstName) newAccount.firstName = body.firstName;
+            if (body.lastName) newAccount.lastName = body.lastName;
 
             let successCallback = () => {
-                let message = I18n.get( Strings.ERROR_MESSAGE_ACCOUNT_ADDED );
+                let message = I18n.get( Strings.SUCCESS_MESSAGE_ACCOUNT_ADDED );
                 Registry.unregister("Accounts");
                 Registry.register(accounts, "Accounts");
                 inResolve && inResolve({ status: 200, send: message});

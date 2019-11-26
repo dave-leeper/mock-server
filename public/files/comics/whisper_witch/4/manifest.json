@@ -37,5 +37,18 @@
     "Page_02.jpg",
     "Page_03.jpg",
     "Page_04.jpg"
+  ],
+  "price": "0.99",
+  "descriptionTitle1": "Whisper Witch",
+  "description1": "Lord Nox has a plan to bring peace on Earth: kill everyone! Includes 6 new Tarot cards and chapter 5, 6, and 7 of Whisper Witch’s Preternatural Forces In The 21st Century.",
+  "descriptionTitle2": "Captain Æther",
+  "description2": "Superbrain invades Earth and only Captain Æther and his allies Knur, Straight Arrow, and Steam Train stand in his way! But Superbrain is ready for them and has a secret weapon: the deadly Stella Obscura!",
+  "descriptionTitle3": " ",
+  "description3": " ",
+  "seeAlso": [
+    { "id": "whisper_witch", "issue": 1 },
+    { "id": "whisper_witch", "issue": 2 },
+    { "id": "whisper_witch", "issue": 3 },
+    { "id": "legends_europe", "issue": 1 }
   ]
 }
