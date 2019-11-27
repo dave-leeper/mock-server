@@ -74,11 +74,12 @@ class AddUser {
             };
 
             if (accounts && accounts.length) {
-                let i = accounts.length;
-                while (i--) {
-                    if (accounts[i].username.toUpperCase() === newAccount.username.toUpperCase()) {
-                        accounts.splice(i, 1);
-                        break;
+                for (let i = accounts.length - 1; 0 <= i; i--) {
+                    if (body.username.toUpperCase() === accounts[i].username.toUpperCase()) {
+                        let message = I18n.get( Strings.ERROR_MESSAGE_ACCOUNT_ALREADY_EXISTS );
+                        if (Log.will(Log.ERROR)) Log.error(message);
+                        inReject && inReject({status: 400, send: message});
+                        return;
                     }
                 }
                 accounts.push(newAccount);
@@ -86,6 +87,19 @@ class AddUser {
             else {
                 accounts =  [ newAccount ];
             }
+
+            let newUserPath = "./public/files/comics/users/" + body.username;
+            if (Files.existsSync(newUserPath)) {
+                    let message = I18n.get( Strings.ERROR_MESSAGE_ACCOUNT_ALREADY_EXISTS );
+                if (Log.will(Log.ERROR)) Log.error(message);
+                inReject && inReject({ status: 400, send: message});
+                return;
+            }
+            Files.createDirSync(newUserPath);
+            Files.writeFileSync(newUserPath + "/owned.json", "[]");
+            Files.writeFileSync(newUserPath + "/favorites.json", "[]");
+            Files.writeFileSync(newUserPath + "/cart.json", "[]");
+            
             let crypto = Registry.get( "Crypto" );
             Files.writeFileLock(
                 path.resolve(body.destination), 

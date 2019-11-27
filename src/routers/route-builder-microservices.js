@@ -33,7 +33,8 @@ class RouteBuilderMicroservices extends ServiceBase {
                     Log.trace('Executing ' + microservice.name + ' microservice with service information of ' + Log.stringify(microservice));
                     micro.do(params).then(( data ) => {
                         Log.trace(microservice.name + ' executed successfully.');
-                        res.status(data.status);
+                        if (data && data.status) res.status(data.status);
+                        else res.status(200);
                         if (data.send) {
                             if (Array.isArray(data.send)) res.send(data.send.map(x => x));
                             else res.send(data.send);
@@ -45,7 +46,8 @@ class RouteBuilderMicroservices extends ServiceBase {
                         next && next();
                     }, ( error ) => {
                         Log.trace(microservice.name + ' executed with error(s). ' + Log.stringify( error ));
-                        res.status(error.status);
+                        if (error && error.status) res.status(error.status);
+                        else res.status(500);
                         if (error.send) {
                             if (Array.isArray(error.send)) Log.error(error.send.map(x => x));
                             else if (Log.will(Log.ERROR)) Log.error(error.send);
@@ -59,6 +61,7 @@ class RouteBuilderMicroservices extends ServiceBase {
                         } else if (error.viewName) {
                             res.render( error.viewName, error.viewObject );
                         }
+                        res.end();
                         next && next();
                     });
                 } catch (err) {
@@ -66,6 +69,7 @@ class RouteBuilderMicroservices extends ServiceBase {
                     if (Log.will(Log.ERROR)) Log.error(error + ' Error: ' + Log.stringify(err));
                     res.status(500);
                     res.render("error", { message: error, error: { status: 500, stack: err.stack }});
+                    res.end();
                     next && next();
                 }
             };

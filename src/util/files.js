@@ -54,6 +54,16 @@ class Files {
     }
 
     /**
+     * Creates a directory.
+     * @param inFilepath {String} The path to the directory.
+     * @param inMode {Number} Permissions mask the directory. Example 0777. Optional.
+     */
+    static createDirSync(inFilepath, inMode) {
+        if (!inMode) inMode = "\\00777";
+        fs.mkdirSync( inFilepath, { recursive: true, mode : inMode }); 
+    }
+    
+    /**
      * returns a list of files.
      * @param inFilepath {String} The path to the directory to search.
      * @param inNameMatches {RegExp} Only files that match will be returned. Can be null to skip this check.
@@ -86,6 +96,7 @@ class Files {
 
         lockFile.lock(inFilepath + ".lock", options, (err) => {
             if (err) {
+                
                 inOnFail && inOnFail(err);
                 return;
             }

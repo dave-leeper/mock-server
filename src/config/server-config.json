@@ -168,6 +168,13 @@
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
+      "path": "/color",
+      "response": "color-picker.hbs",
+      "responseType": "HBS",
+      "hbsData": {"title": "Select a color", "action": "/color/schemes", "verb": "POST"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
       "path": "/login",
       "response": "login.hbs",
       "responseType": "HBS",
@@ -253,6 +260,13 @@
       "description": "Authenticates a user.",
       "serviceFile": "authenticate-user.js",
       "authentication": "local"
+    },
+    {
+      "verb": "POST",
+      "path": "/color/schemes",
+      "name": "Displays complimentary colors",
+      "description": "Displays complimentary colors",
+      "serviceFile": "color-schemes.js"
     },
     {
       "path": "/mocks",
