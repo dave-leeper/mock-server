@@ -34,9 +34,9 @@
   ],
   "cover": "Page_01.jpg",
   "preview": [
-    "Page_02.jpg",
     "Page_03.jpg",
-    "Page_04.jpg"
+    "Page_04.jpg",
+    "Page_21.jpg"
   ],
   "price": "0.99",
   "descriptionTitle1": "The Legends Pacific",
@@ -46,8 +46,8 @@
   "descriptionTitle3": " ",
   "description3": " ",
   "seeAlso": [
-    { "id": "legends_pacific", "issue": 1 },
     { "id": "legends_pacific", "issue": 2 },
+    { "id": "legends_pacific", "issue": 4 },
     { "id": "gold_venus", "issue": 1 },
     { "id": "legends_europe", "issue": 1 }
   ]

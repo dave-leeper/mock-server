@@ -37,6 +37,7 @@ class AddUser {
             }
 
             let accounts = Registry.get( "Accounts" );
+            
             let newAccount = { 
                 username: body.username, 
                 password: body.password, 
@@ -60,6 +61,9 @@ class AddUser {
             if (body.email) newAccount.email = body.email;
             if (body.firstName) newAccount.firstName = body.firstName;
             if (body.lastName) newAccount.lastName = body.lastName;
+            let now = new Date();
+            let transactionDate = "" + now.getFullYear() + "-"  + (now.getMonth() + 1) + "-" + now.getDate();
+            newAccount.transactionDate = transactionDate;
 
             let successCallback = () => {
                 let message = I18n.get( Strings.SUCCESS_MESSAGE_ACCOUNT_ADDED );

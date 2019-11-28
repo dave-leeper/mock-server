@@ -37,16 +37,19 @@ class AddToCart {
                 return;
             }
     
-            let favorites = [];
-            let newFavorite = { id: body.id, issue: body.issue };
+            let cart = [];
+            let now = new Date();
+            let transactionDate = "" + now.getFullYear() + "-"  + (now.getMonth() + 1) + "-" + now.getDate();
+            let newCartItem = { id: body.id, issue: body.issue, transactionDate: transactionDate };
+    
             if (Files.existsSync(filePath)) {
                 let JSONString = Files.readFileSync(filePath);
-                favorites = JSON.parse(JSONString);
-                for (let i = favorites.length - 1; i >= 0; i--) {
-                    if (favorites[i].id.toUpperCase() === newFavorite.id.toUpperCase() && favorites[i].issue === newFavorite.issue ) favorites.splice( i,  1 );
+                cart = JSON.parse(JSONString);
+                for (let i = cart.length - 1; i >= 0; i--) {
+                    if (cart[i].id.toUpperCase() === newCartItem.id.toUpperCase() && cart[i].issue === newCartItem.issue ) cart.splice( i,  1 );
                 };
             }
-            favorites.push(newFavorite);
+            cart.push(newCartItem);
     
             let successCallback = () => {
                 let message = I18n.get( Strings.SUCCESS_MESSAGE_CART_ITEM_ADDED );
@@ -59,7 +62,7 @@ class AddToCart {
             };
             Files.writeFileLock(
                 path.resolve(filePath),
-                JSON.stringify( favorites ),
+                JSON.stringify( cart ),
                 5,
                 successCallback,
                 failCallback
