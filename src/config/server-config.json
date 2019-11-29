@@ -39,6 +39,12 @@
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
+      "path": "/cart/:user",
+      "response": "./public/files/comics/users/:user/cart.json",
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
       "path": "/ping",
       "response": {"name":"My Server","version":"1.0"},
       "responseType": "JSON",
