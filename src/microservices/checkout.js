@@ -91,6 +91,8 @@ class AddUser {
                 }
                 let successCallback = () => {
                     let message = I18n.get( Strings.SUCCESS_MESSAGE_BOOKS_ADDED );
+                    let newUserPath = "./public/files/comics/users/" + body.username;
+                    Files.writeFileSync(newUserPath + "/cart.json", "[]");
                     inResolve && inResolve({ status: 200, send: message});
                 };
                 let failCallback = (error) => {

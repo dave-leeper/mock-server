@@ -15,36 +15,6 @@
   "loginExpire": 600,
   "mocks": [
     {
-      "path": "/comics/:user",
-      "response": "./public/files/comics/users/:user/owned.json",
-      "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
-    },
-    {
-      "path": "/comics/:name/:issue/:page",
-      "response": "./public/files/comics/:name/:issue/:page",
-      "responseType": "BLOB",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
-    },
-    {
-      "path": "/comics/:name/:issue",
-      "response": "./public/files/comics/:name/:issue/manifest.json",
-      "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
-    },
-    {
-      "path": "/favorites/:user",
-      "response": "./public/files/comics/users/:user/favorites.json",
-      "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
-    },
-    {
-      "path": "/cart/:user",
-      "response": "./public/files/comics/users/:user/cart.json",
-      "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
-    },
-    {
       "path": "/ping",
       "response": {"name":"My Server","version":"1.0"},
       "responseType": "JSON",
@@ -185,6 +155,42 @@
       "response": "login.hbs",
       "responseType": "HBS",
       "hbsData": {"title": "Login", "action": "/user/authenticate", "verb": "POST"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/comics",
+      "response": "./public/files/comics/comics.json",
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/comics/:user",
+      "response": "./public/files/comics/users/:user/owned.json",
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/comics/:name/:issue/:page",
+      "response": "./public/files/comics/:name/:issue/:page",
+      "responseType": "BLOB",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/comics/:name/:issue",
+      "response": "./public/files/comics/:name/:issue/manifest.json",
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/favorites/:user",
+      "response": "./public/files/comics/users/:user/favorites.json",
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/cart/:user",
+      "response": "./public/files/comics/users/:user/cart.json",
+      "responseType": "JSON",
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
