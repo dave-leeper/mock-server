@@ -1,12 +1,12 @@
 function Strings(){}
 Strings.LOGIN_SUCCESSFUL = 0;
 Strings.LISTENING_ON_PORT = 1;
-Strings.RESERVERED1 = 2;
-Strings.RESERVERED2 = 3;
-Strings.RESERVERED3 = 4;
-Strings.RESERVERED4 = 5;
-Strings.RESERVERED5 = 6;
-Strings.RESERVERED6 = 7;
+Strings.SUCCESS_MESSAGE_ACCOUNT_ADDED = 2;
+Strings.SUCCESS_MESSAGE_FAVORITE_ADDED = 3;
+Strings.SUCCESS_MESSAGE_FAVORITE_DELETED = 4;
+Strings.SUCCESS_MESSAGE_CART_ITEM_ADDED = 5;
+Strings.SUCCESS_MESSAGE_CART_ITEM_DELETED = 6;
+Strings.SUCCESS_MESSAGE_BOOKS_ADDED = 7;
 Strings.RESERVERED7 = 8;
 Strings.RESERVERED8 = 9;
 Strings.RESERVERED9 = 10;
@@ -109,20 +109,25 @@ Strings.ERROR_MESSAGE_INCORRECT_GROUP = 106;
 Strings.ERROR_MESSAGE_LOGIN_EXPIRED = 107;
 Strings.ERROR_MESSAGE_FILE_NAME = 108;
 Strings.ERROR_MESSAGE_FILE_ALREADY_EXISTS = 109;
-Strings.SUCCESS_MESSAGE_ACCOUNT_ADDED = 110;
-Strings.ERROR_MESSAGE_ACCOUNT_ALREADY_EXISTS= 111;
-Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED = 112;
-Strings.ERROR_MESSAGE_ACCOUNT_ADD_NOT_PROPERLY_CONFIGURED_DESTINATION_REQUIRED = 113;
-Strings.SUCCESS_MESSAGE_FAVORITE_ADDED = 114;
-Strings.ERROR_MESSAGE_FAVORITE_ADD_FAILED = 115;
-Strings.SUCCESS_MESSAGE_FAVORITE_DELETED = 116;
-Strings.ERROR_MESSAGE_FAVORITE_DELETE_FAILED = 117;
-Strings.SUCCESS_MESSAGE_CART_ITEM_ADDED = 118;
-Strings.ERROR_MESSAGE_CART_ITEM_ADD_FAILED = 119;
-Strings.SUCCESS_MESSAGE_CART_ITEM_DELETED = 120;
-Strings.ERROR_MESSAGE_CART_ITEM_DELETE_FAILED = 121;
-Strings.ERROR_NO_COLOR = 122;
-Strings.COUNT = 123;
+Strings.ERROR_MESSAGE_ACCOUNT_ALREADY_EXISTS = 110;
+Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED = 111;
+Strings.ERROR_MESSAGE_ACCOUNT_ADD_NOT_PROPERLY_CONFIGURED_DESTINATION_REQUIRED = 112;
+Strings.ERROR_MESSAGE_FAVORITE_ADD_FAILED = 113;
+Strings.ERROR_MESSAGE_FAVORITE_DELETE_FAILED = 114;
+Strings.ERROR_MESSAGE_CART_ITEM_ADD_FAILED = 115;
+Strings.ERROR_MESSAGE_CART_ITEM_DELETE_FAILED = 116;
+Strings.ERROR_NO_COLOR = 117;
+Strings.ERROR_MESSAGE_SUBTOTAL_REQUIRED = 118;
+Strings.ERROR_MESSAGE_TAXES_ARE_REQUIRED = 119;
+Strings.ERROR_MESSAGE_TOTAL_REQUIRED = 120;
+Strings.ERROR_MESSAGE_BOOK_LIST_REQUIRED = 121;
+Strings.ERROR_MESSAGE_INVALID_JSON = 122;
+Strings.ERROR_MESSAGE_INVALID_BOOK_ID = 123;
+Strings.ERROR_MESSAGE_INVALID_BOOK_ISSUE = 124;
+Strings.ERROR_MESSAGE_ERROR_READING_OWNED_BOOKS = 125;
+Strings.ERROR_MESSAGE_BOOKS_ADD_FAILED = 126;
+Strings.ERROR_MESSAGE_BOOKS_READING_BOOKS = 127;
+Strings.COUNT = 128;
 
 /**
  * Formats a string in a manner similar to sprintf or Microsoft's String.Format() method.
@@ -131,13 +136,12 @@ Strings.COUNT = 123;
  * Strings.format('{0} is not {1}! {0} {2}', 'Sale', 'Sail');
  * results in:
  * Sale is not Sail! Sale {2}
- * @param inFormat {String} The format string.
- * @Param ... {String} ALL comma separated list of string parameters used to format the inFormat string.
+ * @param inArguments {String} The format string and ALL comma separated list of string parameters used to format the inFormat string.
  * @returns {String} The formatted string.
  */
-Strings.format = function( inFormat ) {
-    let aArgs = Array.prototype.slice.call ( arguments, 1 );
-    return inFormat.replace(
+Strings.format = function( inArguments ) {
+    let aArgs = Array.prototype.slice.call ( inArguments, 1 );
+    return inArguments.replace(
         /{(\d+)}/g,
         function ( inMatch, inNumber ) {
             return typeof aArgs[ inNumber ] !== 'undefined' ? aArgs[ inNumber ] : inMatch;

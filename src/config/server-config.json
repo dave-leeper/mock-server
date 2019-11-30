@@ -219,7 +219,21 @@
       "path": "/user/cart/delete",
       "response": "favorite.hbs",
       "responseType": "HBS",
-        "hbsData": {"title": "Delete Favorite", "action": "/user/cart/delete/data", "verb": "POST"},
+      "hbsData": {"title": "Delete Favorite", "action": "/user/cart/delete/data", "verb": "POST"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/user/cart/price",
+      "response": "pricing.hbs",
+      "responseType": "HBS",
+      "hbsData": {"title": "pricing", "action": "/user/cart/price/data", "verb": "POST"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/user/checkout",
+      "response": "checkout.hbs",
+      "responseType": "HBS",
+      "hbsData": {"title": "Chekout", "action": "/user/checkout/data", "verb": "POST"},
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     }
   ],
@@ -242,7 +256,7 @@
       "verb": "POST",
       "path": "/user/favorites/delete/data",
       "name": "Delete a user favorite",
-      "description": "Deletes an item to the user favorite list.",
+      "description": "Deletes an item from the user favorite list.",
       "serviceFile": "delete-favorite.js"
     },
     {
@@ -256,8 +270,22 @@
       "verb": "POST",
       "path": "/user/cart/delete/data",
       "name": "Delete an item from the user cart",
-      "description": "Deletes an item to the user cart.",
+      "description": "Deletes an item from the user cart.",
       "serviceFile": "delete-from-cart.js"
+    },
+    {
+      "verb": "POST",
+      "path": "/user/cart/price/data",
+      "name": "Pricing",
+      "description": "Provides pricing infrmation for the items in a user cart.",
+      "serviceFile": "pricing.js"
+    },
+    {
+      "verb": "POST",
+      "path": "/user/checkout/data",
+      "name": "Add books to the user account",
+      "description": "Adds books to the user account.",
+      "serviceFile": "checkout.js"
     },
     {
       "verb": "POST",
