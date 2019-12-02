@@ -8,15 +8,19 @@
          ],
          "token": "0b851455-c80a-48d3-adb0-5f1807b20431",
          "lastAccessTime": "2019-11-26T12:06:50.232Z",
+         "email": "davidkleeper@gmail.com",
+         "firstName": "David",
+         "lastName": "Leeper",
          "transactionDate": "2018-11-21"
       },
       {
          "username": "admin",
          "password": "2a7d9a2ece07736802dd18721d01d752",
          "groups": [
-            "admin"
+            "user"
          ],
-         "transactionDate": "2018-11-21"
+         "email": "update@admin.com",
+         "transactionDate": "2019-12-1"
       },
       {
          "username": "username",

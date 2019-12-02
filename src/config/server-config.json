@@ -16,7 +16,7 @@
   "mocks": [
     {
       "path": "/ping",
-      "response": {"name":"My Server","version":"1.0"},
+      "response": {"name":"Mock Server","version":"1.0"},
       "responseType": "JSON",
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
@@ -201,6 +201,13 @@
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
+      "path": "/user/update",
+      "response": "add-user.hbs",
+      "responseType": "HBS",
+      "hbsData": {"title": "Update User", "action": "/user/update/data", "verb": "POST", "destination": "./src/authentication/authentication.json"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
       "path": "/user/favorites/add",
       "response": "favorite.hbs",
       "responseType": "HBS",
@@ -245,11 +252,24 @@
   ],
   "microservices": [
     {
+      "path": "/user/:user/info",
+      "name": "Get user info",
+      "description": "Provides basic information about a user.",
+      "serviceFile": "user-info.js"
+    },
+    {
       "verb": "POST",
       "path": "/user/add/data",
       "name": "Add account",
       "description": "Adds an account to the server account file.",
       "serviceFile": "add-account.js"
+    },
+    {
+      "verb": "POST",
+      "path": "/user/update/data",
+      "name": "Update account",
+      "description": "updates an account to the server account file.",
+      "serviceFile": "update-account.js"
     },
     {
       "verb": "POST",

@@ -341,14 +341,14 @@ class Color {
         return newColor;
     }
 
-    /*
-    static blendOperation = {
-        'CROSS' : 1,
-        'ADDITIVE' : 2,
-        'ADDITIVE_ALPHA' : 3,
-        'MULTIPLIED' : 4
+    static get blendOperation() {
+        return {
+            'CROSS': 1,
+            'ADDITIVE': 2,
+            'ADDITIVE_ALPHA': 3,
+            'MULTIPLIED': 4
+        };
     };
-    */
     
     /**
      * Blends two colors.
@@ -358,7 +358,6 @@ class Color {
      * @param {Integer} inBlendOperation: The blend operation.
      * @returns {Color} An color created by blending the two original colors.
      */
-    /*
     static blend(color1, color2, inBlendOperation) {
         let color1Normalized = Color.getNormalizedColor(color1);
         let color2Normalized = Color.getNormalizedColor(color2);
@@ -386,7 +385,6 @@ class Color {
         color2Normalized = Color.clamp(color2Normalized);
         return Color.get255Color(color2Normalized);
     }
-    */
 
     static getDarkerColor(color, divisor) {
         let div = ((divisor)? divisor : 2 );

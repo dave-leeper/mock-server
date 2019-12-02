@@ -2,13 +2,12 @@ const strings = [
     'Login successful.',
     'Listening on port {1}.',
     'Account added successfully.',
+    'Account updated successfully.',
     'Favorite added.',
     'Favorite deleted.',
     'Cart item added.',
     'Cart item deleted.',
     'Books added.',
-    'RESERVED',
-    'RESERVED',
     'RESERVED',
     'RESERVED',
     'RESERVED',
@@ -105,13 +104,15 @@ const strings = [
     'Login required.',
     'Incorrect username: {0}.',
     'Incorrect password.',
+    'Incorrect email: {0}.',
     'At least one group is required.',
     'Login Expired.',
     '{1}',
     'Conflict: File {1} Already Exists.',
-    'Account already exists',
-    'Add account failed. Error: {0}',
-    'Add account is not properly configured. A destination is required.',
+    'Account already exists.',
+    'Account operation failed. Error: {0}',
+    'Account microservice is not properly cosnfigured. A destination is required.',
+    'Account does not exist.',
     'Add favorite failed. Error: {0}',
     'Delete favorite failed. Error: {0}',
     'Add to cart failed. Error: {0}',
@@ -127,7 +128,8 @@ const strings = [
     'Error reading owned books. Error: {0}',
     'Add books to account failed. Error: {0}',
     'Error writing owned books. Error: {0}',
-    'Error reading books.'
+    'Error reading books.',
+    'Error reading user information.'
 ];
 
 module.exports = strings;
