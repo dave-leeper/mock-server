@@ -302,7 +302,7 @@ class RouteBuilderMocks extends ServiceBase {
     }
 
     static ___logMockRequest(mock, req) {
-        Log.trace('Received request for mock service at ' + ((mock.verb) ? mock.verb : 'GET') + ' ' + mock.path);
+        if (Log.will(Log.TRACE)) Log.trace('Received request for mock service at ' + ((mock.verb) ? mock.verb : 'GET') + ' ' + mock.path);
     }
 
     static ___fileExists(responseFile, res) {

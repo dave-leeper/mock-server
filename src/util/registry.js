@@ -28,5 +28,15 @@ Registry.get = function(name) {
     }
     return null;
 };
+Registry.getUserAccount = function(user) {
+    let accounts = Registry.get( "Accounts" );
+    if (!accounts) return null;
+    for (let i = accounts.length - 1; 0 <= i; i--) {
+        if (user.toUpperCase() === accounts[i].username.toUpperCase()) {
+            return accounts[i];
+        }
+    }
+    return null;
+};
 
 module.exports = Registry;

@@ -98,6 +98,7 @@ const strings = [
     'RESERVED',
     'RESERVED',
     'RESERVED',
+    'RESERVED',
     'Authentication not configured.',
     'Authorization not configured.',
     'Unauthorized.',
@@ -129,7 +130,9 @@ const strings = [
     'Add books to account failed. Error: {0}',
     'Error writing owned books. Error: {0}',
     'Error reading books.',
-    'Error reading user information.'
+    'Error reading user information.',
+    'Invalid reset token.',
+    'User not found.'
 ];
 
 module.exports = strings;

@@ -11,27 +11,33 @@ class AddAccount {
     do(params) {
         return new Promise (( inResolve, inReject ) => {
             let body = params.body;
-            let validateResult = this.validate(body);
+            let accounts = Registry.get( "Accounts" );
+            let newAccount = this.buildAccount(body);
+            let validateResult = this.validate(body, newAccount, accounts);
             if ((200 !== validateResult.status)) {
                 if (Log.will(Log.ERROR)) Log.error(validateResult.send);
                 inReject && inReject(validateResult);
             }
-
-            let newAccount = this.buildAccount(body);
-            let accounts = Registry.get( "Accounts" );
 
             if (this.updateAccounts(newAccount, accounts, inResolve, inReject)) {
                 this.writeAccount(newAccount, body.destination, accounts, inResolve, inReject);
             }
        });
     }
-    validate(body){
-        if (!body.destination)  return { status: 400, send: I18n.get( Strings.ERROR_MESSAGE_ACCOUNT_ADD_NOT_PROPERLY_CONFIGURED_DESTINATION_REQUIRED )};
+    validate(body, account, accounts){
         if (!body.username) return { status: 400, send: Strings.format(I18n.get( Strings.ERROR_MESSAGE_INCORRECT_USER_NAME ), body.username)};
         if (!body.password) return { status: 400, send: Strings.format(I18n.get( Strings.ERROR_MESSAGE_INCORRECT_PASSWORD ), body.username)};
-        if (!body.email || 5 > body.email.length || -1 == body.email.indexOf('@') || -1 == body.email.indexOf('.')) return { status: 400, send: Strings.format(I18n.get( Strings.ERROR_MESSAGE_INCORRECT_EMAIL ), body.email)};
         if (!body.group1 && !body.group2 && !body.group3 ) return { status: 400, send: Strings.format(I18n.get( Strings.ERROR_MESSAGE_INCORRECT_GROUP ), body.username)};
+        let emailStatus =  this.validateEmail(body, account, accounts);
+        if (200 != emailStatus.status) return emailStatus;
         return this.validateDatabase(body);
+    }
+    validateEmail(body, account, accounts){
+        if (!body.email || 5 > body.email.length || -1 == body.email.indexOf('@') || -1 == body.email.indexOf('.')) return { status: 400, send: Strings.format(I18n.get( Strings.ERROR_MESSAGE_INCORRECT_EMAIL ), body.email)};
+        for ( let i = 0; i < accounts.length; i++) {
+            if (body.email === accounts[i].email) return { status: 400, send: Strings.format(I18n.get( Strings.ERROR_MESSAGE_INCORRECT_EMAIL ), body.email)};
+        }
+        return { status: 200 };
     }
     validateDatabase(body){
         if (Files.existsSync(path.resolve(AddAccount.userPath + body.username))) return { status: 400, send: Strings.format(I18n.get( Strings.ERROR_MESSAGE_ACCOUNT_ALREADY_EXISTS ), body.username)};
@@ -70,6 +76,8 @@ class AddAccount {
         if (accounts && accounts.length) {
             for (let i = accounts.length - 1; 0 <= i; i--) {
                 if (newAccount.username.toUpperCase() === accounts[i].username.toUpperCase()) {
+                    Log.error(JSON.stringify(accounts));
+                    Log.error(newAccount);
                     let message = I18n.get( Strings.ERROR_MESSAGE_ACCOUNT_ALREADY_EXISTS );
                     if (Log.will(Log.ERROR)) Log.error(message);
                     inReject && inReject({status: 400, send: message});

@@ -8,6 +8,17 @@ let Strings = require('../util/strings' );
 let AddAccount = require('./add-account' );
 
 class UpdateAccount extends AddAccount{
+    validateEmail(body, account, accounts){
+        let user = Registry.getUserAccount(account.username);
+        if (!user) return { status: 400, send: Strings.format(I18n.get( Strings.ERROR_MESSAGE_USER_NOT_FOUND ), body.email)};
+        if (body.email === user.email) return { status: 200 };
+        if (!body.email || 5 > body.email.length || -1 == body.email.indexOf('@') || -1 == body.email.indexOf('.')) return { status: 400, send: Strings.format(I18n.get( Strings.ERROR_MESSAGE_INCORRECT_EMAIL ), body.email)};
+        for ( let i = 0; i < accounts.length; i++) {
+            if (user.username === accounts[i].username) continue;
+            if (body.email === accounts[i].email) return { status: 400, send: Strings.format(I18n.get( Strings.ERROR_MESSAGE_INCORRECT_EMAIL ), body.email)};
+        }
+        return { status: 200 };
+    }
     validateDatabase(body){
         if (!Files.existsSync(path.resolve(AddAccount.userPath + body.username))) return { status: 400, send: Strings.format(I18n.get( Strings.ERROR_MESSAGE_ACCOUNT_DOES_NOT_EXIST ), body.username)};
         return { status: 200 };

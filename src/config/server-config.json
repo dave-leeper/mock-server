@@ -158,6 +158,13 @@
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
+      "path": "/user/password/reset/request",
+      "response": "password-reset-request.hbs",
+      "responseType": "HBS",
+      "hbsData": {"title": "Password Reset Request", "action": "/user/password/reset/request/data", "verb": "POST"},
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
       "path": "/comics",
       "response": "./public/files/comics/comics.json",
       "responseType": "JSON",
@@ -252,8 +259,21 @@
   ],
   "microservices": [
     {
+      "path": "/user/password/reset/reply/:token",
+      "name": "User Password Reply",
+      "description": "Provides a form which lets a user change their password.",
+      "serviceFile": "password-reset-form.js"
+    },
+    {
+      "verb": "POST",
+      "path": "/user/password/reset/update",
+      "name": "Password Update",
+      "description": "Updates a password.",
+      "serviceFile": "password-update.js"
+    },
+    {
       "path": "/user/:user/info",
-      "name": "Get user info",
+      "name": "Get User Info",
       "description": "Provides basic information about a user.",
       "serviceFile": "user-info.js"
     },
@@ -378,6 +398,12 @@
       ]
     },
     {
+      "path": "/strings",
+      "name": "String List",
+      "description": "Displays an array of strings.",
+      "serviceFile": "strings.js"
+    },
+    {
       "path": "/throw",
       "name": "Throw Exception",
       "description": "A micro service that throws an exception. For testing purposes.",
@@ -385,6 +411,13 @@
     }
   ],
   "endpoints": [
+    {
+      "verb": "POST",
+      "path": "/user/password/reset/request/data",
+      "name": "Password Reset",
+      "description": "Sends a password reset email to a user.",
+      "serviceFile": "password-reset-request.js"
+    },
     {
       "path": "/stop",
       "name": "Stop",
