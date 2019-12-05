@@ -20,6 +20,7 @@ mock-server.log
 .env.test.local
 .env.production.local
 .idea/
+sendgrid.bat
 
 
 npm-debug.log*

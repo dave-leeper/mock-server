@@ -1,0 +1,15 @@
+{
+  "id": "main_page",
+  "defaultDuration": 10000.0,
+  "slides": [
+    { "image": "Slideshow1.png", "title": "Captain Æther", "id": "whisper_witch", "issue": 1 },
+    { "image": "Slideshow2.png", "title": "Gold Venus", "id": "gold_venus", "issue": 1 },
+    { "image": "Slideshow3.png", "title": "Legends Pacific", "id": "legends_pacific", "issue": 1 },
+    { "image": "Slideshow4.png", "title": "Legends Europe", "id": "legends_europe", "issue": 1 },
+    { "image": "Slideshow5.png", "title": "Whisper Witch", "id": "whisper_witch", "issue": 1 },
+    { "image": "Slideshow6.png", "title": "Black Fury and Kid Fury", "id": "gold_venus", "issue": 1 },
+    { "image": "Slideshow7.png", "title": "Wild Boy", "id": "legends_pacific", "issue": 1 },
+    { "image": "Slideshow8.png", "title": "The Super-Agents", "id": "legends_europe", "issue": 1 },
+    { "image": "Slideshow9.png", "title": "Heroes of the Wild frontier", "id": "heroes_of_the_wild_frontier", "issue": 1 }
+  ]
+}

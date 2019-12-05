@@ -255,6 +255,18 @@
       "responseType": "HBS",
       "hbsData": {"title": "Chekout", "action": "/user/checkout/data", "verb": "POST"},
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/slideshow/:name",
+      "response": "./public/files/slideshows/:name/manifest.json",
+      "responseType": "JSON",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+    },
+    {
+      "path": "/slideshow/:name/:page",
+      "response": "./public/files/slideshows/:name/:page",
+      "responseType": "BLOB",
+      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     }
   ],
   "microservices": [

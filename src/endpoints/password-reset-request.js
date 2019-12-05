@@ -49,15 +49,12 @@ class PasswordResetRequest extends ServiceBase {
             return;
         }
 
-        // sendgrid.com
-        // user USComics
-        // key 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
         let token = uuidv4();
         let userAccount = Registry.getUserAccount(user.username);
         userAccount.resetPasswordToken = token;
         userAccount.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-        
-        sgMail.setApiKey('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');
+
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
         const msg = {
             to: userAccount.email,
             from: 'davidkleeper@gmail.com',
@@ -68,7 +65,7 @@ class PasswordResetRequest extends ServiceBase {
             'If you did not request this, please ignore this email and your password will remain unchanged.\n'
         };
         sgMail.send(msg);
-        
+
         res.status(200);
         res.send("Password reset email has been sent.");
     }
