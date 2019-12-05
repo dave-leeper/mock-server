@@ -4,7 +4,6 @@ let Log = require('../util/log' );
 let nodemailer = require('nodemailer');
 let Registry = require('../util/registry' );
 let ServiceBase = require ( '../util/service-base.js' );
-let sgMail = require('@sendgrid/mail');
 let Strings = require('../util/strings' );
 let uuidv4 = require('uuid/v4');
 
@@ -54,20 +53,35 @@ class PasswordResetRequest extends ServiceBase {
         userAccount.resetPasswordToken = token;
         userAccount.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
-        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+        var transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'magicjtv@gmail.com',
+                pass: '0212Today'
+            }
+        });
         const msg = {
             to: userAccount.email,
-            from: 'davidkleeper@gmail.com',
+            from: 'magicjtv@gmail.com',
             subject: 'Password Reset',
             text: 'You are receiving this because you (or someone else) have requested the reset of the password for your U.S. Comics account.\n\n' +
             'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
             'http://' + req.headers.host + '/user/password/reset/reply/' + token + '\n\n' +
             'If you did not request this, please ignore this email and your password will remain unchanged.\n'
         };
-        sgMail.send(msg);
+        transporter.sendMail(msg, (error, data) => {
+            if (error) {
+                Log.error(error)
+                let message = Strings.format(I18n.get( Strings.ERROR_MESSAGE_SEND_EMAIL_FAILED ), error);
+                if (Log.will(Log.ERROR)) Log.error(message);
+                res.status(400);
+                res.send(message);
+                return;
+            }
+            res.status(200);
+            res.send("Password reset email has been sent.");
+        });
 
-        res.status(200);
-        res.send("Password reset email has been sent.");
     }
 }
 module.exports = PasswordResetRequest;

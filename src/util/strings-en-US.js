@@ -132,6 +132,7 @@ const strings = [
     'Error reading books.',
     'Error reading user information.',
     'Invalid reset token.',
+    'An error occured while sending email. Error: {0}',
     'User not found.'
 ];
 

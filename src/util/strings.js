@@ -132,8 +132,9 @@ Strings.ERROR_MESSAGE_BOOKS_WRITING_BOOKS = 129;
 Strings.ERROR_MESSAGE_BOOKS_READING_BOOKS = 130;
 Strings.ERROR_MESSAGE_ERROR_READING_USER_INFO = 131;
 Strings.ERROR_MESSAGE_INVALID_RESET_TOKEN = 132;
-Strings.ERROR_MESSAGE_USER_NOT_FOUND = 133;
-Strings.COUNT = 134;
+Strings.ERROR_MESSAGE_SEND_EMAIL_FAILED = 133;
+Strings.ERROR_MESSAGE_USER_NOT_FOUND = 134;
+Strings.COUNT = 135;
 
 /**
  * Formats a string in a manner similar to sprintf or Microsoft's String.Format() method.
@@ -145,8 +146,7 @@ Strings.COUNT = 134;
  * @param inArguments {String} The format string and ALL comma separated list of string parameters used to format the inFormat string.
  * @returns {String} The formatted string.
  */
-Strings.format = function( inArguments ) {
-    let aArgs = Array.prototype.slice.call ( inArguments, 1 );
+Strings.format = function( inArguments, ...aArgs ) {
     return inArguments.replace(
         /{(\d+)}/g,
         function ( inMatch, inNumber ) {
