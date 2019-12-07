@@ -56,7 +56,7 @@ class Server {
                 // Only first logging configure is used
                 if (config.logging && !mergedConfig.logging) mergedConfig.logging = config.logging;
                 if (config.port) mergedConfig.port = config.port;
-                if (config.https) mergedConfig.port = config.https;
+                if (config.https) mergedConfig.https = config.https;
                 if (config.mocks) {
                     if (!mergedConfig.mocks) mergedConfig.mocks = [];
                     mergedConfig.mocks = mergedConfig.mocks.concat(config.mocks);

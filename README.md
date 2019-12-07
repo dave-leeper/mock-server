@@ -44,6 +44,13 @@ is shown below.
   "port": 1337,
 ```
 
+## HTTPS
+The server can be set to use/not use https by setting the https config parameter to true/false.
+
+```
+  "https": true,
+```
+
 ## Login Expire Time
 By default, logins will expire after 5 minutes (300 seconds) of inactivity. This default can 
 be overriden by setting loginExpire to the desired number of seconds. An example is shown below.

@@ -1,6 +1,6 @@
 {
   "port": 1337,
-  "https": false,
+  "https": "/user/favorites/delete",
   "logging": {
     "appenders": {
       "app": { "type": "file", "filename": "mock-server.log" },
