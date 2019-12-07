@@ -2,6 +2,8 @@
 
 const express = require('express');
 const http = require('http');
+const https = require('https');
+const fs = require("fs");
 const path = require('path');
 const favicon = require('serve-favicon');
 const cookieParser = require('cookie-parser');
@@ -54,6 +56,7 @@ class Server {
                 // Only first logging configure is used
                 if (config.logging && !mergedConfig.logging) mergedConfig.logging = config.logging;
                 if (config.port) mergedConfig.port = config.port;
+                if (config.https) mergedConfig.port = config.https;
                 if (config.mocks) {
                     if (!mergedConfig.mocks) mergedConfig.mocks = [];
                     mergedConfig.mocks = mergedConfig.mocks.concat(config.mocks);
@@ -139,7 +142,16 @@ class Server {
         this.express.set('port', normalizedPort);
         Registry.register(locals.port, 'Port');
 
-        this.server = this.express.listen(normalizedPort, null, null, callback);
+        if ( serverConfig.https ) {
+            let privateKey  = fs.readFileSync('./key.pem', 'utf8');
+            let certificate = fs.readFileSync('./cert.pem', 'utf8');
+            let credentials = {key: privateKey, cert: certificate};
+            let httpsServer = https.createServer(credentials, this.express);
+            this.server = httpsServer.listen(normalizedPort, null, null, callback);
+        } else {
+            let httpServer = http.createServer(this.express);
+            this.server = httpServer.listen(normalizedPort, null, null, callback);
+        }
         this.server.on('error', this.onError);
 
         Log.info( I18n.format( I18n.get( Strings.LISTENING_ON_PORT ), normalizedPort ));

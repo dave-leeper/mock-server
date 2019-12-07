@@ -13,49 +13,50 @@ class BasicStrategy {
     constructor() {
     }
     getAuthentication() {
-        return new PassportLocalStrategy((username, password, done) => {
+        return new BasicStrategy((username, password, done) => {
+            Log.error("A");
             let operation = 'getAuthentication';
-        let accounts = Registry.get("Accounts");
-        if (!username || !password || !done) {
-            const err = { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.ERROR_MESSAGE_LOGIN_REQUIRED )};
-            if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
-            return done && done( null, false, err );
-        }
-        if (!accounts) {
-            const err = { operation: operation, statusType: 'error', status: 501, message: I18n.get( Strings.ERROR_MESSAGE_AUTHENTICATION_NOT_CONFIGURED )};
-            if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
-            return done(null, false, err);
-        }
-        for (let loop = 0; loop < accounts.length; loop++) {
-            let account = accounts[loop];
-            if (account.username !== username) continue;
-            if (account.password !== password) {
-                const err = { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.ERROR_MESSAGE_INCORRECT_PASSWORD )};
+            let accounts = Registry.get("Accounts");
+            if (!username || !password || !done) {
+                const err = { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.ERROR_MESSAGE_LOGIN_REQUIRED )};
                 if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
-                return done( null, false, err );
+                return done && done( null, false, err );
             }
-            let headers = Registry.get('Headers');
-            if (!headers.users) headers.users = {};
-            if (!headers.users[account.username]) headers.users[account.username] = [];
-            if (account.headers && 0 != account.headers.length) {
-                headers.users[account.username] = headers.users[account.username].concat(account.headers);
+            if (!accounts) {
+                const err = { operation: operation, statusType: 'error', status: 501, message: I18n.get( Strings.ERROR_MESSAGE_AUTHENTICATION_NOT_CONFIGURED )};
+                if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
+                return done(null, false, err);
             }
-            let token = btoa(username + ":" + password);
-            headers.users[account.username].push({ "header": "Authorization", "value": "Basic " + token });
-            if (account.cookies && 0 != account.cookies.length) {
-                let cookies = Registry.get('Cookies');
-                if (!cookies.users) cookies.users = {};
-                if (!cookies.users[account.username]) cookies.users[account.username] = [];
-                cookies.users[account.username] = cookies.users[account.username].concat(account.cookies);
+            for (let loop = 0; loop < accounts.length; loop++) {
+                let account = accounts[loop];
+                if (account.username !== username) continue;
+                if (account.password !== password) {
+                    const err = { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.ERROR_MESSAGE_INCORRECT_PASSWORD )};
+                    if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
+                    return done( null, false, err );
+                }
+                let headers = Registry.get('Headers');
+                if (!headers.users) headers.users = {};
+                if (!headers.users[account.username]) headers.users[account.username] = [];
+                if (account.headers && 0 != account.headers.length) {
+                    headers.users[account.username] = headers.users[account.username].concat(account.headers);
+                }
+                let token = btoa(username + ":" + password);
+                headers.users[account.username].push({ "header": "Authorization", "value": "Basic " + token });
+                if (account.cookies && 0 != account.cookies.length) {
+                    let cookies = Registry.get('Cookies');
+                    if (!cookies.users) cookies.users = {};
+                    if (!cookies.users[account.username]) cookies.users[account.username] = [];
+                    cookies.users[account.username] = cookies.users[account.username].concat(account.cookies);
+                }
+                account.token = token;                  // <------------ Used by getAuthorization()
+                account.lastAccessTime = new Date();    // <------------ Used by getAuthorization()
+                return done( null, { operation: operation, statusType: 'success', status: 200, username: account.username, message: I18n.get( Strings.LOGIN_SUCCESSFUL )} );
             }
-            account.token = token;                  // <------------ Used by getAuthorization()
-            account.lastAccessTime = new Date();    // <------------ Used by getAuthorization()
-            return done( null, { operation: operation, statusType: 'success', status: 200, username: account.username, message: I18n.get( Strings.LOGIN_SUCCESSFUL )} );
-        }
-        const err = { operation: operation, statusType: 'error', status: 401, message: I18n.format( I18n.get( Strings.ERROR_MESSAGE_INCORRECT_USER_NAME ), username )};
-        if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
-        return done( null, false, err );
-    });
+            const err = { operation: operation, statusType: 'error', status: 401, message: I18n.format( I18n.get( Strings.ERROR_MESSAGE_INCORRECT_USER_NAME ), username )};
+            if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
+            return done( null, false, err );
+        });
     }
     getAuthorization() {
         return (req, res, next) => {

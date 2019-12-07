@@ -21,6 +21,7 @@
     "debug": "2.6.9",
     "deep-extend": ">=0.5.1",
     "elasticsearch": "^16.5.0",
+    "eslint": "^6.7.2",
     "express": "^4.16.4",
     "express-fileupload": "^0.3.0",
     "express-session": "^1.15.6",

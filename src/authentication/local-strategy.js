@@ -40,20 +40,23 @@ class LocalStrategy {
                     if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
                     return done( null, false, err );
                 }
+                let token = uuidv4();
                 let headers = Registry.get('Headers');
                 if (!headers.users) headers.users = {};
                 if (!headers.users[account.username]) headers.users[account.username] = [];
                 if (account.headers && 0 != account.headers.length) {
                     headers.users[account.username] = headers.users[account.username].concat(account.headers);
                 }
-                let token = uuidv4();
-                headers.users[account.username].push({ "header": "Authorization", "value": 'MOCK-SERVER token="' + token + '"' });
+                let headerTokenValue = "MOCK-SERVER token=" + token;
+                let xAuthorizationHeader = { "header": "Authorization", "value": headerTokenValue };
+                headers.users[account.username].push(xAuthorizationHeader);
+                let cookies = Registry.get('Cookies');
+                if (!cookies.users) cookies.users = {};
+                if (!cookies.users[account.username]) cookies.users[account.username] = [];
                 if (account.cookies && 0 != account.cookies.length) {
-                    let cookies = Registry.get('Cookies');
-                    if (!cookies.users) cookies.users = {};
-                    if (!cookies.users[account.username]) cookies.users[account.username] = [];
-                    cookies.users[account.username] = cookies.users[account.username].concat(account.cookies);
+                     cookies.users[account.username] = cookies.users[account.username].concat(account.cookies);
                 }
+
                 account.token = token;                  // <------------ Used by getAuthorization()
                 account.lastAccessTime = new Date();    // <------------ Used by getAuthorization()
                 return done( null, { operation: operation, statusType: 'success', status: 200, username: account.username, message: I18n.get( Strings.LOGIN_SUCCESSFUL )} );
