@@ -114,6 +114,14 @@ class Server {
         this.express.use(fileUpload());
         this.express.use(passport.initialize());
         this.express.use(passport.session());
+        this.express.use(function(req, res, next) {
+            res.header("Access-Control-Allow-Origin", "*");
+            res.header("Access-Control-Allow-Headers", "*");
+            res.header("Access-Control-Allow-Methods", "GET PUT POST DELETE OPTIONS");
+            res.header("Access-Control-Max-Age", "86400");
+            res.status(200);
+            next();
+          });
         passport.serializeUser((user, done) => { done(null, user); });
         passport.deserializeUser((user, done) => { done(null, user); });
         Registry.register(passport, 'Passport');

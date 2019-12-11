@@ -1,6 +1,6 @@
 {
   "port": 1337,
-  "https": "/user/favorites/delete",
+  "https": false,
   "logging": {
     "appenders": {
       "app": { "type": "file", "filename": "mock-server.log" },
@@ -178,10 +178,23 @@
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
+      "verb": "OPTIONS",
+      "path": "/comics/:name/:issue/:page",
+      "response": { "cors": "CORS" },
+      "responseType": "TEXT",
+      "headers": [ 
+        { "header": "Access-Control-Allow-Origin", "value": "*" },
+        { "header": "Access-Control-Allow-Methods", "value": "GET OPTIONS" },
+        { "header": "Access-Control-Max-Age", "value": "86400" }
+      ]
+    },
+    {
       "path": "/comics/:name/:issue/:page",
       "response": "./public/files/comics/:name/:issue/:page",
       "responseType": "BLOB",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "headers": [ 
+        { "header": "Access-Control-Allow-Origin", "value": "*" }
+      ]
     },
     {
       "path": "/comics/:name/:issue",
@@ -351,8 +364,7 @@
       "path": "/user/authenticate",
       "name": "Authenticate User",
       "description": "Authenticates a user.",
-      "serviceFile": "authenticate-user.js",
-      "authentication": "local"
+      "serviceFile": "authenticate-user.js"
     },
     {
       "verb": "POST",
