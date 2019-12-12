@@ -178,17 +178,6 @@
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
-      "verb": "OPTIONS",
-      "path": "/comics/:name/:issue/:page",
-      "response": { "cors": "CORS" },
-      "responseType": "TEXT",
-      "headers": [ 
-        { "header": "Access-Control-Allow-Origin", "value": "*" },
-        { "header": "Access-Control-Allow-Methods", "value": "GET OPTIONS" },
-        { "header": "Access-Control-Max-Age", "value": "86400" }
-      ]
-    },
-    {
       "path": "/comics/:name/:issue/:page",
       "response": "./public/files/comics/:name/:issue/:page",
       "responseType": "BLOB",
@@ -364,7 +353,8 @@
       "path": "/user/authenticate",
       "name": "Authenticate User",
       "description": "Authenticates a user.",
-      "serviceFile": "authenticate-user.js"
+      "serviceFile": "authenticate-user.js",
+      "authentication": "local"
     },
     {
       "verb": "POST",

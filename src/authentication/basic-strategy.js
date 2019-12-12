@@ -14,7 +14,6 @@ class BasicStrategy {
     }
     getAuthentication() {
         return new BasicStrategy((username, password, done) => {
-            Log.error("A");
             let operation = 'getAuthentication';
             let accounts = Registry.get("Accounts");
             if (!username || !password || !done) {
