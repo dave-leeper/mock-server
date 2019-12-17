@@ -8,15 +8,10 @@ let Registry = require('../util/registry' );
 let Strings = require('../util/strings' );
 
 class PasswordUpdate {
+    static get destination() { return "./private/users/authentication.json "; }
     do(params) {
         return new Promise (( inResolve, inReject ) => {
             let body = params.body;
-            if (!body.destination) {
-                let message = I18n.get( Strings.ERROR_MESSAGE_ACCOUNT_ADD_NOT_PROPERLY_CONFIGURED_DESTINATION_REQUIRED );
-                if (Log.will(Log.ERROR)) Log.error(message);
-                inReject && inReject({ status: 400, send: message});
-                return;
-            }
             if (!body.password || !body.reenterPassword || body.password !== body.reenterPassword) {
                 let message = I18n.get( Strings.ERROR_MESSAGE_INCORRECT_PASSWORD );
                 if (Log.will(Log.ERROR)) Log.error(message);
@@ -74,7 +69,7 @@ class PasswordUpdate {
             };
             let crypto = Registry.get( "Crypto" );
             Files.writeFileLock(
-                path.resolve(body.destination),
+                path.resolve(PasswordUpdate.destination),
                 JSON.stringify( { "accounts": Encrypt.encryptAccounts( accounts, crypto.iv, crypto.key )}, null, 3 ),
                 5,
                 successCallback,

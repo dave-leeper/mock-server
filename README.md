@@ -664,7 +664,7 @@ be configured as needed.
 
 ### Local Authentication 
 The local authentication strategy that's built in to the server uses a JSON file
-located at src/authentication/authentication.json to store account informaton. A
+located at private/users/authentication.json to store account informaton. A
 sample is shown below (Notice that passwords are encrypted. This is done by the
 /usr/add route, discussed later):
 

@@ -5,7 +5,7 @@ let path = require('path' );
 let Strings = require('../util/strings' );
 
 class UserInfo {
-    static get userPath() {  return "./src/authentication/authentication.json"; }
+    static get userPath() {  return "./private/users/authentication.json"; }
     do(params) {
         return new Promise (( inResolve, inReject ) => {
             let usersData;

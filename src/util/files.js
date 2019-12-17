@@ -56,11 +56,9 @@ class Files {
     /**
      * Creates a directory.
      * @param inFilepath {String} The path to the directory.
-     * @param inMode {Number} Permissions mask the directory. Example 0777. Optional.
      */
-    static createDirSync(inFilepath, inMode) {
-        if (!inMode) inMode = "\\00777";
-        fs.mkdirSync( inFilepath, { recursive: true, mode : inMode }); 
+    static createDirSync(inFilepath) {
+        fs.mkdirSync( inFilepath, { recursive: true });
     }
     
     /**

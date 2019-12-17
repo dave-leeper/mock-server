@@ -7,7 +7,7 @@ let ServiceBase = require ( '../util/service-base.js' );
 let Strings = require('../util/strings' );
 let uuidv4 = require('uuid/v4');
 
-let Authentication = require('../authentication/authentication' );
+let Authentication = require('../../private/users/authentication' );
 
 /*
 Order of execution for password reset

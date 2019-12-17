@@ -17,7 +17,7 @@ class AddUser {
                 inReject && inReject({ status: 400, send: message});
                 return;
             }
-            let userPath = "./public/files/comics/users/" + body.username;
+            let userPath = "./private/users/" + body.username;
             if (!Files.existsSync(userPath)) {
                 let message = I18n.get( Strings.ERROR_MESSAGE_INCORRECT_USER_NAME );
                 if (Log.will(Log.ERROR)) Log.error(message);
@@ -91,7 +91,7 @@ class AddUser {
                 }
                 let successCallback = () => {
                     let message = I18n.get( Strings.SUCCESS_MESSAGE_BOOKS_ADDED );
-                    let newUserPath = "./public/files/comics/users/" + body.username;
+                    let newUserPath = "./private/users/" + body.username;
                     Files.writeFileSync(newUserPath + "/cart.json", "[]");
                     inResolve && inResolve({ status: 200, send: message});
                 };

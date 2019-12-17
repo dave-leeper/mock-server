@@ -4,7 +4,7 @@ let Registry = require('../util/registry' );
 let Strings = require('../util/strings' );
 
 class PasswordResetForm {
-    static get userPath() {  return "./public/files/comics/users/"; }
+    static get userPath() {  return "./private/users/"; }
     do(params) {
         return new Promise (( inResolve, inReject ) => {
             if (!params.params.token) {
@@ -36,8 +36,7 @@ class PasswordResetForm {
                     title: "Reset Password", 
                     verb: "POST", 
                     action: "/user/password/reset/update",
-                    token: params.params.token,
-                    destination: "./src/authentication/authentication.json"
+                    token: params.params.token
                 }
             });
        });

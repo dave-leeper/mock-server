@@ -1,7 +1,9 @@
 {
   "id": "whisper_witch",
-  "title": "Whisper Witch",
+  "title": "Ye Olde Whisper Witch",
   "issue": 4,
+  "width": 2550,
+  "height": 3300,
   "pages": [
     "Page_01.jpg",
     "Page_02.jpg",

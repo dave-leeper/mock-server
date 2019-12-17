@@ -173,7 +173,7 @@
     },
     {
       "path": "/comics/:user",
-      "response": "./public/files/comics/users/:user/owned.json",
+      "response": "./private/users/:user/owned.json",
       "responseType": "JSON",
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
@@ -193,13 +193,13 @@
     },
     {
       "path": "/favorites/:user",
-      "response": "./public/files/comics/users/:user/favorites.json",
+      "response": "./private/users/:user/favorites.json",
       "responseType": "JSON",
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/cart/:user",
-      "response": "./public/files/comics/users/:user/cart.json",
+      "response": "./private/users/:user/cart.json",
       "responseType": "JSON",
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
@@ -207,14 +207,14 @@
       "path": "/user/add",
       "response": "add-user.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Add User", "action": "/user/add/data", "verb": "POST", "destination": "./src/authentication/authentication.json"},
+      "hbsData": {"title": "Add User", "action": "/user/add/data", "verb": "POST" },
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {
       "path": "/user/update",
       "response": "add-user.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Update User", "action": "/user/update/data", "verb": "POST", "destination": "./src/authentication/authentication.json"},
+      "hbsData": {"title": "Update User", "action": "/user/update/data", "verb": "POST" },
       "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
     },
     {

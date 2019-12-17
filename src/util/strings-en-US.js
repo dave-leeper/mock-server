@@ -112,7 +112,6 @@ const strings = [
     'Conflict: File {1} Already Exists.',
     'Account already exists.',
     'Account operation failed. Error: {0}',
-    'Account microservice is not properly cosnfigured. A destination is required.',
     'Account does not exist.',
     'Add favorite failed. Error: {0}',
     'Delete favorite failed. Error: {0}',

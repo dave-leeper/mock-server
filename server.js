@@ -18,7 +18,7 @@ const Log = require('./src/util/log');
 const Registry = require('./src/util/registry');
 const FileUtilities = require('./src/util/files.js');
 const Encrypt = require('./src/util/encrypt');
-let accounts = require('./src/authentication/authentication').accounts;
+let accounts = require('./private/users/authentication').accounts;
 
 /**
  * @constructor
@@ -115,10 +115,12 @@ class Server {
         this.express.use(passport.initialize());
         this.express.use(passport.session());
         this.express.use(function(req, res, next) {
+            console.log("headers start");
             res.header("Access-Control-Allow-Origin", "*");
             res.header("Access-Control-Allow-Headers", "*");
             res.header("Access-Control-Allow-Methods", "GET PUT POST DELETE OPTIONS");
             res.header("Access-Control-Max-Age", "86400");
+            console.log("headers end");
             res.status(200);
             next();
           });

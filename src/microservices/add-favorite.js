@@ -9,7 +9,7 @@ class AddFavorite {
     do(params) {
         return new Promise (( inResolve, inReject ) => {
             let body = params.body;
-            let filePath = "./public/files/comics/users/";
+            let filePath = "./private/users/";
     
             if (!body.username) {
                 let message = Strings.format(I18n.get( Strings.ERROR_MESSAGE_INCORRECT_USER_NAME ), body.username);

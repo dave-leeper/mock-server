@@ -7,7 +7,9 @@ let Registry = require('../util/registry' );
 let Strings = require('../util/strings' );
 
 class AddAccount {
-    static get userPath() {  return "./public/files/comics/users/"; }
+    static get userPath() { return "./private/users/"; }
+    static get machinesPath() { return "./private/machines/"; }
+    static get destination() { return "./private/users/authentication.json"; }
     do(params) {
         return new Promise (( inResolve, inReject ) => {
             let body = params.body;
@@ -20,7 +22,8 @@ class AddAccount {
             }
 
             if (this.updateAccounts(newAccount, accounts, inResolve, inReject)) {
-                this.writeAccount(newAccount, body.destination, accounts, inResolve, inReject);
+                this.rememberUser(params, newAccount.username)
+                this.writeAccount(newAccount, AddAccount.destination, accounts, inResolve, inReject);
             }
        });
     }
@@ -76,8 +79,6 @@ class AddAccount {
         if (accounts && accounts.length) {
             for (let i = accounts.length - 1; 0 <= i; i--) {
                 if (newAccount.username.toUpperCase() === accounts[i].username.toUpperCase()) {
-                    Log.error(JSON.stringify(accounts));
-                    Log.error(newAccount);
                     let message = I18n.get( Strings.ERROR_MESSAGE_ACCOUNT_ALREADY_EXISTS );
                     if (Log.will(Log.ERROR)) Log.error(message);
                     inReject && inReject({status: 400, send: message});
@@ -110,6 +111,7 @@ class AddAccount {
             if (Log.will(Log.ERROR)) Log.error(message);
             inReject && inReject({ status: 500, send: message});
         };
+        Log.error(path.resolve(destination))
         Files.writeFileLock(
             path.resolve(destination),
             JSON.stringify( { "accounts": Encrypt.encryptAccounts( accounts,  crypto.iv, crypto.key )}, null, 3 ),
@@ -123,6 +125,20 @@ class AddAccount {
         if (expires) cookie.expires = expires;
         if (maxAge) cookie.maxAge = maxAge;
         return cookie;
+    }
+    rememberUser(params, username) {
+        let machine = params.headers["origin"];
+        let record = { machine: machine, username: username };
+        let machinesFile = path.resolve(AddAccount.machinesPath + "machines.json");
+        let machinesData = require(machinesFile)
+        for (let i = 0; i < machinesData.length; i++) {
+            let md = machinesData[i];
+            if (md.machine === record.machine) {
+                return;
+            }
+        }
+        machinesData.push(record);
+        Files.writeFileSync(machinesFile, JSON.stringify(machinesData));
     }
 }
 module.exports = AddAccount;
