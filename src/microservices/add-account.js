@@ -127,9 +127,8 @@ class AddAccount {
         return cookie;
     }
     static rememberUser(params, username) {
-        Log.error('rememberUser')
+        if (!username) return
         let machine = params.headers["origin"];
-        Log.error('machine: ' + machine)
         let record = { machine: machine, username: username };
         let machinesFile = path.resolve(AddAccount.machinesPath + "machines.json");
         let machinesData = require(machinesFile)
@@ -140,22 +139,18 @@ class AddAccount {
                 return;
             }
         }
-        Log.error('add')
         machinesData.push(record);
         Files.writeFileSync(machinesFile, JSON.stringify(machinesData));
     }
     static forgetUser(params, username) {
-        Log.error('forgetUser')
+        if (!username) return
         let machine = params.headers["origin"];
-        Log.error('machine: ' + machine)
         let record = { machine: machine, username: username };
         let machinesFile = path.resolve(AddAccount.machinesPath + "machines.json");
         let machinesData = require(machinesFile)
         for (let i = machinesData.length - 1; 0 <= i; i--) {
             let md = machinesData[i];
-            Log.error('md: ' + JSON.stringify(md))
             if (md.machine === record.machine) {
-                Log.error('match')
                 machinesData.splice(i, 1)
                 Files.writeFileSync(machinesFile, JSON.stringify(machinesData));
                 return;

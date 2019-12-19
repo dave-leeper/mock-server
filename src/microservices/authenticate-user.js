@@ -7,7 +7,7 @@ class AuthenticateUser {
     do(params) {
         return new Promise (( inResolve, inReject ) => {
             let message = Strings.format(I18n.get( Strings.LOGIN_SUCCESSFUL ), params.params.username);
-            this.doRemember(params, params.params.username)
+            this.doRemember(params, params.body.username)
             if (Log.will(Log.INFO)) Log.info(message);
             inResolve && inResolve({ status: 200, send: message});
         });
