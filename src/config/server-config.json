@@ -18,261 +18,233 @@
     {
       "path": "/ping",
       "response": {"name":"Mock Server","version":"1.0"},
-      "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "JSON"
     },
     {
       "path": "/json",
       "response": "./src/config/server-config.json",
-      "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "JSON"
     },
     {
       "path": "/json-string-array",
       "response": ["./server-config.json", "./test/test-data.json"],
-      "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "JSON"
     },
     {
       "path": "/json-object",
       "response": {"title": "Index"},
-      "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "JSON"
     },
     {
       "path": "/json-object-array",
       "response": [{"title": "Index"}, {"title": "Not Found"} ],
-      "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "JSON"
     },
     {
       "path": "/hbs",
       "response": "index.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Index"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Index"}
     },
     {
       "path": "/hbs-string-array",
       "response": [ "index.hbs", "error.hbs" ],
       "responseType": "HBS",
-      "hbsData": [ {"title": "Index"}, {"title": "Not Found"} ],
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": [ {"title": "Index"}, {"title": "Not Found"} ]
     },
     {
       "path": "/text",
       "response": "./views/index.hbs",
-      "responseType": "TEXT",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "TEXT"
     },
     {
       "path": "/text-string-array",
       "response": [ "./views/index.hbs", "./views/error.hbs" ],
-      "responseType": "TEXT",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "TEXT"
     },
     {
       "path": "/text-object",
       "response": {"title": "Index"},
-      "responseType": "TEXT",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "TEXT"
     },
     {
       "path": "/text-object2",
       "response": {"text": "Index"},
-      "responseType": "TEXT",
-      "headers": [{ "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "TEXT"
     },
     {
       "path": "/text-object-array",
       "response": [{"title": "Index"}, {"title": "Not Found"} ],
-      "responseType": "TEXT",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "TEXT"
     },
     {
       "path": "/text-object-array2",
       "response": [{"text": "Index"}, {"text": "Not Found"} ],
-      "responseType": "TEXT",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "TEXT"
     },
     {
       "path": "/uploadfile",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload File", "action": "upload", "verb": "POST"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Upload File", "action": "upload", "verb": "POST"}
     },
     {
       "path": "/elasticsearch/index/upload",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload ElasticSearch Index", "action": "/elasticsearch/index", "verb": "POST"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Upload ElasticSearch Index", "action": "/elasticsearch/index", "verb": "POST"}
     },
     {
       "path": "/elasticsearch/index/mapping/upload",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload ElasticSearch Mapping", "action": "/elasticsearch/index/mapping", "verb": "POST"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Upload ElasticSearch Mapping", "action": "/elasticsearch/index/mapping", "verb": "POST"}
     },
     {
       "path": "/elasticsearch/data/upload",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload ElasticSearch Data", "action": "/elasticsearch/data", "verb": "POST"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Upload ElasticSearch Data", "action": "/elasticsearch/data", "verb": "POST"}
     },
     {
       "path": "/elasticsearch/data/update",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Update ElasticSearch Data", "action": "/elasticsearch/data/update", "verb": "POST"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Update ElasticSearch Data", "action": "/elasticsearch/data/update", "verb": "POST"}
     },
     {
       "path": "/upload/log",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload to log", "action": "/log", "verb": "POST"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Upload to log", "action": "/log", "verb": "POST"}
     },
     {
       "path": "/upload/hotswap",
       "response": "upload.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Upload hotswap config", "action": "/hotswap", "verb": "POST"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Upload hotswap config", "action": "/hotswap", "verb": "POST"}
     },
     {
       "path": "/color",
       "response": "color-picker.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Select a color", "action": "/color/schemes", "verb": "POST"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Select a color", "action": "/color/schemes", "verb": "POST"}
     },
     {
       "path": "/login",
       "response": "login.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Login", "action": "/user/authenticate", "verb": "POST"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Login", "action": "/user/authenticate", "verb": "POST"}
     },
     {
       "path": "/user/password/reset/request",
       "response": "password-reset-request.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Password Reset Request", "action": "/user/password/reset/request/data", "verb": "POST"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Password Reset Request", "action": "/user/password/reset/request/data", "verb": "POST"}
     },
     {
       "path": "/comics",
       "response": "./public/files/comics/comics.json",
-      "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "JSON"
     },
     {
       "path": "/comics/:user",
       "response": "./private/users/:user/owned.json",
-      "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "JSON"
     },
     {
       "path": "/comics/:name/:issue/:page",
       "response": "./public/files/comics/:name/:issue/:page",
-      "responseType": "BLOB",
-      "headers": [ 
-        { "header": "Access-Control-Allow-Origin", "value": "*" }
-      ]
+      "responseType": "BLOB"
     },
     {
       "path": "/comics/:name/:issue",
       "response": "./public/files/comics/:name/:issue/manifest.json",
-      "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "JSON"
     },
     {
       "path": "/favorites/:user",
       "response": "./private/users/:user/favorites.json",
-      "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "JSON"
     },
     {
       "path": "/cart/:user",
       "response": "./private/users/:user/cart.json",
-      "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "JSON"
     },
     {
       "path": "/user/add",
       "response": "add-user.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Add User", "action": "/user/add/data", "verb": "POST" },
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Add User", "action": "/user/add/data", "verb": "POST" }
     },
     {
       "path": "/user/update",
       "response": "add-user.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Update User", "action": "/user/update/data", "verb": "POST" },
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Update User", "action": "/user/update/data", "verb": "POST" }
     },
     {
       "path": "/user/favorites/add",
       "response": "favorite.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Add Favorite", "action": "/user/favorites/add/data", "verb": "POST"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Add Favorite", "action": "/user/favorites/add/data", "verb": "POST"}
     },
     {
       "path": "/user/favorites/delete",
       "response": "favorite.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Delete Favorite", "action": "/user/favorites/delete/data", "verb": "POST"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Delete Favorite", "action": "/user/favorites/delete/data", "verb": "POST"}
     },
     {
       "path": "/user/cart/add",
       "response": "favorite.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Add Favorite", "action": "/user/cart/add/data", "verb": "POST"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Add Favorite", "action": "/user/cart/add/data", "verb": "POST"}
     },
     {
       "path": "/user/cart/delete",
       "response": "favorite.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Delete Favorite", "action": "/user/cart/delete/data", "verb": "POST"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Delete Favorite", "action": "/user/cart/delete/data", "verb": "POST"}
     },
     {
       "path": "/user/cart/price",
       "response": "pricing.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "pricing", "action": "/user/cart/price/data", "verb": "POST"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "pricing", "action": "/user/cart/price/data", "verb": "POST"}
     },
     {
       "path": "/user/checkout",
       "response": "checkout.hbs",
       "responseType": "HBS",
-      "hbsData": {"title": "Chekout", "action": "/user/checkout/data", "verb": "POST"},
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "hbsData": {"title": "Chekout", "action": "/user/checkout/data", "verb": "POST"}
     },
     {
       "path": "/slideshow/:name",
       "response": "./public/files/slideshows/:name/manifest.json",
-      "responseType": "JSON",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "JSON"
     },
     {
       "path": "/slideshow/:name/:page",
       "response": "./public/files/slideshows/:name/:page",
-      "responseType": "BLOB",
-      "headers": [ { "header": "Access-Control-Allow-Origin", "value": "*" } ]
+      "responseType": "BLOB"
+    },
+    {
+      "path": "/remember",
+      "response": "remember.hbs",
+      "responseType": "HBS",
+      "hbsData": {"title": "remember", "action": "/remember/data", "verb": "POST"}
     }
   ],
   "microservices": [
+    {
+      "verb": "POST",
+      "path": "/remember/data",
+      "name": "Remember",
+      "description": "Provides a user name if the server remembers their machine.",
+      "serviceFile": "remember.js"
+    },
     {
       "path": "/user/password/reset/reply/:token",
       "name": "User Password Reply",

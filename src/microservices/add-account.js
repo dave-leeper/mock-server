@@ -22,7 +22,7 @@ class AddAccount {
             }
 
             if (this.updateAccounts(newAccount, accounts, inResolve, inReject)) {
-                this.rememberUser(params, newAccount.username)
+                AddAccount.rememberUser(params, newAccount.username)
                 this.writeAccount(newAccount, AddAccount.destination, accounts, inResolve, inReject);
             }
        });
@@ -126,19 +126,41 @@ class AddAccount {
         if (maxAge) cookie.maxAge = maxAge;
         return cookie;
     }
-    rememberUser(params, username) {
+    static rememberUser(params, username) {
+        Log.error('rememberUser')
         let machine = params.headers["origin"];
+        Log.error('machine: ' + machine)
         let record = { machine: machine, username: username };
         let machinesFile = path.resolve(AddAccount.machinesPath + "machines.json");
         let machinesData = require(machinesFile)
         for (let i = 0; i < machinesData.length; i++) {
             let md = machinesData[i];
+            Log.error('md: ' + JSON.stringify(md))
             if (md.machine === record.machine) {
                 return;
             }
         }
+        Log.error('add')
         machinesData.push(record);
         Files.writeFileSync(machinesFile, JSON.stringify(machinesData));
+    }
+    static forgetUser(params, username) {
+        Log.error('forgetUser')
+        let machine = params.headers["origin"];
+        Log.error('machine: ' + machine)
+        let record = { machine: machine, username: username };
+        let machinesFile = path.resolve(AddAccount.machinesPath + "machines.json");
+        let machinesData = require(machinesFile)
+        for (let i = machinesData.length - 1; 0 <= i; i--) {
+            let md = machinesData[i];
+            Log.error('md: ' + JSON.stringify(md))
+            if (md.machine === record.machine) {
+                Log.error('match')
+                machinesData.splice(i, 1)
+                Files.writeFileSync(machinesFile, JSON.stringify(machinesData));
+                return;
+            }
+        }
     }
 }
 module.exports = AddAccount;

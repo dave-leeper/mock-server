@@ -30,7 +30,7 @@ class RouteBuilderMicroservices extends ServiceBase {
                         pipe: req.pipe,
                         busboy: req.busboy,
                     };
-                    Log.trace('Executing ' + microservice.name + ' microservice with service information of ' + Log.stringify(microservice));
+                    Log.trace('Executing ' + microservice.name + ' microservice.');
                     micro.do(params).then(( data ) => {
                         Log.trace(microservice.name + ' executed successfully.');
                         if (data && data.status) res.status(data.status);
@@ -83,9 +83,9 @@ class RouteBuilderMicroservices extends ServiceBase {
 
             let loggingBegin = this.loggingBegin(microservice);
             if (loggingBegin) handlers.push(loggingBegin);
-            let authentication = this.authentication(config.authenticationStrategies, microservice.authentication);
+            let authentication = this.authentication(config.authenticationStrategies, microservice.authentication, microservice);
             if (authentication) handlers.push(authentication);
-            let authorization = this.authorization(config.authenticationStrategies, microservice.authorization);
+            let authorization = this.authorization(config.authenticationStrategies, microservice.authorization, microservice);
             if (authorization) handlers.push(authorization);
             handlers.push(handler);
             let loggingEnd = this.loggingEnd(microservice);

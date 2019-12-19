@@ -1,4 +1,4 @@
-const PassportLocalStrategy = require('passport-local').Strategy;
+const BasicStrategy = require('passport-http').Strategy;
 const Registry = require('../util/registry' );
 const Strings = require('../util/strings' );
 const I18n = require('../util/i18n' );
@@ -9,7 +9,7 @@ const uuidv4 = require('uuid/v4');
 const DEFAULT_EXPIRE_TIME = 300;
 const WWW_AUTHENTICATE_HEADER = "Basic realm=\"User Visible Realm\", charset=\"UTF-8\"";
 
-class BasicStrategy {
+class BasicStrategyJS {
     constructor() {
     }
     getAuthentication() {
@@ -170,4 +170,4 @@ class BasicStrategy {
     }
 }
 
-module.exports = BasicStrategy;
+module.exports = BasicStrategyJS;

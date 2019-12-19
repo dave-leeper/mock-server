@@ -25,12 +25,12 @@ class LocalStrategy {
             if (!username || !password || !done) {
                 const err = { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.ERROR_MESSAGE_LOGIN_REQUIRED )};
                 if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
-                return done && done( null, false, err );
+                return done && done( err );
             }
             if (!accounts) {
                 const err = { operation: operation, statusType: 'error', status: 501, message: I18n.get( Strings.ERROR_MESSAGE_AUTHENTICATION_NOT_CONFIGURED )};
                 if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
-                return done(null, false, err);
+                return done(err);
             }
             for (let loop = 0; loop < accounts.length; loop++) {
                 let account = accounts[loop];
@@ -38,7 +38,7 @@ class LocalStrategy {
                 if (account.password !== password) {
                     const err = { operation: operation, statusType: 'error', status: 401, message: I18n.get( Strings.ERROR_MESSAGE_INCORRECT_PASSWORD )};
                     if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
-                    return done( null, false, err );
+                    return done( null, false );
                 }
                 let token = uuidv4();
                 let headers = Registry.get('Headers');
@@ -59,11 +59,11 @@ class LocalStrategy {
 
                 account.token = token;                  // <------------ Used by getAuthorization()
                 account.lastAccessTime = new Date();    // <------------ Used by getAuthorization()
-                return done( null, { operation: operation, statusType: 'success', status: 200, username: account.username, message: I18n.get( Strings.LOGIN_SUCCESSFUL )} );
+                return done( null, account );
             }
             const err = { operation: operation, statusType: 'error', status: 401, message: I18n.format( I18n.get( Strings.ERROR_MESSAGE_INCORRECT_USER_NAME ), username )};
             if (Log.will(Log.ERROR)) Log.error(Log.stringify(err));
-            return done( null, false, err );
+            return done( null, false );
         });
     }
     getAuthorization() {
