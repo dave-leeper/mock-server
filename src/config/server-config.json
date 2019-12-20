@@ -226,7 +226,7 @@
       "responseType": "JSON"
     },
     {
-      "path": "/slideshow/:name/:page",
+        "path": "/slideshow/:name/:page",
       "response": "./public/files/slideshows/:name/:page",
       "responseType": "BLOB"
     },
