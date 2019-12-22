@@ -40,7 +40,7 @@ class AddFavorite {
             let favorites = [];
             let now = new Date();
             let transactionDate = "" + now.getFullYear() + "-"  + (now.getMonth() + 1) + "-" + now.getDate();
-            let newFavorite = { id: body.id, issue: body.issue, transactionDate: transactionDate };
+            let newFavorite = { id: body.id, issue: parseInt(body.issue), transactionDate: transactionDate };
             if (Files.existsSync(filePath)) {
                 let JSONString = Files.readFileSync(filePath);
                 favorites = JSON.parse(JSONString);

@@ -10,7 +10,8 @@ class AddUser {
     do(params) {
         return new Promise (( inResolve, inReject ) => {
             let body = params.body;
-
+            
+            console.log(JSON.stringify(body))
             if (!body.username) {
                 let message = Strings.format(I18n.get( Strings.ERROR_MESSAGE_INCORRECT_USER_NAME ), body.username);
                 if (Log.will(Log.ERROR)) Log.error(message);
