@@ -1,9 +1,8 @@
-'use strict';
 
-function MongoQueryHelper(){}
+function MongoQueryHelper() {}
 
-MongoQueryHelper.getQuery = function ( req ) {
-    return req.query;
+MongoQueryHelper.getQuery = function (req) {
+  return req.query;
 };
 
 module.exports = MongoQueryHelper;

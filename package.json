@@ -10,7 +10,8 @@
     "test-microservices": "mocha \"test/unit/microservices/*.js\" & mocha \"test/e2e/microservices/*.js\" & mocha \"test/unit/routers/route-builder-microservices.test.js\"",
     "test-authentication": "mocha \"test/unit/authentication/*.js\"",
     "test-server": "mocha \"test/e2e/server.test.js\"",
-    "test-debug": "mocha --inspect \"test/**/*.js\""
+    "test-debug": "mocha --inspect \"test/**/*.js\"",
+    "lint": "eslint"
   },
   "dependencies": {
     "body-parser": "1.18.2",
@@ -21,7 +22,6 @@
     "debug": "2.6.9",
     "deep-extend": ">=0.5.1",
     "elasticsearch": "^16.5.0",
-    "eslint": "^6.7.2",
     "express": "^4.16.4",
     "express-fileupload": "^0.3.0",
     "express-session": "^1.15.6",
@@ -51,6 +51,9 @@
   },
   "devDependencies": {
     "chai": "4.1.2",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.19.1",
     "istanbul": "^0.4.5",
     "mocha": "^4.0.1"
   }

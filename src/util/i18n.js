@@ -1,18 +1,18 @@
-let fs = require("fs");
+const fs = require('fs');
 
-function I18n(){};
+function I18n() {}
 I18n.locale = 'en-US';
-I18n.strings = require('./strings-' + I18n.locale);
-I18n.setLocale = function(locale) {
-    if (!fs.existsSync('./strings-' + locale)) return;
-    let strings = require('./strings-' + locale);
-    if (!strings) return;
-    I18n.locale = locale;
-    I18n.strings = strings;
+I18n.strings = require(`./strings-${I18n.locale}`);
+I18n.setLocale = function (locale) {
+  if (!fs.existsSync(`./strings-${locale}`)) return;
+  const strings = require(`./strings-${locale}`);
+  if (!strings) return;
+  I18n.locale = locale;
+  I18n.strings = strings;
 };
-I18n.get = function(stringId) {
-    if ((!Number.isInteger(stringId)) || (0 > stringId) || (stringId >= I18n.strings.length)) return null;
-    return I18n.strings[stringId];
+I18n.get = function (stringId) {
+  if ((!Number.isInteger(stringId)) || (stringId < 0) || (stringId >= I18n.strings.length)) return null;
+  return I18n.strings[stringId];
 };
 
 /**
@@ -26,17 +26,17 @@ I18n.get = function(stringId) {
  * @Param ... {String} ALL comma separated list of string parameters used to format the inFormat string.
  * @returns {String} The formatted string.
  */
-I18n.format = function( inFormat ) {
-    if ((!inFormat) || (typeof inFormat !== 'string')) return null;
-    let args = arguments;
-    let formatted = inFormat.replace(
-        /{(\d+)}/g,
-        ( inMatch, inNumber ) => {
-            if (typeof args[ inNumber ] !== 'undefined') return args[ inNumber ];
-            return  inMatch;
-        }
-    );
-    return formatted;
+I18n.format = function (inFormat) {
+  if ((!inFormat) || (typeof inFormat !== 'string')) return null;
+  const args = arguments;
+  const formatted = inFormat.replace(
+    /{(\d+)}/g,
+    (inMatch, inNumber) => {
+      if (typeof args[inNumber] !== 'undefined') return args[inNumber];
+      return inMatch;
+    },
+  );
+  return formatted;
 };
 
 module.exports = I18n;

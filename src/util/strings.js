@@ -1,4 +1,4 @@
-function Strings(){}
+function Strings() {}
 Strings.LOGIN_SUCCESSFUL = 0;
 Strings.LISTENING_ON_PORT = 1;
 Strings.SUCCESS_MESSAGE_ACCOUNT_ADDED = 2;
@@ -145,13 +145,10 @@ Strings.COUNT = 134;
  * @param inArguments {String} The format string and ALL comma separated list of string parameters used to format the inFormat string.
  * @returns {String} The formatted string.
  */
-Strings.format = function( inArguments, ...aArgs ) {
-    return inArguments.replace(
-        /{(\d+)}/g,
-        function ( inMatch, inNumber ) {
-            return typeof aArgs[ inNumber ] !== 'undefined' ? aArgs[ inNumber ] : inMatch;
-        }
-    );
-}
+Strings.format = function (inArguments, ...aArgs) {
+  return inArguments.replace(
+    /{(\d+)}/g,
+    (inMatch, inNumber) => (typeof aArgs[inNumber] !== 'undefined' ? aArgs[inNumber] : inMatch),
+  );
+};
 module.exports = Strings;
-
