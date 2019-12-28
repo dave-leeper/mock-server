@@ -153,6 +153,11 @@
       "responseType": "JSON"
     },
     {
+      "path": "/comics/:name/:issue/EndofPreview.jpg",
+      "response": "./public/files/EndofPreview.jpg",
+      "responseType": "BLOB"
+    },
+    {
       "path": "/comics/:name/:issue/:page",
       "response": "./public/files/comics/:name/:issue/:page",
       "responseType": "BLOB"
@@ -235,6 +240,41 @@
       "response": "remember.hbs",
       "responseType": "HBS",
       "hbsData": {"title": "remember", "action": "/remember/data", "verb": "POST"}
+    },
+    {
+      "path": "/",
+      "response": "./index.html",
+      "responseType": "TEXT"
+    },
+    {
+      "path": "/js/:name",
+      "response": "./js/:name",
+      "responseType": "BLOB"
+    },
+    {
+      "path": "/css/:name",
+      "response": "./css/:name",
+      "responseType": "BLOB"
+    },
+    {
+      "path": "/img/:name",
+      "response": "./img/:name",
+      "responseType": "BLOB"
+    },
+    {
+      "path": "/fonts/:name",
+      "response": "./fonts/:name",
+      "responseType": "BLOB"
+    },
+    {
+      "path": "/statics/:name",
+      "response": "./statics/:name",
+      "responseType": "BLOB"
+    },
+    {
+      "path": "/logo",
+      "response": "./public/USComicsLogo.png",
+      "responseType": "BLOB"
     }
   ],
   "microservices": [

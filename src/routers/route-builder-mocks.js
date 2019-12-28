@@ -122,6 +122,7 @@ class RouteBuilderMocks extends ServiceBase {
       this.addHeaders(mock, req, res);
       this.addCookies(mock, req, res);
       const responseFile = RouteBuilderMocks.___replaceResponseParamsWithRequestValues(mock.response, req);
+      Log.error('responseFile: ' + responseFile)
       if (!RouteBuilderMocks.___fileExists(responseFile, res)) return next && next();
 
       const textResponseFileContents = Files.readFileSync(responseFile, mock.encoding);
