@@ -1,5 +1,4 @@
 {
-  "port": 1337,
   "https": false,
   "logging": {
     "appenders": {
