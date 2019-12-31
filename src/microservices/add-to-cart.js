@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 const path = require('path');
 const Files = require('../util/files');
 const I18n = require('../util/i18n');
@@ -45,7 +46,10 @@ class AddToCart {
         const JSONString = Files.readFileSync(filePath);
         cart = JSON.parse(JSONString);
         for (let i = cart.length - 1; i >= 0; i--) {
-          if (cart[i].id.toUpperCase() === newCartItem.id.toUpperCase() && cart[i].issue === newCartItem.issue) cart.splice(i, 1);
+          let c = cart[i];
+          if (c.id.toUpperCase() !== newCartItem.id.toUpperCase()) continue;
+          if (c.issue !== newCartItem.issue && parseInt(c.issue) !== newCartItem.issue && c.issue !== parseInt(newCartItem.issue)) continue;
+          cart.splice(i, 1);
         }
       }
       cart.push(newCartItem);

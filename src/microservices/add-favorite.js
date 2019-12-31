@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 const path = require('path');
 const Files = require('../util/files');
 const I18n = require('../util/i18n');
@@ -45,7 +46,10 @@ class AddFavorite {
         const JSONString = Files.readFileSync(filePath);
         favorites = JSON.parse(JSONString);
         for (let i = favorites.length - 1; i >= 0; i--) {
-          if (favorites[i].id.toUpperCase() === newFavorite.id.toUpperCase() && favorites[i].issue === newFavorite.issue) favorites.splice(i, 1);
+          let favorite = favorites[i];
+          if (favorite.id.toUpperCase() !== newFavorite.id.toUpperCase()) continue;
+          if (favorite.issue !== newFavorite.issue && parseInt(favorite.issue) !== newFavorite.issue && favorite.issue !== parseInt(newFavorite.issue)) continue;
+          favorites.splice(i, 1);
         }
       }
       favorites.push(newFavorite);
