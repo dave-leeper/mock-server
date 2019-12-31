@@ -272,6 +272,11 @@
       "responseType": "BLOB"
     },
     {
+      "path": "/statics/rive/:name",
+      "response": "./statics/rive/:name",
+      "responseType": "BLOB"
+    },
+    {
       "path": "/logo",
       "response": "./public/USComicsLogo.png",
       "responseType": "BLOB"
