@@ -1,5 +1,5 @@
 {
-  "https": false,
+  "https": true,
   "logging": {
     "appenders": {
       "app": { "type": "file", "filename": "mock-server.log" },
