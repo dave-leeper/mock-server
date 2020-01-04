@@ -18,6 +18,7 @@ const Registry = require('./src/util/registry');
 const FileUtilities = require('./src/util/files.js');
 const Encrypt = require('./src/util/encrypt');
 let { accounts } = require('./private/users/authentication');
+const requestIp = require('request-ip');
 
 /**
  * @constructor
@@ -114,6 +115,7 @@ class Server {
     this.express.use(fileUpload());
     this.express.use(passport.initialize());
     this.express.use(passport.session());
+    this.express.use(requestIp.mw());
     this.express.use((req, res, next) => {
       res.header('Access-Control-Allow-Origin', '*');
       res.header('Access-Control-Allow-Headers', '*');

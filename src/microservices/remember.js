@@ -3,7 +3,7 @@ const Log = require('../util/log');
 class Remember {
   do(params) {
     return new Promise((inResolve, inReject) => {
-      const userMachine = params.headers.origin;
+      const userMachine = params.req.clientIp;
       if (!userMachine) {
         inResolve && inResolve({ status: 404, send: { user: '' } });
         return;

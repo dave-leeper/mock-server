@@ -29,6 +29,7 @@ class RouteBuilderMicroservices extends ServiceBase {
             files: req.files,
             headers: req.headers,
             cookies: req.cookies,
+            req: req,
             pipe: req.pipe,
             busboy: req.busboy,
           };

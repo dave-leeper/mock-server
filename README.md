@@ -231,6 +231,7 @@ The params object passed into the microservice has the following members:
     files:          Array.      The files of the request that invoked this microservice.
     headers:        Array.      The headers of the request that invoked this microservice.
     cookies:        Array.      The cookies of the request that invoked this microservice.
+    req:            Object.     The request that invoked this microservice.
 }
 ```
 ### Microservice Result Object

@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable global-require */
 /* eslint-disable import/no-dynamic-require */
+// https://github.com/pbojinov/request-ip
 const path = require('path');
 const Encrypt = require('../util/encrypt');
 const Files = require('../util/files');
@@ -141,7 +142,7 @@ class AddAccount {
 
   static rememberUser(params, username) {
     if (!username) return;
-    const machine = params.headers.origin;
+    const machine = params.req.clientIp;
     const record = { machine, username };
     const machinesFile = path.resolve(`${AddAccount.machinesPath}machines.json`);
     const machinesData = require(machinesFile);
@@ -158,7 +159,7 @@ class AddAccount {
 
   static forgetUser(params, username) {
     if (!username) return;
-    const machine = params.headers.origin;
+    const machine = params.req.clientIp;
     const record = { machine, username };
     const machinesFile = path.resolve(`${AddAccount.machinesPath}machines.json`);
     const machinesData = require(machinesFile);
