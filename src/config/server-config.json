@@ -88,6 +88,36 @@
       "hbsData": {"title": "Upload File", "action": "upload", "verb": "POST"}
     },
     {
+      "path": "/ide",
+      "response": "ide.hbs",
+      "responseType": "HBS"
+    },
+    {
+      "path": "/lib/codemirror.css",
+      "response": "./node_modules/codemirror/lib/codemirror.css",
+      "responseType": "BLOB"
+    },
+    {
+      "path": "/lib/codemirror.js",
+      "response": "./node_modules/codemirror/lib/codemirror.js",
+      "responseType": "BLOB"
+    },
+    {
+      "path": "/mode/:language/:file",
+      "response": "./node_modules/codemirror/mode/:language/:file",
+      "responseType": "BLOB"
+    },
+    {
+      "path": "/addon/:toolset/:file",
+      "response": "./node_modules/codemirror/addon/:toolset/:file",
+      "responseType": "BLOB"
+    },
+    {
+      "path": "/theme/:file",
+      "response": "./node_modules/codemirror/theme/:file",
+      "responseType": "BLOB"
+    },
+    {
       "path": "/elasticsearch/index/upload",
       "response": "upload.hbs",
       "responseType": "HBS",
