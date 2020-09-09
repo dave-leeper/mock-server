@@ -88,6 +88,12 @@
       "hbsData": {"title": "Upload File", "action": "upload", "verb": "POST"}
     },
     {
+      "path": "/save-local-form",
+      "response": "data.hbs",
+      "responseType": "HBS",
+      "hbsData": {"title": "Data", "action": "save-local", "verb": "POST"}
+    },
+    {
       "path": "/ide",
       "response": "ide.hbs",
       "responseType": "HBS"
@@ -478,6 +484,14 @@
       "name": "Password Reset",
       "description": "Sends a password reset email to a user.",
       "serviceFile": "password-reset-request.js"
+    },
+    {
+      "verb": "POST",
+      "path": "/save-local",
+      "name": "Save data to a local file",
+      "description": "Uploads data from the client, which is then downloaded for saving.",
+      "serviceFile": "save-local.js",
+      "serviceData": { "bodyField": "text", "fileExt": "hero" }
     },
     {
       "path": "/stop",

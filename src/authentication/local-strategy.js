@@ -1,10 +1,10 @@
 const PassportLocalStrategy = require('passport-local').Strategy;
+const uuidv4 = require('uuid/v4');
 const Registry = require('../util/registry');
 const Strings = require('../util/strings');
 const I18n = require('../util/i18n');
 const Log = require('../util/log');
 const reduce = require('../util/algorithm').oneTruthyReduce;
-const uuidv4 = require('uuid/v4');
 
 const DEFAULT_EXPIRE_TIME = 300;
 const WWW_AUTHENTICATE_HEADER = 'Mock-Server realm="User Visible Realm", charset="UTF-8"';
@@ -141,6 +141,7 @@ class LocalStrategy {
       if (!configInfo && config.microservices) configInfo = config.microservices.map(map).reduce(reduce);
       if (!configInfo && config.endpoints) configInfo = config.endpoints.map(map).reduce(reduce);
       if (!configInfo && config.databaseConnections) {
+        // eslint-disable-next-line no-shadow
         const mapDB = (configInfo) => {
           if (!configInfo.authorization) return null;
           if (!configInfo.name) return null;

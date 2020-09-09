@@ -241,6 +241,7 @@ members:
     status:             Number.             The HTTP status of the operation.
     send:               String or String[]  Strings that should be written to the response.
     fileDownloadPath:   String              A file that should be downloaded in the response.
+    fileDeleteAfterDownload:   Boolean      Should the file be deleted after download.
     viewName:           String              The name of a view to send as the response.
     viewObject:         JSON                An object used to render the view.
 ```
@@ -360,7 +361,6 @@ endpoint. These names are relative to the endpoints directory.
 * **headers**<br/>
 Example: [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]<br/>
 An optional array of headers that should be included in the response.
-
 * **cookies**<br/>
 Example: [ 
     { "name": "MY_COOKIE1", "value": "MY_COOKIE_VALUE1" },  

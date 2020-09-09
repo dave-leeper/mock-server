@@ -6,11 +6,11 @@ const Log = require('./log');
 
 class Files {
   /**
-     * Reads a file and returns the contents.
-     * @param inFilepath {String} The path to the file.
-     * @param [inEncoding] {String} The file's encoding. Defaults to utf8.
-     * @returns {String} Returns a string.
-     */
+    * Reads a file and returns the contents.
+    * @param inFilepath {String} The path to the file.
+    * @param [inEncoding] {String} The file's encoding. Defaults to utf8.
+    * @returns {String} Returns a string.
+    */
   static readFileSync(inFilepath, inEncoding) {
     if (typeof (inEncoding) === 'undefined') {
       // eslint-disable-next-line no-param-reassign

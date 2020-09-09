@@ -2,6 +2,7 @@
 /* eslint-disable import/no-dynamic-require */
 
 const path = require('path');
+const files = require('../util/files.js');
 const ServiceBase = require('../util/service-base.js');
 const Log = require('../util/log.js');
 
@@ -17,7 +18,7 @@ class RouteBuilderMicroservices extends ServiceBase {
       const handler = (req, res, next) => {
         const microserviceClass = require(microservicePath);
         // eslint-disable-next-line new-cap
-        const micro = new microserviceClass();
+        const micro = new microserviceClass(microservice);
         this.addHeaders(microservice, req, res);
         this.addCookies(microservice, req, res);
 
@@ -29,7 +30,7 @@ class RouteBuilderMicroservices extends ServiceBase {
             files: req.files,
             headers: req.headers,
             cookies: req.cookies,
-            req: req,
+            req,
             pipe: req.pipe,
             busboy: req.busboy,
           };
@@ -43,6 +44,9 @@ class RouteBuilderMicroservices extends ServiceBase {
               else res.send(data.send);
             } else if (data.fileDownloadPath) {
               res.download(data.fileDownloadPath);
+              if (data.fileDeleteAfterDownload) {
+                files.deleteSync(data.fileDownloadPath);
+              }
             } else if (data.viewName) {
               res.render(data.viewName, data.viewObject);
             }
