@@ -283,27 +283,27 @@
     },
     {
       "path": "/js/:name",
-      "response": "./js/:name",
+      "response": "./spa/js/:name",
       "responseType": "BLOB"
     },
     {
       "path": "/css/:name",
-      "response": "./css/:name",
+      "response": "./spa/css/:name",
       "responseType": "BLOB"
     },
     {
       "path": "/img/:name",
-      "response": "./img/:name",
+      "response": "./spa/img/:name",
       "responseType": "BLOB"
     },
     {
       "path": "/fonts/:name",
-      "response": "./fonts/:name",
+      "response": "./spa/fonts/:name",
       "responseType": "BLOB"
     },
     {
       "path": "/statics/:name",
-      "response": "./statics/:name",
+      "response": "./spa/statics/:name",
       "responseType": "BLOB"
     },
     {
