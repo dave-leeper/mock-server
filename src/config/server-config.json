@@ -278,7 +278,7 @@
     },
     {
       "path": "/",
-      "response": "./index.html",
+      "response": "./spa/index.html",
       "responseType": "TEXT"
     },
     {
