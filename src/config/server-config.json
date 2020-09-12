@@ -20,6 +20,11 @@
       "responseType": "JSON"
     },
     {
+      "path": "/github_callback",
+      "response": {"name":"Github Callback","version":"0.0"},
+      "responseType": "JSON"
+    },
+    {
       "path": "/json",
       "response": "./src/config/server-config.json",
       "responseType": "JSON"

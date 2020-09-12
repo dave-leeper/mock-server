@@ -25,6 +25,7 @@ class SaveLocal extends ServiceBase {
     files.writeFileSync(fileName, data);
 
     res.status(200);
+    res.setHeader('Content-Disposition', `"${fileName}"`);
     res.download(fileName, (err) => {
       files.deleteSync(fileName);
       if (number > 9999) {

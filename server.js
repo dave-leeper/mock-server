@@ -1,15 +1,16 @@
-
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const express = require('express');
+const favicon = require('serve-favicon');
+const fileUpload = require('express-fileupload');
+const fs = require('fs');
 const http = require('http');
 const https = require('https');
-const fs = require('fs');
-const path = require('path');
-const favicon = require('serve-favicon');
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
-const bodyParser = require('body-parser');
-const fileUpload = require('express-fileupload');
 const passport = require('passport');
+const path = require('path');
+const requestIp = require('request-ip');
+const session = require('express-session');
+
 const RouteBuilder = require('./src/routers/route-builder');
 const Strings = require('./src/util/strings');
 const I18n = require('./src/util/i18n');
@@ -18,7 +19,6 @@ const Registry = require('./src/util/registry');
 const FileUtilities = require('./src/util/files.js');
 const Encrypt = require('./src/util/encrypt');
 let { accounts } = require('./private/users/authentication');
-const requestIp = require('request-ip');
 
 /**
  * @constructor
