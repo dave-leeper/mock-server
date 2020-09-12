@@ -20,9 +20,9 @@
       "responseType": "JSON"
     },
     {
-      "path": "/github_callback",
-      "response": {"name":"Github Callback","version":"0.0"},
-      "responseType": "JSON"
+      "path": "/github_callback/:code/:state",
+      "response": ":code, :state",
+      "responseType": "TEXT"
     },
     {
       "path": "/json",
