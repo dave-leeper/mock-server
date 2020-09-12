@@ -20,11 +20,6 @@
       "responseType": "JSON"
     },
     {
-      "path": "/github_callback/:code/:state",
-      "response": { "code": ":code", "state": ":state" },
-      "responseType": "JSON"
-    },
-    {
       "path": "/json",
       "response": "./src/config/server-config.json",
       "responseType": "JSON"
@@ -323,6 +318,12 @@
     }
   ],
   "microservices": [
+    {
+      "path": "/github_callback/",
+      "name": "GitHub Callback",
+      "description": "Callback API used by GitHub App Authorization",
+      "serviceFile": "github-callback.js"
+    },
     {
       "verb": "POST",
       "path": "/remember/data",
