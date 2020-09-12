@@ -319,7 +319,7 @@
   ],
   "microservices": [
     {
-      "path": "/github_callback/",
+      "path": "/github_callback",
       "name": "GitHub Callback",
       "description": "Callback API used by GitHub App Authorization",
       "serviceFile": "github-callback.js"
