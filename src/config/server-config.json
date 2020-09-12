@@ -21,8 +21,8 @@
     },
     {
       "path": "/github_callback/:code/:state",
-      "response": ":code, :state",
-      "responseType": "TEXT"
+      "response": { "code": ":code", "state": ":state" },
+      "responseType": "JSON"
     },
     {
       "path": "/json",

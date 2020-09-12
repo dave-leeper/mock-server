@@ -241,7 +241,7 @@ members:
     status:             Number.             The HTTP status of the operation.
     send:               String or String[]  Strings that should be written to the response.
     fileDownloadPath:   String              A file that should be downloaded in the response.
-    fileDeleteAfterDownload:   Boolean      Should the file be deleted after download.
+    090op:   Boolean      Should the file be deleted after download.
     viewName:           String              The name of a view to send as the response.
     viewObject:         JSON                An object used to render the view.
 ```
