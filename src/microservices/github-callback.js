@@ -20,7 +20,8 @@ class GithubCallback {
     return new Promise((inResolve, inReject) => {
       const { code, state } = params;
       if (!code || !state) {
-        const error = `Required fields (code and state) not found. Params are ${params}`;
+        const paramString = JSON.stringify(params);
+        const error = `Required fields (code and state) not found. Params are ${paramString}`;
         if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
         inReject && inReject({ status: 400, send: error });
       }
