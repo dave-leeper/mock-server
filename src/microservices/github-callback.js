@@ -4,7 +4,7 @@ const Log = require('../util/log');
 
 // https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/#web-application-flow
 // https://github.com/login/oauth/authorize?client_id=c710a4e843af74a2455b&redirect_uri=https://hero-www-server.herokuapp.com/github_callback&scope=repo&state=xyz
-// /github_callback?code=dc818ad0bb882076ede4&state=xyz%27
+// /github_callback?code=dc818ad0bb882076ede4&state=xyz
 // clientId: "c710a4e843af74a2455b",
 // clientSecret: "d391afcab14db918ee41067cdd777007dda89274",
 /*
@@ -20,7 +20,7 @@ class GithubCallback {
     return new Promise((inResolve, inReject) => {
       const { code, state } = params;
       if (!code || !state) {
-        const error = 'Required fields (code and state) not found.';
+        const error = `Required fields (code and state) not found. Params are ${params}`;
         if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
         inReject && inReject({ status: 400, send: error });
       }
