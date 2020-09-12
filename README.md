@@ -228,6 +228,7 @@ The params object passed into the microservice has the following members:
     serviceInfo:    Object.     Information about this service (JSON).
     body:           Object.     The body of the request that invoked this microservice.
     params:         Array.      The params of the request that invoked this microservice.
+    query:          Array.      The query values of the request that invoked this microservice.
     files:          Array.      The files of the request that invoked this microservice.
     headers:        Array.      The headers of the request that invoked this microservice.
     cookies:        Array.      The cookies of the request that invoked this microservice.

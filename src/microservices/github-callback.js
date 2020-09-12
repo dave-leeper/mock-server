@@ -18,26 +18,33 @@ const Log = require('../util/log');
 class GithubCallback {
   do(params) {
     return new Promise((inResolve, inReject) => {
-      const { code, state } = params;
+      if (Log.will(Log.ERROR)) Log.error('---------------------->1');
+      const { code } = params.query;
+      const { state } = params.query;
+      if (Log.will(Log.ERROR)) Log.error(`---------------------->2 ${JSON.stringify(params.query)}`);
       if (!code || !state) {
-        const paramString = JSON.stringify(params);
-        const error = `Required fields (code and state) not found. Params are ${paramString}`;
+        const queryString = JSON.stringify(params.query);
+        const error = `Required fields (code and state) not found. Params are ${queryString}`;
         if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
         inReject && inReject({ status: 400, send: error });
       }
+      if (Log.will(Log.ERROR)) Log.error('---------------------->3');
       let url = 'https://github.com/login/oauth/access_token';
       url = `${url}?client_id=c710a4e843af74a2455b`;
       url = `${url}&client_secret=d391afcab14db918ee41067cdd777007dda89274`;
       url = `${url}&code=${code}`;
       url = `${url}&redirect_uri=https://hero-www-server.herokuapp.com/`;
       url = `${url}&state=${state}`;
+      if (Log.will(Log.ERROR)) Log.error('---------------------->4');
 
       axios.post(url)
         .then((response) => {
+          if (Log.will(Log.ERROR)) Log.error('---------------------->5');
           Log.error(Log.stringify(response));
           inResolve && inResolve({ status: 200, send: { send: Log.stringify(response) } });
         })
         .catch((err) => {
+          if (Log.will(Log.ERROR)) Log.error('---------------------->6');
           const error = `Error retrieving access token. ${JSON.stringify(err)}`;
           if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
           inReject && inReject({ status: 400, send: error });
