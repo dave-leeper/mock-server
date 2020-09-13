@@ -219,6 +219,12 @@ class Server {
       iv: Buffer.from([0xfb, 0x2e, 0x85, 0x78, 0x55, 0x1d, 0x91, 0xe8, 0x4d, 0xfd, 0x25, 0xe1, 0xb9, 0x81, 0x2d, 0xd5]),
     };
     Registry.register(crypto, 'Crypto');
+    const Encrypt = require('./src/util/encrypt');
+    let token = Encrypt.encrypt('d391afcab14db918ee41067cdd777007dda89274', crypto.iv, crypto.key);
+    console.log(`Token: ${token}`);
+    token = Encrypt.decrypt(token, crypto.iv, crypto.key);
+    console.log(`Token: ${token}`);
+
     return crypto;
   }
 }

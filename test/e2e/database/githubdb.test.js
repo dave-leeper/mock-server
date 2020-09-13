@@ -11,7 +11,7 @@ const chai = require('chai');
 
 const { expect } = chai;
 const request = require('request');
-const MongoDB = require('../../../src/database/mongodb.js');
+const GithubDB = require('../../../src/database/githubdb.js');
 const Server = require('../../../server.js');
 const Registry = require('../../../src/util/registry.js');
 

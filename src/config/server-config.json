@@ -526,6 +526,20 @@
         "log": "trace"
       },
       "authorization": { "strategy": "local", "groups": [ "admin" ] }
+    },
+    {
+      "name": "github",
+      "description": "Github service.",
+      "databaseConnector": "githubdb.js",
+      "generateConnectionAPI": false,
+      "generateIndexAPI": false,
+      "generateDataAPI": false,
+      "config": {
+        "owner": "dave-leeper",
+        "repo": "HERO-server-db",
+        "committer": { "name": "dave-leeper", "email": "magicjtv@gmail.com" },
+        "author": { "name": "dave-leeper", "email": "magicjtv@gmail.com" }
+      }
     }
   ]
 }
