@@ -26,9 +26,9 @@ class RouteBuilderElasticsearchDatabase extends ServiceBase {
     for (let loop3 = 0; loop3 < config.databaseConnections.length; loop3++) {
       const databaseConnectionInfo = config.databaseConnections[loop3];
       if (!databaseConnectionInfo.type || databaseConnectionInfo.type.toLowerCase() !== 'elasticsearch') continue;
-      if (databaseConnectionInfo.generateElasticsearchConnectionAPI) this.buildElasticsearchConnectionAPI(router, config, databaseConnectionInfo);
-      if (databaseConnectionInfo.generateElasticsearchIndexAPI) this.buildElasticsearchIndexAPI(router, config, databaseConnectionInfo);
-      if (databaseConnectionInfo.generateElasticsearchDataAPI) this.buildElasticsearchDataAPI(router, config, databaseConnectionInfo);
+      if (databaseConnectionInfo.generateConnectionAPI) this.buildElasticsearchConnectionAPI(router, config, databaseConnectionInfo);
+      if (databaseConnectionInfo.generateIndexAPI) this.buildElasticsearchIndexAPI(router, config, databaseConnectionInfo);
+      if (databaseConnectionInfo.generateDataAPI) this.buildElasticsearchDataAPI(router, config, databaseConnectionInfo);
     }
     databaseConnectionCallback && databaseConnectionCallback(databaseConnectionPromises);
     return true;

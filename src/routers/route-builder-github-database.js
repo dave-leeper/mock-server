@@ -7,9 +7,9 @@ const DatabaseConnectorManager = require('../database/database-connection-manage
 const Registry = require('../util/registry.js');
 const Log = require('../util/log.js');
 
-const SOURCE_PATH = './src/routers/data-route-builders/mongo/';
+const SOURCE_PATH = './src/routers/data-route-builders/github/';
 
-class RouteBuilderMongoDatabase extends ServiceBase {
+class RouteBuilderGithubDatabase extends ServiceBase {
   /**
      * @param router - Express router. This method will add routers to it.
      * @param config - The configure file for the server.
@@ -25,17 +25,17 @@ class RouteBuilderMongoDatabase extends ServiceBase {
 
     for (let loop3 = 0; loop3 < config.databaseConnections.length; loop3++) {
       const databaseConnectionInfo = config.databaseConnections[loop3];
-      if (!databaseConnectionInfo.type || databaseConnectionInfo.type.toLowerCase() !== 'mongo') continue;
-      if (databaseConnectionInfo.generateMongoConnectionAPI) this.buildMongoConnectionAPI(router, config, databaseConnectionInfo);
-      if (databaseConnectionInfo.generateMongoCollectionAPI) this.buildMongoCollectionAPI(router, config, databaseConnectionInfo);
-      if (databaseConnectionInfo.generateMongoDataAPI) this.buildMongoDataAPI(router, config, databaseConnectionInfo);
+      if (!databaseConnectionInfo.type || databaseConnectionInfo.type.toLowerCase() !== 'github') continue;
+      if (databaseConnectionInfo.generateConnectionAPI) this.buildMongoConnectionAPI(router, config, databaseConnectionInfo);
+      if (databaseConnectionInfo.generateCollectionAPI) this.buildMongoCollectionAPI(router, config, databaseConnectionInfo);
+      if (databaseConnectionInfo.generateMDataAPI) this.buildMongoDataAPI(router, config, databaseConnectionInfo);
     }
     databaseConnectionCallback && databaseConnectionCallback(databaseConnectionPromises);
     return true;
   }
 
-  buildMongoConnectionAPI(router, config, databaseConnectionInfo) {
-    const paths = RouteBuilderMongoDatabase.buildMongoConnectionAPIPaths(databaseConnectionInfo.name);
+  buildGithubConnectionAPI(router, config, databaseConnectionInfo) {
+    const paths = RouteBuilderGithubDatabase.buildGithubConnectionAPIPaths(databaseConnectionInfo.name);
     const connectPath = paths[0];
     const pingPath = paths[1];
     const disconnectPath = paths[2];
@@ -92,7 +92,7 @@ class RouteBuilderMongoDatabase extends ServiceBase {
     router.get(disconnectPath, handlers);
   }
 
-  static buildMongoConnectionAPIPaths(name) {
+  static buildMGithubConnectionAPIPaths(name) {
     const paths = [];
     if (!name) return paths;
     const urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
@@ -103,8 +103,8 @@ class RouteBuilderMongoDatabase extends ServiceBase {
     return paths;
   }
 
-  buildMongoCollectionAPI(router, config, databaseConnectionInfo) {
-    const paths = RouteBuilderMongoDatabase.buildMongoCollectionAPIPaths(databaseConnectionInfo.name);
+  buildGithubCollectionAPI(router, config, databaseConnectionInfo) {
+    const paths = RouteBuilderGithubDatabase.buildGithubCollectionAPIPaths(databaseConnectionInfo.name);
     const existsPath = paths[0];
     const createPath = paths[1];
     const dropPath = paths[2];
@@ -161,7 +161,7 @@ class RouteBuilderMongoDatabase extends ServiceBase {
     router.delete(dropPath, handlers);
   }
 
-  static buildMongoCollectionAPIPaths(name) {
+  static buildGithubCollectionAPIPaths(name) {
     const paths = [];
     if (!name) return paths;
     const urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
@@ -172,8 +172,8 @@ class RouteBuilderMongoDatabase extends ServiceBase {
     return paths;
   }
 
-  buildMongoDataAPI(router, config, databaseConnectionInfo) {
-    const paths = RouteBuilderMongoDatabase.buildMongoDataAPIPaths(databaseConnectionInfo.name);
+  buildGithubDataAPI(router, config, databaseConnectionInfo) {
+    const paths = RouteBuilderGithubDatabase.buildGithubDataAPIPaths(databaseConnectionInfo.name);
     const insertPath = paths[0];
     const updatePath = paths[1];
     const deletePath = paths[2];
@@ -229,25 +229,9 @@ class RouteBuilderMongoDatabase extends ServiceBase {
     if (loggingEnd) handlers.push(loggingEnd);
     handlers.push((req, res) => {});
     router.delete(deletePath, handlers);
-
-    handlerBuilderPath = path.resolve(SOURCE_PATH, 'data-query-builder.js');
-    handlerBuilder = require(handlerBuilderPath);
-    handlers = [];
-    handler = handlerBuilder(this, databaseConnectionInfo);
-    if (!handler) {
-      if (Log.will(Log.ERROR)) Log.error(`Data query handler not defined for database connection ${databaseConnectionInfo.name}.`);
-      return;
-    }
-    if (loggingBegin) handlers.push(loggingBegin);
-    if (authentication) handlers.push(authentication);
-    if (authorization) handlers.push(authorization);
-    handlers.push(handler);
-    if (loggingEnd) handlers.push(loggingEnd);
-    handlers.push((req, res) => {});
-    router.get(queryPath, handlers);
   }
 
-  static buildMongoDataAPIPaths(name) {
+  static buildGithubDataAPIPaths(name) {
     const paths = [];
     if (!name) return paths;
     const urlName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
@@ -255,9 +239,8 @@ class RouteBuilderMongoDatabase extends ServiceBase {
     paths.push(`/${urlName}/data/:collection`); // insert (POST)
     paths.push(`/${urlName}/data/:collection`); // update (PUT)
     paths.push(`/${urlName}/data/:collection`); // delete (DELETE)
-    paths.push(`/${urlName}/data/:collection`); // query (GET)
     return paths;
   }
 }
 
-module.exports = RouteBuilderMongoDatabase;
+module.exports = RouteBuilderGithubDatabase;
