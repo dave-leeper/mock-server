@@ -51,18 +51,15 @@ GithubDB.prototype.connect = function (config) {
 
 GithubDB.prototype.ping = function () {
   return new Promise((inResolve, inReject) => {
-    if (!this.client || !this.db) {
+    if (!this.client) {
       inResolve && inResolve(false);
       return;
     }
-    const admin = this.db.admin();
-    admin.ping(null, (error, result) => {
-      if (error) {
-        inResolve && inResolve(false);
-      } else {
-        inResolve && inResolve(true);
-      }
-    });
+    const exists = async () => {
+      let result = await this.fileExists('.___')
+      inResolve && inResolve(result);
+    }
+    exists();
   });
 };
 
