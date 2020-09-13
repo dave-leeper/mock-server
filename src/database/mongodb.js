@@ -23,14 +23,14 @@ Mongodb.prototype.connect = function (config) {
       const client = mongodb.MongoClient;
       this.config = config;
       if (!config || !config.url || !config.db) {
-        const error = { status: false, error: 'Error while connecting.' };
+        const error = { status: false, error: 'Mongodb: Error while connecting.' };
         if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
         inReject && inReject(error);
         return;
       }
       client.connect(config.url, { useNewUrlParser: true }, (err, client2) => {
         if (err) {
-          const error = { status: false, error: 'Error while connecting.' };
+          const error = { status: false, error: 'Mongodb: Error while connecting.' };
           if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
           inReject && inReject(error);
           return;
@@ -38,7 +38,7 @@ Mongodb.prototype.connect = function (config) {
         self.client = client2;
         self.db = client2.db(config.db);
         if (!self.db) {
-          const error = { status: false, error: 'Error while connecting.' };
+          const error = { status: false, error: 'Mongodb: Error while connecting.' };
           if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
           inReject && inReject(error);
           return;
@@ -46,7 +46,7 @@ Mongodb.prototype.connect = function (config) {
         inResolve && inResolve(this.client);
       });
     } catch (err) {
-      const error = { status: false, error: 'Error while connecting.' };
+      const error = { status: false, error: 'Mongodb: Error while connecting.' };
       if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
       inReject && inReject(error);
     }

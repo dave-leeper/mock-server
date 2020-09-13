@@ -1,10 +1,8 @@
 /* eslint-disable import/order */
-import { Octokit } from '@octokit/rest';
-
-import { will, ERROR, error as _error, stringify } from '../util/log';
-import { decrypt } from '../util/encrypt';
-import { get } from '../util/registry';
-
+const { Octokit } = require('@octokit/rest');
+const Encrypt = require('../util/encrypt.js');
+const Log = require('../util/log.js');
+const Registry = require('../util/registry.js');
 const axios = require('axios').default;
 
 // https://octokit.github.io/rest.js/v18#usage
@@ -17,8 +15,8 @@ function GithubDB(name) {
   this.name = name;
   this.config = null;
   this.client = null;
-  const crypto = get('Crypto');
-  this.token = decrypt('5ee0c6633e795b9eaa9b77fb1988a3a5a5c786994d65be67f4934fd0ec4320e58f80d03b4ba2e240cd21876dc37af152', crypto.iv, crypto.key);
+  const crypto = Registry.get('Crypto');
+  this.token = Encrypt.decrypt('5ee0c6633e795b9eaa9b77fb1988a3a5a5c786994d65be67f4934fd0ec4320e58f80d03b4ba2e240cd21876dc37af152', crypto.iv, crypto.key);
 }
 
 /**
@@ -28,9 +26,9 @@ function GithubDB(name) {
 GithubDB.prototype.connect = function (config) {
   return new Promise((inResolve, inReject) => {
     try {
-      if (!config || !config.url || !config.db) {
-        const error = { status: false, error: 'Error while connecting.' };
-        if (will(ERROR)) _error(stringify(error));
+      if (!config || !config.config || !config.config.owner || !config.config.repo || !config.config.committer || !config.config.author) {
+        const error = { status: false, error: 'GithubDB: Error while connecting. Invalid config.' };
+        if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
         inReject && inReject(error);
         return;
       }
@@ -42,8 +40,8 @@ GithubDB.prototype.connect = function (config) {
       this.client = getOctoKit();
       inResolve && inResolve(this.client);
     } catch (err) {
-      const error = { status: false, error: 'Error while connecting.' };
-      if (will(ERROR)) _error(stringify(error));
+      const error = { status: false, error: 'GithubDB: Error while connecting. General error.' };
+      if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
       inReject && inReject(error);
     }
   });
@@ -82,7 +80,7 @@ GithubDB.prototype.createCollection = function (path) {
 GithubDB.prototype.dropCollection = function (path) {
   return new Promise((inResolve, inReject) => {
     this.readCollection(path).then((fileArray) => {
-      let promises = []
+      const promises = [];
       for (let fileIndex = 0; fileIndex < fileArray.length; fileIndex++) {
         const file = fileArray[fileIndex];
         promises.push(this.delete(file.path));
@@ -91,14 +89,14 @@ GithubDB.prototype.dropCollection = function (path) {
         .then((values) => {
           inResolve && inResolve({ status: true });
         })
-        .catch(err) {
+        .catch((err) => {
           const error = { status: false, error: 'Error while dropping collection.' };
-          if (will(ERROR)) _error(stringify(error));
+          if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
           inReject && inReject(error);
-        }
+        })
     }).catch((err) => {
       const error = { status: false, error: 'Error while dropping collection.' };
-      if (will(ERROR)) _error(stringify(error));
+      if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
       inReject && inReject(error);
     });
   });
@@ -115,7 +113,7 @@ GithubDB.prototype.readCollection = function (path) {
         inResolve && inResolve(content.data);
       } catch (err) {
         const error = { status: false, error: 'Error while reading collection.' };
-        if (will(ERROR)) _error(stringify(error));
+        if (Log.will(Log.ERROR)) Log.error(stringify(error));
         inReject && inReject(error);
       }
     };
@@ -157,7 +155,7 @@ GithubDB.prototype.insert = function (path, data) {
         inResolve && inResolve({ status: true });
       } catch (err) {
         const error = { status: false, error: 'Error while inserting data.' };
-        if (will(ERROR)) _error(stringify(error));
+        if (Log.will(Log.ERROR)) Log.error(stringify(error));
         inReject && inReject(error);
       }
     };
@@ -181,7 +179,7 @@ GithubDB.prototype.update = function (path, data) {
         inResolve && inResolve({ status: true });
       } catch (err) {
         const error = { status: false, error: 'Error while updating data.' };
-        if (will(ERROR)) _error(stringify(error));
+        if (Log.will(Log.ERROR)) Log.error(stringify(error));
         inReject && inReject(error);
       }
     };
@@ -201,7 +199,7 @@ GithubDB.prototype.delete = function (path) {
         inResolve && inResolve({ status: true });
       } catch (err) {
         const error = { status: false, error: 'Error while deleting data.' };
-        if (will(ERROR)) _error(stringify(error));
+        if (Log.will(Log.ERROR)) Log.error(stringify(error));
         inReject && inReject(error);
       }
     };
@@ -221,7 +219,7 @@ GithubDB.prototype.read = function (path) {
         })
         .catch((err) => {
           const error = { status: false, error: 'Error while querying data.' };
-          if (will(ERROR)) _error(stringify(error));
+          if (Log.will(Log.ERROR)) Log.error(stringify(error));
           inReject && inReject(error);
         });
     };
@@ -229,4 +227,4 @@ GithubDB.prototype.read = function (path) {
   });
 };
 
-export default GithubDB;
+module.exports = GithubDB;

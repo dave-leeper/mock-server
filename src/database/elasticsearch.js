@@ -24,7 +24,7 @@ Elasticsearch.prototype.connect = function (config) {
       this.config = config;
       inResolve && inResolve(this.client);
     } catch (err) {
-      const error = { status: false, error: 'Error while connecting.' };
+      const error = { status: false, error: 'Elasticsearch: Error while connecting.' };
       if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
       inReject && inReject(error);
     }
