@@ -7,6 +7,7 @@
     "test": "mocha \"test/**/*.js\"",
     "test-util": "mocha \"test/unit/util/*.js\"",
     "test-endpoints": "mocha \"test/unit/endpoints/*.js\" & mocha \"test/e2e/endpoints/*.js\" & mocha \"test/unit/routers/route-builder-endpoints.test.js\"",
+    "test-database": "mocha \"test/e2e/database/*.js\"",
     "test-microservices": "mocha \"test/unit/microservices/*.js\" & mocha \"test/e2e/microservices/*.js\" & mocha \"test/unit/routers/route-builder-microservices.test.js\"",
     "test-authentication": "mocha \"test/unit/authentication/*.js\"",
     "test-server": "mocha \"test/e2e/server.test.js\"",

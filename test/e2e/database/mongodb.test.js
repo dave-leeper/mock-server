@@ -67,7 +67,7 @@ const updateData = {
 const query = {
   title: 'my title',
 };
-describe('As a developer, I need to connect, ping, and disconnect to/from mongodb.', () => {
+describe.skip('As a developer, I need to connect, ping, and disconnect to/from mongodb.', () => {
   before(() => {
   });
   beforeEach(() => {
@@ -95,7 +95,7 @@ describe('As a developer, I need to connect, ping, and disconnect to/from mongod
   });
 });
 
-describe('As a developer, I need to create, check for the existence of, and drop mongodb collections.', () => {
+describe.skip('As a developer, I need to create, check for the existence of, and drop mongodb collections.', () => {
   before((done) => {
     mongodb.connect(configInfo.config).then(() => {
       done();
@@ -170,7 +170,7 @@ describe('As a developer, I need to create, check for the existence of, and drop
   });
 });
 
-describe('As a developer, I need to perform CRUD operations on the mongodb database.', () => {
+describe.skip('As a developer, I need to perform CRUD operations on the mongodb database.', () => {
   before((done) => {
     mongodb.connect(configInfo.config).then(() => {
       done();
@@ -250,7 +250,7 @@ describe('As a developer, I need to perform CRUD operations on the mongodb datab
   });
 });
 
-describe('As a developer, I need work with a Mongo database using a REST interface', () => {
+describe.skip('As a developer, I need work with a Mongo database using a REST interface', () => {
   before(() => {
   });
   beforeEach((done) => {

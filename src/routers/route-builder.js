@@ -7,6 +7,7 @@ const RouteBuilderMocks = require('./route-builder-mocks.js');
 const RouteBuilderMicroservices = require('./route-builder-microservices.js');
 const RouteBuilderEndpoints = require('./route-builder-endpoints.js');
 const RouteBuilderElasticsearchDatabase = require('./route-builder-elasticsearch-database.js');
+const RouteBuilderGithubDatabase = require('./route-builder-github-database.js');
 const RouteBuilderMongoDatabase = require('./route-builder-mongo-database.js');
 const Registry = require('../util/registry.js');
 const Strings = require('../util/strings.js');
@@ -40,6 +41,9 @@ class RouteBuilder {
 
     const routeBuilderMongoDatabase = new RouteBuilderMongoDatabase();
     routeBuilderMongoDatabase.connect(router, config, databaseConnectionCallback);
+
+    const routeBuilderGithubDatabase = new RouteBuilderGithubDatabase();
+    routeBuilderGithubDatabase.connect(router, config, databaseConnectionCallback);
 
     return router;
   }

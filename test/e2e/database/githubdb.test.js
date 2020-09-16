@@ -15,6 +15,11 @@ const GithubDB = require('../../../src/database/githubdb.js');
 const Server = require('../../../server.js');
 const Registry = require('../../../src/util/registry.js');
 
+const crypto = {
+  key: Buffer.from([0xfa, 0x22, 0xea, 0xfd, 0x8a, 0xac, 0xe8, 0x71, 0x9d, 0xa8, 0x82, 0x65, 0x75, 0x12, 0x16, 0x49, 0xaf, 0xfe, 0x39, 0x9f, 0x1d, 0x16, 0xa1, 0xe8, 0x5a, 0x8e, 0xd6, 0x27, 0xf6, 0xde, 0x24, 0x58]),
+  iv: Buffer.from([0xfb, 0x2e, 0x85, 0x78, 0x55, 0x1d, 0x91, 0xe8, 0x4d, 0xfd, 0x25, 0xe1, 0xb9, 0x81, 0x2d, 0xd5]),
+};
+Registry.register(crypto, 'Crypto');
 const githubdb = new GithubDB();
 const testCollection = 'testCollection';
 const port = 1337;
@@ -47,18 +52,27 @@ const updateData = {
   content: 'my updated content',
   suggest: 'my updated suggest',
 };
-describe('As a developer, I need to connect, ping, and disconnect to/from mongodb.', () => {
+describe('As a developer, I need to connect, ping, and disconnect to/from githubdb.', () => {
   before(() => {
   });
-  beforeEach(() => {
+  beforeEach(async () => {
     Registry.unregisterAll();
+    const crypto = {
+      key: Buffer.from([0xfa, 0x22, 0xea, 0xfd, 0x8a, 0xac, 0xe8, 0x71, 0x9d, 0xa8, 0x82, 0x65, 0x75, 0x12, 0x16, 0x49, 0xaf, 0xfe, 0x39, 0x9f, 0x1d, 0x16, 0xa1, 0xe8, 0x5a, 0x8e, 0xd6, 0x27, 0xf6, 0xde, 0x24, 0x58]),
+      iv: Buffer.from([0xfb, 0x2e, 0x85, 0x78, 0x55, 0x1d, 0x91, 0xe8, 0x4d, 0xfd, 0x25, 0xe1, 0xb9, 0x81, 0x2d, 0xd5]),
+    };
+    Registry.register(crypto, 'Crypto');
+    const collectionExists = await githubdb.collectionExists(testCollection);
+    if (collectionExists) {
+      await githubdb.dropCollection(testCollection);
+    }
   });
   afterEach(() => {
   });
   after(() => {
   });
   it('should be able to connect, ping, and disconnect the connection', (done) => {
-    githubdb.connect(configInfo.config).then(() => {
+    githubdb.connect(config.databaseConnections[0]).then(() => {
       githubdb.ping().then((pingResult) => {
         expect(pingResult).to.be.equal(true);
         githubdb.disconnect().then(() => {
@@ -77,20 +91,22 @@ describe('As a developer, I need to connect, ping, and disconnect to/from mongod
 
 describe('As a developer, I need to create, check for the existence of, and drop githubdb collections.', () => {
   before((done) => {
-    githubdb.connect(configInfo.config).then(() => {
+    githubdb.connect(config.databaseConnections[0]).then(() => {
       done();
     });
   });
-  beforeEach((done) => {
+  beforeEach(async function () {
+    this.timeout(5000);
     Registry.unregisterAll();
-    githubdb.collectionExists(testCollection).then((exits) => {
-      if (!exits) done();
-      else {
-        githubdb.dropCollection(testCollection).then(() => {
-          done();
-        });
-      }
-    });
+    const crypto = {
+      key: Buffer.from([0xfa, 0x22, 0xea, 0xfd, 0x8a, 0xac, 0xe8, 0x71, 0x9d, 0xa8, 0x82, 0x65, 0x75, 0x12, 0x16, 0x49, 0xaf, 0xfe, 0x39, 0x9f, 0x1d, 0x16, 0xa1, 0xe8, 0x5a, 0x8e, 0xd6, 0x27, 0xf6, 0xde, 0x24, 0x58]),
+      iv: Buffer.from([0xfb, 0x2e, 0x85, 0x78, 0x55, 0x1d, 0x91, 0xe8, 0x4d, 0xfd, 0x25, 0xe1, 0xb9, 0x81, 0x2d, 0xd5]),
+    };
+    Registry.register(crypto, 'Crypto');
+    const collectionExists = await githubdb.collectionExists(testCollection);
+    if (collectionExists) {
+      await githubdb.dropCollection(testCollection);
+    }
   });
   afterEach(() => {
   });
@@ -100,59 +116,60 @@ describe('As a developer, I need to create, check for the existence of, and drop
     });
   });
 
-  it('should create collections (tables).', (done) => {
-    githubdb.createCollection(testCollection).then((createResult) => {
+  it('should create collections (directories).', async () => {
+    try {
+      const createResult = await githubdb.createCollection(testCollection);
       expect(createResult.status).to.be.equal(true);
-      done();
-    }, (error) => {
+    } catch (err) {
+      console.log(JSON.stringify(err));
       expect(false).to.be.equal(true);
-    });
+    }
   });
 
-  it('should be able to to tell when a collection exists.', (done) => {
-    githubdb.createCollection(testCollection).then((createResult) => {
+  it('should be able to to tell when a collection exists.', async () => {
+    try {
+      const createResult = await githubdb.createCollection(testCollection);
       expect(createResult.status).to.be.equal(true);
-      githubdb.collectionExists(testCollection).then((existsResult) => {
-        expect(existsResult).to.be.equal(true);
-        done();
-      });
-    }, (error) => {
+      const existsResult = await githubdb.collectionExists(testCollection);
+      expect(existsResult).to.be.equal(true);
+    } catch (err) {
       expect(false).to.be.equal(true);
-    });
+    }
   });
 
-  it('should be able to to tell when a collection does not exist.', (done) => {
-    githubdb.collectionExists('JUNK').then((existsResult) => {
+  it('should be able to to tell when a collection does not exist.', async () => {
+    try {
+      const existsResult = await githubdb.collectionExists('JUNK');
       expect(existsResult).to.be.equal(false);
-      done();
-    });
-  });
-
-  it('should drop collections.', (done) => {
-    githubdb.createCollection(testCollection).then((createResult) => {
-      expect(createResult.status).to.be.equal(true);
-      githubdb.dropCollection(testCollection).then((dropResult) => {
-        expect(dropResult.status).to.be.equal(true);
-        done();
-      }, (error) => {
-        expect(false).to.be.equal(true);
-      });
-    });
-  });
-
-  it('should not drop collections that dont exist.', (done) => {
-    githubdb.dropCollection('JUNK').then((dropResult) => {
+    } catch (err) {
       expect(false).to.be.equal(true);
-    }, (error) => {
+    }
+  });
+
+  it('should drop collections.', async () => {
+    try {
+      const createResult = await githubdb.createCollection(testCollection);
+      expect(createResult.status).to.be.equal(true);
+      const dropResult = await githubdb.dropCollection(testCollection);
+      expect(dropResult.status).to.be.equal(true);
+    } catch (error) {
+      expect(false).to.be.equal(true);
+    }
+  }).timeout(5000);
+
+  it('should not drop collections that dont exist.', async () => {
+    try {
+      const dropResult = await githubdb.dropCollection('JUNK');
+      expect(false).to.be.equal(true);
+    } catch (error) {
       expect(error.status).to.be.equal(false);
-      done();
-    });
+    }
   });
 });
 
 describe('As a developer, I need to perform CRUD operations on the githubdb database.', () => {
   before((done) => {
-    githubdb.connect(configInfo.config).then(() => {
+    githubdb.connect(config.databaseConnections[0]).then(() => {
       done();
     });
   });
@@ -164,13 +181,19 @@ describe('As a developer, I need to perform CRUD operations on the githubdb data
         done();
       });
     });
+    const crypto = {
+      key: Buffer.from([0xfa, 0x22, 0xea, 0xfd, 0x8a, 0xac, 0xe8, 0x71, 0x9d, 0xa8, 0x82, 0x65, 0x75, 0x12, 0x16, 0x49, 0xaf, 0xfe, 0x39, 0x9f, 0x1d, 0x16, 0xa1, 0xe8, 0x5a, 0x8e, 0xd6, 0x27, 0xf6, 0xde, 0x24, 0x58]),
+      iv: Buffer.from([0xfb, 0x2e, 0x85, 0x78, 0x55, 0x1d, 0x91, 0xe8, 0x4d, 0xfd, 0x25, 0xe1, 0xb9, 0x81, 0x2d, 0xd5]),
+    };
+    Registry.register(crypto, 'Crypto');
   });
-  afterEach((done) => {
+  afterEach(function (done) {
+    this.timeout(5000);
     githubdb.collectionExists(testCollection).then((exits) => {
       if (!exits) return done();
       githubdb.dropCollection(testCollection).then(() => {
         done();
-      });
+      }).catch(() => { done(); });
     });
   });
   after((done) => {
@@ -179,50 +202,100 @@ describe('As a developer, I need to perform CRUD operations on the githubdb data
     });
   });
   it('should be able to insert records into the database.', (done) => {
-    githubdb.insert(testCollection, data).then((result) => {
+    githubdb.upsert(`${testCollection}/MyFile`, JSON.stringify(data))
+      .then((result) => {
+        expect(result.status).to.be.equal(true);
+        done();
+      })
+      .catch((error) => {
+        console.log(JSON.stringify(error));
+        expect(true).to.be.equal(false);
+      });
+  }).timeout(5000);
+  it('should be able to read records in the database.', (done) => {
+    githubdb.upsert(`${testCollection}/MyFile`, JSON.stringify(data)).then((result) => {
       expect(result.status).to.be.equal(true);
       done();
-    }, (error) => {
+    }).catch((error) => {
       expect(true).to.be.equal(false);
+      done();
     });
-  });
-  it('should be able to read records in the database.', (done) => {
-    githubdb.insert(testCollection, data).then((result) => {
-      githubdb.read(testCollection).then((result) => {
-        expect(result).to.not.be.null;
-        expect(result.title).to.be.equal('my title');
-        expect(result.content).to.be.equal('my content');
-        expect(result.suggest).to.be.equal('my suggest');
-        done();
-      }, (error) => {
-        expect(true).to.be.equal(false);
-      });
-    }, (error) => {
-      expect(true).to.be.equal(false);
-    });
-  });
+  }).timeout(5000);
   it('should be able to update records in the database.', (done) => {
-    githubdb.insert(testCollection, data).then((result) => {
-      githubdb.update(testCollection, query, updateData).then((result) => {
-        expect(result.status).to.be.equal(true);
-        done();
-      }, (error) => {
+    githubdb.upsert(`${testCollection}/MyFile`, JSON.stringify(data))
+      .then((result) => {
+        githubdb.update(`${testCollection}/MyFile`, JSON.stringify(updateData))
+          .then((result) => {
+            expect(result.status).to.be.equal(true);
+            done();
+          })
+          .catch((error) => {
+            expect(true).to.be.equal(false);
+          });
+      })
+      .catch((error) => {
         expect(true).to.be.equal(false);
       });
-    }, (error) => {
-      expect(true).to.be.equal(false);
-    });
-  });
+  }).timeout(5000);
   it('should be able to delete records in the database.', (done) => {
-    githubdb.insert(testCollection, data).then((result) => {
-      githubdb.delete(testCollection, data).then((result) => {
+    githubdb.upsert(`${testCollection}/MyFile`, JSON.stringify(data)).then((result) => {
+      githubdb.delete(`${testCollection}/MyFile`).then((result) => {
         expect(result.status).to.be.equal(true);
         done();
-      }, (error) => {
+      }).catch((error) => {
         expect(true).to.be.equal(false);
       });
-    }, (error) => {
+    }).catch((error) => {
       expect(true).to.be.equal(false);
     });
+  }).timeout(5000);
+});
+
+describe('As a developer, I need to be able to lock and unlock files', () => {
+  before((done) => {
+    githubdb.connect(config.databaseConnections[0]).then(() => {
+      done();
+    });
   });
+  beforeEach(async () => {
+    Registry.unregisterAll();
+    const crypto = {
+      key: Buffer.from([0xfa, 0x22, 0xea, 0xfd, 0x8a, 0xac, 0xe8, 0x71, 0x9d, 0xa8, 0x82, 0x65, 0x75, 0x12, 0x16, 0x49, 0xaf, 0xfe, 0x39, 0x9f, 0x1d, 0x16, 0xa1, 0xe8, 0x5a, 0x8e, 0xd6, 0x27, 0xf6, 0xde, 0x24, 0x58]),
+      iv: Buffer.from([0xfb, 0x2e, 0x85, 0x78, 0x55, 0x1d, 0x91, 0xe8, 0x4d, 0xfd, 0x25, 0xe1, 0xb9, 0x81, 0x2d, 0xd5]),
+    };
+    Registry.register(crypto, 'Crypto');
+    const lockExists = await githubdb.fileExists('.___lock_test.lock');
+    if (lockExists) {
+      await githubdb.delete('.___lock_test.lock');
+    }
+  });
+  afterEach(() => {
+  });
+  after(() => {
+  });
+  it('should be able to create a lock', async () => {
+    try {
+      await githubdb.upsert('test.lock', 'x');
+      await githubdb.lock('test.lock');
+      const lockExists = await githubdb.fileExists('.___lock_test.lock');
+      expect(lockExists).to.be.equal(true);
+      await githubdb.delete('.___lock_test.lock');
+    } catch (err) {
+      console.log(JSON.stringify(err));
+    }
+  }).timeout(5000);
+
+  it('should be able to clear a lock', async () => {
+    try {
+      await githubdb.upsert('test.lock', 'x');
+      await githubdb.lock('test.lock');
+      let lockExists = await githubdb.fileExists('.___lock_test.lock');
+      expect(lockExists).to.be.equal(true);
+      await githubdb.unlock('test.lock');
+      lockExists = await githubdb.fileExists('.___lock_test.lock');
+      expect(lockExists).to.be.equal(false);
+    } catch (err) {
+      console.log(JSON.stringify(err));
+    }
+  }).timeout(5000);
 });

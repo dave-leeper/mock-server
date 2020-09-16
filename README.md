@@ -12,6 +12,14 @@ npm start
 ```
 npm run test
 ```
+To run a subset of tests...
+```
+npm run test-util
+npm run test-endpoints
+npm run test-database
+npm run test-microservices
+npm run test-authentication
+```
 
 # To Start In-Memory Server 
 ```
