@@ -397,7 +397,8 @@ describe('As a developer, I need to be able to have database transactions', () =
   });
   it('should be able to begin a transaction', async () => {
     try {
-      githubdb.beginTransaction(['accounts']);
+      const token = await githubdb.beginTransaction('accounts');
+      console.log(JSON.stringify(token));
     } catch (err) {
       console.log(JSON.stringify(err));
     }

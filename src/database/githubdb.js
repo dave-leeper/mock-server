@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-console */
 /* eslint-disable import/order */
@@ -149,7 +150,10 @@ class GithubDB {
   async getSHA(path) {
     const octokit = this.client;
     const { owner, repo } = this.config;
-    const content = await octokit.repos.getContent({ owner, repo, path });
+    let content = await octokit.repos.getContent({ owner, repo, path });
+    if (typeof content === 'string') {
+      content = JSON.parse(content);
+    }
     return content.data.sha;
   }
 
@@ -256,18 +260,6 @@ class GithubDB {
       const error = { status: false, error: `Error while reading commits from ${path}. ${JSON.stringify(err)}` };
       if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
       throw error;
-    }
-  }
-
-  // content.data
-  // "path":"testCollection/.___",
-  // "sha":"a74daadbdc4bcaf6dca3c34ba572781e7315071a",
-  // "type":"file",
-  // "mode": "100644", The file mode; one of 100644 for file (blob), 100755 for executable (blob), 040000 for subdirectory (tree), 160000 for submodule (commit), or 120000 for a blob that specifies the path of a symlink.
-  async beginTransaction(paths) {
-    for (let pathIndex = 0; pathIndex < paths.length; pathIndex++) {
-      const path = paths[pathIndex];
-      await this.lock(path);
     }
   }
 }
