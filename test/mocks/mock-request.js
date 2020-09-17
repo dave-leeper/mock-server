@@ -24,7 +24,11 @@ MockRequest.prototype.cookie = function (name, value) {
     this.cookies.push({ name, value });
     return;
   }
-  for (let loop = 0; loop < this.cookies.length; loop++) { if (this.cookies[loop].name === name) return this.cookies[loop].value; }
+  for (let loop = 0; loop < this.cookies.length; loop++) {
+    if (this.cookies[loop].name === name) {
+      return this.cookies[loop].value; 
+    }
+  }
   return undefined;
 };
 

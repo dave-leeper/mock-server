@@ -30,6 +30,7 @@ const config = {
       name: 'github',
       description: 'Github service.',
       databaseConnector: 'githubdb.js',
+      factory: 'github-factory.js',
       generateConnectionAPI: false,
       generateIndexAPI: false,
       generateDataAPI: false,
@@ -37,7 +38,7 @@ const config = {
         owner: 'dave-leeper',
         repo: 'HERO-server-db',
         committer: { name: 'dave-leeper', email: 'magicjtv@gmail.com' },
-        author: { name: 'dave-leeper', email: 'magicjtv@gmail.com' },
+        author: { name: 'dave-leeper', email: 'magicjtv@gmail.com' }
       },
     },
   ],

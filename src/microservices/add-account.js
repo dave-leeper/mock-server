@@ -35,42 +35,47 @@ class AddAccount {
   do(params) {
     return new Promise((inResolve, inReject) => {
       const addAccount = async () => {
-        const databaseResult = await this.getDatabaseClient();
-        if (databaseResult.status !== 200) {
-          if (Log.will(Log.ERROR)) Log.error(databaseResult.send);
-          inReject && inReject(databaseResult);
-          return;
-        }
-        const databaseClient = databaseResult.client;
-        const newAccount = this.buildAccount(params.body);
+        try {
+          const databaseResult = await this.getDatabaseClient();
+          if (databaseResult.status !== 200) {
+            if (Log.will(Log.ERROR)) Log.error(databaseResult.send);
+            inReject && inReject(databaseResult);
+            return;
+          }
+          const databaseClient = databaseResult.client;
+          const newAccount = this.buildAccount(params.body);
 
-        const validateResult = await this.validate(databaseClient, newAccount);
-        if (validateResult.status !== 200) {
-          if (Log.will(Log.ERROR)) Log.error(validateResult.send);
-          inReject && inReject(validateResult);
-          return;
-        }
+          const validateResult = await this.validate(databaseClient, newAccount);
+          if (validateResult.status !== 200) {
+            if (Log.will(Log.ERROR)) Log.error(validateResult.send);
+            inReject && inReject(validateResult);
+            return;
+          }
 
-        const updateEmailResult = await this.updateIndex(databaseClient, newAccount);
-        if (updateEmailResult.status !== 200) {
-          if (Log.will(Log.ERROR)) Log.error(updateEmailResult.send);
-          inReject && inReject(updateEmailResult);
-          return;
-        }
+          const updateEmailResult = await this.updateIndex(databaseClient, newAccount);
+          if (updateEmailResult.status !== 200) {
+            if (Log.will(Log.ERROR)) Log.error(updateEmailResult.send);
+            inReject && inReject(updateEmailResult);
+            return;
+          }
 
-        const machine = params.req.clientIp;
-        const { rememberMe } = params.req;
-        const addAccountResult = await this.addAccount(databaseClient, newAccount, machine, rememberMe);
-        if (addAccountResult.status !== 200) {
-          if (Log.will(Log.ERROR)) Log.error(addAccountResult.send);
-          inReject && inReject(addAccountResult);
-          return;
-        }
+          const machine = params.req.clientIp;
+          const { rememberMe } = params.req;
+          const addAccountResult = await this.addAccount(databaseClient, newAccount, machine, rememberMe);
+          if (addAccountResult.status !== 200) {
+            if (Log.will(Log.ERROR)) Log.error(addAccountResult.send);
+            inReject && inReject(addAccountResult);
+            return;
+          }
 
-        const message = I18n.get(Strings.SUCCESS_MESSAGE_ACCOUNT_ADDED);
-        inResolve && inResolve({ status: 200, send: message });
+          const message = I18n.get(Strings.SUCCESS_MESSAGE_ACCOUNT_ADDED);
+          inResolve && inResolve({ status: 200, send: message });
+        } catch (err) {
+          const error = { status: 500, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED), JSON.stringify(err)) };
+          if (Log.will(Log.ERROR)) Log.error(error.send);
+          inReject && inReject(error);
+        }
       };
-
       addAccount();
     });
   }
@@ -182,15 +187,18 @@ class AddAccount {
 
   async updateIndex(databaseClient, newAccount) {
     try {
+      databaseClient.lock('index.json');
       let emailsData = await databaseClient.read('index.json');
       const emails = JSON.parse(emailsData);
       emails.push({ email: newAccount.email, username: newAccount.username });
       emailsData = JSON.stringify(emails);
       databaseClient.update('index.json', emailsData);
+      databaseClient.unlock('index.json');
       return { status: 200 };
     } catch (err) {
       const message = Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED), 'Could not update email/username information.');
       if (Log.will(Log.ERROR)) Log.error(message);
+      databaseClient.unlock('index.json');
       return { status: 500, send: message };
     }
   }

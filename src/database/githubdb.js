@@ -1,8 +1,9 @@
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable-next-line global-require */
 /* eslint-disable camelcase */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-console */
 /* eslint-disable import/order */
-const { Octokit } = require('@octokit/rest');
 const Encrypt = require('../util/encrypt.js');
 const Log = require('../util/log.js');
 const Registry = require('../util/registry.js');
@@ -36,8 +37,10 @@ class GithubDB {
       }
       this.config = config.config;
       const getOctoKit = () => {
-        const appOctokit = new Octokit({ auth: this.token });
-        return appOctokit;
+        const factoryPath = `./${config.factory}`;
+        const factory = require(factoryPath);
+        const octokit = factory(this.token);
+        return octokit;
       };
       this.client = getOctoKit();
       return this.client;
