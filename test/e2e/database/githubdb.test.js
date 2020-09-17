@@ -96,7 +96,7 @@ describe('As a developer, I need to create, check for the existence of, and drop
     });
   });
   beforeEach(async function () {
-    this.timeout(5000);
+    this.timeout(10000);
     Registry.unregisterAll();
     const crypto = {
       key: Buffer.from([0xfa, 0x22, 0xea, 0xfd, 0x8a, 0xac, 0xe8, 0x71, 0x9d, 0xa8, 0x82, 0x65, 0x75, 0x12, 0x16, 0x49, 0xaf, 0xfe, 0x39, 0x9f, 0x1d, 0x16, 0xa1, 0xe8, 0x5a, 0x8e, 0xd6, 0x27, 0xf6, 0xde, 0x24, 0x58]),
@@ -135,7 +135,7 @@ describe('As a developer, I need to create, check for the existence of, and drop
     } catch (err) {
       expect(false).to.be.equal(true);
     }
-  });
+  }).timeout(10000);
 
   it('should be able to to tell when a collection does not exist.', async () => {
     try {
@@ -155,7 +155,7 @@ describe('As a developer, I need to create, check for the existence of, and drop
     } catch (error) {
       expect(false).to.be.equal(true);
     }
-  }).timeout(5000);
+  }).timeout(10000);
 
   it('should not drop collections that dont exist.', async () => {
     try {
@@ -173,28 +173,25 @@ describe('As a developer, I need to perform CRUD operations on the githubdb data
       done();
     });
   });
-  beforeEach((done) => {
+  beforeEach(async function () {
+    this.timeout(10000);
     Registry.unregisterAll();
-    githubdb.collectionExists(testCollection).then((exits) => {
-      if (exits) return done();
-      githubdb.createCollection(testCollection).then(() => {
-        done();
-      });
-    });
     const crypto = {
       key: Buffer.from([0xfa, 0x22, 0xea, 0xfd, 0x8a, 0xac, 0xe8, 0x71, 0x9d, 0xa8, 0x82, 0x65, 0x75, 0x12, 0x16, 0x49, 0xaf, 0xfe, 0x39, 0x9f, 0x1d, 0x16, 0xa1, 0xe8, 0x5a, 0x8e, 0xd6, 0x27, 0xf6, 0xde, 0x24, 0x58]),
       iv: Buffer.from([0xfb, 0x2e, 0x85, 0x78, 0x55, 0x1d, 0x91, 0xe8, 0x4d, 0xfd, 0x25, 0xe1, 0xb9, 0x81, 0x2d, 0xd5]),
     };
     Registry.register(crypto, 'Crypto');
+    const exists = await githubdb.collectionExists(testCollection);
+    if (!exists) {
+      await githubdb.createCollection(testCollection);
+    }
   });
-  afterEach(function (done) {
-    this.timeout(5000);
-    githubdb.collectionExists(testCollection).then((exits) => {
-      if (!exits) return done();
-      githubdb.dropCollection(testCollection).then(() => {
-        done();
-      }).catch(() => { done(); });
-    });
+  afterEach(async function () {
+    this.timeout(10000);
+    const exists = await githubdb.collectionExists(testCollection);
+    if (exists) {
+      await githubdb.dropCollection(testCollection);
+    }
   });
   after((done) => {
     githubdb.disconnect().then(() => {
@@ -211,7 +208,7 @@ describe('As a developer, I need to perform CRUD operations on the githubdb data
         console.log(JSON.stringify(error));
         expect(true).to.be.equal(false);
       });
-  }).timeout(5000);
+  }).timeout(10000);
   it('should be able to read records in the database.', (done) => {
     githubdb.upsert(`${testCollection}/MyFile`, JSON.stringify(data)).then((result) => {
       expect(result.status).to.be.equal(true);
@@ -220,7 +217,7 @@ describe('As a developer, I need to perform CRUD operations on the githubdb data
       expect(true).to.be.equal(false);
       done();
     });
-  }).timeout(5000);
+  }).timeout(10000);
   it('should be able to update records in the database.', (done) => {
     githubdb.upsert(`${testCollection}/MyFile`, JSON.stringify(data))
       .then((result) => {
@@ -236,7 +233,7 @@ describe('As a developer, I need to perform CRUD operations on the githubdb data
       .catch((error) => {
         expect(true).to.be.equal(false);
       });
-  }).timeout(5000);
+  }).timeout(10000);
   it('should be able to delete records in the database.', (done) => {
     githubdb.upsert(`${testCollection}/MyFile`, JSON.stringify(data)).then((result) => {
       githubdb.delete(`${testCollection}/MyFile`).then((result) => {
@@ -248,7 +245,7 @@ describe('As a developer, I need to perform CRUD operations on the githubdb data
     }).catch((error) => {
       expect(true).to.be.equal(false);
     });
-  }).timeout(5000);
+  }).timeout(10000);
 });
 
 describe('As a developer, I need to be able to lock and unlock files', () => {
@@ -257,19 +254,34 @@ describe('As a developer, I need to be able to lock and unlock files', () => {
       done();
     });
   });
-  beforeEach(async () => {
+  beforeEach(async function () {
+    this.timeout(10000);
     Registry.unregisterAll();
     const crypto = {
       key: Buffer.from([0xfa, 0x22, 0xea, 0xfd, 0x8a, 0xac, 0xe8, 0x71, 0x9d, 0xa8, 0x82, 0x65, 0x75, 0x12, 0x16, 0x49, 0xaf, 0xfe, 0x39, 0x9f, 0x1d, 0x16, 0xa1, 0xe8, 0x5a, 0x8e, 0xd6, 0x27, 0xf6, 0xde, 0x24, 0x58]),
       iv: Buffer.from([0xfb, 0x2e, 0x85, 0x78, 0x55, 0x1d, 0x91, 0xe8, 0x4d, 0xfd, 0x25, 0xe1, 0xb9, 0x81, 0x2d, 0xd5]),
     };
     Registry.register(crypto, 'Crypto');
-    const lockExists = await githubdb.fileExists('.___lock_test.lock');
+    const lockExists = await githubdb.isLocked('test.lock');
     if (lockExists) {
-      await githubdb.delete('.___lock_test.lock');
+      await githubdb.unlock('test.lock');
+    }
+    const fileExists = await githubdb.fileExists('test.lock');
+    if (fileExists) {
+      await githubdb.delete('test.lock');
     }
   });
-  afterEach(() => {
+  // eslint-disable-next-line prefer-arrow-callback
+  afterEach(async function () {
+    this.timeout(10000);
+    const lockExists = await githubdb.isLocked('test.lock');
+    if (lockExists) {
+      await githubdb.unlock('test.lock');
+    }
+    const fileExists = await githubdb.fileExists('test.lock');
+    if (fileExists) {
+      await githubdb.delete('test.lock');
+    }
   });
   after(() => {
   });
@@ -279,11 +291,10 @@ describe('As a developer, I need to be able to lock and unlock files', () => {
       await githubdb.lock('test.lock');
       const lockExists = await githubdb.fileExists('.___lock_test.lock');
       expect(lockExists).to.be.equal(true);
-      await githubdb.delete('.___lock_test.lock');
     } catch (err) {
       console.log(JSON.stringify(err));
     }
-  }).timeout(5000);
+  }).timeout(10000);
 
   it('should be able to clear a lock', async () => {
     try {
@@ -297,5 +308,98 @@ describe('As a developer, I need to be able to lock and unlock files', () => {
     } catch (err) {
       console.log(JSON.stringify(err));
     }
-  }).timeout(5000);
+  }).timeout(10000);
+});
+
+describe('As a developer, I need to be able to work with commits', () => {
+  before((done) => {
+    githubdb.connect(config.databaseConnections[0]).then(() => {
+      done();
+    });
+  });
+  beforeEach(async () => {
+    Registry.unregisterAll();
+    const crypto = {
+      key: Buffer.from([0xfa, 0x22, 0xea, 0xfd, 0x8a, 0xac, 0xe8, 0x71, 0x9d, 0xa8, 0x82, 0x65, 0x75, 0x12, 0x16, 0x49, 0xaf, 0xfe, 0x39, 0x9f, 0x1d, 0x16, 0xa1, 0xe8, 0x5a, 0x8e, 0xd6, 0x27, 0xf6, 0xde, 0x24, 0x58]),
+      iv: Buffer.from([0xfb, 0x2e, 0x85, 0x78, 0x55, 0x1d, 0x91, 0xe8, 0x4d, 0xfd, 0x25, 0xe1, 0xb9, 0x81, 0x2d, 0xd5]),
+    };
+    Registry.register(crypto, 'Crypto');
+    await githubdb.unlock('test.lock');
+  });
+  // eslint-disable-next-line prefer-arrow-callback
+  afterEach(async function () {
+    this.timeout(10000);
+    const lockExists = await githubdb.isLocked('test.lock');
+    if (lockExists) {
+      await githubdb.unlock('test.lock');
+    }
+    const fileExists = await githubdb.fileExists('test.lock');
+    if (fileExists) {
+      await githubdb.delete('test.lock');
+    }
+  });
+  after(() => {
+  });
+  it('should be able to list the commits for a file', async () => {
+    try {
+      const commits = await githubdb.listCommits('README.md');
+      expect(commits.length > 0).to.be.equal(true);
+    } catch (err) {
+      console.log(JSON.stringify(err));
+    }
+  });
+});
+
+describe('As a developer, I need to be able to have database transactions', () => {
+  before((done) => {
+    githubdb.connect(config.databaseConnections[0]).then(() => {
+      done();
+    });
+  });
+  beforeEach(async function () {
+    this.timeout(10000);
+    Registry.unregisterAll();
+    const crypto = {
+      key: Buffer.from([0xfa, 0x22, 0xea, 0xfd, 0x8a, 0xac, 0xe8, 0x71, 0x9d, 0xa8, 0x82, 0x65, 0x75, 0x12, 0x16, 0x49, 0xaf, 0xfe, 0x39, 0x9f, 0x1d, 0x16, 0xa1, 0xe8, 0x5a, 0x8e, 0xd6, 0x27, 0xf6, 0xde, 0x24, 0x58]),
+      iv: Buffer.from([0xfb, 0x2e, 0x85, 0x78, 0x55, 0x1d, 0x91, 0xe8, 0x4d, 0xfd, 0x25, 0xe1, 0xb9, 0x81, 0x2d, 0xd5]),
+    };
+    Registry.register(crypto, 'Crypto');
+    let lockExists = await githubdb.isLocked('test.lock');
+    if (lockExists) {
+      await githubdb.unlock('test.lock');
+    }
+    const fileExists = await githubdb.fileExists('test.lock');
+    if (fileExists) {
+      await githubdb.delete('test.lock');
+    }
+    lockExists = await githubdb.isLocked('accounts');
+    if (lockExists) {
+      await githubdb.unlock('accounts');
+    }
+  });
+  // eslint-disable-next-line prefer-arrow-callback
+  afterEach(async function () {
+    this.timeout(10000);
+    let lockExists = await githubdb.isLocked('test.lock');
+    if (lockExists) {
+      await githubdb.unlock('test.lock');
+    }
+    const fileExists = await githubdb.fileExists('test.lock');
+    if (fileExists) {
+      await githubdb.delete('test.lock');
+    }
+    lockExists = await githubdb.isLocked('accounts');
+    if (lockExists) {
+      await githubdb.unlock('accounts');
+    }
+  });
+  after(() => {
+  });
+  it('should be able to begin a transaction', async () => {
+    try {
+      githubdb.beginTransaction(['accounts']);
+    } catch (err) {
+      console.log(JSON.stringify(err));
+    }
+  });
 });

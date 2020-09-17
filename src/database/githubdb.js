@@ -26,49 +26,38 @@ class GithubDB {
    * @param config - database config.
    * @constructor
    */
-  connect(config) {
-    return new Promise((inResolve, inReject) => {
-      try {
-        if (!config || !config.config || !config.config.owner || !config.config.repo || !config.config.committer || !config.config.author) {
-          const error = { status: false, error: 'GithubDB: Error while connecting. Invalid config.' };
-          if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
-          inReject && inReject(error);
-          return;
-        }
-        this.config = config.config;
-        const getOctoKit = () => {
-          const appOctokit = new Octokit({ auth: this.token });
-          return appOctokit;
-        };
-        this.client = getOctoKit();
-        inResolve && inResolve(this.client);
-      } catch (err) {
-        const error = { status: false, error: `GithubDB: Error while connecting. General error. ${JSON.stringify(err)}` };
+  async connect(config) {
+    try {
+      if (!config || !config.config || !config.config.owner || !config.config.repo || !config.config.committer || !config.config.author) {
+        const error = { status: false, error: 'GithubDB: Error while connecting. Invalid config.' };
         if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
-        inReject && inReject(error);
+        throw error;
       }
-    });
-  }
-
-  ping() {
-    return new Promise((inResolve, inReject) => {
-      if (!this.client) {
-        inResolve && inResolve(false);
-        return;
-      }
-      const exists = async () => {
-        const result = await this.fileExists('.___');
-        inResolve && inResolve(result);
+      this.config = config.config;
+      const getOctoKit = () => {
+        const appOctokit = new Octokit({ auth: this.token });
+        return appOctokit;
       };
-      exists();
-    });
+      this.client = getOctoKit();
+      return this.client;
+    } catch (err) {
+      const error = { status: false, error: `GithubDB: Error while connecting. General error. ${JSON.stringify(err)}` };
+      if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
+      throw error;
+    }
   }
 
-  disconnect() {
-    return new Promise((inResolve, inReject) => {
-      this.client = null;
-      inResolve && inResolve(true);
-    });
+  async ping() {
+    if (!this.client) {
+      return false;
+    }
+    const result = await this.fileExists('.___');
+    return result;
+  }
+
+  async disconnect() {
+    this.client = null;
+    return true;
   }
 
   async lock(path) {
@@ -77,7 +66,7 @@ class GithubDB {
     const startTime = new Date();
 
     // eslint-disable-next-line no-await-in-loop
-    while (await this.fileExists(lockFile)) {
+    while (await this.isLocked(path)) {
       const now = new Date();
       const beenWaiting = Math.abs(now - startTime);
       const beenWaitingMinutes = (beenWaiting / 1000) / 60;
@@ -89,12 +78,21 @@ class GithubDB {
         await this.prototype.unlock(path);
       }
     }
-    await this.insert(lockFile, lockFile, false);
+    await this.insert(lockFile, lockFile);
+  }
+
+  async isLocked(path) {
+    const lockFileBase = '.___lock_';
+    const lockExists = await this.fileExists(`${lockFileBase}${path}`);
+    return lockExists;
   }
 
   async unlock(path) {
-    const lockFileBase = '.___lock_';
-    await this.delete(`${lockFileBase}${path}`, false);
+    const lockExists = await this.isLocked(path);
+    if (lockExists) {
+      const lockFileBase = '.___lock_';
+      await this.delete(`${lockFileBase}${path}`);
+    }
   }
 
   sleep(ms) {
@@ -103,7 +101,7 @@ class GithubDB {
     });
   }
 
-  collectionExists(path) {
+  async collectionExists(path) {
     return this.fileExists(`${path}/.___`);
   }
 
@@ -111,59 +109,41 @@ class GithubDB {
    * @param name - The collection name.
    * @returns {Promise}
    */
-  createCollection(path) {
+  async createCollection(path) {
     return this.insert(`${path}/.___`, path);
   }
 
-  dropCollection(path) {
-    return new Promise((inResolve, inReject) => {
-      const drop = async () => {
-        try {
-          const fileArray = await this.readCollection(path);
-          const promises = [];
-          for (let fileIndex = 0; fileIndex < fileArray.length; fileIndex++) {
-            const file = fileArray[fileIndex];
-            // eslint-disable-next-line no-await-in-loop
-            const fileExists = await this.fileExists(file.path);
-            if (fileExists) {
-              promises.push(this.delete(file.path));
-            }
-          }
-          Promise.all(promises)
-            .then((values) => {
-              inResolve && inResolve({ status: true });
-            })
-            .catch((err) => {
-              const error = { status: false, error: `Error while dropping collection ${path}. ${JSON.stringify(err)}` };
-              if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
-              inReject && inReject(error);
-            });
-        } catch (err) {
-          const error = { status: false, error: `Error while dropping collection ${path}. ${JSON.stringify(err)}` };
-          if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
-          inReject && inReject(error);
+  async dropCollection(path) {
+    try {
+      const fileArray = await this.readCollection(path);
+      for (let fileIndex = 0; fileIndex < fileArray.length; fileIndex++) {
+        const file = fileArray[fileIndex];
+        // eslint-disable-next-line no-await-in-loop
+        const fileExists = await this.fileExists(file.path);
+        if (fileExists) {
+          // eslint-disable-next-line no-await-in-loop
+          await this.delete(file.path);
         }
-      };
-      drop();
-    });
+      }
+      return { status: true };
+    } catch (err) {
+      const error = { status: false, error: `Error while dropping collection ${path}. ${JSON.stringify(err)}` };
+      if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
+      throw error;
+    }
   }
 
-  readCollection(path) {
-    return new Promise((inResolve, inReject) => {
-      const getCollectionContent = async () => {
-        try {
-          const octokit = this.client;
-          const { owner, repo } = this.config;
-          const content = await octokit.repos.getContent({ owner, repo, path });
-          inResolve && inResolve(content.data);
-        } catch (err) {
-          const error = { status: false, error: `Error while reading collection ${path}. ${JSON.stringify(err)}` };
-          if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
-          inReject && inReject(error);
-        }
-      };
-      getCollectionContent();
-    });
+  async readCollection(path) {
+    try {
+      const octokit = this.client;
+      const { owner, repo } = this.config;
+      const content = await octokit.repos.getContent({ owner, repo, path });
+      return content.data;
+    } catch (err) {
+      const error = { status: false, error: `Error while reading collection ${path}. ${JSON.stringify(err)}` };
+      if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
+      throw error;
+    }
   }
 
   async getSHA(path) {
@@ -184,27 +164,24 @@ class GithubDB {
     }
   }
 
-  insert(path, data, shouldLock) {
-    return new Promise((inResolve, inReject) => {
-      const createFile = async () => {
-        try {
-          const octokit = this.client;
-          const { owner, repo, committer, author } = this.config;
-          const message = 'Inserted';
-          const buff = Buffer.from(data, 'utf-8');
-          const content = buff.toString('base64');
-          await octokit.repos.createOrUpdateFileContents({
-            owner, repo, path, message, content, committer, author,
-          });
-          inResolve && inResolve({ status: true });
-        } catch (err) {
-          const error = { status: false, error: `Error while inserting data to ${path}. ${JSON.stringify(err)}` };
-          if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
-          inReject && inReject(error);
-        }
-      };
-      createFile();
-    });
+  async insert(path, data) {
+    try {
+      const octokit = this.client;
+      const {
+        owner, repo, committer, author,
+      } = this.config;
+      const message = 'Inserted';
+      const buff = Buffer.from(data, 'utf-8');
+      const content = buff.toString('base64');
+      await octokit.repos.createOrUpdateFileContents({
+        owner, repo, path, message, content, committer, author,
+      });
+      return { status: true };
+    } catch (err) {
+      const error = { status: false, error: `Error while inserting data to ${path}. ${JSON.stringify(err)}` };
+      if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
+      throw error;
+    }
   }
 
   async upsert(path, data) {
@@ -215,96 +192,83 @@ class GithubDB {
     return this.update(path, data);
   }
 
-  update(path, data) {
-    return new Promise((inResolve, inReject) => {
-      const updateFile = async () => {
-        try {
-          const octokit = this.client;
-          const {
-            owner, repo, committer, author,
-          } = this.config;
-          const message = 'Updated';
-          const sha = await this.getSHA(path);
-          const buff = Buffer.from(data, 'utf-8');
-          const content = buff.toString('base64');
-          await octokit.repos.createOrUpdateFileContents(
-            {
-              owner, repo, path, message, sha, content, committer, author,
-            },
-          );
-          inResolve && inResolve({ status: true });
-        } catch (err) {
-          const error = { status: false, error: `Error while updating data to ${path}. ${JSON.stringify(err)}` };
-          if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
-          inReject && inReject(error);
-        }
-      };
-      updateFile();
-    });
+  async update(path, data) {
+    try {
+      const octokit = this.client;
+      const {
+        owner, repo, committer, author,
+      } = this.config;
+      const message = 'Updated';
+      const sha = await this.getSHA(path);
+      const buff = Buffer.from(data, 'utf-8');
+      const content = buff.toString('base64');
+      await octokit.repos.createOrUpdateFileContents(
+        {
+          owner, repo, path, message, sha, content, committer, author,
+        },
+      );
+      return { status: true };
+    } catch (err) {
+      const error = { status: false, error: `Error while updating data to ${path}. ${JSON.stringify(err)}` };
+      if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
+      throw error;
+    }
   }
 
-  delete(path, shouldLock) {
-    return new Promise((inResolve, inReject) => {
-      const deleteFile = async () => {
-        try {
-          const octokit = this.client;
-          const { owner, repo } = this.config;
-          const message = 'Deleted';
-          const sha = await this.getSHA(path);
-          await octokit.repos.deleteFile({
-            owner, repo, path, message, sha,
-          });
-          inResolve && inResolve({ status: true });
-        } catch (err) {
-          const error = { status: false, error: `Error while deleting data from ${path}. ${JSON.stringify(err)} ${JSON.stringify(err)}` };
-          if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
-          inReject && inReject(error);
-        }
-      };
-      deleteFile();
-    });
+  async delete(path) {
+    try {
+      const octokit = this.client;
+      const { owner, repo } = this.config;
+      const message = 'Deleted';
+      const sha = await this.getSHA(path);
+      await octokit.repos.deleteFile({
+        owner, repo, path, message, sha,
+      });
+      return { status: true };
+    } catch (err) {
+      const error = { status: false, error: `Error while deleting data from ${path}. ${JSON.stringify(err)} ${JSON.stringify(err)}` };
+      if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
+      throw error;
+    }
   }
 
-  read(path) {
-    return new Promise((inResolve, inReject) => {
-      const getContent = async () => {
-        const octokit = this.client;
-        const { owner, repo } = this.config;
-        const content = await octokit.repos.getContent({ owner, repo, path });
-        axios.get(content.data.download_url)
-          .then((response) => {
-            inResolve && inResolve(response);
-            this.unlock(path);
-          })
-          .catch((err) => {
-            const error = { status: false, error: `Error while reading data from ${path}. ${JSON.stringify(err)}` };
-            if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
-            inReject && inReject(error);
-            this.unlock(path);
-          });
-      };
-      getContent();
-    });
+  async read(path) {
+    try {
+      const octokit = this.client;
+      const { owner, repo } = this.config;
+      const content = await octokit.repos.getContent({ owner, repo, path });
+      const response = await axios.get(content.data.download_url);
+      return response;
+    } catch (err) {
+      const error = { status: false, error: `Error while reading data from ${path}. ${JSON.stringify(err)}` };
+      if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
+      throw error;
+    }
   }
 
-  listCommits(path) {
-    return new Promise((inResolve, inReject) => {
-      const getContent = async () => {
-        try {
-          const octokit = this.client;
-          const { owner, repo } = this.config;
-          const content = await octokit.repos.listCommits({ owner, repo, path });
-          inResolve && inResolve(content);
-          this.unlock(path);
-        } catch (err) {
-          const error = { status: false, error: `Error while reading commits from ${path}. ${JSON.stringify(err)}` };
-          if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
-          inReject && inReject(error);
-          this.unlock(path);
-        }
-      };
-      getContent();
-    });
+  async listCommits(path) {
+    try {
+      const octokit = this.client;
+      const { owner, repo } = this.config;
+      const content = await octokit.repos.listCommits({ owner, repo, path });
+      return content.data;
+    } catch (err) {
+      const error = { status: false, error: `Error while reading commits from ${path}. ${JSON.stringify(err)}` };
+      if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
+      throw error;
+    }
+  }
+
+  // content.data
+  // "path":"testCollection/.___",
+  // "sha":"a74daadbdc4bcaf6dca3c34ba572781e7315071a",
+  // "type":"file",
+  // "mode": "100644", The file mode; one of 100644 for file (blob), 100755 for executable (blob), 040000 for subdirectory (tree), 160000 for submodule (commit), or 120000 for a blob that specifies the path of a symlink.
+  async beginTransaction(paths) {
+    for (let pathIndex = 0; pathIndex < paths.length; pathIndex++) {
+      const path = paths[pathIndex];
+      await this.lock(path);
+    }
   }
 }
 
