@@ -7,7 +7,6 @@
 const Encrypt = require('../util/encrypt.js');
 const Log = require('../util/log.js');
 const Registry = require('../util/registry.js');
-const axios = require('axios').default;
 
 // https://octokit.github.io/rest.js/v18#usage
 // https://blog.dennisokeeffe.com/blog/2020-06-22-using-octokit-to-create-files/
@@ -243,9 +242,10 @@ class GithubDB {
     try {
       const octokit = this.client;
       const { owner, repo } = this.config;
-      const content = await octokit.repos.getContent({ owner, repo, path });
-      const response = await axios.get(content.data.download_url);
-      return response;
+      const response = await octokit.repos.getContent({ owner, repo, path });
+      const buff = Buffer.from(response.data.content, 'base64');
+      const content = buff.toString();
+      return content;
     } catch (err) {
       const error = { status: false, error: `Error while reading data from ${path}. ${JSON.stringify(err)}` };
       if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));

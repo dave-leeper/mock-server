@@ -38,7 +38,7 @@ const config = {
         owner: 'dave-leeper',
         repo: 'HERO-server-db',
         committer: { name: 'dave-leeper', email: 'magicjtv@gmail.com' },
-        author: { name: 'dave-leeper', email: 'magicjtv@gmail.com' }
+        author: { name: 'dave-leeper', email: 'magicjtv@gmail.com' },
       },
     },
   ],
@@ -53,6 +53,7 @@ const updateData = {
   content: 'my updated content',
   suggest: 'my updated suggest',
 };
+
 describe('As a developer, I need to connect, ping, and disconnect to/from githubdb.', () => {
   before(() => {
   });
@@ -72,6 +73,7 @@ describe('As a developer, I need to connect, ping, and disconnect to/from github
   });
   after(() => {
   });
+
   it('should be able to connect, ping, and disconnect the connection', (done) => {
     githubdb.connect(config.databaseConnections[0]).then(() => {
       githubdb.ping().then((pingResult) => {
@@ -199,6 +201,7 @@ describe('As a developer, I need to perform CRUD operations on the githubdb data
       done();
     });
   });
+
   it('should be able to insert records into the database.', (done) => {
     githubdb.upsert(`${testCollection}/MyFile`, JSON.stringify(data))
       .then((result) => {
@@ -210,15 +213,13 @@ describe('As a developer, I need to perform CRUD operations on the githubdb data
         expect(true).to.be.equal(false);
       });
   }).timeout(10000);
-  it('should be able to read records in the database.', (done) => {
-    githubdb.upsert(`${testCollection}/MyFile`, JSON.stringify(data)).then((result) => {
-      expect(result.status).to.be.equal(true);
-      done();
-    }).catch((error) => {
-      expect(true).to.be.equal(false);
-      done();
-    });
+
+  it('should be able to read records in the database.', async () => {
+    await githubdb.upsert(`${testCollection}/MyFile`, JSON.stringify(data));
+    const savedData = await githubdb.read(`${testCollection}/MyFile`);
+    expect(savedData).to.be.equal(JSON.stringify(data));
   }).timeout(10000);
+
   it('should be able to update records in the database.', (done) => {
     githubdb.upsert(`${testCollection}/MyFile`, JSON.stringify(data))
       .then((result) => {
@@ -235,6 +236,7 @@ describe('As a developer, I need to perform CRUD operations on the githubdb data
         expect(true).to.be.equal(false);
       });
   }).timeout(10000);
+
   it('should be able to delete records in the database.', (done) => {
     githubdb.upsert(`${testCollection}/MyFile`, JSON.stringify(data)).then((result) => {
       githubdb.delete(`${testCollection}/MyFile`).then((result) => {
@@ -341,65 +343,11 @@ describe('As a developer, I need to be able to work with commits', () => {
   });
   after(() => {
   });
+
   it('should be able to list the commits for a file', async () => {
     try {
       const commits = await githubdb.listCommits('README.md');
       expect(commits.length > 0).to.be.equal(true);
-    } catch (err) {
-      console.log(JSON.stringify(err));
-    }
-  });
-});
-
-describe('As a developer, I need to be able to have database transactions', () => {
-  before((done) => {
-    githubdb.connect(config.databaseConnections[0]).then(() => {
-      done();
-    });
-  });
-  beforeEach(async function () {
-    this.timeout(10000);
-    Registry.unregisterAll();
-    const crypto = {
-      key: Buffer.from([0xfa, 0x22, 0xea, 0xfd, 0x8a, 0xac, 0xe8, 0x71, 0x9d, 0xa8, 0x82, 0x65, 0x75, 0x12, 0x16, 0x49, 0xaf, 0xfe, 0x39, 0x9f, 0x1d, 0x16, 0xa1, 0xe8, 0x5a, 0x8e, 0xd6, 0x27, 0xf6, 0xde, 0x24, 0x58]),
-      iv: Buffer.from([0xfb, 0x2e, 0x85, 0x78, 0x55, 0x1d, 0x91, 0xe8, 0x4d, 0xfd, 0x25, 0xe1, 0xb9, 0x81, 0x2d, 0xd5]),
-    };
-    Registry.register(crypto, 'Crypto');
-    let lockExists = await githubdb.isLocked('test.lock');
-    if (lockExists) {
-      await githubdb.unlock('test.lock');
-    }
-    const fileExists = await githubdb.fileExists('test.lock');
-    if (fileExists) {
-      await githubdb.delete('test.lock');
-    }
-    lockExists = await githubdb.isLocked('accounts');
-    if (lockExists) {
-      await githubdb.unlock('accounts');
-    }
-  });
-  // eslint-disable-next-line prefer-arrow-callback
-  afterEach(async function () {
-    this.timeout(10000);
-    let lockExists = await githubdb.isLocked('test.lock');
-    if (lockExists) {
-      await githubdb.unlock('test.lock');
-    }
-    const fileExists = await githubdb.fileExists('test.lock');
-    if (fileExists) {
-      await githubdb.delete('test.lock');
-    }
-    lockExists = await githubdb.isLocked('accounts');
-    if (lockExists) {
-      await githubdb.unlock('accounts');
-    }
-  });
-  after(() => {
-  });
-  it('should be able to begin a transaction', async () => {
-    try {
-      const token = await githubdb.beginTransaction('accounts');
-      console.log(JSON.stringify(token));
     } catch (err) {
       console.log(JSON.stringify(err));
     }
