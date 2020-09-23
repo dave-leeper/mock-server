@@ -2,7 +2,7 @@ const Log = require('../util/log');
 const Registry = require('../util/registry');
 
 class Mocks {
-  do(params) {
+  do(reqInfo) {
     return new Promise((inResolve, inReject) => {
       const serverConfig = Registry.get('ServerConfig');
       if ((!serverConfig) || (!serverConfig.mocks)) {

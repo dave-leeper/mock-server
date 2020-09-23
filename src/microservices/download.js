@@ -4,9 +4,9 @@ const files = require('../util/files.js');
 
 const FILE_PATH = path.resolve('./public/files');
 class Download {
-  do(params) {
+  do(reqInfo) {
     return new Promise((inResolve, inReject) => {
-      const fileName = (((params) && (params.params) && (params.params.name)) ? params.params.name : 'filename');
+      const fileName = (((reqInfo) && (reqInfo.params) && (reqInfo.params.name)) ? reqInfo.params.name : 'filename');
       const filePath = path.join(FILE_PATH, fileName);
       if (!files.existsSync(filePath)) {
         const error = `File (${fileName}) not found.`;

@@ -31,9 +31,6 @@ const config = {
       description: 'Github service.',
       databaseConnector: 'githubdb.js',
       factory: 'github-factory.js',
-      generateConnectionAPI: false,
-      generateIndexAPI: false,
-      generateDataAPI: false,
       config: {
         owner: 'dave-leeper',
         repo: 'HERO-server-db',
@@ -84,7 +81,6 @@ describe('As a developer, I need to connect, ping, and disconnect to/from github
             done();
           });
         }).catch((err) => {
-          console.log(`Test of githubdb.disconnect() failed. Error: ${JSON.stringify(err)}`);
           expect(false).to.be.equal(true);
         });
       });
@@ -124,7 +120,6 @@ describe('As a developer, I need to create, check for the existence of, and drop
       const createResult = await githubdb.createCollection(testCollection);
       expect(createResult.status).to.be.equal(true);
     } catch (err) {
-      console.log(JSON.stringify(err));
       expect(false).to.be.equal(true);
     }
   });
@@ -209,7 +204,6 @@ describe('As a developer, I need to perform CRUD operations on the githubdb data
         done();
       })
       .catch((error) => {
-        console.log(JSON.stringify(error));
         expect(true).to.be.equal(false);
       });
   }).timeout(10000);
@@ -295,7 +289,6 @@ describe('As a developer, I need to be able to lock and unlock files', () => {
       const lockExists = await githubdb.fileExists('.___lock_test.lock');
       expect(lockExists).to.be.equal(true);
     } catch (err) {
-      console.log(JSON.stringify(err));
     }
   }).timeout(10000);
 
@@ -309,7 +302,6 @@ describe('As a developer, I need to be able to lock and unlock files', () => {
       lockExists = await githubdb.fileExists('.___lock_test.lock');
       expect(lockExists).to.be.equal(false);
     } catch (err) {
-      console.log(JSON.stringify(err));
     }
   }).timeout(10000);
 });
@@ -349,7 +341,6 @@ describe('As a developer, I need to be able to work with commits', () => {
       const commits = await githubdb.listCommits('README.md');
       expect(commits.length > 0).to.be.equal(true);
     } catch (err) {
-      console.log(JSON.stringify(err));
     }
   });
 });

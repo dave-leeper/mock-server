@@ -4,21 +4,21 @@ const Strings = require('../util/strings');
 const AddAccount = require('./add-account');
 
 class AuthenticateUser {
-  do(params) {
+  do(reqInfo) {
     return new Promise((inResolve, inReject) => {
-      const message = Strings.format(I18n.get(Strings.LOGIN_SUCCESSFUL), params.params.username);
-      this.doRemember(params, params.body.username);
+      const message = Strings.format(I18n.get(Strings.LOGIN_SUCCESSFUL), reqInfo.params.username);
+      this.doRemember(reqInfo, reqInfo.body.username);
       if (Log.will(Log.INFO)) Log.info(message);
       inResolve && inResolve({ status: 200, send: message });
     });
   }
 
-  doRemember(params, username) {
-    const { rememberMe } = params.body;
+  doRemember(reqInfo, username) {
+    const { rememberMe } = reqInfo.body;
     if (rememberMe === 'true') {
-      AddAccount.rememberUser(params, username);
+      AddAccount.rememberUser(reqInfo, username);
     } else {
-      AddAccount.forgetUser(params, username);
+      AddAccount.forgetUser(reqInfo, username);
     }
   }
 }

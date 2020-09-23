@@ -4,35 +4,23 @@ const Log = require('../util/log.js');
 
 const FILE_PATH = path.resolve('./public/files');
 class Upload {
-  do(params) {
+  do(reqInfo) {
     return new Promise((inResolve, inReject) => {
-      const fileName = (((params) && (params.params) && (params.params.name)) ? params.params.name : 'filename');
+      const fileName = (((reqInfo) && (reqInfo.params) && (reqInfo.params.name)) ? reqInfo.params.name : 'filename');
       const fullFileName = path.join(FILE_PATH, fileName);
       if (files.existsSync(fullFileName)) {
-        const error = {
-          title: fileName,
-          message: 'Conflict: File Already Exists.',
-          error: { status: 409 },
-        };
+        const error = { title: fileName, message: 'Conflict: File Already Exists.', error: { status: 409 } };
         if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
-        inReject && inReject({
-          status: 409,
-          viewName: 'error',
-          viewObject: error,
-        });
+        inReject && inReject({ status: 409, viewName: 'error', viewObject: error });
         return;
       }
       try {
-        const uploadedFile = params.files.filename;
+        const uploadedFile = reqInfo.files.filename;
         uploadedFile.mv(fullFileName, (err) => {
           if (err) {
             const error = { message: 'Error uploading file.', error: { status: 500, stack: err.stack } };
             if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
-            inReject && inReject({
-              status: 500,
-              viewName: 'error',
-              viewObject: error,
-            });
+            inReject && inReject({ status: 500, viewName: 'error', viewObject: error });
             return;
           }
           inResolve && inResolve({

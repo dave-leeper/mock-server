@@ -6,7 +6,7 @@ const Strings = require('../util/strings');
 class UserInfo {
   static get userPath() { return './private/users/authentication.json'; }
 
-  do(params) {
+  do(reqInfo) {
     return new Promise((inResolve, inReject) => {
       let usersData;
       try {
@@ -27,7 +27,7 @@ class UserInfo {
       }
 
       for (let i = 0; i < usersArray.length; i++) {
-        if (usersArray[i].username === params.params.user) {
+        if (usersArray[i].username === reqInfo.params.user) {
           const user = usersArray[i];
           inResolve && inResolve({
             status: 200,

@@ -87,7 +87,6 @@ describe.skip('As a developer, I need to connect, ping, and disconnect to/from m
             done();
           });
         }).catch((err) => {
-          console.log(`Test of mongodb.disconnect() failed. Error: ${JSON.stringify(err)}`);
           expect(false).to.be.equal(true);
         });
       });

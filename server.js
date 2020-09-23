@@ -221,9 +221,9 @@ class Server {
     Registry.register(crypto, 'Crypto');
     const Encrypt = require('./src/util/encrypt');
     let token = Encrypt.encrypt('d391afcab14db918ee41067cdd777007dda89274', crypto.iv, crypto.key);
-    console.log(`Token: ${token}`);
+    // console.log(`Token: ${token}`);
     token = Encrypt.decrypt(token, crypto.iv, crypto.key);
-    console.log(`Token: ${token}`);
+    // console.log(`Token: ${token}`);
 
     return crypto;
   }

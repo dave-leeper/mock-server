@@ -1,204 +1,205 @@
-//@formatter:off
-'use strict';
+// @formatter:off
 
-let chai = require( 'chai' ),
-    expect = chai.expect;
 
+const chai = require('chai');
+
+const { expect } = chai;
+
+const passport = require('passport');
 const Registry = require('../../../src/util/registry.js');
 const MockExpressRouter = require('../../mocks/mock-express-router.js');
 const RouteBuilder = require('../../../src/routers/route-builder.js');
 const RouteBuilderMicroservices = require('../../../src/routers/route-builder-microservices.js');
-const passport = require('passport');
 
-let config = {
-    "microservices": [
-        {
-            "path": "/get_microservice",
-            "name": "A microservice",
-            "description": "A microservice used for testing",
-            "serviceFile": "mocks.js"
-        },
-        {
-            "verb": "OPTIONS",
-            "path": "/options_microservice",
-            "name": "A microservice",
-            "description": "A microservice used for testing",
-            "serviceFile": "mocks.js"
-        },
-        {
-            "verb": "POST",
-            "path": "/post_microservice",
-            "name": "A microservice",
-            "description": "A microservice used for testing",
-            "serviceFile": "mocks.js"
-        },
-        {
-            "verb": "PUT",
-            "path": "/put_microservice",
-            "name": "A microservice",
-            "description": "A microservice used for testing",
-            "serviceFile": "mocks.js"
-        },
-        {
-            "verb": "PATCH",
-            "path": "/patch_microservice",
-            "name": "A microservice",
-            "description": "A microservice used for testing",
-            "serviceFile": "mocks.js"
-        },
-        {
-            "verb": "DELETE",
-            "path": "/delete_microservice",
-            "name": "A microservice",
-            "description": "A microservice used for testing",
-            "serviceFile": "mocks.js"
-        },
-    ]
+const config = {
+  microservices: [
+    {
+      path: '/get_microservice',
+      name: 'A microservice',
+      description: 'A microservice used for testing',
+      serviceFile: 'mocks.js',
+    },
+    {
+      verb: 'OPTIONS',
+      path: '/options_microservice',
+      name: 'A microservice',
+      description: 'A microservice used for testing',
+      serviceFile: 'mocks.js',
+    },
+    {
+      verb: 'POST',
+      path: '/post_microservice',
+      name: 'A microservice',
+      description: 'A microservice used for testing',
+      serviceFile: 'mocks.js',
+    },
+    {
+      verb: 'PUT',
+      path: '/put_microservice',
+      name: 'A microservice',
+      description: 'A microservice used for testing',
+      serviceFile: 'mocks.js',
+    },
+    {
+      verb: 'PATCH',
+      path: '/patch_microservice',
+      name: 'A microservice',
+      description: 'A microservice used for testing',
+      serviceFile: 'mocks.js',
+    },
+    {
+      verb: 'DELETE',
+      path: '/delete_microservice',
+      name: 'A microservice',
+      description: 'A microservice used for testing',
+      serviceFile: 'mocks.js',
+    },
+  ],
 };
 
-let containsPath = (array, path) => {
-    for (let loop = 0; loop < array.length; loop++) {
-        if (array[loop].path === path) return true;
-    }
-    return false;
+const containsPath = (array, path) => {
+  for (let loop = 0; loop < array.length; loop++) {
+    if (array[loop].path === path) return true;
+  }
+  return false;
 };
-let hasHandler = (array, path) => {
-    for (let loop = 0; loop < array.length; loop++) {
-        if (array[loop].path === path) return !!(array[loop].handler);
-    }
-    return false;
+const hasHandler = (array, path) => {
+  for (let loop = 0; loop < array.length; loop++) {
+    if (array[loop].path === path) return !!(array[loop].handler);
+  }
+  return false;
 };
 
-describe( 'As a developer, I need to access microservic routes', function() {
-    before(() => {
-    });
-    beforeEach(() => {
-        Registry.unregisterAll();
-    });
-    afterEach(() => {
-    });
-    after(() => {
-    });
-    it ( 'should not build routes using bad parameters', ( ) => {
-        let routeBuilderMicroservices = new RouteBuilderMicroservices();
-        let mockExpressRouter = new MockExpressRouter();
-        let result = routeBuilderMicroservices.connect( null, null );
-        expect(result).to.be.equal(false);
-        result = routeBuilderMicroservices.connect( {}, {} );
-        expect(result).to.be.equal(false);
-        result = routeBuilderMicroservices.connect( mockExpressRouter, {} );
-        expect(result).to.be.equal(false);
-        result = routeBuilderMicroservices.connect( {}, config );
-        expect(result).to.be.equal(false);
-    });
-    it ( 'should be build routes to handlers based on config information', ( ) => {
-        let routeBuilderMicroservices = new RouteBuilderMicroservices();
-        let mockExpressRouter = new MockExpressRouter();
-        let result = routeBuilderMicroservices.connect( mockExpressRouter, config );
-        expect(result).to.be.equal(true);
-        expect(mockExpressRouter.gets.length).to.be.equal(1);
-        expect(mockExpressRouter.option.length).to.be.equal(1);
-        expect(mockExpressRouter.posts.length).to.be.equal(1);
-        expect(mockExpressRouter.puts.length).to.be.equal(1);
-        expect(mockExpressRouter.patches.length).to.be.equal(1);
-        expect(mockExpressRouter.deletes.length).to.be.equal(1);
-        expect(containsPath(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
-        expect(containsPath(mockExpressRouter.option, '/options_microservice')).to.be.equal(true);
-        expect(containsPath(mockExpressRouter.posts, '/post_microservice')).to.be.equal(true);
-        expect(containsPath(mockExpressRouter.puts, '/put_microservice')).to.be.equal(true);
-        expect(containsPath(mockExpressRouter.patches, '/patch_microservice')).to.be.equal(true);
-        expect(containsPath(mockExpressRouter.deletes, '/delete_microservice')).to.be.equal(true);
-        expect(hasHandler(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
-        expect(hasHandler(mockExpressRouter.option, '/options_microservice')).to.be.equal(true);
-        expect(hasHandler(mockExpressRouter.posts, '/post_microservice')).to.be.equal(true);
-        expect(hasHandler(mockExpressRouter.puts, '/put_microservice')).to.be.equal(true);
-        expect(hasHandler(mockExpressRouter.patches, '/patch_microservice')).to.be.equal(true);
-        expect(hasHandler(mockExpressRouter.deletes, '/delete_microservice')).to.be.equal(true);
-    });
-    it ( 'should support authentication', ( ) => {
-        let config = {
-            authentication: [
-                {
-                    name: "local",
-                    strategyFile: "local-strategy.js",
-                    config: { "successRedirect": "/ping", "failureRedirect": "/login"}
-                }
-            ],
-            microservices: [
-                {
-                    path: "/get_microservice",
-                    name: "A microservice",
-                    description: "A microservice used for testing",
-                    serviceFile: "mocks.js",
-                    authentication: "local"
-                },
-            ]
-        };
-        Registry.register(passport, 'Passport');
-        RouteBuilder.buildAuthenticationStrategies(config);
+describe('As a developer, I need to access microservic routes', () => {
+  before(() => {
+  });
+  beforeEach(() => {
+    Registry.unregisterAll();
+  });
+  afterEach(() => {
+  });
+  after(() => {
+  });
+  it('should not build routes using bad parameters', () => {
+    const routeBuilderMicroservices = new RouteBuilderMicroservices();
+    const mockExpressRouter = new MockExpressRouter();
+    let result = routeBuilderMicroservices.connect(null, null);
+    expect(result).to.be.equal(false);
+    result = routeBuilderMicroservices.connect({}, {});
+    expect(result).to.be.equal(false);
+    result = routeBuilderMicroservices.connect(mockExpressRouter, {});
+    expect(result).to.be.equal(false);
+    result = routeBuilderMicroservices.connect({}, config);
+    expect(result).to.be.equal(false);
+  });
+  it('should be build routes to handlers based on config information', () => {
+    const routeBuilderMicroservices = new RouteBuilderMicroservices();
+    const mockExpressRouter = new MockExpressRouter();
+    const result = routeBuilderMicroservices.connect(mockExpressRouter, config);
+    expect(result).to.be.equal(true);
+    expect(mockExpressRouter.gets.length).to.be.equal(1);
+    expect(mockExpressRouter.option.length).to.be.equal(1);
+    expect(mockExpressRouter.posts.length).to.be.equal(1);
+    expect(mockExpressRouter.puts.length).to.be.equal(1);
+    expect(mockExpressRouter.patches.length).to.be.equal(1);
+    expect(mockExpressRouter.deletes.length).to.be.equal(1);
+    expect(containsPath(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
+    expect(containsPath(mockExpressRouter.option, '/options_microservice')).to.be.equal(true);
+    expect(containsPath(mockExpressRouter.posts, '/post_microservice')).to.be.equal(true);
+    expect(containsPath(mockExpressRouter.puts, '/put_microservice')).to.be.equal(true);
+    expect(containsPath(mockExpressRouter.patches, '/patch_microservice')).to.be.equal(true);
+    expect(containsPath(mockExpressRouter.deletes, '/delete_microservice')).to.be.equal(true);
+    expect(hasHandler(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
+    expect(hasHandler(mockExpressRouter.option, '/options_microservice')).to.be.equal(true);
+    expect(hasHandler(mockExpressRouter.posts, '/post_microservice')).to.be.equal(true);
+    expect(hasHandler(mockExpressRouter.puts, '/put_microservice')).to.be.equal(true);
+    expect(hasHandler(mockExpressRouter.patches, '/patch_microservice')).to.be.equal(true);
+    expect(hasHandler(mockExpressRouter.deletes, '/delete_microservice')).to.be.equal(true);
+  });
+  it('should support authentication', () => {
+    const config = {
+      authentication: [
+        {
+          name: 'local',
+          strategyFile: 'local-strategy.js',
+          config: { successRedirect: '/ping', failureRedirect: '/login' },
+        },
+      ],
+      microservices: [
+        {
+          path: '/get_microservice',
+          name: 'A microservice',
+          description: 'A microservice used for testing',
+          serviceFile: 'mocks.js',
+          authentication: 'local',
+        },
+      ],
+    };
+    Registry.register(passport, 'Passport');
+    RouteBuilder.buildAuthenticationStrategies(config);
 
-        let routeBuilderMicroservices = new RouteBuilderMicroservices();
-        let mockExpressRouter = new MockExpressRouter();
-        let result = routeBuilderMicroservices.connect( mockExpressRouter, config );
-        expect(result).to.be.equal(true);
-        expect(mockExpressRouter.gets.length).to.be.equal(1);
-        expect(containsPath(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
-        expect(hasHandler(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
-        expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
-        expect(mockExpressRouter.gets[0].handler.length).to.be.equal(3);
-    });
-    it ( 'should support authorization', ( ) => {
-        let config = {
-            authentication: [
-                {
-                    name: "local",
-                    strategyFile: "local-strategy.js",
-                    config: { "successRedirect": "/ping", "failureRedirect": "/login"}
-                }
-            ],
-            microservices: [
-                {
-                    path: "/get_microservice",
-                    name: "A microservice",
-                    description: "A microservice used for testing",
-                    serviceFile: "mocks.js",
-                    authorization:  { strategy: "local", groups: [ "admin" ] }
-                },
-            ]
-        };
-        Registry.register(passport, 'Passport');
-        RouteBuilder.buildAuthenticationStrategies(config);
+    const routeBuilderMicroservices = new RouteBuilderMicroservices();
+    const mockExpressRouter = new MockExpressRouter();
+    const result = routeBuilderMicroservices.connect(mockExpressRouter, config);
+    expect(result).to.be.equal(true);
+    expect(mockExpressRouter.gets.length).to.be.equal(1);
+    expect(containsPath(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
+    expect(hasHandler(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
+    expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
+    expect(mockExpressRouter.gets[0].handler.length).to.be.equal(3);
+  });
+  it('should support authorization', () => {
+    const config = {
+      authentication: [
+        {
+          name: 'local',
+          strategyFile: 'local-strategy.js',
+          config: { successRedirect: '/ping', failureRedirect: '/login' },
+        },
+      ],
+      microservices: [
+        {
+          path: '/get_microservice',
+          name: 'A microservice',
+          description: 'A microservice used for testing',
+          serviceFile: 'mocks.js',
+          authorization: { strategy: 'local', groups: ['admin'] },
+        },
+      ],
+    };
+    Registry.register(passport, 'Passport');
+    RouteBuilder.buildAuthenticationStrategies(config);
 
-        let routeBuilderMicroservices = new RouteBuilderMicroservices();
-        let mockExpressRouter = new MockExpressRouter();
-        let result = routeBuilderMicroservices.connect( mockExpressRouter, config );
-        expect(result).to.be.equal(true);
-        expect(mockExpressRouter.gets.length).to.be.equal(1);
-        expect(containsPath(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
-        expect(hasHandler(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
-        expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
-        expect(mockExpressRouter.gets[0].handler.length).to.be.equal(3);
-    });
-    it ( 'should support logging', ( ) => {
-        let config = {
-            microservices: [
-                {
-                    path: "/get_microservice",
-                    name: "A microservice",
-                    description: "A microservice used for testing",
-                    serviceFile: "mocks.js",
-                    logging:  'ALL'
-                },
-            ]
-        };
-        let routeBuilderMicroservices = new RouteBuilderMicroservices();
-        let mockExpressRouter = new MockExpressRouter();
-        let result = routeBuilderMicroservices.connect( mockExpressRouter, config );
-        expect(result).to.be.equal(true);
-        expect(mockExpressRouter.gets.length).to.be.equal(1);
-        expect(containsPath(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
-        expect(hasHandler(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
-        expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
-        expect(mockExpressRouter.gets[0].handler.length).to.be.equal(4);
-    });
+    const routeBuilderMicroservices = new RouteBuilderMicroservices();
+    const mockExpressRouter = new MockExpressRouter();
+    const result = routeBuilderMicroservices.connect(mockExpressRouter, config);
+    expect(result).to.be.equal(true);
+    expect(mockExpressRouter.gets.length).to.be.equal(1);
+    expect(containsPath(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
+    expect(hasHandler(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
+    expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
+    expect(mockExpressRouter.gets[0].handler.length).to.be.equal(3);
+  });
+  it('should support logging', () => {
+    const config = {
+      microservices: [
+        {
+          path: '/get_microservice',
+          name: 'A microservice',
+          description: 'A microservice used for testing',
+          serviceFile: 'mocks.js',
+          logging: 'ALL',
+        },
+      ],
+    };
+    const routeBuilderMicroservices = new RouteBuilderMicroservices();
+    const mockExpressRouter = new MockExpressRouter();
+    const result = routeBuilderMicroservices.connect(mockExpressRouter, config);
+    expect(result).to.be.equal(true);
+    expect(mockExpressRouter.gets.length).to.be.equal(1);
+    expect(containsPath(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
+    expect(hasHandler(mockExpressRouter.gets, '/get_microservice')).to.be.equal(true);
+    expect(Array.isArray(mockExpressRouter.gets[0].handler)).to.be.equal(true);
+    expect(mockExpressRouter.gets[0].handler.length).to.be.equal(4);
+  });
 });

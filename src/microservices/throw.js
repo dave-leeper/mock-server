@@ -1,5 +1,5 @@
 class Throw {
-  do(_params) {
+  do(_reqInfo) {
     throw Error('ERROR');
   }
 }

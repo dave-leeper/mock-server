@@ -4,9 +4,9 @@ const Log = require('../util/log');
 const Strings = require('../util/strings');
 
 class ColorSchemes {
-  do(params) {
+  do(reqInfo) {
     return new Promise((inResolve, inReject) => {
-      const { body } = params;
+      const { body } = reqInfo;
 
       if (!body.color) {
         const message = I18n.get(Strings.ERROR_NO_COLOR);

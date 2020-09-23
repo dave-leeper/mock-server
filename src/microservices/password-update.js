@@ -10,9 +10,9 @@ const Strings = require('../util/strings');
 class PasswordUpdate {
   static get destination() { return './private/users/authentication.json '; }
 
-  do(params) {
+  do(reqInfo) {
     return new Promise((inResolve, inReject) => {
-      const { body } = params;
+      const { body } = reqInfo;
       if (!body.password || !body.reenterPassword || body.password !== body.reenterPassword) {
         const message = I18n.get(Strings.ERROR_MESSAGE_INCORRECT_PASSWORD);
         if (Log.will(Log.ERROR)) Log.error(message);

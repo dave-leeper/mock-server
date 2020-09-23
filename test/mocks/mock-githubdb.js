@@ -42,3 +42,5 @@ class MockGithubDB {
     this.repos = new Repos();
   }
 }
+
+module.exports = MockGithubDB;

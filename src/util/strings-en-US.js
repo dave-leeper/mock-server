@@ -8,7 +8,7 @@ const strings = [
   'Cart item added.',
   'Cart item deleted.',
   'Books added.',
-  'RESERVED',
+  'Log level set. New log level is {0}',
   'RESERVED',
   'RESERVED',
   'RESERVED',
@@ -132,7 +132,9 @@ const strings = [
   'Error reading user information.',
   'Invalid reset token.',
   'An error occured while sending email. Error: {0}',
-  'User not found.'
+  'User not found. {0}',
+  'Microservice {0} timed out. Timeout value: {1}',
+  'Unknown log level {0}.',
 ];
 
 module.exports = strings;

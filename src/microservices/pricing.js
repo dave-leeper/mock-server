@@ -4,9 +4,9 @@ const Log = require('../util/log');
 const Strings = require('../util/strings');
 
 class Pricing {
-  do(params) {
+  do(reqInfo) {
     return new Promise((inResolve, inReject) => {
-      const { body } = params;
+      const { body } = reqInfo;
       let price = 0.0;
       const taxes = 0.0;
 

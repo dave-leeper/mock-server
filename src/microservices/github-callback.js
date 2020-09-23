@@ -18,12 +18,12 @@ const Registry = require('../util/registry');
   state:          string            The unguessable random string you provided in Step 1.
 */
 class GithubCallback {
-  do(params) {
+  do(reqInfo) {
     return new Promise((inResolve, inReject) => {
-      const { code } = params.query;
-      const { state } = params.query;
+      const { code } = reqInfo.query;
+      const { state } = reqInfo.query;
       if (!code || !state) {
-        const queryString = JSON.stringify(params.query);
+        const queryString = JSON.stringify(reqInfo.query);
         const error = `Required fields (code and state) not found. Params are ${queryString}`;
         if (Log.will(Log.ERROR)) Log.error(Log.stringify(error));
         inReject && inReject({ status: 400, send: error });

@@ -6,9 +6,9 @@ const Log = require('../util/log');
 const Strings = require('../util/strings');
 
 class AddToCart {
-  do(params) {
+  do(reqInfo) {
     return new Promise((inResolve, inReject) => {
-      const { body } = params;
+      const {body} = reqInfo;
       let filePath = './private/users/';
 
       if (!body.username) {
@@ -46,9 +46,15 @@ class AddToCart {
         const JSONString = Files.readFileSync(filePath);
         cart = JSON.parse(JSONString);
         for (let i = cart.length - 1; i >= 0; i--) {
-          let c = cart[i];
-          if (c.id.toUpperCase() !== newCartItem.id.toUpperCase()) continue;
-          if (c.issue !== newCartItem.issue && parseInt(c.issue) !== newCartItem.issue && c.issue !== parseInt(newCartItem.issue)) continue;
+          const c = cart[i];
+          if (c.id.toUpperCase() !== newCartItem.id.toUpperCase()) {
+            continue;
+          }
+          if (c.issue !== newCartItem.issue
+          && parseInt(c.issue) !== newCartItem.issue
+          && c.issue !== parseInt(newCartItem.issue)) {
+            continue;
+          }
           cart.splice(i, 1);
         }
       }

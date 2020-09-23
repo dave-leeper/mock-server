@@ -4,9 +4,9 @@ const Log = require('../util/log');
 const Strings = require('../util/strings');
 
 class AddUser {
-  do(params) {
+  do(reqInfo) {
     return new Promise((inResolve, inReject) => {
-      const { body } = params;
+      const { body } = reqInfo;
 
       if (!body.username) {
         const message = Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_USER_NAME), body.username);

@@ -1,4 +1,6 @@
 /*
+  Dirctory structure
+  ------------------
   machines.json
   accounts
     index.json       // All emails and usernames used for accounts.
@@ -12,6 +14,7 @@
             toon2.hero (encrypted)
 
   Account
+  -------
     username
     password (encrypted)
     email
@@ -20,6 +23,35 @@
     rememberMe
     groups
     authorization
+
+    POST Body
+    ---------
+    username
+    password
+    email
+    firstname
+    lastname
+    group1
+    group2
+    group3
+    headername1
+    headername2
+    headername3
+    headervalue1
+    headervalue2
+    headervalue3
+    cookiename1
+    cookiename2
+    cookiename3
+    cookievalue1
+    cookievalue2
+    cookievalue3
+    cookieexpires1
+    cookieexpires2
+    cookieexpires3
+    cookiemaxage1
+    cookiemaxage2
+    cookiemaxage3
 */
 
 // https://github.com/pbojinov/request-ip
@@ -32,7 +64,7 @@ const Registry = require('../util/registry');
 const Strings = require('../util/strings');
 
 class AddAccount {
-  do(params) {
+  do(reqInfo) {
     return new Promise((inResolve, inReject) => {
       const addAccount = async () => {
         try {
@@ -43,7 +75,7 @@ class AddAccount {
             return;
           }
           const databaseClient = databaseResult.client;
-          const newAccount = this.buildAccount(params.body);
+          const newAccount = this.buildAccount(reqInfo.body);
 
           const validateResult = await this.validate(databaseClient, newAccount);
           if (validateResult.status !== 200) {
@@ -59,8 +91,8 @@ class AddAccount {
             return;
           }
 
-          const machine = params.req.clientIp;
-          const { rememberMe } = params.req;
+          const machine = reqInfo.clientIp;
+          const { rememberMe } = reqInfo.body;
           const addAccountResult = await this.addAccount(databaseClient, newAccount, machine, rememberMe);
           if (addAccountResult.status !== 200) {
             if (Log.will(Log.ERROR)) Log.error(addAccountResult.send);
@@ -119,9 +151,9 @@ class AddAccount {
     }
     if (body.cookiename1 || body.cookiename2 || body.cookiename3) {
       newAccount.cookies = [];
-      if (body.cookiename1) newAccount.cookies.push(this.makeCookie(body.cookiename1, body.cookievalue1, body.cookieepires1, body.cookiemaxage1));
-      if (body.cookiename2) newAccount.cookies.push(this.makeCookie(body.cookiename2, body.cookievalue2, body.cookieepires2, body.cookiemaxage2));
-      if (body.cookiename3) newAccount.cookies.push(this.makeCookie(body.cookiename3, body.cookievalue3, body.cookieepires3, body.cookiemaxage3));
+      if (body.cookiename1) newAccount.cookies.push(this.makeCookie(body.cookiename1, body.cookievalue1, body.cookieexpires1, body.cookiemaxage1));
+      if (body.cookiename2) newAccount.cookies.push(this.makeCookie(body.cookiename2, body.cookievalue2, body.cookieexpires2, body.cookiemaxage2));
+      if (body.cookiename3) newAccount.cookies.push(this.makeCookie(body.cookiename3, body.cookievalue3, body.cookieexpires3, body.cookiemaxage3));
     }
     if (body.email) newAccount.email = body.email;
     if (body.firstName) newAccount.firstName = body.firstName;

@@ -24,7 +24,6 @@ describe('As a developer, I need need to stop the server with an API call', () =
     const next = () => {};
     saveLocal.do(mockRequest, mockResponse, next);
     expect(mockResponse.sendStatus).to.be.equal(200);
-    console.log(JSON.stringify(mockResponse));
     expect(mockResponse.sendfile.startsWith("/Users/davidleeper/Documents/src/node/mock-server/public/files_TMP.")).to.be.equal(true);
   });
 });

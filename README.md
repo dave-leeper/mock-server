@@ -223,14 +223,22 @@ verb fields.
 ```
 
 ## Microservices
-Provides simple services that should take only a few seconds to execute.
-Microservices have a do(params) method that returns a promise. The resolve()
-and reject() methods of the promise will be passed a microservice result object.
+Provides simple services that should take only a few seconds to execute. A microservice
+is allocated a certain amount of time to execute. If it does not complete before this time,
+execution is halted and a 408 error is returned. The amount of time allowed defaults to
+20000 miliseconds (20 seconds). Use the time parameter of the microservice's config to adjust
+the timeout.
+
+Microservices are stateless and have no lifecycle. A new microservice object
+will be instantiated every time a request to the microservice is made.
+
+Microservices have a do(reqInfo) method that returns a promise. The resolve()
+and reject() methods of the promise will be passed a Microservice Result Object.
+
 The promise is fulfilled when the microservice completes a request.
-Microservices are stateless and have no lifecycle. A microservice object
- will be instantiated every time a request to the microservice is made.
-### Params
-The params object passed into the microservice has the following members:
+
+### ReqInfo
+The reqInfo object passed into the microservice has the following members:
 ```
 {
     serviceInfo:    Object.     Information about this service (JSON).
@@ -240,7 +248,9 @@ The params object passed into the microservice has the following members:
     files:          Array.      The files of the request that invoked this microservice.
     headers:        Array.      The headers of the request that invoked this microservice.
     cookies:        Array.      The cookies of the request that invoked this microservice.
-    req:            Object.     The request that invoked this microservice.
+    pipe:           Object.     Request pipe.
+    busboy:         Object.     Busboy object.
+    clientIp        String.     IP of the client making the request.
 }
 ```
 ### Microservice Result Object
@@ -250,7 +260,7 @@ members:
     status:             Number.             The HTTP status of the operation.
     send:               String or String[]  Strings that should be written to the response.
     fileDownloadPath:   String              A file that should be downloaded in the response.
-    090op:   Boolean      Should the file be deleted after download.
+    fileDeleteAfterDownload:     Boolean    Should the file be deleted after download.
     viewName:           String              The name of a view to send as the response.
     viewObject:         JSON                An object used to render the view.
 ```
@@ -258,6 +268,7 @@ Send, fileDownloadPath, and viewName/viewObject are mutually exclusive. You can 
 of these three methods of sending data in the response per response. The only exception to this
 is on reject, in which case the server will always check the send field for an error message to
 log, even if fileDownloadPath or viewName/viewObject are used.
+
 ### Config Fields
 * **verb**<br/>
 Example: "POST"<br/>
@@ -275,6 +286,9 @@ A short human-readable description of the microservice.<br/>
 Example: "/throw.js"<br/>
 The name of the javascript file containing the
 microservice. These names are relative to the microservices directory.
+* **timeout**<br/>
+The number of miliseconds the microservice is allowed to execute. If not provided,
+this value defaults to 20000 (20 seconds).
 * **serviceData**<br/>
 Example: "serviceData": { "level": "DEBUG", "json": true, }<br/>
 An optional
@@ -286,7 +300,6 @@ json: True if the data being written is JSON.
 * **headers**<br/>
 Example: [ { "header": "MY_HEADER", "value": "MY_HEADER_VALUE" } ]<br/>
 An optional array of headers that should be included in the response.
-
 * **cookies**<br/>
 Example: [ 
     { "name": "MY_COOKIE1", "value": "MY_COOKIE_VALUE1" },  
@@ -316,7 +329,8 @@ level for the server is used.
         "path": "/download/:name",
         "name": "File Download",
         "description": "Downloads a file from the files directory of the server. The :name Parameter is the file name.",
-        "serviceFile": "download.js"
+        "serviceFile": "download.js",
+        "timeout": 10000
     }]
 ```
 
@@ -410,36 +424,6 @@ contains any information needed to configure the connection. It is up to
 the database connector class to interpret this data. This field is
 ignored when the connector is set up to use a backend database server
 using the backendURL parameter.
-* **generateElasticsearchConnectionAPI (Elasticsearch only)**<br/>
-Example: true<br/>
-A boolean value indicating if connection REST APIs should be generated
-for the connection. Optional. Defaults to false. These APIs are
-described in the API section, below.
-* **generateElasticsearchIndexAPI (Elasticsearch only)**<br/>
-Example: true<br/>
-A boolean value indicating if index REST APIs should be generated for
-the connection. Optional. Defaults to false. These APIs are described in
-the API section, below.
-* **generateElasticsearchDataAPI (Elasticsearch only)**<br/>
-Example: true<br/>
-A boolean value indicating if data REST APIs should be generated for
-the connection. Optional. Defaults to false. These APIs are described in
-the API section, below.
-* **generateMongoConnectionAPI (Mongo only)**<br/>
-Example: true<br/>
-A boolean value indicating if connection REST APIs should be generated
-for the connection. Optional. Defaults to false. These APIs are
-described in the API section, below.
-* **generateMongoCollectionAPI (Mongo only)**<br/>
-Example: true<br/>
-A boolean value indicating if collection REST APIs should be generated for
-the connection. Optional. Defaults to false. These APIs are described in
-the API section, below.
-* **generateMongoDataAPI (Mongo only)**<br/>
-Example: true<br/>
-A boolean value indicating if data REST APIs should be generated for
-the connection. Optional. Defaults to false. These APIs are described in
-the API section, below.
 * **authentication**<br/>
 Example: "local"<br/>
 Sets the authentication strategy used by this route. Optional. Usually only
@@ -461,9 +445,6 @@ level for the server is used.
       "type": "elasticsearch",
       "description": "Elasticsearch service.",
       "databaseConnector": "elasticsearch.js",
-      "generateElasticsearchConnectionAPI": true,
-      "generateElasticsearchIndexAPI": true,
-      "generateElasticsearchDataAPI": true,
       "config": {
         "host": "localhost:9200",
         "log": "trace"
@@ -478,9 +459,6 @@ level for the server is used.
       "type": "mongo",
       "description": "Mongo service.",
       "databaseConnector": "elasticsearch.js",
-      "generateMongoConnectionAPI": true,
-      "generateMongoCollectionAPI": true,
-      "generateMongoDataAPI": true,
       "config": {
         "url": 'mongodb://localhost:27017',
         "db": 'testdb',
@@ -489,162 +467,24 @@ level for the server is used.
         }
       }
     }]
+``` 
+* A simple config for GitHub.
 ```
-    
-### API
-By default, the database APIs are not generated. See the fields section,
-above, for information on how to set the flags needed to generate the
-APIs.
-
-The intent of the APIs is to quickly and easily provide endpoints for
-basic database operations.
-
-#### Connection API (Elasticsearch and Mongo)
-* **GET database-connection-name/connection/connect**<br/>
-Connects to the database.
-* **GET database-connection-name/connection/disconnect**<br/>
-Disconnects from the database.
-* **GET database-connection-name/connection/ping**<br/>
-Pings the database connection.
-
-#### Index API (Elasticsearch)
-* **GET database-connection-name/index/:index/exists**<br/>
-Determines if the index named :index exists.
-* **POST database-connection-name/index**<br/>
-Creates an index. The body of the request has a JSON object indicating
-the index name. Example:<br/>
+  "databaseConnections" : [
+    {
+      "name": "github",
+      "type": "github",
+      "description": "Github service.",
+      "databaseConnector": "githubdb.js",
+      "factory": "github-factory.js",
+      "config": {
+        "owner": "me",
+        "repo": "my-github-db",
+        "committer": { "name": "me", "email": "me@gmail.com" },
+        "author": { "name": "me", "email": "me@gmail.com" }
+      }
+    }]
 ```
-{ index: "test" }
-```
-* **DELETE database-connection-name/index/:index**<br/>
-Drops the index indicated by the :index parameter.
-* **POST database-connection-name/index/mapping**<br/>
-Creates a mapping in an index. The body of the request has a JSON
-object indicating the mapping information. Example:
-```
-{
-    index: "test",
-    type: "document",
-    body: {
-        properties: {
-            title: { type: "string" },
-            content: { type: "string" },
-            suggest: {
-                type: "completion",
-                analyzer: "simple",
-                search_analyzer: "simple"
-            }
-        }
-    }
-}
-```
-
-#### Collection API (Mongo)
-* **GET database-connection-name/collection/:collection/exists**<br/>
-Determines if the collection named :collection exists.
-* **POST database-connection-name/collection/:collection**<br/>
-Creates a collection named :collection. 
-* **DELETE database-connection-name/collection/:collection**<br/>
-Drops the index indicated by the :index parameter.
-
-#### Data API (Elasticsearch)
-* **POST database-connection-name/data**<br/>
-Inserts the data in the body of the request into the database. Example:
-```
-{
-    body:{
-        title: "my title",
-        content: "my content",
-        suggest: "my suggest"
-    },
-    id: 1,
-    type: "document",
-    index: "test"
-}
-```
-
-* **GET database-connection-name/data/:index/:type/:id**<br/>
-Selects data from the database. If the :id parameter is set to _all, all
-records from the index/type are returned. Query parameters can be used
-in conjunction with the _all id to narrow down the results. Use the
-_size and _from query parameters to handle the page size of the returned
-values. The data returned is a status and an array of matching records.
-Example:
-```
-{
-  "status":"success",
-  "data": [{
-    "title":"title2",
-    "content":"content2",
-    "suggest":"suggest2"
-  },
-  {
-    "title":"my title",
-    "content":"my content",
-    "suggest":"my suggest"
-  }]
-}
-```
-
-##### Examples
-* **GET database-connection-name/data/test/my-type/1**<br/>
-Gets the data of type my-type from index test with an _id value of 1.
-* **GET database-connection-name/data/test/my-type/_all**<br/>
-Gets all data of type my-type from index test.
-* **GET database-connection-name/data/test/my-type/_all?title=my+title**<br/>
-Gets all data of type my-type from index test where title = "my title".
-* **GET database-connection-name/data/test/my-type/_all?title=my+title&content=my+content**<br/>
-Gets all data of type my-type from index test where title equals "my title"
-and content equals "my content".
-* **GET database-connection-name/data/test/my-type/_all?title=my+title&_size=5&_from=50**<br/>
-Gets all data of type my-type from index test where title = "my title".
-Only five records are returned, starting from the 50th record of the results.
-
-* **POST database-connection-name/data/update**<br/>
-Updates the data using the body of the request. Example:
-```
-    body:{
-        doc: {
-            title: "my updated title",
-            content: "my updated content",
-            suggest: "my updated suggest"
-        }
-    },
-    id: 1,
-    type: "document",
-    index: "test"
-```
-
-* **DELETE database-connection-name/data/:index/:type/:id**<br/>
-Deletes a record from the database. Example:
-* **DELETE database-connection-name/data/test/my-type/1**
-
-#### Data API (Mongo)
-* **POST database-connection-name/data/:collection**<br/>
-Inserts the data in the body of the request into the database. Example:
-```
-{
-    title: "my title",
-    content: "my content",
-    suggest: "my suggest"
-}
-```
-
-* **GET database-connection-name/data/:collection?_id=1**<br/>
-Selects data from the database. The url query parameters contain the query.
-
-* **PUT database-connection-name/data/:collection?_id=1**<br/>
-Updates the data using the body of the request. The url query parameters contain the query. Example:
-```
-{
-    title: "my updated title",
-    content: "my updated content",
-    suggest: "my updated suggest"
-}
-```
-
-* **DELETE database-connection-name/data/:collection?_id=1**<br/>
-Deletes data. The url query parameters contain the query.
 
 ## Registry
 The registry stores name/value pairs that are available to the entire program.
@@ -779,9 +619,6 @@ Authorization information can be added to mocks, microservices, endpoints, and d
        "name": "elasticsearch",
        "description": "Elasticsearch service.",
        "databaseConnector": "elasticsearch.js",
-       "generateConnectionAPI": true,
-       "generateIndexAPI": true,
-       "generateDataAPI": true,
        "config": {
          "host": "localhost:9200",
          "log": "trace"

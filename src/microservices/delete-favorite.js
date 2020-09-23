@@ -6,9 +6,9 @@ const Log = require('../util/log');
 const Strings = require('../util/strings');
 
 class DeleteFavorite {
-  do(params) {
+  do(reqInfo) {
     return new Promise((inResolve, inReject) => {
-      const { body } = params;
+      const { body } = reqInfo;
       let filePath = './private/users/';
 
       if (!body.username) {
@@ -43,7 +43,7 @@ class DeleteFavorite {
         const JSONString = Files.readFileSync(filePath);
         favorites = JSON.parse(JSONString);
         for (let i = favorites.length - 1; i >= 0; i--) {
-          let favorite = favorites[i];
+          const favorite = favorites[i];
           if (favorite.id.toUpperCase() !== newFavorite.id.toUpperCase()) continue;
           if (favorite.issue !== newFavorite.issue && parseInt(favorite.issue) !== newFavorite.issue && favorite.issue !== parseInt(newFavorite.issue)) continue;
           const successCallback = () => {

@@ -415,6 +415,13 @@
       "authentication": "local"
     },
     {
+      "verb": "GET",
+      "path": "/set/log/:level",
+      "name": "Set log level.",
+      "description": "Sets the server's log level.",
+      "serviceFile": "set-log-level.js"
+    },
+    {
       "verb": "POST",
       "path": "/color/schemes",
       "name": "Displays complimentary colors",
@@ -527,22 +534,6 @@
         "log": "trace"
       },
       "authorization": { "strategy": "local", "groups": [ "admin" ] }
-    },
-    {
-      "name": "mongo",
-      "type": "mongo",
-      "description": "MongoDB service.",
-      "databaseConnector": "mongodb.js",
-      "generateConnectionAPI": true,
-      "generateIndexAPI": true,
-      "generateDataAPI": true,
-      "config": {
-        "url": "mongodb://localhost:27017",
-        "db": "testdb",
-        "collections": {
-          "testCollection": { "w": 0 }
-        }
-      }
     },
     {
       "name": "github",
