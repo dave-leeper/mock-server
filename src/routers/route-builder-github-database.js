@@ -19,8 +19,7 @@ class RouteBuilderGithubDatabase extends ServiceBase {
   connect(router, config, databaseConnectionCallback) {
     if (!router || !router.get || !router.put || !router.post || !router.patch || !router.delete || !router.options) return false;
     if (!config || !config.databaseConnections) return false;
-    const databaseConnectionManager = new DatabaseConnectorManager();
-    Registry.register(databaseConnectionManager, 'DatabaseConnectorManager');
+    const databaseConnectionManager = Registry.get('DatabaseConnectorManager');
     const databaseConnectionPromises = databaseConnectionManager.connect(config);
 
     databaseConnectionCallback && databaseConnectionCallback(databaseConnectionPromises);

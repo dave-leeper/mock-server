@@ -1,11 +1,8 @@
 /* eslint-disable no-console */
 // @formatter:off
-
-
 const chai = require('chai');
 const Log = require('../../../src/util/log');
 const Registry = require('../../../src/util/registry');
-
 
 const { expect } = chai;
 const DatabaseConnectionsMicroservice = require('../../../src/microservices/database-connections.js');

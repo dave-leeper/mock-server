@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable-next-line global-require */
 /* eslint-disable camelcase */
@@ -10,6 +11,8 @@ const Registry = require('../util/registry.js');
 
 // https://octokit.github.io/rest.js/v18#usage
 // https://blog.dennisokeeffe.com/blog/2020-06-22-using-octokit-to-create-files/
+// http://mattgreensmith.net/2013/08/08/commit-directly-to-github-via-api-with-octokit/
+// https://dev.to/lucis/how-to-push-files-programatically-to-a-repository-using-octokit-with-typescript-1nj0
 /**
  * @param name - name of the connection.
  * @constructor
@@ -253,6 +256,63 @@ class GithubDB {
     }
   }
 
+  async createBlob(content, encoding) {
+    try {
+      const octokit = this.client;
+      const { owner, repo } = this.config;
+      const newBlob = await octokit.git.createBlob({
+        owner,
+        repo,
+        content,
+        encoding,
+      });
+      const newBlobSha = newBlob.data.sha;
+      return { newBlob, newBlobSha };
+    } catch (err) {
+      const error = { status: false, error: `Error while creating blob. ${JSON.stringify(err)}` };
+      if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
+      throw error;
+    }
+  }
+
+  async createCommit(message, tree, parents) {
+    try {
+      const octokit = this.client;
+      const { owner, repo } = this.config;
+      const newCommit = await octokit.git.createCommit({
+        owner,
+        repo,
+        message,
+        tree,
+        parents,
+      });
+      const newCommitSha = newCommit.data.sha;
+      return { newCommit, newCommitSha };
+    } catch (err) {
+      const error = { status: false, error: `Error while creating commit. ${JSON.stringify(err)}` };
+      if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
+      throw error;
+    }
+  }
+
+  async getCommit(refSha) {
+    try {
+      const octokit = this.client;
+      const { owner, repo } = this.config;
+      const commit = await octokit.git.getCommit({
+        owner,
+        repo,
+        commit_sha: refSha,
+      });
+      const commitTreeSha = commit.data.tree.sha;
+      return { commit, commitTreeSha };
+    } catch (err) {
+      const error = { status: false, error: `Error while getting commit. ${JSON.stringify(err)}` };
+      if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
+      throw error;
+    }
+  }
+
   async listCommits(path) {
     try {
       const octokit = this.client;
@@ -260,10 +320,122 @@ class GithubDB {
       const content = await octokit.repos.listCommits({ owner, repo, path });
       return content.data;
     } catch (err) {
-      const error = { status: false, error: `Error while reading commits from ${path}. ${JSON.stringify(err)}` };
+      const error = { status: false, error: `Error while getting commit list from ${path}. ${JSON.stringify(err)}` };
       if (Log.will(Log.ERROR)) Log.error(JSON.stringify(error));
       throw error;
     }
+  }
+
+  async getRef(ref) {
+    const octokit = this.client;
+    const { owner, repo } = this.config;
+    const theRef = await octokit.git.getRef({
+      owner,
+      repo,
+      ref,
+    });
+    const refSha = theRef.data.object.sha;
+    return { ref: theRef, refSha };
+  }
+
+  async updateRef(ref, sha) {
+    const octokit = this.client;
+    const { owner, repo } = this.config;
+    const updatedRef = octokit.git.updateRef({
+      owner,
+      repo,
+      ref,
+      sha,
+    });
+  }
+
+  async createTree(treeNodeArray) {
+    const octokit = this.client;
+    const { owner, repo } = this.config;
+    const newTree = await octokit.git.createTree({
+      owner,
+      repo,
+      tree: treeNodeArray,
+    });
+    const newTreeSha = newTree.data.sha;
+    return { newTree, newTreeSha };
+  }
+
+  async getTree(commitSha, recursive) {
+    const octokit = this.client;
+    const { owner, repo } = this.config;
+    const rawTree = (recursive)
+      ? await octokit.git.getTree({
+        owner,
+        repo,
+        recursive: true,
+        tree_sha: commitSha,
+      })
+      : await octokit.git.getTree({
+        owner,
+        repo,
+        tree_sha: commitSha,
+      });
+    const { tree } = rawTree.data;
+    const treeSha = rawTree.data.sha;
+    return { treeNodeArray: tree, treeSha };
+  }
+
+  //  The file mode; one of
+  //    100644 for file (blob),
+  //    100755 for executable (blob),
+  //    040000 for subdirectory (tree),
+  //    160000 for submodule (commit), or
+  //    120000 for a blob that specifies the path of a symlink.
+  addFileToTreeNodeArray(treeNodeArray, path, type, sha, baseTree) {
+    const node = {
+      path,
+      mode: '100644',
+      type,
+      sha,
+      base_tree: baseTree,
+    };
+    const treeNodeArrayClone = [...treeNodeArray];
+    treeNodeArrayClone.push(node);
+    return treeNodeArrayClone;
+  }
+
+  async removeFileFromTreeNodeArray(treeNodeArray, path) {
+    const treeNodeArrayClone = [...treeNodeArray];
+    for (let nodeIndex = 0; nodeIndex < treeNodeArrayClone.length; nodeIndex++) {
+      const node = treeNodeArrayClone[nodeIndex];
+      if (node.path === path) {
+        treeNodeArrayClone.splice(nodeIndex, 1);
+        return treeNodeArrayClone;
+      }
+    }
+    return treeNodeArrayClone;
+  }
+
+  async updateFileInTreeNodeArray(treeNodeArray, path, type, sha, baseTree) {
+    let treeNodeArrayClone = this.removeFileFromTreeNodeArray(treeNodeArray, path);
+    treeNodeArrayClone = this.addFileToTreeNodeArray(treeNodeArray, path, type, sha, baseTree);
+
+    return treeNodeArrayClone;
+  }
+
+  async treeTest() {
+    const octokit = this.client;
+    const { owner, repo } = this.config;
+    const masterRef = 'heads/master';
+    const filename = 'test2';
+
+    const { ref, refSha } = await this.getRef(masterRef);
+    const { commit, commitTreeSha } = await this.getCommit(refSha);
+    const { newBlob, newBlobSha } = await this.createBlob('text', 'utf-8');
+    let { treeNodeArray, treeSha } = await this.getTree(commitTreeSha);
+    treeNodeArray = this.addFileToTreeNodeArray(treeNodeArray, filename, 'blob', newBlobSha, commitTreeSha);
+    console.log(`treeNodeArray ${JSON.stringify(treeNodeArray)}`);
+    const { newTree, newTreeSha } = await this.createTree(treeNodeArray);
+    const message = 'Committed via Octokit!';
+    const { newCommit, newCommitSha } = await this.createCommit(message, newTreeSha, [refSha]);
+
+    await this.updateRef(masterRef, newCommitSha);
   }
 }
 

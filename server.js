@@ -1,3 +1,6 @@
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
+/* eslint-disable no-console */
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const express = require('express');
@@ -34,11 +37,11 @@ class Server {
     const locals = {
       port,
     };
-    const getConfigFileNames = (config) => {
-      const configList = FileUtilities.getFileList(config, /.json/i, true, false);
+    const getConfigFileNames = (theConfig) => {
+      const configList = FileUtilities.getFileList(theConfig, /.json/i, true, false);
       if (!configList) [];
       for (let loop = 0; loop < configList.length; loop++) {
-        const fullPath = path.join(__dirname, path.join(config, configList[loop]));
+        const fullPath = path.join(__dirname, path.join(theConfig, configList[loop]));
         configList[loop] = fullPath;
       }
       return configList;
@@ -53,30 +56,30 @@ class Server {
     const mergeConfigs = (loadedConfigs) => {
       const mergedConfig = {};
       for (let loop = 0; loop < loadedConfigs.length; loop++) {
-        const config = loadedConfigs[loop];
+        const theConfig = loadedConfigs[loop];
         // Only first logging configure is used
-        if (config.logging && !mergedConfig.logging) mergedConfig.logging = config.logging;
-        if (config.port) mergedConfig.port = config.port;
-        if (config.https) mergedConfig.https = config.https;
-        if (config.mocks) {
+        if (theConfig.logging && !mergedConfig.logging) mergedConfig.logging = theConfig.logging;
+        if (theConfig.port) mergedConfig.port = theConfig.port;
+        if (theConfig.https) mergedConfig.https = theConfig.https;
+        if (theConfig.mocks) {
           if (!mergedConfig.mocks) mergedConfig.mocks = [];
-          mergedConfig.mocks = mergedConfig.mocks.concat(config.mocks);
+          mergedConfig.mocks = mergedConfig.mocks.concat(theConfig.mocks);
         }
-        if (config.authentication) {
+        if (theConfig.authentication) {
           if (!mergedConfig.authentication) mergedConfig.authentication = [];
-          mergedConfig.authentication = mergedConfig.authentication.concat(config.authentication);
+          mergedConfig.authentication = mergedConfig.authentication.concat(theConfig.authentication);
         }
-        if (config.microservices) {
+        if (theConfig.microservices) {
           if (!mergedConfig.microservices) mergedConfig.microservices = [];
-          mergedConfig.microservices = mergedConfig.microservices.concat(config.microservices);
+          mergedConfig.microservices = mergedConfig.microservices.concat(theConfig.microservices);
         }
-        if (config.endpoints) {
+        if (theConfig.endpoints) {
           if (!mergedConfig.endpoints) mergedConfig.endpoints = [];
-          mergedConfig.endpoints = mergedConfig.endpoints.concat(config.endpoints);
+          mergedConfig.endpoints = mergedConfig.endpoints.concat(theConfig.endpoints);
         }
-        if (config.databaseConnections) {
+        if (theConfig.databaseConnections) {
           if (!mergedConfig.databaseConnections) mergedConfig.databaseConnections = [];
-          mergedConfig.databaseConnections = mergedConfig.databaseConnections.concat(config.databaseConnections);
+          mergedConfig.databaseConnections = mergedConfig.databaseConnections.concat(theConfig.databaseConnections);
         }
       }
       return mergedConfig;

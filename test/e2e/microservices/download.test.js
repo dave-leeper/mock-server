@@ -28,15 +28,12 @@ const config = {
 const port = 1337;
 const server = new Server();
 
-describe('As a developer, I need to download files from the server.', () => {
+describe('As a developer, I need to download files from the server. E2E', () => {
   before(() => {
   });
   beforeEach(() => {
   });
-  afterEach((done) => {
-    server.stop(() => {
-      done();
-    });
+  afterEach(() => {
   });
   after(() => {
   });
@@ -50,7 +47,9 @@ describe('As a developer, I need to download files from the server.', () => {
         if (err) expect(true).to.be.equal(false);
         expect(body).to.be.equal('TEXT');
         fs.unlinkSync(sourceFile);
-        done();
+        server.stop(() => {
+          done();
+        });
       });
     });
   });
@@ -63,7 +62,9 @@ describe('As a developer, I need to download files from the server.', () => {
         if (err) expect(true).to.be.equal(false);
         expect(body).to.be.equal('TEXT');
         fs.unlinkSync(sourceFile);
-        done();
+        server.stop(() => {
+          done();
+        });
       });
     });
   });
@@ -73,7 +74,9 @@ describe('As a developer, I need to download files from the server.', () => {
       request(url, (err, res, body) => {
         if (err) expect(true).to.be.equal(false);
         expect(res.statusCode).to.be.equal(404);
-        done();
+        server.stop(() => {
+          done();
+        });
       });
     });
   });

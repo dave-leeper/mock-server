@@ -26,7 +26,7 @@ npm run test-authentication
 var Server = require('./server.js');
 var port = MY_PORT_NUMBER;
 var serverConfig = require('./MY_SERVER_CONFIG.json');
-var server = new Server().init(port, serverConfig);
+var server = new Server().init(port, serverConfig, optionalCallback);
 ```
 # To Set The Port 
 The port used by the mock server defaults to 3000. You can override this by setting the

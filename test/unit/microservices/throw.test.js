@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // @formatter:off
 
 
@@ -28,17 +29,24 @@ const config = {
 
 describe('As a developer, I need the server to continue running when exceptions are thrown.', () => {
   it('should continue running after an exception is thrown', (done) => {
+    console.log('=============== throw 1');
     const port = 1337;
     const server = new Server();
     const serverInitCallback = () => {
+      console.log('=============== throw 2');
       request(`http://localhost:${port}/throw`, { json: true }, (_err, _res, _body) => {
+        console.log('=============== throw 3');
         request(`http://localhost:${port}/ping`, { json: true }, (_err2, _res2, body) => {
+          console.log('=============== throw 4');
           expect(body.name).to.be.equal('My Server');
           expect(body.version).to.be.equal('1.0');
-          server.stop(() => { done(); });
+          server.stop(() => {
+            console.log('=============== throw 5');
+            done();
+          });
         });
       });
     };
     server.init(port, config, serverInitCallback);
-  });
+  }).timeout(5000);
 });

@@ -45,7 +45,6 @@ describe('As a developer, I need to upload files to the server.', () => {
   });
 
   it('should upload files', (done) => {
-    console.log('====================> Upload');
     server.init(port, config, () => {
       const sourceFile = path.resolve('./public/files', 'user2.png');
       const destFile = path.resolve('./public/files', 'filename');

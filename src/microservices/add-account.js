@@ -63,6 +63,8 @@ const Log = require('../util/log');
 const Registry = require('../util/registry');
 const Strings = require('../util/strings');
 
+const indexFile = 'accounts/index.json';
+
 class AddAccount {
   do(reqInfo) {
     return new Promise((inResolve, inReject) => {
@@ -113,7 +115,7 @@ class AddAccount {
   }
 
   async getDatabaseClient() {
-    const databaseConnectionManager = Registry.get('DatabaseConnectionManager');
+    const databaseConnectionManager = Registry.get('DatabaseConnectorManager');
     if (!databaseConnectionManager) {
       const message = Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED), 'Could not load database connection manager.');
       if (Log.will(Log.ERROR)) Log.error(message);
@@ -174,7 +176,7 @@ class AddAccount {
   async validate(databaseClient, newAccount) {
     if (!newAccount.username) return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_USER_NAME), newAccount.username) };
     if (!newAccount.password) return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_PASSWORD), newAccount.username) };
-    if (!newAccount.group1 && !newAccount.group2 && !newAccount.group3) return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_GROUP), newAccount.username) };
+    if (!newAccount.groups.length) return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_GROUP), newAccount.username) };
     const emailAndUserNameStatus = await this.validateEmailAndUserName(databaseClient, newAccount);
     if (emailAndUserNameStatus.status !== 200) return emailAndUserNameStatus;
     const passwordStatus = await this.validatePassword(newAccount);
@@ -195,16 +197,31 @@ class AddAccount {
       return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_USER_NAME), newAccount.username) };
     }
 
-    const accounts = await databaseClient.read('index.json');
-    for (let i = 0; i < accounts.length; i++) {
-      if (newAccount.email === accounts[i].email) {
-        return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_EMAIL), newAccount.email) };
+    if (await databaseClient.fileExists(indexFile)) {
+      const accounts = JSON.parse(await databaseClient.read(indexFile));
+      console.log(`============================== ${JSON.stringify(accounts)}`);
+      for (let i = 0; i < accounts.length; i++) {
+        if (newAccount.email === accounts[i].email) {
+          return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_EMAIL), newAccount.email) };
+        }
+        if (newAccount.username === accounts[i].username) {
+          return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_USER_NAME), newAccount.username) };
+        }
       }
-      if (newAccount.username === accounts[i].username) {
-        return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_USER_NAME), newAccount.username) };
-      }
+      await databaseClient.sleep(5000);
+      return { status: 200 };
     }
-    return { status: 200 };
+
+    try {
+      await databaseClient.insert(indexFile, '[]');
+      await databaseClient.sleep(5000);
+      return { status: 200 };
+    } catch (err) {
+      const message = Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED), 'Could not create email/username information.');
+      if (Log.will(Log.ERROR)) Log.error(message);
+      databaseClient.unlock(indexFile);
+      return { status: 500, send: message };
+    }
   }
 
   async validatePassword(newAccount) {
@@ -219,18 +236,18 @@ class AddAccount {
 
   async updateIndex(databaseClient, newAccount) {
     try {
-      databaseClient.lock('index.json');
-      let emailsData = await databaseClient.read('index.json');
-      const emails = JSON.parse(emailsData);
-      emails.push({ email: newAccount.email, username: newAccount.username });
-      emailsData = JSON.stringify(emails);
-      databaseClient.update('index.json', emailsData);
-      databaseClient.unlock('index.json');
+      let indexData = await databaseClient.read(indexFile);
+      const index = JSON.parse(indexData);
+      index.push({ email: newAccount.email, username: newAccount.username });
+      indexData = JSON.stringify(index);
+      await databaseClient.sleep(5000);
+      databaseClient.update(indexFile, indexData);
+      databaseClient.unlock(indexFile);
       return { status: 200 };
     } catch (err) {
       const message = Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED), 'Could not update email/username information.');
       if (Log.will(Log.ERROR)) Log.error(message);
-      databaseClient.unlock('index.json');
+      databaseClient.unlock(indexFile);
       return { status: 500, send: message };
     }
   }
@@ -252,6 +269,7 @@ class AddAccount {
       return { status: 500, send: message };
     }
 
+    await databaseClient.sleep(5000);
     const newUserToonPath = `${newUserPath}/toon`;
     try {
       await databaseClient.createCollection(newUserToonPath);

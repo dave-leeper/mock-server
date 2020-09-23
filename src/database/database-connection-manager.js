@@ -1,3 +1,6 @@
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
+/* eslint-disable new-cap */
 
 function DatabaseConnectionManager() {
   this.config = null;

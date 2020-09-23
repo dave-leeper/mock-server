@@ -51,7 +51,7 @@ const updateData = {
   suggest: 'my updated suggest',
 };
 
-describe('As a developer, I need to connect, ping, and disconnect to/from githubdb.', () => {
+describe.skip('As a developer, I need to connect, ping, and disconnect to/from githubdb.', () => {
   before(() => {
   });
   beforeEach(async () => {
@@ -88,7 +88,7 @@ describe('As a developer, I need to connect, ping, and disconnect to/from github
   });
 });
 
-describe('As a developer, I need to create, check for the existence of, and drop githubdb collections.', () => {
+describe.skip('As a developer, I need to create, check for the existence of, and drop githubdb collections.', () => {
   before((done) => {
     githubdb.connect(config.databaseConnections[0]).then(() => {
       done();
@@ -165,7 +165,7 @@ describe('As a developer, I need to create, check for the existence of, and drop
   });
 });
 
-describe('As a developer, I need to perform CRUD operations on the githubdb database.', () => {
+describe.skip('As a developer, I need to perform CRUD operations on the githubdb database.', () => {
   before((done) => {
     githubdb.connect(config.databaseConnections[0]).then(() => {
       done();
@@ -245,7 +245,7 @@ describe('As a developer, I need to perform CRUD operations on the githubdb data
   }).timeout(10000);
 });
 
-describe('As a developer, I need to be able to lock and unlock files', () => {
+describe.skip('As a developer, I need to be able to lock and unlock files', () => {
   before((done) => {
     githubdb.connect(config.databaseConnections[0]).then(() => {
       done();
@@ -336,11 +336,20 @@ describe('As a developer, I need to be able to work with commits', () => {
   after(() => {
   });
 
-  it('should be able to list the commits for a file', async () => {
+  it.skip('should be able to list the commits for a file', async () => {
     try {
       const commits = await githubdb.listCommits('README.md');
       expect(commits.length > 0).to.be.equal(true);
     } catch (err) {
+      console.log(JSON.stringify(err));
     }
   });
+
+  it('test tree', async () => {
+    try {
+      const commits = await githubdb.treeTest();
+    } catch (err) {
+      console.log(JSON.stringify(err));
+    }
+  }).timeout(5000);
 });

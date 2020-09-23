@@ -9,6 +9,7 @@ const RouteBuilderEndpoints = require('./route-builder-endpoints.js');
 const RouteBuilderElasticsearchDatabase = require('./route-builder-elasticsearch-database.js');
 const RouteBuilderGithubDatabase = require('./route-builder-github-database.js');
 const RouteBuilderMongoDatabase = require('./route-builder-mongo-database.js');
+const DatabaseConnectorManager = require('../database/database-connection-manager');
 const Registry = require('../util/registry.js');
 const Strings = require('../util/strings.js');
 const I18n = require('../util/i18n.js');
@@ -35,6 +36,9 @@ class RouteBuilder {
 
     const routeBuilderEndpoints = new RouteBuilderEndpoints();
     routeBuilderEndpoints.connect(router, config);
+
+    const databaseConnectionManager = new DatabaseConnectorManager();
+    Registry.register(databaseConnectionManager, 'DatabaseConnectorManager');
 
     const routeBuilderElasticsearchDatabase = new RouteBuilderElasticsearchDatabase();
     routeBuilderElasticsearchDatabase.connect(router, config, databaseConnectionCallback);
