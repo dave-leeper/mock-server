@@ -1,139 +1,61 @@
-/*
-  Dirctory structure
-  ------------------
-  machines.json
-  accounts
-    index.json       // All emails and usernames used for accounts.
-    user1
-        account.json
-        owned.json
-        favorites.json
-        cart.json
-        toons
-            toon1.hero (encrypted)
-            toon2.hero (encrypted)
-
-  Account
-  -------
-    username
-    password (encrypted)
-    email
-    firstName
-    lastName
-    rememberMe
-    groups
-    authorization
-
-    POST Body
-    ---------
-    username
-    password
-    email
-    firstname
-    lastname
-    group1
-    group2
-    group3
-    headername1
-    headername2
-    headername3
-    headervalue1
-    headervalue2
-    headervalue3
-    cookiename1
-    cookiename2
-    cookiename3
-    cookievalue1
-    cookievalue2
-    cookievalue3
-    cookieexpires1
-    cookieexpires2
-    cookieexpires3
-    cookiemaxage1
-    cookiemaxage2
-    cookiemaxage3
-*/
-
+/* eslint-disable no-param-reassign */
+/* eslint-disable global-require */
+/* eslint-disable import/no-dynamic-require */
 // https://github.com/pbojinov/request-ip
 const path = require('path');
 const Encrypt = require('../util/encrypt');
+const Files = require('../util/files');
 const GithubDB = require('../database/githubdb');
 const I18n = require('../util/i18n');
 const Log = require('../util/log');
 const Registry = require('../util/registry');
 const Strings = require('../util/strings');
 
-const indexFile = 'accounts/index.json';
-
 class AddAccount {
-  do(reqInfo) {
+  static get userPath() { return './private/users/'; }
+
+  static get machinesPath() { return './private/machines/'; }
+
+  static get destination() { return './private/users/authentication.json'; }
+
+  do(params) {
     return new Promise((inResolve, inReject) => {
-      const addAccount = async () => {
-        try {
-          const databaseResult = await this.getDatabaseClient();
-          if (databaseResult.status !== 200) {
-            if (Log.will(Log.ERROR)) Log.error(databaseResult.send);
-            inReject && inReject(databaseResult);
-            return;
-          }
-          const databaseClient = databaseResult.client;
-          const newAccount = this.buildAccount(reqInfo.body);
+      const { body } = params;
+      const accounts = Registry.get('Accounts');
+      const newAccount = this.buildAccount(body);
+      const validateResult = this.validate(body, newAccount, accounts);
+      if ((validateResult.status !== 200)) {
+        if (Log.will(Log.ERROR)) Log.error(validateResult.send);
+        inReject && inReject(validateResult);
+      }
 
-          const validateResult = await this.validate(databaseClient, newAccount);
-          if (validateResult.status !== 200) {
-            if (Log.will(Log.ERROR)) Log.error(validateResult.send);
-            inReject && inReject(validateResult);
-            return;
-          }
-
-          const updateEmailResult = await this.updateIndex(databaseClient, newAccount);
-          if (updateEmailResult.status !== 200) {
-            if (Log.will(Log.ERROR)) Log.error(updateEmailResult.send);
-            inReject && inReject(updateEmailResult);
-            return;
-          }
-
-          const machine = reqInfo.clientIp;
-          const { rememberMe } = reqInfo.body;
-          const addAccountResult = await this.addAccount(databaseClient, newAccount, machine, rememberMe);
-          if (addAccountResult.status !== 200) {
-            if (Log.will(Log.ERROR)) Log.error(addAccountResult.send);
-            inReject && inReject(addAccountResult);
-            return;
-          }
-
-          const message = I18n.get(Strings.SUCCESS_MESSAGE_ACCOUNT_ADDED);
-          inResolve && inResolve({ status: 200, send: message });
-        } catch (err) {
-          const error = { status: 500, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED), JSON.stringify(err)) };
-          if (Log.will(Log.ERROR)) Log.error(error.send);
-          inReject && inReject(error);
-        }
-      };
-      addAccount();
+      if (this.updateAccounts(newAccount, accounts, inResolve, inReject)) {
+        AddAccount.rememberUser(params, newAccount.username);
+        this.writeAccount(newAccount, AddAccount.destination, accounts, inResolve, inReject);
+      }
     });
   }
 
-  async getDatabaseClient() {
-    const databaseConnectionManager = Registry.get('DatabaseConnectorManager');
-    if (!databaseConnectionManager) {
-      const message = Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED), 'Could not load database connection manager.');
-      if (Log.will(Log.ERROR)) Log.error(message);
-      return { status: 500, send: message };
+  validate(body, account, accounts) {
+    if (!body.username) return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_USER_NAME), body.username) };
+    if (!body.password) return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_PASSWORD), body.username) };
+    if (!body.group1 && !body.group2 && !body.group3) return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_GROUP), body.username) };
+    const emailStatus = this.validateEmail(body, account, accounts);
+    if (emailStatus.status !== 200) return emailStatus;
+    return this.validateDatabase(body);
+  }
+
+  validateEmail(body, account, accounts) {
+    if (!body.email || body.email.length < 5 || body.email.indexOf('@') === -1 || body.email.indexOf('.') === -1) return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_EMAIL), body.email) };
+    for (let i = 0; i < accounts.length; i++) {
+      if (body.email === accounts[i].email) return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_EMAIL), body.email) };
     }
-    const githubDB = databaseConnectionManager.getConnection('github');
-    if (!githubDB) {
-      const message = Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED), 'Could not load database client.');
-      if (Log.will(Log.ERROR)) Log.error(message);
-      return { status: 500, send: message };
-    }
-    const pingResult = await githubDB.ping();
-    if (!pingResult) {
-      const message = Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED), 'Could not connect to database.');
-      if (Log.will(Log.ERROR)) Log.error(message);
-      return { status: 500, send: message };
-    }
-    return { status: 200, client: githubDB };
+    return { status: 200 };
+  }
+
+  validateDatabase(body) {
+    if (Files.existsSync(path.resolve(AddAccount.userPath + body.username))) return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ALREADY_EXISTS), body.username) };
+    return { status: 200 };
   }
 
   buildAccount(body) {
@@ -153,9 +75,9 @@ class AddAccount {
     }
     if (body.cookiename1 || body.cookiename2 || body.cookiename3) {
       newAccount.cookies = [];
-      if (body.cookiename1) newAccount.cookies.push(this.makeCookie(body.cookiename1, body.cookievalue1, body.cookieexpires1, body.cookiemaxage1));
-      if (body.cookiename2) newAccount.cookies.push(this.makeCookie(body.cookiename2, body.cookievalue2, body.cookieexpires2, body.cookiemaxage2));
-      if (body.cookiename3) newAccount.cookies.push(this.makeCookie(body.cookiename3, body.cookievalue3, body.cookieexpires3, body.cookiemaxage3));
+      if (body.cookiename1) newAccount.cookies.push(this.makeCookie(body.cookiename1, body.cookievalue1, body.cookieepires1, body.cookiemaxage1));
+      if (body.cookiename2) newAccount.cookies.push(this.makeCookie(body.cookiename2, body.cookievalue2, body.cookieepires2, body.cookiemaxage2));
+      if (body.cookiename3) newAccount.cookies.push(this.makeCookie(body.cookiename3, body.cookievalue3, body.cookieepires3, body.cookiemaxage3));
     }
     if (body.email) newAccount.email = body.email;
     if (body.firstName) newAccount.firstName = body.firstName;
@@ -166,6 +88,52 @@ class AddAccount {
     return newAccount;
   }
 
+  updateAccounts(newAccount, accounts, inResolve, inReject) {
+    if (accounts && accounts.length) {
+      for (let i = accounts.length - 1; i >= 0; i--) {
+        if (newAccount.username.toUpperCase() === accounts[i].username.toUpperCase()) {
+          const message = I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ALREADY_EXISTS);
+          if (Log.will(Log.ERROR)) Log.error(message);
+          inReject && inReject({ status: 400, send: message });
+          return false;
+        }
+      }
+      accounts.push(newAccount);
+    } else {
+      accounts = [newAccount];
+    }
+    return true;
+  }
+
+  writeAccount(newAccount, destination, accounts, inResolve, inReject) {
+    const newUserPath = path.resolve(AddAccount.userPath + newAccount.username);
+    Files.createDirSync(newUserPath);
+    Files.writeFileSync(`${newUserPath}/owned.json`, '[]');
+    Files.writeFileSync(`${newUserPath}/favorites.json`, '[]');
+    Files.writeFileSync(`${newUserPath}/cart.json`, '[]');
+
+    const crypto = Registry.get('Crypto');
+    const successCallback = () => {
+      const message = I18n.get(Strings.SUCCESS_MESSAGE_ACCOUNT_ADDED);
+      Registry.unregister('Accounts');
+      Registry.register(accounts, 'Accounts');
+      inResolve && inResolve({ status: 200, send: message });
+    };
+    const failCallback = (error) => {
+      const message = Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED), Log.stringify(error));
+      if (Log.will(Log.ERROR)) Log.error(message);
+      inReject && inReject({ status: 500, send: message });
+    };
+    Log.error(path.resolve(destination));
+    Files.writeFileLock(
+      path.resolve(destination),
+      JSON.stringify({ accounts: Encrypt.encryptAccounts(accounts, crypto.iv, crypto.key) }, null, 3),
+      5,
+      successCallback,
+      failCallback,
+    );
+  }
+
   makeCookie(name, value, expires, maxAge) {
     const cookie = { name, value };
     if (expires) cookie.expires = expires;
@@ -173,146 +141,37 @@ class AddAccount {
     return cookie;
   }
 
-  async validate(databaseClient, newAccount) {
-    if (!newAccount.username) return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_USER_NAME), newAccount.username) };
-    if (!newAccount.password) return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_PASSWORD), newAccount.username) };
-    if (!newAccount.groups.length) return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_GROUP), newAccount.username) };
-    const emailAndUserNameStatus = await this.validateEmailAndUserName(databaseClient, newAccount);
-    if (emailAndUserNameStatus.status !== 200) return emailAndUserNameStatus;
-    const passwordStatus = await this.validatePassword(newAccount);
-    return passwordStatus;
-  }
-
-  async validateEmailAndUserName(databaseClient, newAccount) {
-    if (!newAccount.email
-    || newAccount.email.length < 5
-    || newAccount.email.indexOf('@') === -1
-    || newAccount.email.indexOf('.') === -1) {
-      return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_EMAIL), newAccount.email) };
-    }
-    if ((!newAccount.username)
-    || (newAccount.username.length === 0)
-    || (newAccount.username.length < 5)
-    || (!/[a-zA-Z0-9-_]/.test(newAccount.username))) {
-      return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_USER_NAME), newAccount.username) };
-    }
-
-    if (await databaseClient.fileExists(indexFile)) {
-      const accounts = JSON.parse(await databaseClient.read(indexFile));
-      console.log(`============================== ${JSON.stringify(accounts)}`);
-      for (let i = 0; i < accounts.length; i++) {
-        if (newAccount.email === accounts[i].email) {
-          return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_EMAIL), newAccount.email) };
-        }
-        if (newAccount.username === accounts[i].username) {
-          return { status: 400, send: Strings.format(I18n.get(Strings.ERROR_MESSAGE_INCORRECT_USER_NAME), newAccount.username) };
-        }
-      }
-      await databaseClient.sleep(5000);
-      return { status: 200 };
-    }
-
-    try {
-      await databaseClient.insert(indexFile, '[]');
-      await databaseClient.sleep(5000);
-      return { status: 200 };
-    } catch (err) {
-      const message = Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED), 'Could not create email/username information.');
-      if (Log.will(Log.ERROR)) Log.error(message);
-      databaseClient.unlock(indexFile);
-      return { status: 500, send: message };
-    }
-  }
-
-  async validatePassword(newAccount) {
-    if ((!newAccount.password)
-    || (newAccount.password.length === 0)
-    || (newAccount.password.length < 5)
-    || (!/[a-zA-Z0-9-_]/.test(newAccount.username))) {
-      return { status: 400, send: I18n.get(Strings.ERROR_MESSAGE_INCORRECT_PASSWORD) };
-    }
-    return { status: 200 };
-  }
-
-  async updateIndex(databaseClient, newAccount) {
-    try {
-      let indexData = await databaseClient.read(indexFile);
-      const index = JSON.parse(indexData);
-      index.push({ email: newAccount.email, username: newAccount.username });
-      indexData = JSON.stringify(index);
-      await databaseClient.sleep(5000);
-      databaseClient.update(indexFile, indexData);
-      databaseClient.unlock(indexFile);
-      return { status: 200 };
-    } catch (err) {
-      const message = Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED), 'Could not update email/username information.');
-      if (Log.will(Log.ERROR)) Log.error(message);
-      databaseClient.unlock(indexFile);
-      return { status: 500, send: message };
-    }
-  }
-
-  async addAccount(databaseClient, newAccount, machine, rememberMe) {
-    const newUserPath = `accounts/${newAccount.username}`;
-    const userExists = await databaseClient.collectionExists(newUserPath);
-    if (userExists) {
-      const message = I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ALREADY_EXISTS);
-      if (Log.will(Log.ERROR)) Log.error(message);
-      return { status: 500, send: message };
-    }
-
-    try {
-      await databaseClient.createCollection(newUserPath);
-    } catch (err) {
-      const message = I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED);
-      if (Log.will(Log.ERROR)) Log.error(message);
-      return { status: 500, send: message };
-    }
-
-    await databaseClient.sleep(5000);
-    const newUserToonPath = `${newUserPath}/toon`;
-    try {
-      await databaseClient.createCollection(newUserToonPath);
-    } catch (err) {
-      const message = I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED);
-      if (Log.will(Log.ERROR)) Log.error(message);
-      return { status: 500, send: message };
-    }
-
-    const crypto = Registry.get('Crypto');
-    const account = Encrypt.encryptAccount(newAccount, crypto.iv, crypto.key);
-    try {
-      await databaseClient.upsert(`${newUserPath}/account.json`, account);
-    } catch (err) {
-      const message = I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED);
-      if (Log.will(Log.ERROR)) Log.error(message);
-      return { status: 500, send: message };
-    }
-
-    if (rememberMe) {
-      try {
-        let machinesData = await databaseClient.read('machines.json');
-        const machines = JSON.parse(machinesData);
-        machines.push({ machine, username: newAccount.username });
-        machinesData = JSON.stringify(machines);
-        await databaseClient.update('machines.json', machinesData);
-      } catch (err) {
-        const message = I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED);
-        if (Log.will(Log.ERROR)) Log.error(message);
-        return { status: 500, send: message };
+  static rememberUser(params, username) {
+    if (!username) return;
+    const machine = params.req.clientIp;
+    const record = { machine, username };
+    const machinesFile = path.resolve(`${AddAccount.machinesPath}machines.json`);
+    const machinesData = require(machinesFile);
+    for (let i = 0; i < machinesData.length; i++) {
+      const md = machinesData[i];
+      Log.error(`md: ${JSON.stringify(md)}`);
+      if (md.machine === record.machine) {
+        return;
       }
     }
+    machinesData.push(record);
+    Files.writeFileSync(machinesFile, JSON.stringify(machinesData));
+  }
 
-    try {
-      await databaseClient.upsert(`${newUserPath}/owned.json`, '[]');
-      await databaseClient.upsert(`${newUserPath}/favorites.json`, '[]');
-      await databaseClient.upsert(`${newUserPath}/cart.json`, '[]');
-    } catch (err) {
-      const message = I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED);
-      if (Log.will(Log.ERROR)) Log.error(message);
-      return { status: 500, send: message };
+  static forgetUser(params, username) {
+    if (!username) return;
+    const machine = params.req.clientIp;
+    const record = { machine, username };
+    const machinesFile = path.resolve(`${AddAccount.machinesPath}machines.json`);
+    const machinesData = require(machinesFile);
+    for (let i = machinesData.length - 1; i >= 0; i--) {
+      const md = machinesData[i];
+      if (md.machine === record.machine) {
+        machinesData.splice(i, 1);
+        Files.writeFileSync(machinesFile, JSON.stringify(machinesData));
+        return;
+      }
     }
-    return { status: 200 };
   }
 }
 module.exports = AddAccount;
