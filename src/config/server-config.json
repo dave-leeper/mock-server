@@ -325,7 +325,6 @@
       "serviceFile": "github-callback.js"
     },
     {
-      "verb": "POST",
       "path": "/remember/data",
       "name": "Remember",
       "description": "Provides a user name if the server remembers their machine.",

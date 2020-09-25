@@ -1,10 +1,10 @@
 // @formatter:off
 const chai = require('chai');
-const Log = require('../../../src/util/log');
-const Registry = require('../../../src/util/registry');
+const Log = require('@src/util/log');
+const Registry = require('@src/util/registry');
 
 const { expect } = chai;
-const MicroservicesMicroservice = require('../../../src/microservices/microservices.js');
+const MicroservicesMicroservice = require('@src/microservices/microservices.js');
 
 const config = {
   microservices: [

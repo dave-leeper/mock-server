@@ -5,7 +5,6 @@
 const path = require('path');
 const Encrypt = require('../util/encrypt');
 const Files = require('../util/files');
-const GithubDB = require('../database/githubdb');
 const I18n = require('../util/i18n');
 const Log = require('../util/log');
 const Registry = require('../util/registry');
@@ -16,11 +15,11 @@ class AddAccount {
 
   static get machinesPath() { return './private/machines/'; }
 
-  static get destination() { return './private/users/authentication.json'; }
+  static get authenticationFile() { return './private/users/authentication.json'; }
 
-  do(params) {
+  do(reqInfo) {
     return new Promise((inResolve, inReject) => {
-      const { body } = params;
+      const { body } = reqInfo;
       const accounts = Registry.get('Accounts');
       const newAccount = this.buildAccount(body);
       const validateResult = this.validate(body, newAccount, accounts);
@@ -30,8 +29,8 @@ class AddAccount {
       }
 
       if (this.updateAccounts(newAccount, accounts, inResolve, inReject)) {
-        AddAccount.rememberUser(params, newAccount.username);
-        this.writeAccount(newAccount, AddAccount.destination, accounts, inResolve, inReject);
+        AddAccount.rememberUser(reqInfo, newAccount.username);
+        this.writeAccount(newAccount, AddAccount.authenticationFile, accounts, inResolve, inReject);
       }
     });
   }
@@ -111,6 +110,7 @@ class AddAccount {
     Files.writeFileSync(`${newUserPath}/owned.json`, '[]');
     Files.writeFileSync(`${newUserPath}/favorites.json`, '[]');
     Files.writeFileSync(`${newUserPath}/cart.json`, '[]');
+    Files.writeFileSync(`${newUserPath}/hero-base.json`, '[]');
 
     const crypto = Registry.get('Crypto');
     const successCallback = () => {
@@ -120,7 +120,7 @@ class AddAccount {
       inResolve && inResolve({ status: 200, send: message });
     };
     const failCallback = (error) => {
-      const message = Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED), Log.stringify(error));
+      const message = Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_OPERATION_FAILED), Log.stringify(error));
       if (Log.will(Log.ERROR)) Log.error(message);
       inReject && inReject({ status: 500, send: message });
     };
@@ -141,9 +141,10 @@ class AddAccount {
     return cookie;
   }
 
-  static rememberUser(params, username) {
+  static rememberUser(reqInfo, username) {
     if (!username) return;
-    const machine = params.req.clientIp;
+    if (!reqInfo.body.rememberMe) return;
+    const machine = reqInfo.clientIp;
     const record = { machine, username };
     const machinesFile = path.resolve(`${AddAccount.machinesPath}machines.json`);
     const machinesData = require(machinesFile);
@@ -172,6 +173,19 @@ class AddAccount {
         return;
       }
     }
+  }
+
+  static forgetUserByUserName(username) {
+    if (!username) return;
+    const machinesFile = path.resolve(`${AddAccount.machinesPath}machines.json`);
+    const machinesData = require(machinesFile);
+    for (let i = machinesData.length - 1; i >= 0; i--) {
+      const md = machinesData[i];
+      if (md.username === username) {
+        machinesData.splice(i, 1);
+      }
+    }
+    Files.writeFileSync(machinesFile, JSON.stringify(machinesData));
   }
 }
 module.exports = AddAccount;

@@ -63,6 +63,18 @@ class Files {
   }
 
   /**
+   * Creates a directory.
+   * @param inFilepath {String} The path to the directory.
+   * @param recursive {Boolean} Remove subdirectories.
+   */
+  static deleteDirSync(inFilepath, recursive) {
+    fs.rmdirSync(inFilepath, { recursive }, (err) => {
+    if (err) {
+        throw err;
+    }
+  });
+
+  /**
      * returns a list of files.
      * @param inFilepath {String} The path to the directory to search.
      * @param inNameMatches {RegExp} Only files that match will be returned. Can be null to skip this check.

@@ -63,7 +63,7 @@ class PasswordUpdate {
         });
       };
       const failCallback = (error) => {
-        const message = Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_ADD_FAILED), Log.stringify(error));
+        const message = Strings.format(I18n.get(Strings.ERROR_MESSAGE_ACCOUNT_OPERATION_FAILED), Log.stringify(error));
         if (Log.will(Log.ERROR)) Log.error(message);
         inReject && inReject({ status: 500, send: message });
       };

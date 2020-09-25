@@ -1,1 +1,6 @@
-[{"machine":"::1","username":"dave"}]
+[
+    {
+        "machine": "test",
+        "username": "A_User"
+    }
+]

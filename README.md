@@ -468,23 +468,6 @@ level for the server is used.
       }
     }]
 ``` 
-* A simple config for GitHub.
-```
-  "databaseConnections" : [
-    {
-      "name": "github",
-      "type": "github",
-      "description": "Github service.",
-      "databaseConnector": "githubdb.js",
-      "factory": "github-factory.js",
-      "config": {
-        "owner": "me",
-        "repo": "my-github-db",
-        "committer": { "name": "me", "email": "me@gmail.com" },
-        "author": { "name": "me", "email": "me@gmail.com" }
-      }
-    }]
-```
 
 ## Registry
 The registry stores name/value pairs that are available to the entire program.
